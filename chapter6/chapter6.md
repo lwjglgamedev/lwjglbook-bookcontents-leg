@@ -23,9 +23,11 @@ Matrices have a number of basic operations that can be applied to them (such as 
 
 You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid, the following picture sows a top view of that area.
 
-![Projection Matrix](projection_matrix.png)
+![Projection Matrix concepts](projection_matrix.png)
  
 Our projection matrix will correctly map our 3D coordinates so they can be correctly represented into our 2D screen. The mathematical representation of that matrix is as follows (don’t be scared).
+
+![Projection Matrix](projection_matrix_eq.png)
  
 Where aspect ratio is the relation between our screen width and our screen height ($$a=width/height$$). In order to obtain the projected coordinates of a given point we just need to multiply the projection matrix to the original coordinates. The result will be another vector that will contain the projected version.
 We will use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our ```pom.xml``` file.
@@ -182,6 +184,7 @@ So right now, in order to that representation we need to provide some basic oper
 * Scale: Adjust the size of an object.
  
 The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called transformation matrix and passed as a uniform to our vertex shader.
+
 That transformation matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
 Transf=[Translation Matrix]∙[Rotation Matrix]∙[Scale Matrix]
 If we include our projection matrix to the transformation matrix it would be like this:
