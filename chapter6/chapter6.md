@@ -204,17 +204,22 @@ Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Mat
 $$
 
 The translation matrix  is defined like this:
-[■(1&0&0&dx@0&1&0&dy@0&0&1&dz@0&0&0&1)]
-	Parameters:
-	dx: Displacement along the x axis.
-	dy: Displacement along the y axis.
-	dz: Displacement along the z axis.
+
+![Translation Matrix](translation_matrix.png)
+
+Translation Matrix Parameters:
+* dx: Displacement along the x axis.
+* dy: Displacement along the y axis.
+* dz: Displacement along the z axis.
+
 The scale matrix is defined like this:
-[■(sx&0&0&0@0&sy&0&0@0&0&sz&0@0&0&0&1)]
-	Parameters:
-	sx: Scaling along the x axis.
-	sy: Scaling along the y axis.
-	sz: Scaling along the z axis.
+
+![Scale Matrix](scale_matrix.png)
+
+Scale Matrix Parameters:
+* sx: Scaling along the x axis.
+* sy: Scaling along the y axis.
+* sz: Scaling along the z axis.
 
 The rotation matrix is much more complex, but keep in mind that it can be constructed by the multiplication of 3 rotation matrices for a single axis.
 
