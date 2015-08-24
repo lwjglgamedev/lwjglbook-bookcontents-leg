@@ -171,9 +171,13 @@ float[] positions = new float[]{
 ```
 
 That is, our z coordinates are outside the visible zone. Let’s assign them a value of ```-0.05f```. Now you will see a giant green square like this:
+
+![Square 1](square_1.png)
  
 What is happening now is that we are drawing the quad to close to our camera, we are actually zooming into it. If we assign now a value of ```-1.05f``` to the z coordinate we can see now our coloured quad.
- 
+
+![Square coloured](square_coloured.png) 
+
 If we continuing pushing backwards our quad we will see it smaller. Notice also that our quad does not resemble to a rectangle anymore.
 
 Let’s recall what we’ve done so far. We have learnt how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation. 
@@ -182,13 +186,23 @@ So right now, in order to that representation we need to provide some basic oper
 * Translation: Move an object by some amount in any of the three axis.
 * Rotation: Rotate an object by some amount of degrees over any of the three axis.
 * Scale: Adjust the size of an object.
- 
+
+![Transformations](transformations.png)
+
 The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called transformation matrix and passed as a uniform to our vertex shader.
 
 That transformation matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
-Transf=[Translation Matrix]∙[Rotation Matrix]∙[Scale Matrix]
+
+$$
+Transf=\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+$$
+
 If we include our projection matrix to the transformation matrix it would be like this:
-Transf=[Proj Matrix]∙[Translation Matrix]∙[Rotation Matrix]∙[Scale Matrix]
+
+$$
+Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+$$
+
 The translation matrix  is defined like this:
 [■(1&0&0&dx@0&1&0&dy@0&0&1&dz@0&0&0&1)]
 	Parameters:
@@ -201,7 +215,9 @@ The scale matrix is defined like this:
 	sx: Scaling along the x axis.
 	sy: Scaling along the y axis.
 	sz: Scaling along the z axis.
+
 The rotation matrix is much more complex, but keep in mind that it can be constructed by the multiplication of 3 rotation matrices for a single axis.
+
 Now, in order to apply those concepts we need to refactor our code a little bit. In our game we will be loading a set of models which can be used to render many objects in different positions according to our game logic (imagine a FPS game which loads three models for different enemies, there are only three models but using these models we can draw as many enemies as we want). Do we need to create a VAO and the set of VBOs for each of those objects ? The answer is no, we only need to load it once per model. What we need to do is draw it independently according to its position, size and rotation. That is we need to transform those models when we are rendering it.
 So we will create a new class named GameItem that will hold a reference to a model, to a Mesh instance. A GameItem instance will have variables for storing its position, its rotation state and its scale. This is the definition of that class.
 
