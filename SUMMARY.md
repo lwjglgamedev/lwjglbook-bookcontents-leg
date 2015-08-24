@@ -5,4 +5,5 @@
 * [The Game Loop](chapter2.md)
 * [A brief about coordinates](chapter3.md)
 * [Rendering](chapter4.md)
+* More on Rendering
 
