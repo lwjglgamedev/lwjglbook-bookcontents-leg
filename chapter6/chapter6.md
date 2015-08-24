@@ -152,27 +152,34 @@ public void setUniform(String uniformName, Matrix4f value) {
 ```
 
 Now we can use that method in our Renderer class in our render method, after the shader program has been binded:
+
+```java
 shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+```
 
-We are over, we can now show our quad correctly rendered, so you can now launch your program and will obtain a.... black background without any coloured quad. What’s happened? Did we break something? Actually no, remember that we are now simulating the effect of camera looking at our scene, and that we provided to distances, one to the farthest plane (equal to 1.000f and one the closes plane (equal to 0.01f). Our coordinates are:
-        float[] positions = new float[]{
-            -0.5f,  0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-        };
+We are over, we can now show our quad correctly rendered, so you can now launch your program and will obtain a.... black background without any coloured quad. What’s happened? Did we break something? Actually no, remember that we are now simulating the effect of camera looking at our scene, and that we provided to distances, one to the farthest plane (equal to 1.000f) and one to the closest plane (equal to 0.01f). Our coordinates are:
 
-That is, our z coordinates are outside the visible zone. Let’s assign them a value of -0.05f. Now you will see a giant green square like this:
+```java
+float[] positions = new float[]{
+    -0.5f,  0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+     0.5f,  0.5f, 0.0f,
+};
+```
+
+That is, our z coordinates are outside the visible zone. Let’s assign them a value of ```-0.05f```. Now you will see a giant green square like this:
  
-What is happening now is that we are drawing the quad to close to our camera, we are actually zooming into it. If we assign now a value of -1.05f to the z coordinate we can see now our coloured quad.
+What is happening now is that we are drawing the quad to close to our camera, we are actually zooming into it. If we assign now a value of ```-1.05f``` to the z coordinate we can see now our coloured quad.
  
 If we continuing pushing backwards our quad we will see it smaller. Notice also that our quad does not resemble to a rectangle anymore.
+
 Let’s recall what we’ve done so far. We have learnt how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation. 
 
 So right now, in order to that representation we need to provide some basic operations to act upon any model:
-	Translation: Move an object by some amount in any of the three axis.
-	Rotation: Rotate an object by some amount of degrees over any of the three axis.
-	Scale: Adjust the size of an object.
+* Translation: Move an object by some amount in any of the three axis.
+* Rotation: Rotate an object by some amount of degrees over any of the three axis.
+* Scale: Adjust the size of an object.
  
 The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called transformation matrix and passed as a uniform to our vertex shader.
 That transformation matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
@@ -194,6 +201,8 @@ The scale matrix is defined like this:
 The rotation matrix is much more complex, but keep in mind that it can be constructed by the multiplication of 3 rotation matrices for a single axis.
 Now, in order to apply those concepts we need to refactor our code a little bit. In our game we will be loading a set of models which can be used to render many objects in different positions according to our game logic (imagine a FPS game which loads three models for different enemies, there are only three models but using these models we can draw as many enemies as we want). Do we need to create a VAO and the set of VBOs for each of those objects ? The answer is no, we only need to load it once per model. What we need to do is draw it independently according to its position, size and rotation. That is we need to transform those models when we are rendering it.
 So we will create a new class named GameItem that will hold a reference to a model, to a Mesh instance. A GameItem instance will have variables for storing its position, its rotation state and its scale. This is the definition of that class.
+
+```java
 package org.lwjglb.engine;
 
 import org.joml.Vector3f;
@@ -248,9 +257,11 @@ public class GameItem {
         return mesh;
     }
 }
-
+```
 
 We will create another class which will deal with transformations named Transformation.
+
+```java
 package org.lwjglb.engine.graph;
 
 import org.joml.Matrix4f;
@@ -290,66 +301,77 @@ public class Transformation {
         return projectionMatrix.mul(transformationMatrix);
     }
 }
+```
 
+As you can see this class groups all the transformations including the projection matrix. Given a set of vectors that model the displacement, rotation and scale it returns the projection matrix multiplied by the transformation matrix. The method ```getTransformationMatrix``` returns the matrix that will be used to transform the coordinates for each vertex in our vertex shader.
+In our ```Renderer``` class, in the constructor method we just instantiate the Transformation with no arguments and in the ```init``` method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
 
-As you can see this class groups all the transformations including the projection matrix. Given a set of vectors that model the displacement, rotation and scale it returns the projection matrix multiplied by the transformation matrix. The method getTransformationMatrix returns the matrix that will be used to transform the coordinates for each vertex in our vertex shader.
-In our Renderer class, in the constructor method we just instantiate the Transformation with no arguments and in the init method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
-    public Renderer() {
-        transformation = new Transformation();
-    }
+```java
+public Renderer() {
+    transformation = new Transformation();
+}
     
-    public void init(Window window) throws Exception {
-        [...]
-        // Create transformation uniform
-        shaderProgram.createUniform("transformation");
+public void init(Window window) throws Exception {
+    // .... Some code before ...
+    // Create transformation uniform
+    shaderProgram.createUniform("transformation");
         
-        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+}
+```
+
+In the render method of our ```Renderer``` class we receive now an array of GameItems:
+
+```java
+public void render(Window window, GameItem[] gameItems) {
+    clear();
+
+    shaderProgram.bind();
+        
+    // Update projection Matrix
+    transformation.updateProjectionMatrix(FOV,
+        window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        
+    // Render each gameItem
+    for(GameItem gameItem : gameItems) {
+        // Set transformation for this item
+        Matrix4f tMatrix =
+            transformation.getTransformationMatrix(
+                gameItem.getPosition(),
+                gameItem.getRotation(),
+                gameItem.getScale());
+        shaderProgram.setUniform("transformation", tMatrix);
+        // Render the mes for this game item
+        gameItem.getMesh().render();
     }
 
-In the render method of our Renderer class we receive now an array of GameItems:
-    public void render(Window window, GameItem[] gameItems) {
-        clear();
+    shaderProgram.unbind();
+}
+```
 
-        shaderProgram.bind();
-        
-        // Update projection Matrix
-        transformation.updateProjectionMatrix(FOV,
-            window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        
-        // Render each gameItem
-        for(GameItem gameItem : gameItems) {
-            // Set transformation for this item
-            Matrix4f tMatrix =
-                transformation.getTransformationMatrix(
-                    gameItem.getPosition(),
-                    gameItem.getRotation(),
-                    gameItem.getScale());
-            shaderProgram.setUniform("transformation", tMatrix);
-            // Render the mes for this game item
-            gameItem.getMesh().render();
-        }
+We update the projection matrix once per renderer call. By doing this way we can deal with window resize operations . Then we iterate over the ```GameItem``` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
 
-        shaderProgram.unbind();
-    }
-
-
-We update the projection matrix once per renderer call. By doing this way we can deal with window resize operations . Then we iterate over the GameItem array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
 We have moved the rendering code to draw a Mesh to this class:
-    public void render() {
-        // Draw the mesh
-        glBindVertexArray(getVaoId());
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
 
-        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+```java
+public void render() {
+    // Draw the mesh
+    glBindVertexArray(getVaoId());
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
-        // Restore state
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindVertexArray(0);
-    }
+    glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+    // Restore state
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+}
+```
 
 Our vertex shader simply changes the name of the uniform from projectionMatrix to transformation:
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -364,8 +386,9 @@ void main()
     gl_Position = transformation * vec4(position, 1.0);
     exColour = inColour;
 }
-
+```
 
 As you can see the code is exactly the same, we are using the uniform to correctly project our coordinates taking into consideration our frustrum, position, scale and rotation information.
-Finally we only need to change our DummyGame class to create a instance of GameItem with its associated Mesh and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
+
+Finally we only need to change our ```DummyGame``` class to create a instance of ```GameItem``` with its associated ```Mesh``` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
 
