@@ -39,37 +39,33 @@ void main()
 }
 ```
 
-The first line is a directive that states the version of the GLSL language we are using. The following table relates the GLSL version, the OpenGL that matches that version and the directive to use (source: Wikipedia: https://en.wikipedia.org/wiki/OpenGL_Shading_Language#Versions).
-GLSL Version	OpenGL Version	Shader Preprocessor
-1.10.59
-2.0	#version 110
-1.20.8
-2.1	#version 120
-1.30.10
-3.0	#version 130
-1.40.08
-3.1	#version 140
-1.50.11
-3.2	#version 150
-3.30.6
-3.3	#version 330
-4.00.9
-4.0	#version 400
-4.10.6
-4.1	#version 410
-4.20.11
-4.2	#version 420
-4.30.8
-4.3	#version 430
-4.40
-4.4	#version 440
-4.50
-4.5	#version 450
+The first line is a directive that states the version of the GLSL language we are using. The following table relates the GLSL version, the OpenGL that matches that version and the directive to use (Wikipedia: https://en.wikipedia.org/wiki/OpenGL_Shading_Language#Versions).
 
-The second line specifies the input format for this shader. Data in an OpenGL buffer can be whatever we want, that is, the language does not force you to pass a specific data structure with a predefined semantic. From the point of view of the shader it is expecting to receive a buffer with data. It can be a position, a position with some additional information or whatever we want. The vertex is just receiving an array of floats, when we fill the buffer, we split that buffer into chunks that are going to be processed by the shader.
+| GLS Version | OpenGL Version | Shader Preprocessor |
+| -- | -- | -- |
+| 1.10.59 | 2.0 | #version 110 |
+| 1.20.8 | 2.1 | #version 120 |
+| 1.30.10 | 3.0 | #version 130 |
+| 1.40.08 | 3.1 | #version 140 |
+| 1.50.11| 3.2 | #version 150 |
+| 3.30.6 | 3.3 | #version 330 |
+| 4.00.9 | 4.0 | #version 400 |
+| 4.10.6 | 4.1 | #version 410 |
+| 4.20.11 | 4.2 | #version 420 |
+| 4.30.8 | 4.3 | #version 430 |
+| 4.40 | 4.4 | #version 440 |
+| 4.50 | 4.5 | #version 450 |
+
+
+The second line specifies the input format for this shader. Data in an OpenGL buffer can be whatever we want, that is, the language does not force you to pass a specific data structure with a predefined semantic. From the point of view of the shader it is expecting to receive a buffer with data. It can be a position, a position with some additional information or whatever we want. The vertex is just receiving an array of floats, when we fill the buffer, we define the buffer chunks that are going to be processed by the shader.
+
 So, first we need to get that chunk into something that’s meaningful to us. In this case we are saying that, starting from the position 0, we are expecting to receive a vector composed by 3 attributes (x, y, z). 
-The shader has a main block like any other C program which in this case is very simple. It is just returning the received position as it is by assigning the received position to the output variable gl_Position without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes (vec4). This is because gl_Position is expecting the result in vec4 format since it is using homogenous coordinates. That is, is expecting something in the form (x, y, z, w), where w represents an extra dimensions that allows us to properly deal with points at infinity.
-Let’s now have a look about our first fragment shader. We will create a file named “fragment.fs” (The extension is for Fragment Shader) under the resources directory with the following content:
+
+The shader has a main block like any other C program which in this case is very simple. It is just returning the received position in the output variable *gl_Position* without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes (vec4). This is because *gl_Position* is expecting the result in vec4 format since it is using homogeneous coordinates. That is, is expecting something in the form (x, y, z, w), where w represents an extra dimensions that allows us to properly deal with points at infinity.
+
+Let us now have a look about our first fragment shader. We will create a file named “*fragment.fs*” (The extension is for Fragment Shader) under the resources directory with the following content:
+
+
 #version 330
 
 out vec4 fragColor;
