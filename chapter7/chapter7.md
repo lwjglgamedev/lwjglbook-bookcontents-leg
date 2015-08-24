@@ -257,17 +257,25 @@ public void setUniform(String uniformName, int value) {
 In the init method of our Renderer class we will create a new uniform:
 shaderProgram.createUniform("texture_sampler");
 
-In the render method of our Renderer class we will set the uniform value to 0. (We are not using several textures right now so we are just using unit 0.
-shaderProgram.setUniform("texture_sampler", 0);
+In the ```render``` method of our ```Renderer``` class we will set the uniform value to 0. (We are not using several textures right now so we are just using unit 0.
 
-Finally we just need to change the render method of the Mesh class to use the texture. At the beginning of that method we put the following lines:
+```java
+shaderProgram.setUniform("texture_sampler", 0);
+```
+
+Finally we just need to change the render method of the ```Mesh``` class to use the texture. At the beginning of that method we put the following lines:
+
+```java
 // Activate first texture unit
 glActiveTexture(GL_TEXTURE0);
 // Bind the texture
 glBindTexture(GL_TEXTURE_2D, texture.getId());
+```
 
-We basically are binding to the texture identified by  texture.getId() in the texture unit 0.
+We basically are binding to the texture identified by  ```texture.getId()``` in the texture unit 0.
 Right now, we have just modified our code base to support textures, now we need to setup texture coordinates for our 3D cube. Our texture image file will be something like this:
+
+
  
 In our 3D model we have eight vertices. Let’s see how this can be done. Let’s first define the front face texture coordinates for each vertex.
  
