@@ -283,7 +283,7 @@ In our 3D model we have eight vertices. Let’s see how this can be done. Let’
 
 | Vertex | Texture Coordinate |
 | -- | -- |
-| V0| (0.0, 0.0) |
+| V0 | (0.0, 0.0) |
 | V1 | (0.0, 0.5) |
 | V2 | (0.5, 0.5) |
 | V3 | (0.5, 0.0) |
@@ -295,7 +295,7 @@ Now, let’s define the texture mapping of the top face.
  
 | Vertex | Texture Coordinate |
 | -- | -- |
-| V4| (0.0, 0.5) |
+| V4 | (0.0, 0.5) |
 | V5 | (0.5, 0.5) |
 | V0 | (0.0, 1.0) |
 | V3 | (0.5, 1.0) |
