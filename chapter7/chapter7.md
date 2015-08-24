@@ -281,7 +281,6 @@ In our 3D model we have eight vertices. Let’s see how this can be done. Let’
 
 ![Texture coordinates front face](cube_texture_front_face.png)
 
-TEST
 
 | Vertex | Texture Coordinate |
 | -- | -- |
@@ -290,8 +289,6 @@ TEST
 | V2 | (0.5, 0.5) |
 | V3 | (0.5, 0.0) |
  
-TEST
-
 
 Now, let’s define the texture mapping of the top face.
 
