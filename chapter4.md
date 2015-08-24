@@ -7,19 +7,28 @@ The sequence of steps that ends up drawing a 3D representation into your 2D scre
 
 The graphics pipeline was composed by these steps:
 
- 
+![Graphics Pipeline](rendering_pipeline.png)
+
 
 Open GL 2.0 introduced the concept of programmable pipeline. In this model, the different steps that compose the graphics pipeline can be controlled or programmed by using a set of specific programs called shaders. The following picture depicts a simplified version of the OpenGL programmable pipeline:
 
- 
-The rendering starts taking as its input a list of vertices in the form of Vertex Buffers. But, what is a vertex? A vertex is a data structure that describes a point in 2D or 3D space. And how do you describe a point in a 3D space? By specifying it’s coordinates x, y and z. And what is a Vertex Buffer? A Vertex Buffer is another data structure that packs all the vertices that need to be rendered, by using vertex arrays, and makes that information available to the shaders in the graphics pipeline.
-Those vertices are processed by the vertex shader which main purpose is to calculate the projected position of each vertex into the screen space. This shader can generate also other outputs related to colour or texture, but it’s main goal is to project the vertices into the screen space, that is, to generate dots.
-The geometry processing stage connects the vertices that are transformed by the vertex shader to form triangles. It does so by taking into consideration the order in which the vertices were stored and grouping them using different models. Why triangles? Triangles is like the basic work unit for graphic cards, it’s a simple geometric shape that can be combined and transformed to construct complex 3D scenes. This stage can also use a specific shader to group the vertices.
-The rasterization stage takes the triangles generated in the previous stages, clips them and transforms them into pixel-sized fragments.
-Those fragments are used during the fragment processing stage by the fragment shader to generate pixels assigning them the final that get into the framebuffer. The framebuffer is the final result of the graphics pipeline it holds the value of each pixel that should be drawn to the screen.
-Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processes in parallel in order to generate the final scene.
-So let’s start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “vertex.vs” (The extension is for Vertex Shader) under the resources directory with the following content:
+![Programmable pipeline](rendering_pipeline_2.png) 
 
+The rendering starts taking as its input a list of vertices in the form of Vertex Buffers. But, what is a vertex? A vertex is a data structure that describes a point in 2D or 3D space. And how do you describe a point in a 3D space? By specifying it’s coordinates x, y and z. And what is a Vertex Buffer? A Vertex Buffer is another data structure that packs all the vertices that need to be rendered, by using vertex arrays, and makes that information available to the shaders in the graphics pipeline.
+
+Those vertices are processed by the vertex shader which main purpose is to calculate the projected position of each vertex into the screen space. This shader can generate also other outputs related to colour or texture, but it’s main goal is to project the vertices into the screen space, that is, to generate dots.
+
+The geometry processing stage connects the vertices that are transformed by the vertex shader to form triangles. It does so by taking into consideration the order in which the vertices were stored and grouping them using different models. Why triangles? Triangles is like the basic work unit for graphic cards, it’s a simple geometric shape that can be combined and transformed to construct complex 3D scenes. This stage can also use a specific shader to group the vertices.
+
+The rasterization stage takes the triangles generated in the previous stages, clips them and transforms them into pixel-sized fragments.
+
+Those fragments are used during the fragment processing stage by the fragment shader to generate pixels assigning them the final that get into the framebuffer. The framebuffer is the final result of the graphics pipeline it holds the value of each pixel that should be drawn to the screen.
+
+Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processes in parallel in order to generate the final scene.
+
+So let uss start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “*vertex.vs*” (The extension is for Vertex Shader) under the resources directory with the following content:
+
+```
 #version 330
 
 layout (location=0) in vec3 pos;
@@ -28,6 +37,7 @@ void main()
 {
 	gl_Position = vec4(position, 1.0);
 }
+```
 
 The first line is a directive that states the version of the GLSL language we are using. The following table relates the GLSL version, the OpenGL that matches that version and the directive to use (source: Wikipedia: https://en.wikipedia.org/wiki/OpenGL_Shading_Language#Versions).
 GLSL Version	OpenGL Version	Shader Preprocessor
