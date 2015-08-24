@@ -7,7 +7,7 @@ In this chapter we will start developing our game engine by creating our game lo
 
 The following snippet shows the structure of a game loop:
 
-```
+```java
 while (keepOnRunning) {
     handleInput();
     updateGameState();
@@ -19,7 +19,7 @@ So, is that all? Have we finished with game loops? Well, not yet. The above snip
 
 Thus, we need the game loop to try run at a constant rate independently of the machine it runs on. Let us suppose that we want our game to run at a constant rate of 50 Frames Per Second (FPS). Our game loop could be something like this: 
 
-```
+```java
 double secsPerFrame = 1 / 50;
 
 while (keepOnRunning) {
@@ -43,7 +43,7 @@ First of all we may want to control separately the period at which the game stat
 
 Let us have a look at how our game loop looks like:
 
-```
+```java
 double secsPerUpdate = 1 / 30;
 double previous = getTime();
 double steps = 0.0;
@@ -67,7 +67,7 @@ while (true) {
 
 With this game loop we update our game state at fixed steps, but, How do we control that we do not exhaust computer resources by rendering continuously? This is done in the sync method:
 
-```
+```java
 private void sync(double loopStartTime) {
    float loopSlot = 1f / 50;
    double endTime = loopStartTime + loopSlot; 
@@ -85,7 +85,7 @@ So What are we doing in the above method ? In summary we calculate how many seco
 
 Now  it is time to structure our code base in order to start writing our first version of our Game Engine. First of all we will encapsulate all the GLFW Window initialization code in a class named Window allowing some basic parameterization of its characteristics (such as title and size). That Window class will also provide a method to detect key presses which will be used in our game loop:
 
-```
+```java
 public boolean isKeyPressed(int keyCode) {
     return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
 }
@@ -93,7 +93,7 @@ public boolean isKeyPressed(int keyCode) {
 
 We will also create a *Renderer* class which will do our game render logic. By now, it will just have an empty *init* method and another method to clear the screen with the configured clear color:
 
-```
+```java
 public void init() throws Exception {        
 }
 
@@ -104,7 +104,7 @@ public void clear() {
 
 Then we will create an interface named *IGameLogic* which will encapsulate our game logic. By doing this we will make our game engine reusable across different titles. This interface will have methods to get the input, to update the game state and to render game specific data.
 
-```
+```java
 public interface IGameLogic {
 
     void init() throws Exception;
@@ -119,7 +119,7 @@ public interface IGameLogic {
 
 Then we will create a class named *GameEngine* which will contain our game loop code. This class will implement the *Runnable* interface since the game loop will be run inside a separate thread:
 
-```
+```java
 public class GameEngine implements Runnable {
 
     //..[Removed code]..
@@ -137,7 +137,7 @@ public class GameEngine implements Runnable {
 
 As you can see we create a new Thread which will execute the run method of our *GameEngine* class which will contain our game loop:
 
-```
+```java
 public void start() {
     gameLoopThread.start();
 }    
@@ -158,7 +158,7 @@ In the source code you will see that we have created other auxiliary classes suc
 
 Our *GameEngine* class just delegates the input and update methods to the *IGameLogic* instance. In the render method it delegates also to the *IGameLogic*  instance an updates the window.
 
-```
+```java
 protected void input() {
     gameLogic.input(window);
 }
@@ -175,7 +175,7 @@ protected void render() {
 
 Our starting point, our class that contains the main method will just only create a *GameEngine* instance and start it.
 
-```
+```java
 public class Main {
 
     public static void main(String[] args) {
@@ -194,7 +194,7 @@ public class Main {
 ```
 At the end we only need to create or game logic class, which for this chapter will be a simpler one. It will just update the increase / decrease the clear color of the window whenever the user presses the up / down key. The render method will just clear the window with that color.
 
-```
+```java
 public class DummyGame implements IGameLogic {
 
     private int direction = 0;
