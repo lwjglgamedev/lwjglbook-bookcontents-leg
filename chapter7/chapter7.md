@@ -10,7 +10,7 @@ In order to draw a cube we just need to define eight vertices.
 So our coordinates array will be like this:
 
 ```java
-float[] positions = new float[]{
+float[] positions = new float[] {
     // VO
     -0.5f,  0.5f,  0.5f,
     // V1
@@ -33,32 +33,39 @@ float[] positions = new float[]{
 Of course, since we have 4 more vertices we need to update our array of colours. Just repeat the first four items by now.
 
 Finally, since a cube is made of six faces we need to draw twelve triangles (two per face), so we need to update our indices array. Remember that triangles must be define in counter clock wise order.
-        int[] indices = new int[]{
-            // Front face
-            0, 1, 3, 3, 1, 2,
-            // Top Face
-            4, 0, 3, 5, 4, 3,
-            // Right face
-            3, 2, 7, 5, 3, 7,
-            // Left face
-            0, 1, 6, 4, 0, 6,
-            // Bottom face
-            6, 1, 2, 7, 6, 2,
-            // Back face
-            4, 6, 7, 5, 4, 7,
-        };
 
-In order to better view the cube we will change our rotating code in our DummyGame class to rotate along the three axis:
-            // Update rotation angle
-            float rotation = gameItem.getRotation().x + 1.5f;
-            if ( rotation > 360 ) {
-                rotation = 0;
-            }
-            gameItem.setRotation(rotation, rotation, rotation);  
+```java
+int[] indices = new int[] {
+    // Front face
+    0, 1, 3, 3, 1, 2,
+    // Top Face
+    4, 0, 3, 5, 4, 3,
+    // Right face
+    3, 2, 7, 5, 3, 7,
+    // Left face
+    0, 1, 6, 4, 0, 6,
+    // Bottom face
+    6, 1, 2, 7, 6, 2,
+    // Back face
+    4, 6, 7, 5, 4, 7,
+};
+```
+
+In order to better view the cube we will change our rotating code in our ```DummyGame``` class to rotate along the three axis.
+
+```java
+// Update rotation angle
+float rotation = gameItem.getRotation().x + 1.5f;
+if ( rotation > 360 ) {
+    rotation = 0;
+}
+gameItem.setRotation(rotation, rotation, rotation);  
+```
 
 An that’s all that. You can now compile an run your example and you will obtain something like this.
  
 There is something weird with this cube, some faces are not being painted correctly. What is happening ? The reason why the cube has this aspect is that the triangles that compose the cube are being drawn in a random order. The pixels that are far away should be drawn before pixels that are closer. In order to do that we must enable depth test.
+
 This is can be done in our Window class at the end of the init method:
          glEnable(GL_DEPTH_TEST);
 
