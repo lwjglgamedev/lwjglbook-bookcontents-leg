@@ -137,4 +137,108 @@ public class GameEngine implements Runnable {
 
 As you can see we create a new Thread which will execute the run method of our *GameEngine* class which will contain our game loop:
 
-``````
+```
+public void start() {
+    gameLoopThread.start();
+}    
+
+@Override
+public void run() {
+    try {
+        init();
+        gameLoop();
+    } catch (Exception excp) {
+        excp.printStackTrace();
+    }
+}
+```
+Our *GameEngine* class provides a start method which just starts our Thread so run method will be executed asynchronously. That method will perform the initialization tasks and will run the game loop until  our window is closed. It is very important to initialize GLFW code inside the thread that is going to update it later. Thus, in that *init* method our Window and *Renderer* instances are initialized.
+
+In the source code you will see that we have created other auxiliary classes such as Timer (which will provide utility methods for calculating elapsed time) and will be used by our game loop logic.
+
+Our *GameEngine* class just delegates the input and update methods to the *IGameLogic* instance. In the render method it delegates also to the *IGameLogic*  instance an updates the window.
+
+```
+protected void input() {
+    gameLogic.input(window);
+}
+
+protected void update(float interval) {
+    gameLogic.update(interval);
+}
+
+protected void render() {
+    gameLogic.render(window);
+    window.update();
+}
+```
+
+Our starting point, our class that contains the main method will just only create a *GameEngine* instance and start it.
+
+```
+public class Main {
+
+    public static void main(String[] args) {
+        try {
+            IGameLogic gameLogic = new DummyGame();
+            GameEngine gameEng = new GameEngine("GAME",
+                600, 480, gameLogic);
+            gameEng.start();
+        } catch (Exception excp) {
+            excp.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
+}
+```
+At the end we only need to create or game logic class, which for this chapter will be a simpler one. It will just update the increase / decrease the clear color of the window whenever the user presses the up / down key. The render method will just clear the window with that color.
+
+```
+public class DummyGame implements IGameLogic {
+
+    private int direction = 0;
+    
+    private float color = 0.0f;
+
+    private final Renderer renderer;
+
+    public DummyGame() {
+        renderer = new Renderer();
+    }
+    
+    @Override
+    public void init() throws Exception {
+        renderer.init();
+    }
+
+    @Override
+    public void input(Window window) {
+        if ( window.isKeyPressed(GLFW_KEY_UP) ) {
+            direction = 1;
+        } else if ( window.isKeyPressed(GLFW_KEY_DOWN) ) {
+            direction = -1;
+        } else {
+            direction = 0;
+        }
+    }
+
+    @Override
+    public void update(float interval) {
+        color += direction * 0.01f;
+        if (color > 1) {
+            color = 1.0f;
+        } else if ( color < 0 ) {
+            color = 0.0f;
+        }
+    }
+
+    @Override
+    public void render(Window window) {
+        window.setClearColor(color, color, color, 0.0f);
+        renderer.clear();
+    }    
+}
+```
+
+The class hierarchy that we have created will help us to separate our game engine code from the code of a specific game. Although it may seem necessary at this moment we need to isolate generic tasks that every game will use from the state logic, artwork and resources of an specific game in order to reuse our game engine. In later chapters we will need to restructure this class hierarchy as our game engine gets more complex.
