@@ -301,7 +301,7 @@ Now, let’s define the texture mapping of the top face.
 | V3 | (0.5, 1.0) |
 	
 
-As you can see we have a problem, we need to setup different texture coordinates for the same vertices (V0 and V3). How can we solve this ? The only way to solve it is to repeat some points. For the top face we need to repeat the four vertices and assign them the correct texture coordinates.
+As you can see we have a problem, we need to setup different texture coordinates for the same vertices (V0 and V3). How can we solve this ? The only way to solve it is to repeat some points. For the top face we need to repeat the four vertices and assign them the correct texture coordinates. 
 
 Since the front, back and lateral faces use the same texture we won’t need to repeat all of the vertices. You have the complete definition in the source code, but we needed to pass from 8 points to 20. The final result is like this.
 
