@@ -84,3 +84,57 @@ So What are we doing in the above method ? In summary we calculate how many seco
 2.	Compare current time with that end time and wait just one second if we have not reached that time yet.
 
 Now  it is time to structure our code base in order to start writing our first version of our Game Engine. First of all we will encapsulate all the GLFW Window initialization code in a class named Window allowing some basic parameterization of its characteristics (such as title and size). That Window class will also provide a method to detect key presses which will be used in our game loop:
+
+```
+public boolean isKeyPressed(int keyCode) {
+    return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
+}
+```
+
+We will also create a *Renderer* class which will do our game render logic. By now, it will just have an empty *init* method and another method to clear the screen with the configured clear color:
+
+```
+public void init() throws Exception {        
+}
+
+public void clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+}
+```
+
+Then we will create an interface named *IGameLogic* which will encapsulate our game logic. By doing this we will make our game engine reusable across different titles. This interface will have methods to get the input, to update the game state and to render game specific data.
+
+```
+public interface IGameLogic {
+
+    void init() throws Exception;
+
+    void input(Window window);
+
+    void update(float interval);
+    
+    void render(Window window);
+}
+```
+
+Then we will create a class named *GameEngine* which will contain our game loop code. This class will implement the *Runnable* interface since the game loop will be run inside a separate thread:
+
+```
+public class GameEngine implements Runnable {
+
+    //..[Removed code]..
+
+    private final Thread gameLoopThread;
+
+    public GameEngine(String windowTitle, int width, int height, IMageLogoc gameLogic) throws Exception {
+        gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
+        window = new Window(windowTitle, width, height);
+        this.gameLogic = gameLogic;
+        //..[Removed code]..
+    }
+
+```
+
+As you can see we create a new Thread which will execute the run method of our *GameEngine* class which will contain our game loop:
+
+``````
