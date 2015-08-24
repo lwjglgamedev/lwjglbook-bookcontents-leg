@@ -17,12 +17,7 @@ How do we do this ? By using a projection matrix or frustrum. That matrix will t
 
 A matrix is a bi-dimensional array of numbers arranged in columns and rows, each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix (2 rows and 2 columns).
 
-$$
-(a/2b)
-[1 1]
-[2 2]
-$$
-[■(1&2.3@0&-1)]
+![2x2 Matrix](2_2_matrix.png)
 
 Matrices have a number of basic operations that can be applied to them (such as addition, multiplication, etc.) that you can consult in any maths book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
 
@@ -32,22 +27,29 @@ You can think about the projection matrix as a camera, which has a field of view
  
 Our projection matrix will correctly map our 3D coordinates so they can be correctly represented into our 2D screen. The mathematical representation of that matrix is as follows (don’t be scared).
  
-Where aspect ratio is the relation between our screen width and our screen height (a=width⁄height). In order to obtain the projected coordinates of a given point we just need to multiply the projection matrix to the original coordinates. The result will be another vector that will contain the projected version.
-We will use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our pom.xml file:
+Where aspect ratio is the relation between our screen width and our screen height ($$a=width/height$$). In order to obtain the projected coordinates of a given point we just need to multiply the projection matrix to the original coordinates. The result will be another vector that will contain the projected version.
+We will use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our ```pom.xml``` file.
+
+```xml
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
             <version>${joml.version}</version>
         </dependency>
+```
 
-And define the version of the library to use
+And define the version of the library to use.
+
+```xml
     <properties>
         [...]
         <joml.version>1.5.0</joml.version>
         [...]
     </properties>
+```
 
-Now let’s define our projection matrix. We will create a instance of the class Matrix4f (provided by the JOML library) in our Renderer class. The Matrix4f provides a method to set up a projection matrix named perspective. This methods need the following parameters:
+Now let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named perspective. This methods need the following parameters:
+
 	Field of View: The Field of View angle in radians. We will define a constant that holds that value
 	Aspect Ratio.
 	Distance to the near plane (z-near)
