@@ -60,7 +60,7 @@ public class Mesh {
 }
 ```
 
-We will create our *Mesh* instance in our *DummyGame* class, removing the VAO and VBO code from *Renderer* *init* method. Our render method in the *Renderer* class will accept a Mesh instance to render. The *cleanup* method will also be simplified since the *Mesh* class already provides one for freeing VAO and VBO resources.
+We will create our ```Mesh``` instance in our ```DummyGame``` class, removing the VAO and VBO code from *Renderer* *init* method. Our render method in the ```Renderer``` class will accept a Mesh instance to render. The ```cleanup``` method will also be simplified since the ```Mesh``` class already provides one for freeing VAO and VBO resources.
 
 ```java
 public void render(Mesh mesh) {
@@ -93,11 +93,11 @@ One important thing to note is this line:
 glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
 ```
 
-Our *Mesh* counts the number of vertices (by dividing the position array by 3, since we are passing X, Y and Z coordinates)), so we can now render more complex shapes. So, let us try to render a more complex shape, let us render a quad. A quad can be constructed by using two triangles as shown in the next figure.
+Our ```Mesh``` counts the number of vertices (by dividing the position array by 3, since we are passing X, Y and Z coordinates)), so we can now render more complex shapes. So, let us try to render a more complex shape, let us render a quad. A quad can be constructed by using two triangles as shown in the next figure.
 
 ![quad coordinates](quad_coordinates.png)
 
-As you can see we have two triangles, the first one formed by the vertices: V1, V2 and V4 (the orange one) and the second one formed by the vertices V4, V2, V3 (the green one). Vertices are specified in a counter clockwise order, so the float array to be passes will be [V1, V2, V4, V4, V2, V3], so the init method in our *DummyGame* class will be:
+As you can see we have two triangles, the first one formed by the vertices: V1, V2 and V4 (the orange one) and the second one formed by the vertices V4, V2, V3 (the green one). Vertices are specified in a counter clockwise order, so the float array to be passes will be [V1, V2, V4, V4, V2, V3], so the init method in our ```DummyGame``` class will be:
 
 ```java
 @Override
@@ -136,14 +136,14 @@ Then we specify the order into which those vertices should be drawn by referring
 | V1 | V2 | V3 | V4 | V3 | V2 |
 
 
-So we need to modify our *Mesh* class to. accept another parameter, an array of indices, and now the number of vertices to draw will be the length of that indices array.
+So we need to modify our ```Mesh``` class to. accept another parameter, an array of indices, and now the number of vertices to draw will be the length of that indices array.
 
 ```java
 public Mesh(float[] positions, int[] indices) {
     vertexCount = indices.length;
 ```
 
-After we have created our VBO that stores the positions, we need to create another VBO which will hold the indices. So we rename the identifier that holds the identifier for the positions VBO and create a new one for the index VBO (*idxVboId*). The process of creating that VBO is similar but the type is now *GL_ELEMENT_ARRAY_BUFFER*.
+After we have created our VBO that stores the positions, we need to create another VBO which will hold the indices. So we rename the identifier that holds the identifier for the positions VBO and create a new one for the index VBO (```idxVboId```). The process of creating that VBO is similar but the type is now ```GL_ELEMENT_ARRAY_BUFFER```.
 
 ```java
 idxVboId = glGenBuffers();
@@ -210,10 +210,13 @@ public void init() throws Exception {
 
 Now let’s add some colour to our example. We will pass another array of floats to our Mesh class which hold the colour for each coordinate in the quad.
 
+```java
+public Mesh(float[] positions, float[] colours, int[] indices) {
+```
 
-    public Mesh(float[] positions, float[] colours, int[] indices) {
+With that array, we will create another VBO which will be associated to our VAO.
 
-With that array, we will create another VBO which will be associated to our VAO:
+```java
 // Colour VBO
 colourVboId = glGenBuffers();
 FloatBuffer colourBuffer = BufferUtils.createFloatBuffer(colours.length);
@@ -221,8 +224,9 @@ colourBuffer.put(colours).flip();
 glBindBuffer(GL_ARRAY_BUFFER, colourVboId);
 glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
 glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+```
 
-Please notice that in the glVertexAttribPointer call, the first parameter is now a “1”, this the location where our shader will be expecting that data. (Of course, since we have another VBO we need to free it in the cleanup method). Now we need to modify our shaders. The vertex shader is now expecting two parameters, the coordinates (in location 0) and the colour (in location 1). The vertex shader will just output the received colour so it can be processes by the fragment shader.
+Please notice that in the ```glVertexAttribPointer``` call, the first parameter is now a “1”, this the location where our shader will be expecting that data. (Of course, since we have another VBO we need to free it in the cleanup method). Now we need to modify our shaders. The vertex shader is now expecting two parameters, the coordinates (in location 0) and the colour (in location 1). The vertex shader will just output the received colour so it can be processes by the fragment shader.
 #version 330
 
 layout (location =0) in vec3 position;
