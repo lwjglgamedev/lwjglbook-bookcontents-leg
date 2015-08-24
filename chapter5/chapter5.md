@@ -191,21 +191,26 @@ The parameters of that method are:
 * indices: Specifies the offset to apply to the indices data to start rendering.
 
 An now we can use our newer and much more efficient method of drawing complex models by just specifying the indices.
-    public void init() throws Exception {
-        renderer.init();
-        float[] positions = new float[]{
-            -0.5f,  0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-        };
-        int[] indices = new int[]{
-            0, 1, 3, 3, 1, 2,
-        };
-        mesh = new Mesh(positions, indices);
-    }
 
-Now let’s add some colour to our example. We will pass another array of floats to our Mesh class which hold the colour for each coordinate in the quad:
+```java
+public void init() throws Exception {
+    renderer.init();
+    float[] positions = new float[]{
+        -0.5f,  0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
+    };
+    int[] indices = new int[]{
+        0, 1, 3, 3, 1, 2,
+    };
+    mesh = new Mesh(positions, indices);
+}
+```
+
+Now let’s add some colour to our example. We will pass another array of floats to our Mesh class which hold the colour for each coordinate in the quad.
+
+
     public Mesh(float[] positions, float[] colours, int[] indices) {
 
 With that array, we will create another VBO which will be associated to our VAO:
