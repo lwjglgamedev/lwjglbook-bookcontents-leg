@@ -17,10 +17,18 @@ How do we do this ? By using a projection matrix or frustrum. That matrix will t
 
 A matrix is a bi-dimensional array of numbers arranged in columns and rows, each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix (2 rows and 2 columns).
 
-
+$$
+(a/2b)
+[1 1]
+[2 2]
+$$
 [■(1&2.3@0&-1)]
+
 Matrices have a number of basic operations that can be applied to them (such as addition, multiplication, etc.) that you can consult in any maths book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
+
 You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid, the following picture sows a top view of that area.
+
+![Projection Matrix](projection_matrix.png)
  
 Our projection matrix will correctly map our 3D coordinates so they can be correctly represented into our 2D screen. The mathematical representation of that matrix is as follows (don’t be scared).
  
