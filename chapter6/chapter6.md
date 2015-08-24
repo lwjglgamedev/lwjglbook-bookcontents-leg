@@ -50,11 +50,14 @@ And define the version of the library to use.
 
 Now let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named perspective. This methods need the following parameters:
 
-	Field of View: The Field of View angle in radians. We will define a constant that holds that value
-	Aspect Ratio.
-	Distance to the near plane (z-near)
-	Distance to the far plane (z-far).
+* Field of View: The Field of View angle in radians. We will define a constant that holds that value
+* Aspect Ratio.
+* Distance to the near plane (z-near)
+* Distance to the far plane (z-far).
+
 We will instantiate  that matrix in our init method so we need to pass a reference to our Window  instance to get its size (you can see it in the source code). The new constants and variables are:
+
+```java
     /**
      * Field of View in Radians
      */
@@ -65,17 +68,25 @@ We will instantiate  that matrix in our init method so we need to pass a referen
     private static final float Z_FAR = 1000.f;
 
     private Matrix4f projectionMatrix;
-    
-    
+```
     
 The projection matrix is created as follows:
+
+```java
 float aspectRatio = (float) window.getWidth() / window.getHeight();
 projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,
     Z_NEAR, Z_FAR);
+```
 
 At this moment we will ignore that the aspect ratio can change (by resizing our window). This could be checked in our render method and change our projection matrix accordingly.
-Now that we have our matrix, how do we use it? We need to use it in our shader, and it should be applied to all the vertices. At first, you could think in bundling it in the vertex input (like the coordinates and the colours), but think it twice. We would be wasting lots of space since the projection matrix should not change even between several render calls. The answer is to use “uniforms”. Uniforms are global GLSL variables that shaders can use and that we will employ to communicate with them. 
+
+Now that we have our matrix, how do we use it? We need to use it in our shader, and it should be applied to all the vertices. At first, you could think in bundling it in the vertex input (like the coordinates and the colours), but think it twice. We would be wasting lots of space since the projection matrix should not change even between several render calls.
+
+The answer is to use “uniforms”. Uniforms are global GLSL variables that shaders can use and that we will employ to communicate with them. 
+
 So we need to modify our vertex shader code and declare a new uniform called projectionMatrix and use it to calculate the projected position.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -90,17 +101,27 @@ void main()
     gl_Position = projectionMatrix * vec4(position, 1.0);
     exColour = inColour;
 }
+```
 
-As you can see we define our projectionMatrix as matrix of 4x4 elements and the position is obtained by multiplying it by our original coordinates. Now we need to pass the values of the projection matrix to our shader. First, we need to get a reference to the place where the uniform will hold its values. This done with the method glGetUniformLocation which receives two parameters:
-	The Shader program Identifier.
-	The name of the uniform (it should match the once defined in the shader code).
-This method returns an identifier holding the uniform location, Since we may have more than one uniform, we will store those locations in a Map indexing by its name (We will need that location number later). So in our ShaderProgram class we create a new variable that holds those identifiers:
-   private final Map<String, Integer> uniforms;
+As you can see we define our ```projectionMatrix``` as matrix of 4x4 elements and the position is obtained by multiplying it by our original coordinates. Now we need to pass the values of the projection matrix to our shader. First, we need to get a reference to the place where the uniform will hold its values. This done with the method ```glGetUniformLocation``` which receives two parameters:
+* The Shader program Identifier.
+* The name of the uniform (it should match the once defined in the shader code).
+
+This method returns an identifier holding the uniform location, Since we may have more than one uniform, we will store those locations in a Map indexing by its name (We will need that location number later). So in our ```ShaderProgram``` class we create a new variable that holds those identifiers:
+
+```java
+private final Map<String, Integer> uniforms;
+```
 
 This variable will be initialized in our constructor:
-        uniforms = new HashMap<>();
+
+```java
+uniforms = new HashMap<>();
+```
 
 And finally we create a method to set up new uniforms and store the obtained location.
+
+```java
 public void createUniform(String uniformName) throws Exception {
     int uniformLocation = glGetUniformLocation(programId,
 	    uniformName);
@@ -110,18 +131,25 @@ public void createUniform(String uniformName) throws Exception {
     }
     uniforms.put(uniformName, uniformLocation);
 }
+```
 
-Now, in our Renderer class we can invoke the createUniform method once the shader program has been compiled (in this case, we will do it once the porjection matrix has been instantiated).
-        shaderProgram.createUniform("projectionMatrix");
+Now, in our ```Renderer``` class we can invoke the ```createUniform``` method once the shader program has been compiled (in this case, we will do it once the porjection matrix has been instantiated).
+
+```java
+shaderProgram.createUniform("projectionMatrix");
+```
 
 At this moment, we already have a holder ready to be set up with data to be uses as our projection matrix. Since the projection matrix won’t change between rendering calls we may set up the values right after the creation of the uniform, but we will do it in our render method. You will see later that we may reuse that uniform to do additional operations that need to be done en each render call.
-We will create another method in our ShaderProgram class to setup the data named setUniform. Basically we transform our matrix into a 4x4 FloatBuffer by using the utility methods provided by JOML library and send them to the location we stored  in our locations map.
-    public void setUniform(String uniformName, Matrix4f value) {
-        // Dump the matrix into a float buffer
-        FloatBuffer fb = BufferUtils.createFloatBuffer(16);
-        value.get(fb);
-        glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
-    }
+We will create another method in our ```ShaderProgram``` class to setup the data named ```setUniform```. Basically we transform our matrix into a 4x4 FloatBuffer by using the utility methods provided by JOML library and send them to the location we stored  in our locations map.
+
+```java
+public void setUniform(String uniformName, Matrix4f value) {
+    // Dump the matrix into a float buffer
+    FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+    value.get(fb);
+    glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
+}
+```
 
 Now we can use that method in our Renderer class in our render method, after the shader program has been binded:
 shaderProgram.setUniform("projectionMatrix", projectionMatrix);
