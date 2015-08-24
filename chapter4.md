@@ -65,7 +65,7 @@ The shader has a main block like any other C program which in this case is very 
 
 Let us now have a look about our first fragment shader. We will create a file named “*fragment.fs*” (The extension is for Fragment Shader) under the resources directory with the following content:
 
-
+```
 #version 330
 
 out vec4 fragColor;
@@ -74,6 +74,7 @@ void main()
 {
 	fragColor = vec4(0.0, 0.5, 0.5, 1.0);
 }
+```
 
 The structure is quite similar to our vertex shader. In this case we will set a fixed colour for each fragment. The output variable is defined in second line and set as a vec4  fragColor.
 Now that we have our shaders created, how do we use them? This is the sequence of steps we need to follow:
@@ -83,7 +84,10 @@ Now that we have our shaders created, how do we use them? This is the sequence o
 4.	Compile the shader.
 5.	Attach the shader to the program.
 6.	Link the program.
+
 At the end the shader will be loaded in the graphics card and we can use by referencing an identifier, the program identifier.
+
+```
 package org.lwjglb.engine.graph;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -163,10 +167,15 @@ public class ShaderProgram {
         }
     }
 }
+```
 
-The constructor of the ShaderProgram creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. ShaderProgram also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
-Since we have a cleanup method, let’s change our IGameLogic interface class to add a cleanup method:
-      void cleanup();
+The constructor of the *ShaderProgram* creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. *ShaderProgram* also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
+
+Since we have a cleanup method, let uss change our *IGameLogic* interface class to add a cleanup method:
+
+```
+void cleanup();
+```
 
 This method will be invoked when the game loop finishes, so we need to modify the run method of the GameEngine class:
     @Override
