@@ -173,13 +173,13 @@ The constructor of the *ShaderProgram* creates a new program in OpenGL and provi
 
 Since we have a cleanup method, let uss change our *IGameLogic* interface class to add a cleanup method:
 
-```
+```java
 void cleanup();
 ```
 
 This method will be invoked when the game loop finishes, so we need to modify the run method of the *GameEngine* class:
 
-```
+```java
 @Override
 public void run() {
     try {
@@ -195,7 +195,7 @@ public void run() {
 
 Now we can use or shaders in order to display a triangle. We will do this in the init method of our *Renderer* class. First of all, we create the *Shader* program:
 
-```
+```java
 public void init() throws Exception {
     shaderProgram = new ShaderProgram();
     shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
@@ -208,7 +208,7 @@ We have created an utility class which by now provides a method to retrieve the 
 
 Now we can define our triangle as an array of floats. We create a single float array which will define the vertices of the triangle. As you can see there’s no structure in that array, as it is right now, OpenGL cannot know the structure of that data, it’s just a sequence of floats:
 
-```
+```java
 float[] vertices = new float[]{
      0.0f,  0.5f, 0.0f,
     -0.5f, -0.5f, 0.0f,
@@ -222,14 +222,14 @@ The following picture depicts the triangle in our coordinates system.
 
 Now that we have our coordinates, we need to store them into our graphics card and tell OpenGL about the structure. We will introduce now two important concepts Vertex Array Objects (VAOs) and Vertex Buffer Object (VBOs). If you get lost in the next code fragments remember that at the end what we are doing is sending the data that models the objects we want to draw to the graphics card memory. When we store it we get an identifier that serves us later to refer to it while drawing.
 
-Let uss first start with Vertex Buffer Object (VBOs). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we have said before OpenGL does not know anything about our data structure, in fact it can hold not just coordinates but other information, such as textures, colour, etc.
+Let us first start with Vertex Buffer Object (VBOs). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we have said before OpenGL does not know anything about our data structure, in fact it can hold not just coordinates but other information, such as textures, colour, etc.
 A Vertex Array Objects (VAOs). A VAO is an object that contains one or more VBOs which are usually called attribute lists. Each attribute list can hold one type of data: position, colour, texture, etc. You are free to store whichever you want in each slot.
  
 A VAO is like a wrapper that groups a set of definitions for the data is going to be stored in the graphics card. When we create a VAO we  get an identifier, we use that identifier to render it and the elements it contains using the definitions we specified during its creation.
 
-So let uss continue coding our example. The first thing that we must do with is to store our array of floats into a *FloatBuffer*. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
+So let us continue coding our example. The first thing that we must do with is to store our array of floats into a *FloatBuffer*. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
 
-```
+```java
 FloatBuffer verticesBuffer =
 	BufferUtils.createFloatBuffer(vertices.length);
 verticesBuffer.put(vertices).flip();
@@ -239,14 +239,14 @@ We use a utility class to create the buffer and after we have stored the data (w
 
 Now  we need to create the VAO and bind to it.
 
-```
+```java
 vaoId = glGenVertexArrays();
 glBindVertexArray(vaoId);
 ```
 
 Then, we need to create or VBO, bind to it and put the data into it.
 
-```
+```java
 vboId = glGenBuffers();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
@@ -254,7 +254,7 @@ glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
 
 Now it comes the most important part, we need to define the structure of our data and store in one of the attribute lists of the VAO, this is done with the following line.
 
-```
+```java
 glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 ```
 
@@ -269,7 +269,7 @@ index: Specifies the location where the shader expects this data.
 
 After we have finished with our VBO we can unbind it and the VAO (bind them to 0)
 
-```
+```java
 // Unbind the VBO
 glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -279,7 +279,7 @@ glBindVertexArray(0);
 
 That’s all the code that should be in our *init* method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
 
-```
+```java
 public void render() {
     clear();
 
@@ -304,7 +304,7 @@ As you can see we just clear the window, bind the shader program, bind the VAO, 
 
 We also added a cleanup method to our Renderer class which frees acquired resources.
 
-```
+```java
 public void cleanup() {
     if (shaderProgram != null) {
         shaderProgram.cleanup();
