@@ -87,7 +87,7 @@ Now that we have our shaders created, how do we use them? This is the sequence o
 
 At the end the shader will be loaded in the graphics card and we can use by referencing an identifier, the program identifier.
 
-```
+```java
 package org.lwjglb.engine.graph;
 
 import static org.lwjgl.opengl.GL20.*;
