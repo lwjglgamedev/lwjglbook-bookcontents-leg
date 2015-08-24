@@ -124,50 +124,72 @@ But the code above presents a problem. We are repeating coordinates to represent
 ![Dolphin](dolphin.png)
  
 At the end we would need much more memory because of that duplicate information and this is where Index Buffers come to the rescue. For drawing the quad we only need to specify each vertex once this way: V1, V2, V3, V4). Each vertex has a position in the array, V1 has position 0, V2 has position 1, etc:
-V1	V2	V3	V4
-0	1	2	3
+
+| V1 | V2 | V3 | V4 | 
+| -- | -- | -- | -- |
+| 0 | 1 | 2 | 3 |
 
 Then we specify the order into which those vertices should be drawn by referring to their position:
-0	1	3	3	1	2
-V1	V2	V4	V4	V3	V2
 
-So we need to modify our Mesh class to. accept another parameter, an array of indices, and now the number of vertices to draw will be the length of that indices array.
+| 0 | 1 | 3 | 3 | 1 | 2 |
+| -- | -- | -- | -- | -- | -- |
+| V1 | V2 | V3 | V4 | V3 | V2 |
+
+
+So we need to modify our *Mesh* class to. accept another parameter, an array of indices, and now the number of vertices to draw will be the length of that indices array.
+
+```java
 public Mesh(float[] positions, int[] indices) {
     vertexCount = indices.length;
+```
 
-After we have created our VBO that stores the positions, we need to create another VBO which will hold the indices. So we rename the identifier that holds the identifier for the positions VBO and create a new one for the index VBO (idxVboId). The process of creating that VBO is similar but the type is now GL_ELEMENT_ARRAY_BUFFER.
+After we have created our VBO that stores the positions, we need to create another VBO which will hold the indices. So we rename the identifier that holds the identifier for the positions VBO and create a new one for the index VBO (*idxVboId*). The process of creating that VBO is similar but the type is now *GL_ELEMENT_ARRAY_BUFFER*.
+
+```java
 idxVboId = glGenBuffers();
 IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indices.length);
 indicesBuffer.put(indices).flip();
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+```
 
-Since we are dealing with integers we need to create an IntBuffer instead of a FloatBuffer.
-And that’s, all the VAO will contain now two VBOs, one for positions and another one that will hold the indices and that will be used for rendering. Our cleanup method in our ;esh class must take into consideration that there is another VBO to free:
-    public void cleanUp() {
-        glDisableVertexAttribArray(0);
+Since we are dealing with integers we need to create an *IntBuffer* instead of a *FloatBuffer*.
 
-        // Delete the VBOs
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(posVboId);
-        glDeleteBuffers(idxVboId);
+And that’s, all the VAO will contain now two VBOs, one for positions and another one that will hold the indices and that will be used for rendering. Our cleanup method in our *Mesh* class must take into consideration that there is another VBO to free.
 
-        // Delete the VAO
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoId);
-    }
+```java
+public void cleanUp() {
+    glDisableVertexAttribArray(0);
 
-Finally, we need to modify our drawing call that used the glDrawArrays:
+    // Delete the VBOs
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(posVboId);
+    glDeleteBuffers(idxVboId);
+
+    // Delete the VAO
+    glBindVertexArray(0);
+    glDeleteVertexArrays(vaoId);
+}
+```
+
+Finally, we need to modify our drawing call that used the glDrawA**rrays method:
+
+```java
 glDrawArrays(GL_TRIANGLES, 0, mesh. getVertexCount());
+```
 
-To another call that uses the method glDrawElements:
+To another call that uses the method *glDrawElements*:
+
+```java
 glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
+```
 
 The parameters of that method are:
-•	mode: Specifies the primitives for rendering, triangles in this case. No changes here.
-•	count: Specifies the number of elements to be rendered.
-•	type: Specifies the type of value in the indices data. In this case we are using integers.
-•	indices: Specifies the offset to apply to the indices data to start rendering.
+* mode: Specifies the primitives for rendering, triangles in this case. No changes here.
+* count: Specifies the number of elements to be rendered.
+* type: Specifies the type of value in the indices data. In this case we are using integers.
+* indices: Specifies the offset to apply to the indices data to start rendering.
+
 An now we can use our newer and much more efficient method of drawing complex models by just specifying the indices.
     public void init() throws Exception {
         renderer.init();
