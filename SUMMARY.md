@@ -7,4 +7,5 @@
 * [Rendering](chapter4/chapter4.md)
 * [More on Rendering](chapter5/chapter5.md)
 * [Transformations](chapter6/chapter6.md)
+* Textures
 
