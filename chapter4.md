@@ -177,123 +177,151 @@ Since we have a cleanup method, let uss change our *IGameLogic* interface class 
 void cleanup();
 ```
 
-This method will be invoked when the game loop finishes, so we need to modify the run method of the GameEngine class:
-    @Override
-    public void run() {
-        try {
-            init();
-            gameLoop();
-        } catch (Exception excp) {
-            excp.printStackTrace();
-        } finally {
-            cleanup();
-        }
-    }
+This method will be invoked when the game loop finishes, so we need to modify the run method of the *GameEngine* class:
 
-Now we can use or shaders in order to display a triangle. We will do this in the init method of our Renderer class. First of all, we create the Shader program:
-    public void init() throws Exception {
-        shaderProgram = new ShaderProgram();
-        shaderProgram.createVertexShader(
-		    Utils.loadResource("/vertex.vs"));
-        shaderProgram.createFragmentShader(
-		    Utils.loadResource("/fragment.fs"));
-        shaderProgram.link();
+```
+@Override
+public void run() {
+    try {
+        init();
+        gameLoop();
+    } catch (Exception excp) {
+        excp.printStackTrace();
+    } finally {
+        cleanup();
+    }
+}
+```
+
+Now we can use or shaders in order to display a triangle. We will do this in the init method of our *Renderer* class. First of all, we create the *Shader* program:
+
+```
+public void init() throws Exception {
+    shaderProgram = new ShaderProgram();
+    shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
+    shaderProgram.createFragmentShader(Utils.loadResource("/fragment.fs"));
+    shaderProgram.link();
+}
+```
 
 We have created an utility class which by now provides a method to retrieve the contents of a file from the class path. This method is used to retrieve the contents of our shaders.
+
 Now we can define our triangle as an array of floats. We create a single float array which will define the vertices of the triangle. As you can see there’s no structure in that array, as it is right now, OpenGL cannot know the structure of that data, it’s just a sequence of floats:
-        float[] vertices = new float[]{
-            0.0f, 0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f
-        };
 
-The following picture depicts the triangle in our coordinate system:
+```
+float[] vertices = new float[]{
+     0.0f,  0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f
+};
+```
 
- 
+The following picture depicts the triangle in our coordinates system.
+
+![Coordinates System](coordinates.png) 
+
 Now that we have our coordinates, we need to store them into our graphics card and tell OpenGL about the structure. We will introduce now two important concepts Vertex Array Objects (VAOs) and Vertex Buffer Object (VBOs). If you get lost in the next code fragments remember that at the end what we are doing is sending the data that models the objects we want to draw to the graphics card memory. When we store it we get an identifier that serves us later to refer to it while drawing.
-Let’s first start with Vertex Buffer Object (VBOs). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we have said before OpenGL does not know anything about our data structure, in fact it can hold not just coordinates but other information, such as textures, colour, etc.
+
+Let uss first start with Vertex Buffer Object (VBOs). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we have said before OpenGL does not know anything about our data structure, in fact it can hold not just coordinates but other information, such as textures, colour, etc.
 A Vertex Array Objects (VAOs). A VAO is an object that contains one or more VBOs which are usually called attribute lists. Each attribute list can hold one type of data: position, colour, texture, etc. You are free to store whichever you want in each slot.
  
 A VAO is like a wrapper that groups a set of definitions for the data is going to be stored in the graphics card. When we create a VAO we  get an identifier, we use that identifier to render it and the elements it contains using the definitions we specified during its creation.
-So let’s continue coding our example. The first thing that we must do with is to store our array of floats into a FloatBuffer. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
+
+So let uss continue coding our example. The first thing that we must do with is to store our array of floats into a *FloatBuffer*. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
+
+```
 FloatBuffer verticesBuffer =
 	BufferUtils.createFloatBuffer(vertices.length);
 verticesBuffer.put(vertices).flip();
+```
 
 We use a utility class to create the buffer and after we have stored the data (with the put method) we need to reset the position of the buffer to the 0 position with the flip method (that is, we say that we’ve finishing writing on it).
-Now  we need to create the VAO and bind to it
+
+Now  we need to create the VAO and bind to it.
+
+```
 vaoId = glGenVertexArrays();
 glBindVertexArray(vaoId);
+```
 
+Then, we need to create or VBO, bind to it and put the data into it.
 
-Then, we need to create or VBO, bind to it and put the data into it:
+```
 vboId = glGenBuffers();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+```
 
-Now it comes the most important part, we need to define the structure of our data and store in one of the attribute lists of the VAO, this is done with the following sentence:
+Now it comes the most important part, we need to define the structure of our data and store in one of the attribute lists of the VAO, this is done with the following line.
+
+```
 glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+```
 
 The parameters are:
-•	index: Specifies the location where the shader expects this data.
-•	size: Specifies then number of components per vertex attribute (from 1 to 4). In this case, we are passing 3D coordinates, so it should be 3.
-•	type: Specifies the type of each component in the array, in this case a float.
-•	normalized: Specifies if the values should be normalized or not.
-•	stride: Specifies the byte offset between consecutive generic vertex attributes. (We will explain it later).
-•	offset: Specifies a offset of the first component of the first component in the array in the data store of the buffer.
+* 
+index: Specifies the location where the shader expects this data.
+* size: Specifies then number of components per vertex attribute (from 1 to 4). In this case, we are passing 3D coordinates, so it should be 3.
+* type: Specifies the type of each component in the array, in this case a float.
+* normalized: Specifies if the values should be normalized or not.
+* stride: Specifies the byte offset between consecutive generic vertex attributes. (We will explain it later).
+* offset: Specifies a offset of the first component of the first component in the array in the data store of the buffer.
+
 After we have finished with our VBO we can unbind it and the VAO (bind them to 0)
+
+```
 // Unbind the VBO
 glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 // Unbind the VAO
 glBindVertexArray(0);
+```
 
-That’s all the code that should be in our init method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
-    public void render() {
-        clear();
+That’s all the code that should be in our *init* method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
 
-        shaderProgram.bind();
+```
+public void render() {
+    clear();
 
-        // Bind to the VAO
-        glBindVertexArray(vaoId);
-        glEnableVertexAttribArray(0);
+    shaderProgram.bind();
 
-        // Draw the vertices
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Bind to the VAO
+    glBindVertexArray(vaoId);
+    glEnableVertexAttribArray(0);
 
-        // Restore state
-        glDisableVertexAttribArray(0);
-        glBindVertexArray(0);
+    // Draw the vertices
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        shaderProgram.unbind();
-    }
+    // Restore state
+    glDisableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    shaderProgram.unbind();
+}
+```
 
 As you can see we just clear the window, bind the shader program, bind the VAO, draw the vertices stored in the VBO associated to the VAO and restore the state. That’s it.
-We also added a cleanup method to our Renderer class which frees acquired resources:
-    public void cleanup() {
-        if (shaderProgram != null) {
-            shaderProgram.cleanup();
-        }
 
-        glDisableVertexAttribArray(0);
+We also added a cleanup method to our Renderer class which frees acquired resources.
 
-        // Delete the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDeleteBuffers(vboId);
-
-        // Delete the VAO
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoId);
+```
+public void cleanup() {
+    if (shaderProgram != null) {
+        shaderProgram.cleanup();
     }
+
+    glDisableVertexAttribArray(0);
+
+    // Delete the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(vboId);
+
+    // Delete the VAO
+    glBindVertexArray(0);
+    glDeleteVertexArrays(vaoId);
 }
+```
 
 And, that’s all ! If you have followed the steps carefully you will see something like this.
  
-Our first triangle! You may think that this won’t make it into the top ten game list, and you will be totally right. You may also think that this has been too much work for drawing a boring triangle, but keep in mind that we are introducing key concepts and preparing the base infrastructure to do more complex things. Please be patience and continue reading.
-
-
-
-
-
-
-
+Our first triangle! You may think that this will not make it into the top ten game list, and you will be totally right. You may also think that this has been too much work for drawing a boring triangle, but keep in mind that we are introducing key concepts and preparing the base infrastructure to do more complex things. Please be patience and continue reading.
