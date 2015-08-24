@@ -116,8 +116,12 @@ public void init() throws Exception {
 ```
 
 Now you should see a quad rendered like this:
+
+![Quad rendered](quad_rendered.png)
  
 But the code above presents a problem. We are repeating coordinates to represent the quad, we are passing twice V2 and V4 coordinates. With this small shape it may not seem a big deal, but image a much more complex 3D model, we would be repeating the coordinates many times. Keep in mind also that now we are just using three floats for representing the position of a vertex but later on we will need more data to represent the texture, etc. Also take into consideration that in more complex shapes the number of vertices shared between triangles cane be even higher like in the figure below (where a vertex can be shared between six triangles).
+
+![Dolphin](dolphin.png)
  
 At the end we would need much more memory because of that duplicate information and this is where Index Buffers come to the rescue. For drawing the quad we only need to specify each vertex once this way: V1, V2, V3, V4). Each vertex has a position in the array, V1 has position 0, V2 has position 1, etc:
 V1	V2	V3	V4
