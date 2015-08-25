@@ -60,7 +60,7 @@ public class Mesh {
 }
 ```
 
-We will create our ```Mesh``` instance in our ```DummyGame``` class, removing the VAO and VBO code from *Renderer* *init* method. Our render method in the ```Renderer``` class will accept a Mesh instance to render. The ```cleanup``` method will also be simplified since the ```Mesh``` class already provides one for freeing VAO and VBO resources.
+We will create our ```Mesh``` instance in our ```DummyGame``` class, removing the VAO and VBO code from ```Renderer``` ```init``` method. Our render method in the ```Renderer``` class will accept a Mesh instance to render. The ```cleanup``` method will also be simplified since the ```Mesh``` class already provides one for freeing VAO and VBO resources.
 
 ```java
 public void render(Mesh mesh) {
@@ -153,7 +153,7 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
 ```
 
-Since we are dealing with integers we need to create an *IntBuffer* instead of a *FloatBuffer*.
+Since we are dealing with integers we need to create an ```IntBuffer``` instead of a ```FloatBuffer```.
 
 And that’s, all the VAO will contain now two VBOs, one for positions and another one that will hold the indices and that will be used for rendering. Our cleanup method in our ```Mesh``` class must take into consideration that there is another VBO to free.
 
