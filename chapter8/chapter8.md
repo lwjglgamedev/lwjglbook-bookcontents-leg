@@ -254,7 +254,9 @@ protected void input() {
 }
 ```
 
-Now we are ready to update our DummyGame class to process the keyboard and mouse input. The input method of that class will be like this:
+Now we are ready to update our ```DummyGame``` class to process the keyboard and mouse input. The input method of that class will be like this:
+
+```java
 @Override
 public void input(Window window, MouseInput mouseInput) {
     cameraInc.set(0, 0, 0);
@@ -274,24 +276,24 @@ public void input(Window window, MouseInput mouseInput) {
         cameraInc.y = 1;
     }
 }
+```
 
-It just updates a Vector3f variable named cameraInc which holds the camera displacement that should be applied. 
-The update method of the DummyGame class modifies the camera position and rotation according to the processes key and mouse events.
-    @Override
-    public void update(float interval, MouseInput mouseInput) {
-        for (GameItem gameItem : gameItems) {
-            // Update camera position
-            camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+It just updates a ```Vector3f``` variable named ```cameraInc``` which holds the camera displacement that should be applied. 
+The update method of the ```DummyGame``` class modifies the camera position and rotation according to the processes key and mouse events.
 
-            // Update camera based on mouse            
-            if (mouseInput.isRightButtonPressed()) {
-                Vector2f rotVec = mouseInput.getDisplVec();
-                camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-            }
+```java
+@Override
+public void update(float interval, MouseInput mouseInput) {
+    for (GameItem gameItem : gameItems) {
+        // Update camera position
+        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+
+        // Update camera based on mouse            
+        if (mouseInput.isRightButtonPressed()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
         }
     }
+}
+```
 
-
-ADD MORE CUBES TO OUR WORLD
-CULL_FACE
-CULL_BACK
