@@ -4,7 +4,7 @@ In this book we will learn the principal techniques involved in developing 3D ga
 
 LWJGL is a low level API, it’s like a wrapper around OpenGL. If your idea is to start creating 3D games in a short period of time maybe you should like to other alternatives like JmonkeyEngine (jmonkeyengine.org/) or another alternative. By using this low level API yo will have to go through many concepts and create mane lines of code before you see the results. The benefit of doing this way is that you will get a much better understanding about 3D graphics.
 
-As said in the previous paragraphs we will be using Java for this book. We will be using Java 8, so you need to download Java SDK from Oracle’s pages. Just choose the installer that suits your Operative System and install it.
+As said in the previous paragraphs we will be using Java for this book. We will be using Java 8, so you need to download Java SDK from Oracle’s pages. Just choose the installer that suits your Operative System and install it. This book assumes that you have a moderate understanding of the Java language.
 
 The source code that accompanies this book has been developed using the Netbeans IDE. You can download the latest version of that IDE from https://netbeans.org/. You only need the Java SE version but remember to download the version that suits with your JDK version (32 bits or 64 bits).
 
