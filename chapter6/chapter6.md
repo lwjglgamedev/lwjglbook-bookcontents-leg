@@ -322,13 +322,16 @@ public class Transformation {
                 rotateY((float)Math.toRadians(rotation.y)).
                 rotateZ((float)Math.toRadians(rotation.z)).
                 scale(scale);
-        return projectionMatrix.mul(transformationMatrix);
+        Matrix4f currProj = new Matrix4f(projectionMatrix);
+        return currProj.mul(transformationMatrix);
     }
 }
 ```
 
 As you can see this class groups all the transformations including the projection matrix. Given a set of vectors that model the displacement, rotation and scale it returns the projection matrix multiplied by the transformation matrix. The method ```getTransformationMatrix``` returns the matrix that will be used to transform the coordinates for each vertex in our vertex shader.
 In our ```Renderer``` class, in the constructor method we just instantiate the Transformation with no arguments and in the ```init``` method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
+
+An important thing notice is that the the ```mul``` method of the  ```Matrix4f``` class modifies the matrix instance that applies to. So if we directly multiply the projection matrix with the transformation matrix we will be modifying the projection matrix itself. That matrix should not change during a render cycle, so we must do a copy of that matrix. If we don't do t his and we render several objects we would be applying the projection matrix more than once fo
 
 ```java
 public Renderer() {
