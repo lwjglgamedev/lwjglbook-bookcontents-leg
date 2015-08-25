@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [First steps](chapter1.md)
+* [First steps](chapter1/chapter1.md)
 * [The Game Loop](chapter2/chapter2.md)
 * [A brief about coordinates](chapter3/chapter3.md)
 * [Rendering](chapter4/chapter4.md)
