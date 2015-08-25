@@ -26,7 +26,7 @@ Those fragments are used during the fragment processing stage by the fragment sh
 
 Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processes in parallel in order to generate the final scene.
 
-So let uss start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “*vertex.vs*” (The extension is for Vertex Shader) under the resources directory with the following content:
+So let uss start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “```vertex.vs```” (The extension is for Vertex Shader) under the resources directory with the following content:
 
 ```
 #version 330
@@ -61,9 +61,9 @@ The second line specifies the input format for this shader. Data in an OpenGL bu
 
 So, first we need to get that chunk into something that’s meaningful to us. In this case we are saying that, starting from the position 0, we are expecting to receive a vector composed by 3 attributes (x, y, z). 
 
-The shader has a main block like any other C program which in this case is very simple. It is just returning the received position in the output variable *gl_Position* without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes (vec4). This is because *gl_Position* is expecting the result in vec4 format since it is using homogeneous coordinates. That is, is expecting something in the form (x, y, z, w), where w represents an extra dimensions that allows us to properly deal with points at infinity.
+The shader has a main block like any other C program which in this case is very simple. It is just returning the received position in the output variable ```gl_Position``` without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes (vec4). This is because ```gl_Position``` is expecting the result in vec4 format since it is using homogeneous coordinates. That is, is expecting something in the form (x, y, z, w), where w represents an extra dimensions that allows us to properly deal with points at infinity.
 
-Let us now have a look about our first fragment shader. We will create a file named “*fragment.fs*” (The extension is for Fragment Shader) under the resources directory with the following content:
+Let us now have a look about our first fragment shader. We will create a file named “```fragment.fs```” (The extension is for Fragment Shader) under the resources directory with the following content:
 
 ```
 #version 330
@@ -169,15 +169,15 @@ public class ShaderProgram {
 }
 ```
 
-The constructor of the *ShaderProgram* creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. *ShaderProgram* also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
+The constructor of the ```ShaderProgram``` creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. ```ShaderProgram``` also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
 
-Since we have a cleanup method, let uss change our *IGameLogic* interface class to add a cleanup method:
+Since we have a cleanup method, let us change our ```IGameLogic``` interface class to add a cleanup method:
 
 ```java
 void cleanup();
 ```
 
-This method will be invoked when the game loop finishes, so we need to modify the run method of the *GameEngine* class:
+This method will be invoked when the game loop finishes, so we need to modify the run method of the ```GameEngine``` class:
 
 ```java
 @Override
@@ -193,7 +193,7 @@ public void run() {
 }
 ```
 
-Now we can use or shaders in order to display a triangle. We will do this in the init method of our *Renderer* class. First of all, we create the *Shader* program:
+Now we can use or shaders in order to display a triangle. We will do this in the ```init``` method of our ```Renderer``` class. First of all, we create the shader program:
 
 ```java
 public void init() throws Exception {
@@ -227,7 +227,7 @@ A Vertex Array Objects (VAOs). A VAO is an object that contains one or more VBOs
  
 A VAO is like a wrapper that groups a set of definitions for the data is going to be stored in the graphics card. When we create a VAO we  get an identifier, we use that identifier to render it and the elements it contains using the definitions we specified during its creation.
 
-So let us continue coding our example. The first thing that we must do with is to store our array of floats into a *FloatBuffer*. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
+So let us continue coding our example. The first thing that we must do with is to store our array of floats into a ```FloatBuffer```. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
 
 ```java
 FloatBuffer verticesBuffer =
@@ -277,7 +277,7 @@ glBindBuffer(GL_ARRAY_BUFFER, 0);
 glBindVertexArray(0);
 ```
 
-That’s all the code that should be in our *init* method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
+That’s all the code that should be in our ```init``` method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
 
 ```java
 public void render() {
