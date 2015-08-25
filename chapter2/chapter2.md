@@ -31,7 +31,7 @@ while (keepOnRunning) {
 }
 ```
 
-This game loop is simple and could be used for some games but it also presents some problems.  First of all, it assumes that our update and render methods fit in the available time we have in order to render at a constant rate of 50 FPS (that is, *secsPerFrame* which is equals to 20 ms.).
+This game loop is simple and could be used for some games but it also presents some problems.  First of all, it assumes that our update and render methods fit in the available time we have in order to render at a constant rate of 50 FPS (that is, ```secsPerFrame``` which is equals to 20 ms.).
 
 Besides that, our computer may be prioritizing another tasks that prevent our game loop to execute for certain period of time. So, we may end up updating our game state at very variable time steps which are not suitable for game physics.
 
@@ -79,7 +79,7 @@ private void sync(double loopStartTime) {
 }
 ```
 
-So What are we doing in the above method ? In summary we calculate how many seconds our game loop iteration should last (which is stored in the *loopSlot* variable) and we wait for that time taking into consideration the time we have spent in our loop. But instead of doing a single wait for the whole available time period we do small waits. This will allow other tasks to run and will avoid the sleep accuracy problems we mentioned before. Then, what we do is: 
+So What are we doing in the above method ? In summary we calculate how many seconds our game loop iteration should last (which is stored in the ```loopSlot``` variable) and we wait for that time taking into consideration the time we have spent in our loop. But instead of doing a single wait for the whole available time period we do small waits. This will allow other tasks to run and will avoid the sleep accuracy problems we mentioned before. Then, what we do is: 
 1.	Calculate the time at which we should exit this wait method and start another iteration of our game loop (which is the variable endTi**me).
 2.	Compare current time with that end time and wait just one second if we have not reached that time yet.
 
@@ -91,7 +91,7 @@ public boolean isKeyPressed(int keyCode) {
 }
 ```
 
-We will also create a *Renderer* class which will do our game render logic. By now, it will just have an empty *init* method and another method to clear the screen with the configured clear color:
+We will also create a ```Renderer``` class which will do our game render logic. By now, it will just have an empty ```init``` method and another method to clear the screen with the configured clear color:
 
 ```java
 public void init() throws Exception {        
@@ -102,7 +102,7 @@ public void clear() {
 }
 ```
 
-Then we will create an interface named *IGameLogic* which will encapsulate our game logic. By doing this we will make our game engine reusable across different titles. This interface will have methods to get the input, to update the game state and to render game specific data.
+Then we will create an interface named ```IGameLogic``` which will encapsulate our game logic. By doing this we will make our game engine reusable across different titles. This interface will have methods to get the input, to update the game state and to render game specific data.
 
 ```java
 public interface IGameLogic {
@@ -117,7 +117,7 @@ public interface IGameLogic {
 }
 ```
 
-Then we will create a class named *GameEngine* which will contain our game loop code. This class will implement the *Runnable* interface since the game loop will be run inside a separate thread:
+Then we will create a class named ```GameEngine``` which will contain our game loop code. This class will implement the ```Runnable``` interface since the game loop will be run inside a separate thread:
 
 ```java
 public class GameEngine implements Runnable {
@@ -135,7 +135,7 @@ public class GameEngine implements Runnable {
 
 ```
 
-As you can see we create a new Thread which will execute the run method of our *GameEngine* class which will contain our game loop:
+As you can see we create a new Thread which will execute the run method of our ```GameEngine``` class which will contain our game loop:
 
 ```java
 public void start() {
@@ -152,11 +152,11 @@ public void run() {
     }
 }
 ```
-Our *GameEngine* class provides a start method which just starts our Thread so run method will be executed asynchronously. That method will perform the initialization tasks and will run the game loop until  our window is closed. It is very important to initialize GLFW code inside the thread that is going to update it later. Thus, in that *init* method our Window and *Renderer* instances are initialized.
+Our ```GameEngine``` class provides a start method which just starts our Thread so run method will be executed asynchronously. That method will perform the initialization tasks and will run the game loop until  our window is closed. It is very important to initialize GLFW code inside the thread that is going to update it later. Thus, in that ```init``` method our Window and ```Renderer``` instances are initialized.
 
 In the source code you will see that we have created other auxiliary classes such as Timer (which will provide utility methods for calculating elapsed time) and will be used by our game loop logic.
 
-Our *GameEngine* class just delegates the input and update methods to the *IGameLogic* instance. In the render method it delegates also to the *IGameLogic*  instance an updates the window.
+Our ```GameEngine``` class just delegates the input and update methods to the ```IGameLogic``` instance. In the render method it delegates also to the ```IGameLogic```  instance an updates the window.
 
 ```java
 protected void input() {
@@ -173,7 +173,7 @@ protected void render() {
 }
 ```
 
-Our starting point, our class that contains the main method will just only create a *GameEngine* instance and start it.
+Our starting point, our class that contains the main method will just only create a ```GameEngine``` instance and start it.
 
 ```java
 public class Main {
