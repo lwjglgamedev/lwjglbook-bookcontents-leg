@@ -299,3 +299,28 @@ public void update(float interval, MouseInput mouseInput) {
 }
 ```
 
+Now we can add more cubes to our world, scale them set them up in a specific location and play with our new camera. As you can see all the cubes share the same mesh.
+
+```java
+GameItem gameItem1 = new GameItem(mesh);
+gameItem1.setScale(0.5f);
+gameItem1.setPosition(0, 0, -2);
+
+GameItem gameItem2 = new GameItem(mesh);
+gameItem2.setScale(0.5f);
+gameItem2.setPosition(0.5f, 0.5f, -2);
+
+GameItem gameItem3 = new GameItem(mesh);
+gameItem3.setScale(0.5f);
+gameItem3.setPosition(0, 0, -2.5f);
+
+GameItem gameItem4 = new GameItem(mesh);
+gameItem4.setScale(0.5f);
+
+gameItem4.setPosition(0.5f, 0, -2.5f);
+gameItems = new GameItem[]{gameItem1, gameItem2, gameItem3, gameItem4};
+```
+
+You will get something like this.
+
+![Cubes](cubes.png)
