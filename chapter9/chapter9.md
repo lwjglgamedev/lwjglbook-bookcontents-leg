@@ -311,6 +311,8 @@ After we have processed the second face the arrays and lists will be like this.
 ![Ordering VII](ordering_vii.png)
 
 The second face defines vertices which already has been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are set below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by  two in the case of texture coordinates.
+
+```java
 private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
     List<Vector3f> normList, List<Face> facesList) {
 
@@ -362,36 +364,53 @@ private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoord
         normArr[posIndex * 3 + 2] = vecNorm.z;
     }
 }
+```
 
 Another thing to notice is that texture coordinates are in UV format so y coordinates need to be calculated as 1 minus the value contained in the file.
-Now, at last, we can render obj models. I’ve included an OBJ file that contains the textured cube that we have been using in previous chapters. In order to use it in the init method of our DummyGame class we just need to construct a GameItem instance like this.
+
+Now, at last, we can render obj models. I’ve included an OBJ file that contains the textured cube that we have been using in previous chapters. In order to use it in the ```init``` method of our ```DummyGame``` class we just need to construct a ```GameItem``` instance like this.
+
+```java
 Texture texture = new Texture("/textures/grassblock.png");
 mesh.setTexture(texture);
 GameItem gameItem = new GameItem(mesh);
 gameItem.setScale(0.5f);
 gameItem.setPosition(0, 0, -2);
 gameItems = new GameItem[]{gameItem};
+```
 
 And we will get our familiar textured cube.
- 
+
+![Textured cube](textured_cube.png) 
+
 We can now try with other models. We can use the famous Standford Bunny (it can be freely downloaded) model, which is included used in the resources. This model is not textured so we can us it this way.
+
+```java
 Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
 GameItem gameItem = new GameItem(mesh);
 gameItem.setScale(1.5f);
 gameItem.setPosition(0, 0, -2);
 gameItems = new GameItem[]{gameItem};
+```
 
- 
+![Standford Bunny](standford_bunny.png)
 
 The model likes a little bit strange because we have no textures and there’s no light so we cannot appreciate the volumes but you can check that the model is correctly loaded. In the Window class when we set up the OpenGL parameters add this line.
+
+```java
 glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+```
 
 You should now see something like this when you zoom in.
- 
+
+![Standford Bunny Triangles](standford_bunny_triangles.png) 
+
 You can now see all the triangles that compose the model.
 You can use Blender to create your models. Blender is a powerful tool but it can be some bit of overwhelming at first, there are lots of options, lots of key combinations and you need to take your time to do the most basic things by the first time. When you export the models using blender please make sure to include the normals and export faces as triangles.
- 
+
+![OBJ Export options](obj_export_options.png)
+
 Also if you are applying textures please remember to split edges since we cannot assign several texture coordinates to the same vertex,
  
-
+![Edge split](edge_split.png)
 
