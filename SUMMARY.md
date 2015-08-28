@@ -9,4 +9,5 @@
 * [Transformations](chapter6/chapter6.md)
 * [Textures](chapter7/chapter7.md)
 * [Camera](chapter8/chapter8.md)
+   * Loading more complex models
 
