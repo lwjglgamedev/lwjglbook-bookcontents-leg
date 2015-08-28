@@ -299,33 +299,16 @@ Then we use the rest of the indices of the index group to set up the ```textures
 
 Then we pick the third index, which  is 1, so what we must do is put the first vector normal coordinate in the same position as the one that occupies the vertex designated ```posIndex``` (V1).
 
-
-
-verticesArray	V1	V2	V3	V4
-				
-texturesArray	T2			
-				
-normalsArray	N1			
-				
-indicesList	0			
+![Ordering V](ordering_v.png)
 
 After we have processed the first face the arrays and lists will be like this.
-verticesArray	V1	V2	V3	V4
-				
-texturesArray	T2	T1	T2	
-				
-normalsArray	N1	N1	N1	
-				
-indicesList	0	1	2	
+
+
+![Ordering VI](ordering_vi.png)
 
 After we have processed the second face the arrays and lists will be like this.
-verticesArray	V1	V2	V3	V4
-				
-texturesArray	T2	T1	T2	T1
-				
-normalsArray	N1	N1	N1	N1
-				
-indicesList	0	1	2	
+
+![Ordering VII](ordering_vii.png)
 
 The second face defines vertices which already has been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are set below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by  two in the case of texture coordinates.
 private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
