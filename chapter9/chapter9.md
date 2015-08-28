@@ -106,14 +106,17 @@ As you can see we have create two new uniforms:
 * ```colour```: Will contain the base .
 * ```useColour```: It’s a flag that we will set to 1 when we don’t use textures.
 
-In the Renderer class we need to create those two uniforms.
+In the ```Renderer``` class we need to create those two uniforms.
 
-
+```java
 // Create uniform for default colour and the flag that controls it
 shaderProgram.createUniform("colour");
 shaderProgram.createUniform("useColour");
+```
 
-In the render method of the Renderer class we need to set the values for this uniforms for each gameItem.
+In the render method of the ```Renderer``` class we need to set the values for this uniforms for each ```gameItem```.
+
+```java
 for(GameItem gameItem : gameItems) {
     Mesh mesh = gameItem.getMesh();
     // Set transformation for this item
@@ -124,20 +127,29 @@ for(GameItem gameItem : gameItems) {
     shaderProgram.setUniform("useColour", mesh.isTextured() ? 0 : 1);
     mesh.render();
 }
+```
 
-Now we can create a new class named OBJLoader which parse OBJ files and will create a Mesh instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
+Now we can create a new class named ```OBJLoader``` which parse OBJ files and will create a Mesh instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
+
+```java
 public static Mesh loadMesh(String fileName) throws Exception {
+```
  
 The parameter filename specifies the name of the file, that must be in the CLASSPATH that contains the OBJ model.
  The first thing that we do is read the file contents and store all the lines in an array. Then we create several lists that will hold the vertices, the texture coordinates, the normals and the faces.
+
+```java
 List<String> lines = Files.readAllLines(Paths.get(OBJLoader.class.getResource(fileName).toURI()));
 
 List<Vector3f> vertices = new ArrayList<>();
 List<Vector2f> textures = new ArrayList<>();
 List<Vector3f> normals = new ArrayList<>();
 List<Face> faces = new ArrayList<>();
+```
 
 Then will parse each line and depending on the starting token will get a vertex position, a texture coordinate, a vertex normal or a face definition. At the end we will need to reorder that information.
+
+```java
 for (String line : lines) {
     String[] tokens = line.split("\\s+");
     switch (tokens[0]) {
@@ -174,12 +186,15 @@ for (String line : lines) {
 	}
 }
 return reorderLists(vertices, textures, normals, faces);
+```
 
-Before talking about reordering let’s see how face definitions are parsed. We have create a class named Face which parses the definition of a face. A Face is composed by a list of indices groups, in this case since we are dealing with triangles we will have three indices group).
+Before talking about reordering let’s see how face definitions are parsed. We have create a class named ```Face``` which parses the definition of a face. A ```Face``` is composed by a list of indices groups, in this case since we are dealing with triangles we will have three indices group).
 
- 
+![Face definition](face_definition.png)
 
-We will create another inner class named IndexGroup that will hold the information for a group.
+We will create another inner class named ```IndexGroup``` that will hold the information for a group.
+
+```java
 protected static class IdxGroup {
 
     public static final int NO_VALUE = -1;
@@ -196,11 +211,13 @@ protected static class IdxGroup {
         idxVecNormal = NO_VALUE;
         }
 }
+```
 
 When parsing faces we may see objects with no textures but with vector normals, in this case a face line could be like this.
  
-Our Face class will be like this.
+Our ```Face``` class will be like this.
 
+```java
 protected static class Face {
 
     /**
@@ -238,10 +255,13 @@ protected static class Face {
         return idxGroups;
     }
 }
+```
 
-Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our Mesh class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique. OpenGL does not allow us to define different indices arrays per type of element (if so, we would not need to repeat vertices while applying textures).
+Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our ```Mesh``` class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique. OpenGL does not allow us to define different indices arrays per type of element (if so, we would not need to repeat vertices while applying textures).
 
 When you open an OBJ line you will first probably see that the list that holds the vertices positions has a higher number of elements than the lists that hold the texture coordinates and the number of vertices. That’s something that we need to solve. Let’s use a simple example which defines a quad with a texture with a pixel height (just for illustration purposes). The OBJ file may be like this (don’t pay too much attention about the normals coordinate since it’s just for illustration purpose).
+
+```java
 v 0 0 0
 v 1 0 0
 v 1 1 0
@@ -254,45 +274,33 @@ vn 0 0 1
 
 f 1/2/1 2/1/1 3/2/1
 f 1/2/1 3/2/1 4/1/1
+```
 
 When we have finished parsing the file we have the following lists (the number of each element is its position in the file upon order of appearance)
-verticesList	V1	V2	V3	V4
-				
-texturesList	T1			
-				
-normalsList	N1			
+
+![Ordering I](ordering_i.png)
 
 Now we will use the face definitions to construct the final arrays including the indices. A thing to take into consideration is that  the order in which textures coordinates and vector normals are defined does not  correspond to the orders in which vertices are defined. If the size of the lists would be the same and they were ordered face definition lines would only just need to include a number per vertex.
+
 So we need to order the data and setup accordingly to our needs. The first thing that we must do is create three arrays and one list, one for the vertices, other for the texture coordinates, other for the normals and the list for the indices. The three arrays will have the same length (equal to the number of vertices). The vertices array will have a copy of the list of vertices.
 
-verticesArray	V1	V2	V3	V4
-				
-texturesArray				
-				
-normalsArray				
-				
-indicesList				
+![Ordering II](ordering_ii.png)
 
-Now we start processing the faces. The first index group of the first face is 1/2/1. We use the first index  in the index group, the one that defines the geometric vertex to construct the index list.  Let’s name it as posIndex.
-Our face is specifiying that the we should add the index of the element that occupies the first position into our indices list. So we put the value of posIndex minus one into de indicesList (we must substract 1 since arrays start at 0 but OBJ file format assumes that they start at 1).
-verticesArray	V1	V2	V3	V4
-				
-texturesArray				
-				
-normalsArray				
-				
-indicesList	0			
+Now we start processing the faces. The first index group of the first face is 1/2/1. We use the first index  in the index group, the one that defines the geometric vertex to construct the index list.  Let’s name it as ```posIndex```.
+Our face is specifiying that the we should add the index of the element that occupies the first position into our indices list. So we put the value of ```posIndex``` minus one into the ```indicesList``` (we must substract 1 since arrays start at 0 but OBJ file format assumes that they start at 1).
 
-Then we use the rest of the indices of the index group to set up the texturesArray and normalsArray. The second index is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex (V1).
-verticesArray	V1	V2	V3	V4
-				
-texturesArray	T2			
-				
-normalsArray				
-				
-indicesList	0			
+![Ordering III](ordering_iii.png)
+			
 
-Then we pick the third index, which  is 1, so what we must do is put the first vector normal coordinate in the same position as the one that occupies the vertex designated posIndex (V1).
+Then we use the rest of the indices of the index group to set up the ```texturesArray``` and ```normalsArray```. The second index is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex (V1).
+
+![Ordering IV](ordering_iv.png)
+			
+
+Then we pick the third index, which  is 1, so what we must do is put the first vector normal coordinate in the same position as the one that occupies the vertex designated ```posIndex``` (V1).
+
+
+
 verticesArray	V1	V2	V3	V4
 				
 texturesArray	T2			
