@@ -217,13 +217,14 @@ layout (location=1) in vec2 texCoord;
 
 out vec2 outTexCoord;
 
-uniform mat4 transformation;
+uniform mat4 worldMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
 {
-    gl_Position = transformation * vec4(position, 1.0);
+    gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
     outTexCoord = texCoord;
-}
+} 
 ```
 
 In the fragment shader we must use those texture coordinates in order to set the pixel colours:
