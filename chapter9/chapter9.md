@@ -119,9 +119,9 @@ In the render method of the ```Renderer``` class we need to set the values for t
 ```java
 for(GameItem gameItem : gameItems) {
     Mesh mesh = gameItem.getMesh();
-    // Set transformation for this item
-    Matrix4f tMatrix = transformation.getTransformationMatrix(gameItem);
-    shaderProgram.setUniform("transformation", tMatrix);
+    // Set model view matrix for this item
+    Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+    shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
     // Render the mes for this game item
     shaderProgram.setUniform("colour", mesh.getColour());
     shaderProgram.setUniform("useColour", mesh.isTextured() ? 0 : 1);
