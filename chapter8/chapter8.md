@@ -89,54 +89,60 @@ public class Camera {
 Next in our ```Transformation``` class we will hold a new matrix to hold the values of the view matrix.
 
 ```java
-private final Matrix4f transformationMatrix;
+private final Matrix4f viewMatrix;
 ```
 
 We will also provide a method to update its value. Like the projection matrix this matrix will be the same for all the objects to be rendered in a render cycle.
 
 ```java
-public void updateViewMatrix(Camera camera) {
-    viewMatrix.identity();
+public Matrix4f getViewMatrix(Camera camera) {
+	viewMatrix.identity();
     Vector3f cameraPos = camera.getPosition();
     Vector3f rotation = camera.getRotation();
     viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z).
-            rotateX((float)Math.toRadians(rotation.x)).
-            rotateY((float)Math.toRadians(rotation.y)).
-            rotateZ((float)Math.toRadians(rotation.z));
+        rotateX((float)Math.toRadians(rotation.x)).
+        rotateY((float)Math.toRadians(rotation.y)).
+        rotateZ((float)Math.toRadians(rotation.z));
+    return viewMatrix;
 }
 ```
 
-As you can see we first do the translation and then the rotation. Finally we need to use it in our ```getTransformationMatrix``` method.
+As you can see we first do the translation and then the rotation. . Finally we will remove the previous ```getWorldMatrix``` and add a new one called getModelViewMatrix.
 
 ```java
-public Matrix4f getTransformationMatrix(GameItem gameItem) {
+public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
     Vector3f rotation = gameItem.getRotation();
-    transformationMatrix.identity().translate(gameItem.getPosition()).
-            rotateX((float)Math.toRadians(-rotation.x)).
-            rotateY((float)Math.toRadians(-rotation.y)).
-            rotateZ((float)Math.toRadians(-rotation.z)).
-            scale(gameItem.getScale());
-    Matrix4f currProj = new Matrix4f(projectionMatrix);
+    modelViewMatrix.identity().translate(gameItem.getPosition()).
+        rotateX((float)Math.toRadians(-rotation.x)).
+        rotateY((float)Math.toRadians(-rotation.y)).
+        rotateZ((float)Math.toRadians(-rotation.z)).
+        scale(gameItem.getScale());
     Matrix4f viewCurr = new Matrix4f(viewMatrix);
-    return currProj.mul(viewCurr.mul(transformationMatrix));
+    return viewCurr.mul(modelViewMatrix);
 }
 ```
 
-As with the projection matrix, the ```getTransformationMatrix``` method will be called per each ```GameItem``` instance so we must work over a copy of the view matrix so transformations do not get accumulated in each call (Remember that ```Matrix4f``` class is not immutable).
+The ```getModelViewMatrix``` method will be called per each ```GameItem``` instance so we must work over a copy of the view matrix so transformations do not get accumulated in each call (Remember that ```Matrix4f``` class is not immutable).
 
 In the render method of the ```Renderer``` class we just need to update the view matrix according to the camera values, just after the projection matrix is also updated.
 
 ```java
-public void render(Window window, Camera camera, GameItem[] gameItems) {
-    clear();
+// Update projection Matrix
+Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-    shaderProgram.bind();
+// Update view Matrix
+Matrix4f viewMatrix = transformation.getViewMatrix(camera);
         
-    // Update projection Matrix
-    transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-    // Update view Matrix
-    transformation.updateViewMatrix(camera);
-    //..[Removed code]..
+shaderProgram.setUniform("texture_sampler", 0);
+// Render each gameItem
+for(GameItem gameItem : gameItems) {
+    // Set model view matrix for this item
+    Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+    shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+    // Render the mes for this game item
+    gameItem.getMesh().render();
+}
 ```
 
 And that’s all, our base code supports the concept of a camera. Now we need to use it. We can change the way we handle the input and update the camera. We will set the following controls:
