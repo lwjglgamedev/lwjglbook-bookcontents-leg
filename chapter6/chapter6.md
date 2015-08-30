@@ -1,7 +1,7 @@
 
 # Transformations
 
-Let’s get back to our nice coloured quad we created in previous chapter. If you look carefully at it it resembles more to a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
+Let’s get back to our nice coloured quad we created in previous chapter. If you look carefully at it, it resembles more to a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
 
 ![Coordinates](coordinates.png)
 
@@ -189,18 +189,20 @@ So right now, in order to that representation we need to provide some basic oper
 
 ![Transformations](transformations.png)
 
-The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called transformation matrix and passed as a uniform to our vertex shader.
+The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
 
-That transformation matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
+The reason why it is called world matrix is because we are passing from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined using it’s own coordinate systems, they don’t know the size of your 3D space and the y need to be placed in it so when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate systems (the model one) to another coordinate systems (the one for our 3D world). 
+
+That world matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
 
 $$
-Transf=\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+World Matrix\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
 $$
 
 If we include our projection matrix to the transformation matrix it would be like this:
 
 $$
-Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]=\left[Porj Matrix\right]\left[World Matrix\right]
 $$
 
 The translation matrix  is defined like this:
@@ -295,43 +297,35 @@ public class Transformation {
 
     private final Matrix4f projectionMatrix;
 
-    private final Matrix4f transformationMatrix;
+    private final Matrix4f worldMatrix;
     
     public Transformation() {
-        transformationMatrix = new Matrix4f();
+        worldMatrix = new Matrix4f();
         projectionMatrix = new Matrix4f();
     }
 
-    public Transformation(float fov, float width, float height,
-        float zNear, float zFar) {
-        this();
-        updateProjectionMatrix(fov, width, height, zNear, zFar);
-    } 
-
-    public final void updateProjectionMatrix(float fov, float width,
-        float height, float zNear, float zFar) {
+    public final Matrix4f getProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
         float aspectRatio = width / height;        
         projectionMatrix.identity();
-        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);        
+        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
+        return projectionMatrix;
     }
     
-    public Matrix4f getTransformationMatrix(Vector3f offset,
-        Vector3f rotation, float scale) {
-        transformationMatrix.identity().translate(offset).
+    public Matrix4f getWorldMatrix(Vector3f offset, Vector3f rotation, float scale) {
+        worldMatrix.identity().translate(offset).
                 rotateX((float)Math.toRadians(rotation.x)).
                 rotateY((float)Math.toRadians(rotation.y)).
                 rotateZ((float)Math.toRadians(rotation.z)).
                 scale(scale);
-        Matrix4f currProj = new Matrix4f(projectionMatrix);
-        return currProj.mul(transformationMatrix);
+        return worldMatrix;
     }
 }
 ```
 
-As you can see this class groups all the transformations including the projection matrix. Given a set of vectors that model the displacement, rotation and scale it returns the projection matrix multiplied by the transformation matrix. The method ```getTransformationMatrix``` returns the matrix that will be used to transform the coordinates for each vertex in our vertex shader.
+As you can see this class groups all the projection and world matrix. Given a set of vectors that model the displacement, rotation and scale it returns the world matrix. The method ```getWorldMatrix``` returns the matrix that will be used to transform the coordinates for each ```GameItem```. That class also provides a method that based on the Field Of View, the aspect ratio and the near and far distance gets the projection matrix.
 
 
-An important thing notice is that the the ```mul``` method of the  ```Matrix4f``` class modifies the matrix instance that applies to. So if we directly multiply the projection matrix with the transformation matrix we will be modifying the projection matrix itself. That matrix should not change during a render cycle, so we must do a copy of that matrix. If we don't do t his and we render several objects we would be applying the projection matrix twice for the second object to be rendered, three times for the third object and so on.
+An important thing notice is that the the ```mul``` method of the  ```Matrix4f``` class modifies the matrix instance that applies to. So if we directly multiply the projection matrix with the transformation matrix we will be modifying the projection matrix itself. This is why we are always initializing each matrix to the identity matrix upon each call. 
 
 In our ```Renderer``` class, in the constructor method we just instantiate the Transformation with no arguments and in the ```init``` method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
 
@@ -342,8 +336,9 @@ public Renderer() {
     
 public void init(Window window) throws Exception {
     // .... Some code before ...
-    // Create transformation uniform
-    shaderProgram.createUniform("transformation");
+    // Create uniforms for world and projection matrices
+    shaderProgram.createUniform("projectionMatrix");
+    shaderProgram.createUniform("worldMatrix");
         
     window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -358,18 +353,18 @@ public void render(Window window, GameItem[] gameItems) {
     shaderProgram.bind();
         
     // Update projection Matrix
-    transformation.updateProjectionMatrix(FOV,
-        window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        
+    Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+    shaderProgram.setUniform("projectionMatrix", projectionMatrix);        
+
     // Render each gameItem
     for(GameItem gameItem : gameItems) {
-        // Set transformation for this item
-        Matrix4f tMatrix =
-            transformation.getTransformationMatrix(
+        // Set world matrix for this item
+        Matrix4f worldMatrix =
+            transformation.getWorldMatrix(
                 gameItem.getPosition(),
                 gameItem.getRotation(),
                 gameItem.getScale());
-        shaderProgram.setUniform("transformation", tMatrix);
+        shaderProgram.setUniform("worldMatrix", tMatrix);
         // Render the mes for this game item
         gameItem.getMesh().render();
     }
@@ -378,7 +373,7 @@ public void render(Window window, GameItem[] gameItems) {
 }
 ```
 
-We update the projection matrix once per renderer call. By doing this way we can deal with window resize operations . Then we iterate over the ```GameItem``` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
+We update the projection matrix once per ```render``` call. By doing this way we can deal with window resize operations . Then we iterate over the ```GameItem``` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
 
 We have moved the rendering code to draw a Mesh to this class:
 
@@ -398,7 +393,7 @@ public void render() {
 }
 ```
 
-Our vertex shader simply changes the name of the uniform from projectionMatrix to transformation:
+Our vertex shader simply adds a new the called worldMatrix  and uses it with the projectionMatrix to calculate the position:
 
 ```glsl
 #version 330
@@ -408,16 +403,23 @@ layout (location=1) in vec3 inColour;
 
 out vec3 exColour;
 
-uniform mat4 transformation;
+uniform mat4 worldMatrix;
+uniform mat4 projectionMatrix;
+
 
 void main()
 {
-    gl_Position = transformation * vec4(position, 1.0);
+    gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
     exColour = inColour;
 }
 ```
 
 As you can see the code is exactly the same, we are using the uniform to correctly project our coordinates taking into consideration our frustrum, position, scale and rotation information.
+
+Another important thing to think about is, why don’t we pass the translation, rotation and scale matrices instead of  combining them into a world matrix ? The reason is that we should try to limit the matrices we use in our shaders. Also keep in mind that the matrix multiplication that we do in our shader is done once per each vertex. The projection matrix does not change between render calls and the world matrix does not change per ```GameItem``` instance. If we passed the translation, rotation and scale matrices independently we will be doing two more matrices multiplication . Think about a model with tons of vertices and that’s a lot of extra operations.
+
+But you may now think, that if the world matrix does not change per ```GameItem``` instance, why don’t do the matrix multiplication in our Java class by multiplying our projection matrix and the world matrix and send it as single uniform ? In this case we would be saving many more operations. The answer is that this a valid point right now but when we add more features to our game engine we will need to operate with world coordinates in our vertex shader so it’s better to use those two matrices.
+
 
 Finally we only need to change our ```DummyGame``` class to create a instance of ```GameItem``` with its associated ```Mesh``` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
 
