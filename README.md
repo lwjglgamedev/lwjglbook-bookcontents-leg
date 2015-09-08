@@ -11,4 +11,4 @@ I started to collect some materials, develop some examples and decided to organi
 
 **Soure code**: The source code of this book will be published in github.
 
-**Disclaimer**: English is not my mother tongue. Also I have used the process of writing to learn myself the concepts explained. Please feel free to send any comments and make the corrections yo consider in order to improve the book.
+**Disclaimer**: English is not my mother tongue. Also I have used the process of writing to learn myself the concepts explained. Please feel free to send any comments and make the corrections you consider in order to improve the book.
