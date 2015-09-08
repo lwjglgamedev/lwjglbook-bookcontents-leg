@@ -10,5 +10,5 @@
 * [Textures](chapter7/chapter7.md)
 * [Camera](chapter8/chapter8.md)
 * [Loading more complex models](chapter9/chapter9.md)
-* Let there be light
+* [Let there be light](chapter10/chapter10.md)
 
