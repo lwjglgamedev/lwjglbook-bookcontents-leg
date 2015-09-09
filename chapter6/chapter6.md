@@ -207,7 +207,7 @@ $$
 
 The translation matrix  is defined like this:
 
-![Translation Matrix](translation_matrix.png)
+![Translation Matrix ](translation_matrix.png)
 
 Translation Matrix Parameters:
 * dx: Displacement along the x axis.
