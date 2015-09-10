@@ -37,10 +37,13 @@ But, how do we calculate this ? Do you remember from previous chapter that we in
 
 ![Normals and light direction](diffuse_light_normals.png) 
 
-As you can see, the normal associated to P1, named N1, is parallell to the vector that points to the light source,  which models the opposite of the light ray (N1 has been sketched displaced so you can see it, but ot’s equivalent mathematically). P1 has an angle equal to 0 with the vector that points to the light source. It’s surface is perpendicullar to the light source and P1 would be the brighter point.
-The normal associated to P2, named N2, has an angle of around 30 degrees with the vector that points the light source, so it should be darker tan P1. Finally, the normal associated to P3, named N3, is also parrallel to th evector that points to the ligh source but both vectors are in the oppsite direction. P3 has an angle of 360 degrees with the vector that points the light source, and should not get any light at all.
+As you can see, the normal associated to $$P1$$, named $$N1$$, is parallel to the vector that points to the light source,  which models the opposite of the light ray ($$N1$$ has been sketched displaced so you can see it, but it’s equivalent mathematically). $$P1$$ has an angle equal to $$0$$ with the vector that points to the light source. It’s surface is perpendicullar to the light source and $$P1$$ would be the brighter point.
+
+The normal associated to $$P2$$, named $$N2$$, has an angle of around 30 degrees with the vector that points the light source, so it should be darker tan $$P1$$. Finally, the normal associated to $$P3$$, named $$N3$$, is also parrallel to the vector that points to the light source but both vectors are in the opposite direction. $$P3$$ has an angle of 360 degrees with the vector that points the light source, and should not get any light at all.
+
 So it seems that we have a good approach to determine the light intensity that gets to a point and it’s related to the  angle that forms the normal with a vector that points to the light source. How can we calculate this ?
-There’s a mathematical operation that we can use and it’s called dot product. This operation takes two vectors and produces a number (a scalar), that is positive if the angle between them is small and negative if the angle between them is wide. If both vectors are normalized, that is the both have a length equal to one, the dot product will be between -1 and 1. The dot product will be one if both vectors look in the same direction (angle 0), it will be 0 if both vectors form a square angle and will be -1 if both vectors face opposite direction. 
+
+There’s a mathematical operation that we can use and it’s called dot product. This operation takes two vectors and produces a number (a scalar), that is positive if the angle between them is small and negative if the angle between them is wide. If both vectors are normalized, that is the both have a length equal to one, the dot product will be between $$-1$$ and $$1$$. The dot product will be one if both vectors look in the same direction (angle $$0$$), it will be $$0$$ if both vectors form a square angle and will be $$-1$$ if both vectors face opposite direction. 
 
 Let’s define two vectors, v1 and v2, and let α be the angle between them. The dot product is defined by the following formula:
  
