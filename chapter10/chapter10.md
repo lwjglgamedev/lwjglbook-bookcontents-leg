@@ -102,7 +102,7 @@ Now we need to calculate the light intensity that we see which we will call $$sp
 
 We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light done by  powering the $$specularFactor$$ to a parameter named $$specularPower$$.
 
-$$specularFactor = specularFactor\pow(specularPower)$$.
+$$specularFactor = specularFactor^{specularPower}$$.
 
 Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$lColour * reflectance * specularFactor * intensity$$.
 
