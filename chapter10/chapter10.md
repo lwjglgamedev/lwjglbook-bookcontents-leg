@@ -45,11 +45,13 @@ So it seems that we have a good approach to determine the light intensity that g
 
 There’s a mathematical operation that we can use and it’s called dot product. This operation takes two vectors and produces a number (a scalar), that is positive if the angle between them is small and negative if the angle between them is wide. If both vectors are normalized, that is the both have a length equal to one, the dot product will be between $$-1$$ and $$1$$. The dot product will be one if both vectors look in the same direction (angle $$0$$), it will be $$0$$ if both vectors form a square angle and will be $$-1$$ if both vectors face opposite direction. 
 
-Let’s define two vectors, v1 and v2, and let α be the angle between them. The dot product is defined by the following formula:
- 
-v1∙v2=|v1|∙|v2|∙Cosα
+Let’s define two vectors, v1 and v2, and let α be the angle between them. The dot product is defined by the following formula.
+
+![Dot product](dot_product.png) 
+
 If both vectors are normalize, their length, their module will be equal to one, so the dot product is equal to the cosine if the angle between them. We will use that operation to calculate the diffuse reflectance component.
-So we need to calculate the vector that points to the source of light. How we do this ? We have the position of each point (the vertex position) and we have the position of the light source. First of all, both coordinates must be in the same coordinate space. To simplify, let’s assume that they are both in world coordinate space, then those positions are dthe coordinates of the vectors that point to the vertex position (VP) and to the light source (VS), as shown in the next figure.
+
+So we need to calculate the vector that points to the source of light. How we do this ? We have the position of each point (the vertex position) and we have the position of the light source. First of all, both coordinates must be in the same coordinate space. To simplify, let’s assume that they are both in world coordinate space, then those positions are the coordinates of the vectors that point to the vertex position ($$VP$$) and to the light source ($$VS$$), as shown in the next figure.
  
 If we substract VS from VP we get the vector that we are looking for which it’s called L.
  
