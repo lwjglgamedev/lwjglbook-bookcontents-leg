@@ -72,7 +72,7 @@ Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = norm
 
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
 
-$$colour = lColour * diffuseFactor * intensit$$
+$$colour = lColour * diffuseFactor * intensity$$
 
 Let’s view now the specular component, but first  we need to examine how light is reflected. When light hits a surface some part of it is absorbed and the other part is reflected, if you remember from your physics class, reflection is when light bounces off an object.
  
