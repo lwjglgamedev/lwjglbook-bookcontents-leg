@@ -9,25 +9,34 @@ Before we start, let us define some light types:
 * **Directional light**: This type for light models the light that we receive from the sun, all the objects in the 3D the space are  hit by parallel ray lights coming from a specific direction. No matter if the object is close or of far all the right lights impact the objects with the same angle.
 * **Ambient light**: This type of light comes from everywhere in the space and illuminates all the objects in the same way.
  
+![Light types](light_types.png)
 
 Thus, to model light we need to take into consideration the type of light plus, its position and some other parameters like its colour. Of course, the light hits objects and the way those objects absorb and reflect light is also important.
+
 The Phong shading algorithm will the effects of light for each point in our model, that is for every vertex. This is why it’s called a local illumination simulation, this is the reason which this algorithm will not calculate shadows, it will just calculate the light tp be applied to every vertex without taking into consideration if the vertex is behind an objects that blocks the light. We will overcome this in later chapters. But, because of that is a very simple and fast algorithm that provides very goof effects. We will use here a simplified version that does not take into account materials deeply.
 The Pong algorithm considers three components for lighting:
 	Ambient light: models light that comes from everywhere, this will serve us to illuminate (with the require intensity) the areas that are not hit by any light, it’s like a background light.
 	Diffuse reflectance: It takes into consideration that surfaces that are facing the light source are brighter.
 	Specular reflectance: models how light reflects in polished or metallic surfaces
 
-At the end what we want to obtain is a factor that, multiplied by our model colour, will get that colour brighter or darker depending on the light. Let’s name our components as A for ambient, D for diffuse and S for specular. That factor will be the addition of those components:
-L = A + D + S
-In fact, those components are indeed colours, that is the colour components that each light component contributes to. Light will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour (obtained from a texture or a base colour).
-So the final colour will be: L * base_colour.
+At the end what we want to obtain is a factor that, multiplied by our model colour, will get that colour brighter or darker depending on the light. Let’s name our components as $$A$$ for ambient, $$D$$ for diffuse and $$S$$ for specular. That factor will be the addition of those components:
+
+$$L = A + D + S$$
+
+In fact, those components are indeed colours, that is the colour components that each light component contributes to. Light will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour (obtained from a texture or a base colour). So the final colour will be: $$L * basecolour$$.
+
 Let’s view the first component, the ambient light component it’s just a constant factor that will make all of our objects brighter or darker. We can use to simulate light for a specific period of time (dawn, dusk, et.c) also it can be used to add some light to points that are not hit directly by ray lights but could be lighted by  indirect light (caused by reflections) in an easy way.
-Ambient light is the easiest component to calculate, we just need to pass a colour, since it will be multiplied by our base colour it just modulates that base colour. Imagine that we have determined that a colour for a fragment is (1.0, 0.0, 0.0), that is red colour. Without ambient light it will be dissplayed as a fully red fragment. If we set ambient light to (0.5, 0.5, 0.5) the final colour will be (0.5, 0, 0), that is a darker version of red. This light will darken all the fragments in the same way. Besides that it can add some colour if the RGB components are not the same, so we just need a vector to modulate ambient light intensity and colour.
+
+Ambient light is the easiest component to calculate, we just need to pass a colour, since it will be multiplied by our base colour it just modulates that base colour. Imagine that we have determined that a colour for a fragment is $$(1.0, 0.0, 0.0)$$, that is red colour. Without ambient light it will be dissplayed as a fully red fragment. If we set ambient light to $$(0.5, 0.5, 0.5)$$ the final colour will be $$(0.5, 0, 0)$$, that is a darker version of red. This light will darken all the fragments in the same way. Besides that it can add some colour if the RGB components are not the same, so we just need a vector to modulate ambient light intensity and colour.
+
 Let’s talk now about diffuse reflectance. It models the fact that surfaces which face in a perpendicular way to the light source look brighter than surfaces where light is received in a  more indirect angle. Those objects receive more light, the light density (let me call it this way) is higher.
- 
+
+![Diffuse Light](diffuse_light.png) 
+
 But, how do we calculate this ? Do you remember from previous chapter that we introduced the normal concept ? The normal was the vector perpendicular to a surface that had length equal to one. So, Let’s draw the normals for  three points in the previous figure, as you can see, the normal for each point will be the vector perpendicular to the tangent plane for each point. Instead of drawing rays coming from the source of light we will draw vectors from each point to the point of light (that is, in the opposite direction).
 
- 
+![Normals and light direction](diffuse_light_normals.png) 
+
 As you can see, the normal associated to P1, named N1, is parallell to the vector that points to the light source,  which models the opposite of the light ray (N1 has been sketched displaced so you can see it, but ot’s equivalent mathematically). P1 has an angle equal to 0 with the vector that points to the light source. It’s surface is perpendicullar to the light source and P1 would be the brighter point.
 The normal associated to P2, named N2, has an angle of around 30 degrees with the vector that points the light source, so it should be darker tan P1. Finally, the normal associated to P3, named N3, is also parrallel to th evector that points to the ligh source but both vectors are in the oppsite direction. P3 has an angle of 360 degrees with the vector that points the light source, and should not get any light at all.
 So it seems that we have a good approach to determine the light intensity that gets to a point and it’s related to the  angle that forms the normal with a vector that points to the light source. How can we calculate this ?
