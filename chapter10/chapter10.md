@@ -52,39 +52,58 @@ Let’s define two vectors, v1 and v2, and let α be the angle between them. The
 If both vectors are normalize, their length, their module will be equal to one, so the dot product is equal to the cosine if the angle between them. We will use that operation to calculate the diffuse reflectance component.
 
 So we need to calculate the vector that points to the source of light. How we do this ? We have the position of each point (the vertex position) and we have the position of the light source. First of all, both coordinates must be in the same coordinate space. To simplify, let’s assume that they are both in world coordinate space, then those positions are the coordinates of the vectors that point to the vertex position ($$VP$$) and to the light source ($$VS$$), as shown in the next figure.
- 
-If we substract VS from VP we get the vector that we are looking for which it’s called L.
+
+![Difffuse Light calculation I](diffuse_calc_i.png) 
+
+If we substract $$V$$S from $$VP$$ we get the vector that we are looking for which it’s called $$L$$.
  
 Now we can do the dot product between the vector that points to the light source and the normal, that product is called the Lambert term, due to Johann Lambert which was the first to propose that relation to model the brightness of a surface.
+
 Let’s summarize how we can calculate it, we define the following variables:
-	vPos: Position of our vertex in model view space coordinates.
-	lPos: Position of the light in view space coordinates.
-	intensity: Intensity of the light (from 0 to 1).
-	lColour: Colour of the light.
-	normal: The vertex normal.
-First we need to calculate the vector that points to the light source from current position: to_light_direction = lPos - vPos. The result needs to be normalized
-Then we need to calculate the diffuse factor (an scalar): diffuseFactor = normal * to_light_direction. It’s calculated as dot product between two vectors, since we want it to be between -1 and 1 both vectors need to be normalized. Colours need to be between 0 and 1 so if a value it’s lower than 0 we will set it to 0.
+* $$vPos$$: Position of our vertex in model view space coordinates.
+* $$lPos$$: Position of the light in view space coordinates.
+* $$intensity$$: Intensity of the light (from 0 to 1).
+* $$lColour$$: Colour of the light.
+* $$normal$$: The vertex normal.
+* 
+First we need to calculate the vector that points to the light source from current position: $$to_light_direction = lPos - vPos$$. The result needs to be normalized
+
+Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal * to_light_direction$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
+
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
-colour = lColour * diffuseFactor * intensity
 
-Let’s view now the specular component, but first  we need to examine first how light is reflected. When light hits a surface some part of it is absorbed and the other part is reflected, if you remember from your physics class, reflection is when light bounces off an object.
- 
+$$colour = lColour * diffuseFactor * intensit$$y
 
-But of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections that. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. You what we see is like a beam of light being reflected from the surface. That is, light is diffused when impact a surface, and that’s the disuse component that we have been talking about previously.
+Let’s view now the specular component, but first  we need to examine how light is reflected. When light hits a surface some part of it is absorbed and the other part is reflected, if you remember from your physics class, reflection is when light bounces off an object.
  
- 
-Bad when light impacts a polished surface, for instance a metal, the light suffers from lower diffusion and most of it gets reflected in the opposite direction as it hit that surface.
+![Light reflection](light_reflection.png)
 
+Of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections that. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. You what we see is like a beam of light being reflected from the surface. That is, light is diffused when impact a surface, and that’s the disuse component that we have been talking about previously.
  
+![Surface](surface.png)
+ 
+But when light impacts a polished surface, for instance a metal, the light suffers from lower diffusion and most of it gets reflected in the opposite direction as it hit that surface.
+
+![Plished surface](polished_surface.png) 
+
 This is what the specular component models, and it depends on the material characteristics. Regarding specular reflectance, it’s important to note that  the reflected light will only be visible if the camera is in a proper position, that is, is in the area of where the reflected light is emitted.
- 
 
-Once the mechanism that’s behind sepecular reflection we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source, to_light_direction, so let’s  name it from_light_direction = – to_light_direction.
-Then we need to calculate the reflected light that results from the impact of the from_light_direction into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So reflected_light = reflect(from_light_source, normal).
+![Specular lightning](specular_lightining.png) 
 
-We also need a vector that points to the camera, let’s name it camera_direction, and it will be calculate as the difference between the camera position and the vertex position: camera_direction = cameraPos – vPos. The camera position vector and the vertex position need to be in the same coordinate system and the resulting vector needs to be normalized. The following figure sketches the main components we have calculated up to now.
+Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as $$fromLightDirection = – toLightDirection$$.
+
+Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So, $$reflected_light = reflect(fromLightSource, normal)$$.
+
+We also need a vector that points to the camera, let’s name it $$cameraDirection$$, and it will be calculated as the difference between the camera position and the vertex position: $$cameraDirection = cameraPos – vPos$$. The camera position vector and the vertex position need to be in the same coordinate system and the resulting vector needs to be normalized. The following figure sketches the main components we have calculated up to now.
+
+![Specular lightning calculation](specular_lightining_calc.png)
  
-Now we need to calculate the light intensity that we see which we will call specularFactor, this component will be higher if the camera_direction and the reflected_light vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So specularFactor = camera_direction * reflected_light. We only want this value to be between 0 and 1 so if it’s lower than 0 it will be set to 0.
-We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light done by  powering the specularFactor to a parameter named specularPower: specularFactor = specularFactor^specularPower.
-Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: lColour * reflectance * specularFactor * intensity.
-We now know how to calculate the three components that will serve us to model a point light with an ambient light. But our light model is still not complete, the light that an object reflects is independent of de distance that the light is, we need to simulate light attenuation. 
+Now we need to calculate the light intensity that we see which we will call $$specularFactor$$, this component will be higher if the $$cameraDirection$$ and the $$reflectedLight$$ vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So $$specularFactor = cameraDirection . reflectedLight$$. We only want this value to be between $$0$$ and $$1$$ so if it’s lower than $$0$$ it will be set to 0.
+
+We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light done by  powering the $$specularFactor$$ to a parameter named $$specularPower$$.
+
+$$specularFactor = specularFactor\pow(specularPower)$$.
+
+Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$lColour * reflectance * specularFactor * intensity$$.
+
+We now know how to calculate the three components that will serve us to model a point light with an ambient light. But our light model is still not complete, the light that an object reflects is independent of the distance that the light is, we need to simulate light attenuation. 
