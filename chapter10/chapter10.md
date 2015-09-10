@@ -39,7 +39,7 @@ But, how do we calculate this ? Do you remember from previous chapter that we in
 
 As you can see, the normal associated to $$P1$$, named $$N1$$, is parallel to the vector that points to the light source,  which models the opposite of the light ray ($$N1$$ has been sketched displaced so you can see it, but it’s equivalent mathematically). $$P1$$ has an angle equal to $$0$$ with the vector that points to the light source. It’s surface is perpendicullar to the light source and $$P1$$ would be the brighter point.
 
-The normal associated to $$P2$$, named $$N2$$, has an angle of around 30 degrees with the vector that points the light source, so it should be darker tan $$P1$$. Finally, the normal associated to $$P3$$, named $$N3$$, is also parrallel to the vector that points to the light source but both vectors are in the opposite direction. $$P3$$ has an angle of 360 degrees with the vector that points the light source, and should not get any light at all.
+The normal associated to $$P2$$, named $$N2$$, has an angle of around 30 degrees with the vector that points the light source, so it should be darker tan $$P1$$. Finally, the normal associated to $$P3$$, named $$N3$$, is also parallel to the vector that points to the light source but both vectors are in the opposite direction. $$P3$$ has an angle of 360 degrees with the vector that points the light source, and should not get any light at all.
 
 So it seems that we have a good approach to determine the light intensity that gets to a point and it’s related to the  angle that forms the normal with a vector that points to the light source. How can we calculate this ?
 
@@ -68,7 +68,7 @@ Let’s summarize how we can calculate it, we define the following variables:
 * 
 First we need to calculate the vector that points to the light source from current position: $$to_light_direction = lPos - vPos$$. The result needs to be normalized
 
-Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal * to_light_direction$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
+Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal * toLightDirection$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
 
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
 
