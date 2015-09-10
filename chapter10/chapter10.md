@@ -84,15 +84,15 @@ Of course, surfaces are not totally polished, and if you look at closer distance
  
 But when light impacts a polished surface, for instance a metal, the light suffers from lower diffusion and most of it gets reflected in the opposite direction as it hit that surface.
 
-![Plished surface](polished_surface.png) 
+![Polished surface](polished_surface.png) 
 
 This is what the specular component models, and it depends on the material characteristics. Regarding specular reflectance, it’s important to note that  the reflected light will only be visible if the camera is in a proper position, that is, is in the area of where the reflected light is emitted.
 
 ![Specular lightning](specular_lightining.png) 
 
-Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as $$fromLightDirection = – toLightDirection$$.
+Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as $$fromLightDirection =–toLightDirection$$.
 
-Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So, $$reflected_light = reflect(fromLightSource, normal)$$.
+Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So, $$reflectedLight = reflect(fromLightSource, normal)$$.
 
 We also need a vector that points to the camera, let’s name it $$cameraDirection$$, and it will be calculated as the difference between the camera position and the vertex position: $$cameraDirection = cameraPos – vPos$$. The camera position vector and the vertex position need to be in the same coordinate system and the resulting vector needs to be normalized. The following figure sketches the main components we have calculated up to now.
 
