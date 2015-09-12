@@ -98,7 +98,7 @@ We also need a vector that points to the camera, let’s name it $$cameraDirecti
 
 ![Specular lightning calculation](specular_lightining_calc.png)
  
-Now we need to calculate the light intensity that we see which we will call $$specularFactor$$, this component will be higher if the $$cameraDirection$$ and the $$reflectedLight$$ vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So $$specularFactor = cameraDirection . reflectedLight$$. We only want this value to be between $$0$$ and $$1$$ so if it’s lower than $$0$$ it will be set to 0.
+Now we need to calculate the light intensity that we see which we will call $$specularFactor$$, this component will be higher if the $$cameraDirection$$ and the $$reflectedLight$$ vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So $$specularFactor = cameraDirection \cdot reflectedLight$$. We only want this value to be between $$0$$ and $$1$$ so if it’s lower than $$0$$ it will be set to 0.
 
 We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light done by  powering the $$specularFactor$$ to a parameter named $$specularPower$$.
 
