@@ -68,7 +68,7 @@ Let’s summarize how we can calculate it, we define the following variables:
 * 
 First we need to calculate the vector that points to the light source from current position: $$toLightDirection = lPos - vPos$$. The result needs to be normalized
 
-Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal * toLightDirection$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
+Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal \cdot toLightDirection$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
 
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
 
