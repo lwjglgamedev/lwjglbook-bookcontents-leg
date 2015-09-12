@@ -107,3 +107,181 @@ $$specularFactor = specularFactor^{specularPower}$$.
 Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$lColour * reflectance * specularFactor * intensity$$.
 
 We now know how to calculate the three components that will serve us to model a point light with an ambient light. But our light model is still not complete, the light that an object reflects is independent of the distance that the light is, we need to simulate light attenuation. 
+
+Attenuation is a function of the distance and light, the strength of light is inversely proportional to the square of distance. That fact is easy to visualize, as light is propagating its energy  is distributed along the surface of sphere with a radius that’s equal to the distance traveled by the light. The surface of a sphere is proportional to the square of its radius. We can calculate the attenuation factor with this formula: $$1.0 / (atConstant + atLinear*dist + atExponent*dist^{2})$$.
+In order to simulate attenuation we just need to multiply that attenuation factor by the final colour. 
+
+Now we can start coding all the concepts described above, we will start with our shaders. Most of the work will be done in the fragment shader but we need to pass some data from the vertex shader to it.  In previous chapter the fragment shader just received the texture coordinates, now we are going to pass also two more parameters:
+* The vertex normal (normalized) transformed to model view space coordinates.
+* The vertex position transformed to model view space coordinates.
+This is the code of the vertex shader.
+
+```glsl
+#version 330
+
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoord;
+layout (location=2) in vec3 vertexNormal;
+
+out vec2 outTexCoord;
+out vec3 mvVertexNormal;
+out vec3 mvVertexPos;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+void main()
+{
+    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mvPos;
+    outTexCoord = texCoord;
+    mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
+    mvVertexPos = mvPos.xyz;
+}
+```
+
+Before we continue with the fragment shader there’s a very important concept that must be highlighted. From the code above you can see that ```mvVertexNormal```,the variable contains the vertex normal, is transformed into model view space coordinates. This is done by multiplying the ```vertexNormal``` by the ```modelViewMatrix``` as with the vertex position. But there’s a subtle difference, the w component of that vertex normal is set to 0 before multiplying it by the matrix: ```vec4(vertexNormal, 0.0)```. Why are we doing this ? Because we do want the normal to be rotated and scaled but we do not want it to be translated, we are only interested into its direction but not in its position. This is achieved by setting is w component to 0 and is one of the advantages of using homogeneous coordinates, by  setting the w component we can control what transformations are applied. You can do the matrix multiplication by hand and see why this happens.
+
+Now we can start to do the real work in our fragment shader, besides declaring as input parameters the values that come from the vertex shader we are going to define some useful structures to model light and material characteristic. First of all, we will define the structures that model the light.
+
+```glsl
+struct Attenuation
+{
+    float constant;
+    float linear;
+    float exponent;
+};
+
+struct PointLight
+{
+    vec3 colour;
+    // Light position is assumed to be in view coordinates
+    vec3 position;
+    float intensity;
+    Attenuation att;
+};
+```
+
+A point light is defined by a colour, a position, a number between 0 and 1 which models its intensity  and a set of parameters which will model the attenuation equation. 
+
+The structure that models a material characteristics is:
+```glsl
+struct Material
+{
+    vec3 colour;
+    int useColour;
+    float reflectance;
+};
+```
+A material is defined by a base colour (if we don’t use texture to colour the fragments), a flag that controls that behaviour and a reflectance index. We will use the following uniforms in our fragment shader.
+
+```glsl
+uniform sampler2D texture_sampler;
+uniform vec3 ambientLight;
+uniform float specularPower;
+uniform Material material;
+uniform PointLight pointLight;
+uniform vec3 camera_pos;
+```
+
+We are creating new uniforms to set the following variables:
+* The ambient light: which will contain a colour that will affect every fragment in the same way.
+* The specular power (the exponent used in the equation that was presented when talking about the specular light).
+* A point light.
+* The material characteristics.
+* The camera position in view space coordinates.
+
+Now we are going to define a function that, taking as its input a point light, the vertex position and its normal returns the colour contribution calculated for the diffuse and specular light components described previously.
+
+```glsl
+vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
+{
+    vec4 diffuseColour = vec4(0, 0, 0, 0);
+    vec4 specColour = vec4(0, 0, 0, 0);
+
+    // Diffuse Light
+    vec3 light_direction = light.position - position;
+    vec3 to_light_source  = normalize(light_direction);
+    float diffuseFactor = max(dot(normal, to_light_source ), 0.0);
+    diffuseColour = vec4(light.colour, 1.0) * light.intensity * diffuseFactor;
+
+    // Specular Light
+    vec3 camera_direction = normalize(camera_pos - position);
+    vec3 from_light_source = -to_light_source;
+    vec3 reflected_light = normalize(reflect(from_light_source, normal));
+    float specularFactor = max( dot(camera_direction, reflected_light), 0.0);
+    specularFactor = pow(specularFactor, specularPower);
+    specColour = specularFactor * material.reflectance * vec4(light.colour, 1.0);
+
+    // Attenuation
+    float distance = length(light_direction);
+    float attenuationInv = light.att.constant + light.att.linear * distance +
+        light.att.exponent * distance * distance;
+    return (diffuseColour + specColour) / attenuationInv;
+}
+```
+
+The previous code is relatively straight forward, it just calculates a colour for the diffuse component, another one for the specular component and modulates them by the attenuation suffered by the light in its travel to the vertex we are processing. With that function, the main function of the vertex function is very simple.
+
+```glsl
+void main()
+{
+    vec4 baseColour; 
+    if ( material.useColour == 1 )
+    {
+        baseColour = vec4(material.colour, 1);
+    }
+    else
+    {
+        baseColour = texture(texture_sampler, outTexCoord);
+    }
+    vec4 lightColour = calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
+
+    vec4 totalLight = vec4(ambientLight, 1.0);
+    totalLight += lightColour;
+    
+    fragColor = baseColour * totalLight;
+}
+```
+
+The first part of the function is the same as the one used in previous chapter, we calculate the fragment colour either by using a fixed colour or by calculating it from texture coordinates. Final colour is calculated by multiplying that colour and the summation of the ambient light, diffuse and colour components. As you can see ambient light is not affected by attenuation.
+We have introduced some new concepts into our shader, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, ```PointLight``` and ```Material```. They war just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the ```ShaderProgram``` class, first to be able to create the uniforms for the point light and material structures.
+
+```java
+public void createPointLightUniform(String uniformName) throws Exception {
+    createUniform(uniformName + ".colour");
+    createUniform(uniformName + ".position");
+    createUniform(uniformName + ".intensity");
+    createUniform(uniformName + ".att.constant");
+    createUniform(uniformName + ".att.linear");
+    createUniform(uniformName + ".att.exponent");
+}
+
+public void createMaterialUniform(String uniformName) throws Exception {
+    createUniform(uniformName + ".colour");
+    createUniform(uniformName + ".useColour");
+    createUniform(uniformName + ".reflectance");
+}
+```
+
+As you can see, it’s very simple, we just create a separate uniform for all the attributes that compose the structure. Now we need to create another two methods to set up the values of those uniforms and that will take as parameters ```PointLight``` and Material instances.
+
+```java
+public void setUniform(String uniformName, PointLight pointLight) {
+    setUniform(uniformName + ".colour", pointLight.getColor() );
+    setUniform(uniformName + ".position", pointLight.getPosition());
+    setUniform(uniformName + ".intensity", pointLight.getIntensity());
+    PointLight.Attenuation att = pointLight.getAttenuation();
+    setUniform(uniformName + ".att.constant", att.getConstant());
+    setUniform(uniformName + ".att.linear", att.getLinear());
+    setUniform(uniformName + ".att.exponent", att.getExponent());
+}
+
+public void setUniform(String uniformName, Material material) {
+    setUniform(uniformName + ".colour", material.getColour() );
+    setUniform(uniformName + ".useColour", material.isTextured() ? 0 : 1);
+    setUniform(uniformName + ".reflectance", material.getReflectance());
+}
+```
+
+In this chapter source code you will see also that we also have modified the Mesh class to hold a material instance and that we have created a simple example that creates a point light that can be moved by using the “N” and “M” keys in order to show how a point light focusing over a mesh with a reflectance value higher than 0 looks like. We will not include the whole source code because this chapter would be too longer and it would not contribute too much to clarify the concepts explained here.
