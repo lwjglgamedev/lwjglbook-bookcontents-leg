@@ -9,6 +9,6 @@ My initial goal was to learn the techniques involved in writing a 3D game using 
 
 I started to collect some materials, develop some examples and decided to organize that information in the form of a book.
 
-**Source code**: The source code of this book will be published in github.
+**Source code**: The source code of this book will be published in [GitHub](https://github.com/lwjglgamedev/lwjglbook).
 
 **Disclaimer**: English is not my mother tongue. Also I have used the process of writing to learn myself the concepts explained. Please feel free to send any comments and make the corrections you consider in order to improve the book.
