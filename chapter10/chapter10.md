@@ -297,3 +297,8 @@ shaderProgram.setUniform("pointLight", currPointLight);
 ```
 
 We will not include the whole source code because this chapter would be too longer and it would not contribute too much to clarify the concepts explained here.
+
+![Lightning results](lightning_result.png)
+
+
+
