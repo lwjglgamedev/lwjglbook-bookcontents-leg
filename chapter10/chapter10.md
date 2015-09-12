@@ -90,7 +90,7 @@ This is what the specular component models, and it depends on the material chara
 
 ![Specular lightning](specular_lightining.png) 
 
-Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as fromLightDirection =–toLightDirection.
+Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as $$fromLightDirection =–toLightDirection$$.
 
 Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So, $$reflectedLight = reflect(fromLightSource, normal)$$.
 
