@@ -284,4 +284,16 @@ public void setUniform(String uniformName, Material material) {
 }
 ```
 
-In this chapter source code you will see also that we also have modified the Mesh class to hold a material instance and that we have created a simple example that creates a point light that can be moved by using the “N” and “M” keys in order to show how a point light focusing over a mesh with a reflectance value higher than 0 looks like. We will not include the whole source code because this chapter would be too longer and it would not contribute too much to clarify the concepts explained here.
+In this chapter source code you will see also that we also have modified the Mesh class to hold a material instance and that we have created a simple example that creates a point light that can be moved by using the “N” and “M” keys in order to show how a point light focusing over a mesh with a reflectance value higher than 0 looks like.
+
+
+Let's get back to our fragment shader, as we have said we need another uniform which contains the camera position, camera_pos. These coordinates must be in view space. Usually we will set up light coordinates in world space coordinates, so we need to multiply them by the view matrix in order to be able to use them in our shader, so we need to create a new method in the Transformation class that return the view matrix so we transform light coordinate.
+
+```java
+// Get a copy of the light object and transform its position to view coordinates
+PointLight currPointLight = new PointLight(pointLight);
+currPointLight.getPosition().mul(viewMatrix);
+shaderProgram.setUniform("pointLight", currPointLight);
+```
+
+We will not include the whole source code because this chapter would be too longer and it would not contribute too much to clarify the concepts explained here.
