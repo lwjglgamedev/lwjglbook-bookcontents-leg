@@ -3,6 +3,9 @@
 
 In this chapter we are going to implement other light types that we introduced in previous chapter. We will start with directional lightning.
 
+
+## Directional Light 
+
 If you recall, directional lighting hits all the objects by parallel rays all coming from the same direction. It models light sources that are very far away but have a high intensity such us the Sun.
 
 ![Directional Light](directional_light.png)
@@ -215,3 +218,25 @@ And that’s it, we can now simulate the movement of the, artificial, sun across
 
  ![Directional Light results](directional_light_result.png)
 
+## Spot Light 
+
+Now we will implement a spot light which are very similar to a point light but the emitted light is restricted to a  3D cone. It models the light that comes out from focuses or any other light source that does not emit in all directions. A spot light has the same attributes as a point light but adds two new parameters, the cone angle and the cone direction.
+ 
+![Spot Light](spot_light.png)
+
+Spot light contribution is calculated in the same way as a point light with some exceptions. The point which the vector that points from the vertex position to the light source is not contained inside the light cone are not affected by the point light.
+ 
+![Spot Light II](spot_light_ii.png)
+
+How do we calculate if it’s inside the light cone or not ? We need to do a dot product again between the vector that points from the light source and the cone direction vector (both of them normalized).
+
+![Spot Light calculation](spot_light_calc.png) 
+
+The dot product between L and C vectors is equal to: L∙C=|L|∙|C|∙Cos(α). If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will now that it is inside the light cone (recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine).
+The second difference is that the point that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculate this, we will chose a simple approach by multiplying the attenuation by the following factor:
+1- (1-Cos(∝))/(1-Cos(cone angle))
+(In our fragment shaders we won’t have the angle but the cosine of the cut off angle. You can check that the formula above produces values from 0 to 1, 0 when the angle is equal to the cutoff angle and 1 when the angle is 0).
+
+The implementation will be very similar to the rest of lights. We need to create a new class named ```SpotLight```, set up the appropriate uniforms, pass it to the shader and modify the fragment shader to get it. You can check the source code for this chapter. 
+
+Another important thing when passing the uniforms is that translations should not be applied to the light cone direction since we are only interested in directions. So as in the case of the directional light, when transforming to view space coordinates we  must set $$w$$ component to $$0$$.
