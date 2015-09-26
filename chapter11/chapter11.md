@@ -233,8 +233,11 @@ How do we calculate if it’s inside the light cone or not ? We need to do a dot
 ![Spot Light calculation](spot_light_calc.png) 
 
 The dot product between L and C vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will now that it is inside the light cone (recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine).
+
 The second difference is that the point that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculate this, we will chose a simple approach by multiplying the attenuation by the following factor:
-1- (1-Cos(∝))/(1-Cos(cone angle))
+
+$$1 - (1-Cos(\alpha))/(1-Cos(cutOffAngle)$$
+
 (In our fragment shaders we won’t have the angle but the cosine of the cut off angle. You can check that the formula above produces values from 0 to 1, 0 when the angle is equal to the cutoff angle and 1 when the angle is 0).
 
 The implementation will be very similar to the rest of lights. We need to create a new class named ```SpotLight```, set up the appropriate uniforms, pass it to the shader and modify the fragment shader to get it. You can check the source code for this chapter. 
