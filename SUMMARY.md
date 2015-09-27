@@ -1,7 +1,6 @@
 # Summary
 
 * [Introduction](README.md)
-   * Let there be even more light
 * [First steps](chapter1/chapter1.md)
 * [The Game Loop](chapter2/chapter2.md)
 * [A brief about coordinates](chapter3/chapter3.md)
