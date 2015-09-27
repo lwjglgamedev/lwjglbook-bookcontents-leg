@@ -243,3 +243,91 @@ $$1 - (1-Cos(\alpha))/(1-Cos(cutOffAngle)$$
 The implementation will be very similar to the rest of lights. We need to create a new class named ```SpotLight```, set up the appropriate uniforms, pass it to the shader and modify the fragment shader to get it. You can check the source code for this chapter. 
 
 Another important thing when passing the uniforms is that translations should not be applied to the light cone direction since we are only interested in directions. So as in the case of the directional light, when transforming to view space coordinates we  must set $$w$$ component to $$0$$.
+
+![Spot Light Sample](spot_light_sample.png)
+
+
+## Multiple Lights
+
+So at last we have finally implemented all the four types of light, but currently we can only use one instance for each type. This is ok for ambient and directional light but we definitively want to use several point and spot lights. We need to set up our fragment shader to receive a list of lights, so we will use arrays to store that information. Let’s see how this can be done.
+
+Before we start, it’s important to note that in GLSL the length of the array must be set at compile time so it must be big enough to accommodate all the objects we need later. The first thing that we will do is define some constants to set up the maximum number of point and spot lights that we are going to use.
+
+```glsl
+const int MAX_POINT_LIGHTS = 5;
+const int MAX_SPOT_LIGHTS = 5;
+```
+
+Then we need to modify the uniforms that previously store just a single point and spot light to use an array.
+
+```glsl
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+```
+
+In the main function we just need to iterate over those arrays to calculate the colour contributions of each instance using the existing functions. We may not pass as many lights as the array length so we need to control it. There are many possible ways to do this, one is to pass a uniform with the actual array length but this may not work with older graphics cards. Instead we will check the light intensity (empty positions in array will have a light intensity equal to 0).
+
+```glsl
+for (int i=0; i<MAX_POINT_LIGHTS; i++)
+{
+    if ( pointLights[i].intensity > 0 )
+    {
+        totalLight += calcPointLight(pointLights[i], mvVertexPos, mvVertexNormal); 
+    }
+}
+
+for (int i=0; i<MAX_SPOT_LIGHTS; i++)
+{
+    if ( spotLights[i].pl.intensity > 0 )
+    {
+        totalLight += calcSpotLight(spotLights[i], mvVertexPos, mvVertexNormal);
+    }
+}
+```
+
+Now we need to create those uniforms in the ```Render``` class. When we are using arrays we need to create a uniform for each element of the list. So, for instance, for the $$pointLights$$ array  we need to create a uniform named ```pointLights[0]```, ```pointLights[1]```, etc. And of ocurse, this translates also to the structure attributes, so we will have ```pointLights[0].colour```, ```pointLights[1], colour```, etc. The methods to create those uniforms are as follows.
+
+```java
+public void createPointLightListUniform(String uniformName, int size) throws Exception {
+    for (int i = 0; i < size; i++) {
+        createPointLightUniform(uniformName + "[" + i + "]");
+    }
+}
+
+public void createSpotLightListUniform(String uniformName, int size) throws Exception {
+    for (int i = 0; i < size; i++) {
+        createSpotLightUniform(uniformName + "[" + i + "]");
+    }
+}
+```
+
+We also need methods to set up the values of those uniforms.
+
+```java
+public void setUniform(String uniformName, PointLight[] pointLights) {
+    int numLights = pointLights != null ? pointLights.length : 0;
+    for (int i = 0; i < numLights; i++) {
+        setUniform(uniformName, pointLights[i], i);
+    }
+}
+
+public void setUniform(String uniformName, PointLight pointLight, int pos) {
+    setUniform(uniformName + "[" + pos + "]", pointLight);
+}
+	
+public void setUniform(String uniformName, SpotLight[] spotLights) {
+    int numLights = spotLights != null ? spotLights.length : 0;
+    for (int i = 0; i < numLights; i++) {
+        setUniform(uniformName, spotLights[i], i);
+    }
+}
+
+public void setUniform(String uniformName, SpotLight spotLight, int pos) {
+    setUniform(uniformName + "[" + pos + "]", spotLight);
+}
+```
+
+Finally we just need to update the ```Render``` class to receive a list of point and spot lights, and modify accordingly the ```DummyGame``` class to create those list to see something like this.
+
+![Multiple Lights](multiple_lights.png)
+
