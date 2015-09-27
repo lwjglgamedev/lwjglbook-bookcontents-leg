@@ -11,4 +11,6 @@ I started to collect some materials, develop some examples and decided to organi
 
 **Source code**: The source code of this book will be published in [GitHub](https://github.com/lwjglgamedev/lwjglbook).
 
-**Disclaimer**: English is not my mother tongue. Also I have used the process of writing to learn myself the concepts explained. Please feel free to send any [comments](https://www.gitbook.com/book/lwjglgamedev/3d-game-development-with-lwjgl/contact) and make the corrections you consider in order to improve the book.
+**Disclaimer**: I have used the process of writing to learn myself the concepts explained and English is not my mother tongue. Please feel free to send any [comments](https://www.gitbook.com/book/lwjglgamedev/3d-game-development-with-lwjgl/contact) and make the corrections you consider in order to improve the book.
+
+Suggestions and corrections are more than welcome (and if you do like it please let me know also).
