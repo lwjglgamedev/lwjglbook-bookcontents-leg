@@ -45,7 +45,7 @@ And define the version of the library to use.
 ```xml
     <properties>
         [...]
-        <joml.version>1.5.0</joml.version>
+        <joml.version>1.6.5</joml.version>
         [...]
     </properties>
 ```
