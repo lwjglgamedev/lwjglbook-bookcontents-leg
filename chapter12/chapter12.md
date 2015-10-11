@@ -181,7 +181,7 @@ void main()
 }
 ```
 
-It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix that combines the orthographic projection matrix and the model matrix associated to each element. That matrix is the multiplication of the ortographic projection matrix and the model matrix, projModelMatrix  =  ortographicMatrix * modelMatrix. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in the java code to avoid doing it for each vertex, we will just do it once per item. Remember that our vertices should be expressed in screen coordinates.
+It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix that combines the orthographic projection matrix and the model matrix associated to each element. That matrix is the multiplication of the ortographic projection matrix and the model matrix, $$projModelMatrix  =  ortographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in the java code to avoid doing it for each vertex, we will just do it once per item. Remember that our vertices should be expressed in screen coordinates.
 
 The fragment shader is also very simple.
 
