@@ -334,6 +334,8 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 If you play with the zoom so the text overlaps with the cube you will see this effect.
 
+![Text with opaque background](text_opaque.png)
+
 The text is not drawn with a transparent background. This is due to the fact that we must explicitly enable support for blending so the alpha component has any effect. We will do this in the Window class when we set up the other initialization parameters with the following fragment of code.
 
 ```java
@@ -343,4 +345,5 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ```
 
 Now you will see the text drawn with a transparent background.
- 
+
+![Text with transparent background](text_transparent.png) 
