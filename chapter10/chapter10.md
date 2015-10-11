@@ -292,7 +292,12 @@ Let's get back to our fragment shader, as we have said we need another uniform w
 ```java
 // Get a copy of the light object and transform its position to view coordinates
 PointLight currPointLight = new PointLight(pointLight);
-currPointLight.getPosition().mul(viewMatrix);
+Vector3f lightPos = currPointLight.getPosition();
+Vector4f aux = new Vector4f(lightPos, 1);
+aux.mul(viewMatrix);
+lightPos.x = aux.x;
+lightPos.y = aux.y;
+lightPos.z = aux.z; 
 shaderProgram.setUniform("pointLight", currPointLight);
 ```
 
