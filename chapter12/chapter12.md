@@ -5,7 +5,7 @@ In this chapter we will create a HUD (Heads-Up Display) for our game. That is, a
 You will see also that some little refactoring has been applied to the source code, especially in the Render class to prepare it for the separation of the 3D scene and the HUD rendering. 
 
 ## Text rendering
- 
+
 The first thing that we will do is render text. in order to do so what we are going to do is to map a texture that contains alphabet characters into a quad which is formed by a set of tiles, each of them representing a single letter. The first thing that we must do is to create the texture that contains the alphabet, there are many programs out there that can do this task, such as,  [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc.
 
 We will use Codehead’s Bitmap Font Generator (CBFG). This tool lets you configure many options such as the texture size, the font type, the anti-aliasing to be applied, etc. The following figure depicts the configuration that we will use to generate our texture file. In this chapter we will assume that we will be rendering text encoded in ISO-8859-1 format, if you need to deal with different character sets you will need to tweak a little bit the code.
