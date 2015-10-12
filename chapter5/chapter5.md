@@ -265,8 +265,13 @@ void main()
 The last important thing to do is to modify our rendering code to use that second array of data:
 
 ```java
-public void render(Mesh mesh) {
+public void render(Window window, Mesh mesh) {
     clear();
+
+    if ( window.isResized() ) {
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        window.setResized(false);
+    }
 
     shaderProgram.bind();
 
