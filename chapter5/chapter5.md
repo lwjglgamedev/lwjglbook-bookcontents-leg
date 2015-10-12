@@ -60,11 +60,16 @@ public class Mesh {
 }
 ```
 
-We will create our ```Mesh``` instance in our ```DummyGame``` class, removing the VAO and VBO code from ```Renderer``` ```init``` method. Our render method in the ```Renderer``` class will accept a Mesh instance to render. The ```cleanup``` method will also be simplified since the ```Mesh``` class already provides one for freeing VAO and VBO resources.
+We will create our ```Mesh``` instance in our ```DummyGame``` class, removing the VAO and VBO code from ```Renderer``` ```init``` method. Our render method in the ```Renderer``` class will accept also a Mesh instance to render. The ```cleanup``` method will also be simplified since the ```Mesh``` class already provides one for freeing VAO and VBO resources.
 
 ```java
 public void render(Mesh mesh) {
     clear();
+
+    if ( window.isResized() ) {
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        window.setResized(false);
+    }
 
     shaderProgram.bind();
 
