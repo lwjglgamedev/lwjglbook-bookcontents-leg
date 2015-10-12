@@ -1,4 +1,4 @@
-# HUD and some other things
+# Game HUD
 
 In this chapter we will create a HUD (Heads-Up Display) for our game. That is, a set of 2D shapes and text that is displayed at any time over the 3D scene to show relevant information. We will create a simple HUD that will serve us to show some basic techniques for representing that information.
 
@@ -354,3 +354,82 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 Now you will see the text drawn with a transparent background.
 
 ![Text with transparent background](text_transparent.png) 
+
+
+## Complete the HUD
+
+Now that we have rendered a text we can complete our HUD, we will add a compass that rotates depending on the direction the camera is facing. In this case we will add a new GameItem to the Hud class that will have a mesh that models a compass. 
+
+![Compass](compass.png) 
+
+The compass will be modelled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change our fragment shader for the hud a little bit to detect if we have a texture or not. We will do this by using a uniform.
+
+```glsl
+#version 330
+
+in vec2 outTexCoord;
+in vec3 mvPos;
+out vec4 fragColor;
+
+uniform sampler2D texture_sampler;
+uniform vec3 colour;
+uniform int hasTexture;
+
+void main()
+{
+    if ( hasTexture == 1 )
+    {
+        fragColor = vec4(colour, 1) * texture(texture_sampler, outTexCoord);
+    }
+    else
+    {
+        fragColor = vec4(colour, 1);
+    }
+}
+```
+
+In the ```Hud``` class we will create a new ```GameItem``` that loads de compass and add it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
+
+```java
+// Create compass
+Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
+Material material = new Material();
+material.setColour(new Vector3f(1, 0, 0));
+mesh.setMaterial(material);
+compassItem = new GameItem(mesh);
+compassItem.setScale(40.0f);
+// Rotate to transform it to screen coordinates
+compassItem.setRotation(0f, 0f, 180f);
+
+// Create list that holds the items that compose the HUD
+gameItems = new GameItem[]{statusTextItem, compassItem};
+```
+
+Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space like coordinates, and if we are expecting screen coordinates it would pointing downwards. The Hud class will also provide a method to update the angle of the compass that must take this also into consideration. 
+
+```java
+public void rotateCompass(float angle) {
+    this.compassItem.setRotation(0, 0, 180 + angle);
+}
+```
+
+In the ```DummyGame``` class we will update the angle whenever the camera is moved. We need to use the y angle rotation.
+
+```java
+// Update camera based on mouse            
+if (mouseInput.isRightButtonPressed()) {
+    Vector2f rotVec = mouseInput.getDisplVec();
+    camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+            
+    // Update HUD compass
+    hud.rotateCompass(camera.getRotation().y);
+}
+```
+
+We will get something like this (remember that it is only a sample, in a real game you may probably want to use some texture to give the compass a different look).
+
+
+![HUD with a compass](hud_compass.png)
+
+As you can see we have set up all the infrastructure needed in order to create a HUD for our games. Now it is just a matter of creating all the elements that represent relevant information to the user and  give them a professional look and feel.
+
