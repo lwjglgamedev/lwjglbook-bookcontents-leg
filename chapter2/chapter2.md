@@ -83,12 +83,25 @@ So What are we doing in the above method ? In summary we calculate how many seco
 1.	Calculate the time at which we should exit this wait method and start another iteration of our game loop (which is the variable endTi**me).
 2.	Compare current time with that end time and wait just one second if we have not reached that time yet.
 
-Now  it is time to structure our code base in order to start writing our first version of our Game Engine. First of all we will encapsulate all the GLFW Window initialization code in a class named Window allowing some basic parameterization of its characteristics (such as title and size). That Window class will also provide a method to detect key presses which will be used in our game loop:
+Now  it is time to structure our code base in order to start writing our first version of our Game Engine. First of all we will encapsulate all the GLFW Window initialization code in a class named ```Window``` allowing some basic parameterization of its characteristics (such as title and size). That ```Window``` class will also provide a method to detect key presses which will be used in our game loop:
 
 ```java
 public boolean isKeyPressed(int keyCode) {
     return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
 }
+```
+The ```Window``` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized.
+
+```java
+// Setup resize callback
+glfwSetWindowSizeCallback(windowHandle, windowSizeCallback = new GLFWWindowSizeCallback() {
+    @Override
+    public void invoke(long window, int width, int height) {
+        Window.this.width = width;
+        Window.this.height = height;
+        Window.this.setResized(true);
+    }           
+});
 ```
 
 We will also create a ```Renderer``` class which will do our game render logic. By now, it will just have an empty ```init``` method and another method to clear the screen with the configured clear color:
@@ -235,10 +248,16 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void render(Window window) {
+        if ( window.isResized() ) {
+            glViewport(0, 0, window.getWidth(), window.getHeight());
+            window.setResized(false);
+        }
         window.setClearColor(color, color, color, 0.0f);
         renderer.clear();
     }    
 }
 ```
+
+In the ```render``` method we need to be ware if the window has been resized and update the view port to locate the center of the coordinates in the center of the window.
 
 The class hierarchy that we have created will help us to separate our game engine code from the code of a specific game. Although it may seem necessary at this moment we need to isolate generic tasks that every game will use from the state logic, artwork and resources of an specific game in order to reuse our game engine. In later chapters we will need to restructure this class hierarchy as our game engine gets more complex.
