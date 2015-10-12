@@ -305,17 +305,15 @@ The update method of the ```DummyGame``` class modifies the camera position and 
 ```java
 @Override
 public void update(float interval, MouseInput mouseInput) {
-    for (GameItem gameItem : gameItems) {
-        // Update camera position
-        camera.movePosition(cameraInc.x * CAMERA_POS_STEP,
-            cameraInc.y * CAMERA_POS_STEP,
-            cameraInc.z * CAMERA_POS_STEP);
+    // Update camera position
+    camera.movePosition(cameraInc.x * CAMERA_POS_STEP,
+        cameraInc.y * CAMERA_POS_STEP,
+        cameraInc.z * CAMERA_POS_STEP);
 
-        // Update camera based on mouse            
-        if (mouseInput.isRightButtonPressed()) {
-            Vector2f rotVec = mouseInput.getDisplVec();
-            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        }
+    // Update camera based on mouse            
+    if (mouseInput.isRightButtonPressed()) {
+        Vector2f rotVec = mouseInput.getDisplVec();
+        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
     }
 }
 ```
