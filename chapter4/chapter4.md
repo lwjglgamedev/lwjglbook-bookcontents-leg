@@ -280,7 +280,7 @@ glBindVertexArray(0);
 That’s all the code that should be in our ```init``` method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
 
 ```java
-public void render() {
+public void render(Window window) {
     clear();
 
     if ( window.isResized() ) {
