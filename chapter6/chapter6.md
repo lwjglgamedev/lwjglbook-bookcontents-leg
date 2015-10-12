@@ -350,6 +350,11 @@ In the render method of our ```Renderer``` class we receive now an array of Game
 public void render(Window window, GameItem[] gameItems) {
     clear();
 
+        if ( window.isResized() ) {
+            glViewport(0, 0, window.getWidth(), window.getHeight());
+            window.setResized(false);
+        }
+
     shaderProgram.bind();
         
     // Update projection Matrix
