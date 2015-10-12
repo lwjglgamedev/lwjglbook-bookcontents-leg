@@ -283,6 +283,11 @@ That’s all the code that should be in our ```init``` method. Our data is alrea
 public void render() {
     clear();
 
+    if ( window.isResized() ) {
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        window.setResized(false);
+    }
+
     shaderProgram.bind();
 
     // Bind to the VAO
