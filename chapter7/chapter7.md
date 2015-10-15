@@ -262,9 +262,9 @@ void main()
 }
 ```
 
-Before analyzing the code let’s clarify some concepts. A graphic card has several spaces or slots to store textures. Each of these spaces is called a texture unit. When we are working with textures we almost set the texture unit that we want to work with. As you can we have a new uniform named texture_sampler. That uniform has a ```sampler2D``` type. That uniform will hold the value of the texture unit that we want to work with.
+Before analyzing the code let’s clarify some concepts. A graphic card has several spaces or slots to store textures. Each of these spaces is called a texture unit. When we are working with textures we must set the texture unit that we want to work with. As you can see we have a new uniform named ```texture_sampler```. That uniform has a ```sampler2D``` type and will hold the value of the texture unit that we want to work with.
 
-In the main function we use the texture ```lookup``` function named “texture”. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to evolve it more easily later on.
+In the main function we use the texture ```lookup``` function named ```texture```. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to evolve it more easily later on.
 
 Thus, in our ```ShaderProgram``` class we will create a new method that allows us to set an integer value for a uniform:
 
@@ -274,10 +274,13 @@ public void setUniform(String uniformName, int value) {
 }
 ```
 
-In the init method of our Renderer class we will create a new uniform:
-shaderProgram.createUniform("texture_sampler");
+In the ```init``` method of the ```Renderer``` class we will create a new uniform:
 
-In the ```render``` method of our ```Renderer``` class we will set the uniform value to 0. (We are not using several textures right now so we are just using unit 0.
+```java
+shaderProgram.createUniform("texture_sampler");
+```
+
+Also, in the ```render``` method of our ```Renderer``` class we will set the uniform value to 0. (We are not using several textures right now so we are just using unit 0.
 
 ```java
 shaderProgram.setUniform("texture_sampler", 0);
@@ -293,6 +296,7 @@ glBindTexture(GL_TEXTURE_2D, texture.getId());
 ```
 
 We basically are binding to the texture identified by  ```texture.getId()``` in the texture unit 0.
+
 Right now, we have just modified our code base to support textures, now we need to setup texture coordinates for our 3D cube. Our texture image file will be something like this:
 
 ![Cube texture](cube_texture.png)
@@ -322,7 +326,7 @@ Now, let’s define the texture mapping of the top face.
 | V3 | (0.5, 1.0) |
 	
 
-As you can see we have a problem, we need to setup different texture coordinates for the same vertices (V0 and V3). How can we solve this ? The only way to solve it is to repeat some points. For the top face we need to repeat the four vertices and assign them the correct texture coordinates.
+As you can see we have a problem, we need to setup different texture coordinates for the same vertices (V0 and V3). How can we solve this? The only way to solve it is to repeat some vertices and associated different texture coordinates. For the top face we need to repeat the four vertices and assign them the correct texture coordinates.
 
 Since the front, back and lateral faces use the same texture we won’t need to repeat all of the vertices. You have the complete definition in the source code, but we needed to pass from 8 points to 20. The final result is like this.
 
