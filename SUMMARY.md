@@ -14,5 +14,4 @@
 * [Let there be even more light](chapter11/chapter11.md)
 * [HUD](chapter12/chapter12.md)
    * Sky Box
-* Sky Box
 
