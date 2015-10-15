@@ -26,9 +26,12 @@ $$L = A + D + S$$
 
 In fact, those components are indeed colours, that is the colour components that each light component contributes to. This is due to the fact that light components will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour (obtained from a texture or a base colour). So the final colour will be: $$L * basecolour$$.
 
+
+## Ambient Light component
+
 Let’s view the first component, the ambient light component it’s just a constant factor that will make all of our objects brighter or darker. We can use it to simulate light for a specific period of time (dawn, dusk, etc.) also it can be used to add some light to points that are not hit directly by ray lights but could be lighted by  indirect light (caused by reflections) in an easy way.
 
-Ambient light is the easiest component to calculate, we just need to pass a colour, since it will be multiplied by our base colour it just modulates that base colour. Imagine that we have determined that a colour for a fragment is $$(1.0, 0.0, 0.0)$$, that is red colour. Without ambient light it will be dissplayed as a fully red fragment. If we set ambient light to $$(0.5, 0.5, 0.5)$$ the final colour will be $$(0.5, 0, 0)$$, that is a darker version of red. This light will darken all the fragments in the same way. Besides that it can add some colour if the RGB components are not the same, so we just need a vector to modulate ambient light intensity and colour.
+Ambient light is the easiest component to calculate, we just need to pass a colour, since it will be multiplied by our base colour it just modulates that base colour. Imagine that we have determined that a colour for a fragment is $$(1.0, 0.0, 0.0)$$, that is red colour. Without ambient light it will be displayed as a fully red fragment. If we set ambient light to $$(0.5, 0.5, 0.5)$$ the final colour will be $$(0.5, 0, 0)$$, that is a darker version of red. This light will darken all the fragments in the same way (it may seem to be a little strange to be talking about light that darkens objects but in fact that is the effect that we get). Besides that, it can add some colour if the RGB components are not the same, so we just need a vector to modulate ambient light intensity and colour.
 
 Let’s talk now about diffuse reflectance. It models the fact that surfaces which face in a perpendicular way to the light source look brighter than surfaces where light is received in a  more indirect angle. Those objects receive more light, the light density (let me call it this way) is higher.
 
