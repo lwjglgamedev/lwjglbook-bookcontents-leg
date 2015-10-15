@@ -42,7 +42,8 @@ float[] colours = new float[]{
     0.0f, 0.5f, 0.0f,
     0.0f, 0.0f, 0.5f,
     0.0f, 0.5f, 0.5f,
-};```
+};
+```
 
 Finally, since a cube is made of six faces we need to draw twelve triangles (two per face), so we need to update the indices array. Remember that triangles must be defined in counter clock wise order.
 
@@ -74,13 +75,13 @@ if ( rotation > 360 ) {
 gameItem.setRotation(rotation, rotation, rotation);  
 ```
 
-An that’s all that. You can now compile an run your example and you will obtain something like this.
+An that’s all, we are now able to display a spining 3D cube. You can now compile an run your example and you will obtain something like this.
 
 ![Cube with no depth tests](cube_no_depth_test.png)
 
-There is something weird with this cube, some faces are not being painted correctly. What is happening ? The reason why the cube has this aspect is that the triangles that compose the cube are being drawn in a random order. The pixels that are far away should be drawn before pixels that are closer. In order to do that we must enable depth test.
+There is something weird with this cube, some faces are not being painted correctly. What is happening? The reason why the cube has this aspect is that the triangles that compose the cube are being drawn in a sort of random order. The pixels that are far away should be drawn before pixels that are closer. This is not happening right now and in order to do that we must enable depth test.
 
-This is can be done in our Window class at the end of the ```init``` method:
+This is can be done in the ```Window``` class at the end of the ```init``` method:
 
 ```java
 glEnable(GL_DEPTH_TEST);
