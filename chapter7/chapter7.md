@@ -164,7 +164,7 @@ int textureId = glGenTextures();
 glBindTexture(GL_TEXTURE_2D, textureId);
 ```
 
-Then we need to tell OpenGL how to unpack our RGBA bytes. Each component is one byte size
+Then we need to tell OpenGL how to unpack our RGBA bytes. Since each component is one byte size we need to add the following line:
 
 ```java
 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -177,20 +177,20 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(),
     decoder.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 ```
 
-The glTextImage2D method has the following parameters:
-* target: Specifies the target texture (its type). In this case: GL_TEXTURE_2D. 
-* level: Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image. More on this later.
-* internal format: Specifies the number of colour components in the texture.
-* width: Specifies the width of the texture image.
-* height: Specifies the height of the texture image.
-* border: This value must be zero.
-* format: Specifies the format of the pixel data: RGBA in this case.
-* type: Specifies the data type of the pixel data. We are using unsigned bytes for this.
-* data: The buffer that stores our data.
+The ```glTextImage2D``` method has the following parameters:
+* ```target```: Specifies the target texture (its type). In this case: GL_TEXTURE_2D. 
+* ```level```: Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image. More on this later.
+* ```internal format```: Specifies the number of colour components in the texture.
+* ```width```: Specifies the width of the texture image.
+* ```height```: Specifies the height of the texture image.
+* ```border```: This value must be zero.
+* ```format```: Specifies the format of the pixel data: RGBA in this case.
+* ```type```: Specifies the data type of the pixel data. We are using unsigned bytes for this.
+* ```data```: The buffer that stores our data.
 
-In some code snippets that you may find yow ill probably see that before calling the ```glTextImage2D``` method filtering parameters are set up. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated.
+In some code snippets that you may find yow will probably see that, before calling the ```glTextImage2D``` method, filtering parameters are set up. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated.
 
-If those parameters are not set the texture will not be displayed. So before the glTextImage2D method you could see something like this:
+If those parameters are not set the texture will not be displayed. So before the ```glTextImage2D``` method you could see something like this:
 
 ```java
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
