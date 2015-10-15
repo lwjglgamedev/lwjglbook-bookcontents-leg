@@ -201,9 +201,9 @@ So right now, in order to that representation we need to provide some basic oper
 
 ![Transformations](transformations.png)
 
-The operations described above are known as a transformation. And you probable may be guessing how are we going to achieve that by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
+The operations described above are known as transformations. And you probable may be guessing that the way we are we going to achieve that is by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
 
-The reason why it is called world matrix is because we are passing from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined using it’s own coordinate systems, they don’t know the size of your 3D space and the y need to be placed in it so when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate systems (the model one) to another coordinate systems (the one for our 3D world). 
+The reason why it is called world matrix is because we are transforming from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined using it’s own coordinate systems, they don’t know the size of your 3D space and the y need to be placed in it so when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate systems (the model one) to another coordinate systems (the one for our 3D world). 
 
 That world matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
 
