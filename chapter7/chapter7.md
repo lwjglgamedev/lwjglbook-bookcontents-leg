@@ -132,19 +132,19 @@ And define the version of the library to use.
 
 One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling ```glEnable(GL_TEXTURE_2D)```. This is true if you are using fixed pipepline, since we are using GLSL shader is not required anymore.
 
-Now we will create a new ```Texture``` class that will perform all the necessary steps to load a texture. Our texture images will be located in our resources folder and can be accessed as a CLASSPATH resource and passes as an input stream to the ```PNGDecoder``` class.
+Now we will create a new ```Texture``` class that will perform all the necessary steps to load a texture. Our texture image will be located in the resources folder and can be accessed as a CLASSPATH resource and passed as an input stream to the ```PNGDecoder``` class.
 
 ```java
 PNGDecoder decoder = new PNGDecoder(
      Texture.class.getResourceAsStream(fileName));
 ```
 
-Then we need to decode the PNG image and store the image into a buffer by using the decode method of the ```PNGDecoder``` class. The PNG image will be decoded in RGBA format (RGB for Red, Green, Blue and A for Alpha or transparency) which uses four bytes per pixel. 
+Then we need to decode the PNG image and store its content into a buffer by using the ```decode``` method of the ```PNGDecoder``` class. The PNG image will be decoded in RGBA format (RGB for Red, Green, Blue and A for Alpha or transparency) which uses four bytes per pixel. 
 
-The decode method requires two parameters:
-* buffer: The ByteBuffer that will hold the decoded image (since each pixel uses four bytes its size will be 4 * width * height).
-* stride:  Specifies the distance in bytes from the start of a line to the start of the next line. In this case it will be the number of bytes per line.
-* format: The target format into which the image should be decoded (RGBA).
+The ```decode``` method requires two parameters:
+* ```buffer```: The ByteBuffer that will hold the decoded image (since each pixel uses four bytes its size will be 4 * width * height).
+* ```stride```:  Specifies the distance in bytes from the start of a line to the start of the next line. In this case it will be the number of bytes per line.
+* ```format```: The target format into which the image should be decoded (RGBA).
 
 ```java
 ByteBuffer buf = ByteBuffer.allocateDirect(
@@ -153,9 +153,9 @@ decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
 buf.flip();
 ```
 
-One important thing to remember is that OpenGL, for historical reasons, requires that texture images have a size of a power of two (2, 4, 8, 16, .... bytes). Some drivers remove that constraint but it’s better to stick to it to avoid problems.
+One important thing to remember is that OpenGL, for historical reasons, requires that texture images have a size in bytes of a power of two (2, 4, 8, 16, ....). Some drivers remove that constraint but it’s better to stick to it to avoid problems.
 
-The next step is to load the texture into our graphics card memory. First of all we need to create  new texture identifier. Each operation with a texture will use that identifier so we need to bind to it.
+The next step is to upload the texture into the graphics card memory. First of all we need to create a new texture identifier. Each operation related to that texture will use that identifier so we need to bind to it.
 
 ```java
 // Create a new OpenGL texture 
