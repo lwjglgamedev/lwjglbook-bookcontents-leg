@@ -114,7 +114,7 @@ shaderProgram.createUniform("colour");
 shaderProgram.createUniform("useColour");
 ```
 
-In the render method of the ```Renderer``` class we need to set the values for this uniforms for each ```gameItem```.
+And like any other uniform, in the ```render``` method of the ```Renderer``` class we need to set the values for this uniforms for each ```gameItem```.
 
 ```java
 for(GameItem gameItem : gameItems) {
@@ -129,14 +129,15 @@ for(GameItem gameItem : gameItems) {
 }
 ```
 
-Now we can create a new class named ```OBJLoader``` which parse OBJ files and will create a Mesh instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
+Now we can create a new class named ```OBJLoader``` which parses OBJ files and will create a ```Mesh``` instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
 
 ```java
 public static Mesh loadMesh(String fileName) throws Exception {
 ```
  
-The parameter filename specifies the name of the file, that must be in the CLASSPATH that contains the OBJ model.
- The first thing that we do is read the file contents and store all the lines in an array. Then we create several lists that will hold the vertices, the texture coordinates, the normals and the faces.
+The parameter ```filename``` specifies the name of the file, that must be in the CLASSPATH that contains the OBJ model.
+
+The first thing that we will do in that method is to read the file contents and store all the lines in an array. Then we create several lists that will hold the vertices, the texture coordinates, the normals and the faces.
 
 ```java
 List<String> lines = Files.readAllLines(Paths.get(OBJLoader.class.getResource(fileName).toURI()));
@@ -213,8 +214,6 @@ protected static class IdxGroup {
 }
 ```
 
-When parsing faces we may see objects with no textures but with vector normals, in this case a face line could be like this.
- 
 Our ```Face``` class will be like this.
 
 ```java
@@ -256,7 +255,8 @@ protected static class Face {
     }
 }
 ```
-
+When parsing faces we may see objects with no textures but with vector normals, in this case a face line could be like this ```f 11//1 17//1 13//1```, so we need to detect those cases.
+ 
 Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our ```Mesh``` class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique. OpenGL does not allow us to define different indices arrays per type of element (if so, we would not need to repeat vertices while applying textures).
 
 When you open an OBJ line you will first probably see that the list that holds the vertices positions has a higher number of elements than the lists that hold the texture coordinates and the number of vertices. That’s something that we need to solve. Let’s use a simple example which defines a quad with a texture with a pixel height (just for illustration purposes). The OBJ file may be like this (don’t pay too much attention about the normals coordinate since it’s just for illustration purpose).
