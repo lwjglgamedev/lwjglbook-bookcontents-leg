@@ -335,12 +335,11 @@ public class Transformation {
 }
 ```
 
-As you can see this class groups all the projection and world matrix. Given a set of vectors that model the displacement, rotation and scale it returns the world matrix. The method ```getWorldMatrix``` returns the matrix that will be used to transform the coordinates for each ```GameItem```. That class also provides a method that based on the Field Of View, the aspect ratio and the near and far distance gets the projection matrix.
-
+As you can see this class groups the projection and world matrix. Given a set of vectors that model the displacement, rotation and scale it returns the world matrix. The method ```getWorldMatrix``` returns the matrix that will be used to transform the coordinates for each ```GameItem``` instance. That class also provides a method that, based on the Field Of View, the aspect ratio and the near and far distance gets the projection matrix.
 
 An important thing notice is that the the ```mul``` method of the  ```Matrix4f``` class modifies the matrix instance that applies to. So if we directly multiply the projection matrix with the transformation matrix we will be modifying the projection matrix itself. This is why we are always initializing each matrix to the identity matrix upon each call. 
 
-In our ```Renderer``` class, in the constructor method we just instantiate the Transformation with no arguments and in the ```init``` method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
+In the ```Renderer``` class, in the constructor method, we just instantiate the ```Transformation``` with no arguments and in the ```init``` method we just create the uniform. The uniform name has been renamed to transformation to better match its purpose.
 
 ```java
 public Renderer() {
