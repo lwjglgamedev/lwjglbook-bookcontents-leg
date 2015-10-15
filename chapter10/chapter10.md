@@ -176,7 +176,7 @@ struct PointLight
 };
 ```
 
-A point light is defined by a colour, a position, a number between 0 and 1 which models its intensity  and a set of parameters which will model the attenuation equation. 
+A point light is defined by a colour, a position, a number between $$0$$ and $$1$$ which models its intensity  and a set of parameters which will model the attenuation equation. 
 
 The structure that models a material characteristics is:
 ```glsl
@@ -259,7 +259,8 @@ void main()
 ```
 
 The first part of the function is the same as the one used in previous chapter, we calculate the fragment colour either by using a fixed colour or by calculating it from texture coordinates. Final colour is calculated by multiplying that colour and the summation of the ambient light, diffuse and colour components. As you can see ambient light is not affected by attenuation.
-We have introduced some new concepts into our shader, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, ```PointLight``` and ```Material```. They war just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the ```ShaderProgram``` class, first to be able to create the uniforms for the point light and material structures.
+
+We have introduced some new concepts into our shader, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, ```PointLight``` and ```Material```. They are just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the ```ShaderProgram``` class, first to be able to create the uniforms for the point light and material structures.
 
 ```java
 public void createPointLightUniform(String uniformName) throws Exception {
@@ -298,10 +299,10 @@ public void setUniform(String uniformName, Material material) {
 }
 ```
 
-In this chapter source code you will see also that we also have modified the Mesh class to hold a material instance and that we have created a simple example that creates a point light that can be moved by using the “N” and “M” keys in order to show how a point light focusing over a mesh with a reflectance value higher than 0 looks like.
+In this chapter source code you will see also that we also have modified the ```Mesh``` class to hold a material instance and that we have created a simple example that creates a point light that can be moved by using the “N” and “M” keys in order to show how a point light focusing over a mesh with a reflectance value higher than 0 looks like.
 
 
-Let's get back to our fragment shader, as we have said we need another uniform which contains the camera position, camera_pos. These coordinates must be in view space. Usually we will set up light coordinates in world space coordinates, so we need to multiply them by the view matrix in order to be able to use them in our shader, so we need to create a new method in the Transformation class that return the view matrix so we transform light coordinate.
+Let's get back to our fragment shader, as we have said we need another uniform which contains the camera position, camera_pos. These coordinates must be in view space. Usually we will set up light coordinates in world space coordinates, so we need to multiply them by the view matrix in order to be able to use them in our shader, so we need to create a new method in the ```Transformation``` class that returns the view matrix so we transform light coordinates.
 
 ```java
 // Get a copy of the light object and transform its position to view coordinates
@@ -315,7 +316,7 @@ lightPos.z = aux.z;
 shaderProgram.setUniform("pointLight", currPointLight);
 ```
 
-We will not include the whole source code because this chapter would be too longer and it would not contribute too much to clarify the concepts explained here.
+We will not include the whole source code because this chapter would be too long and it would not contribute too much to clarify the concepts explained here. You can check it in the source code that accompanies this book.
 
 ![Lightning results](lightning_result.png)
 
