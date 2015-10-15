@@ -23,29 +23,29 @@ But what is anormal ? Let’s define it first. When you have a plane its normal 
 
 As you can see in the figure above a plane can have two normals, which one should we use ? Normals in 3D graphics are used for lightning, so we should chose the normal which is oriented towards the source of light. In other words we should choose the normal that points out from the external face of our model.
 
-When we have a 3D model, it is composed by polygons, triangles in our case. Each triangle is composed by three vertices. The Normal vector for a triangle will be the vector perpendicular to it which has length equal to one. 
+When we have a 3D model, it is composed by polygons, triangles in our case. Each triangle is composed by three vertices. The Normal vector for a triangle will be the vector perpendicular to the triangle surface which has a length equal to one. 
 
-A vertex normal is associated to a specific vertex and is the combination of the normals of the surrounding triangles (of course its length is equal to one). Here you can see the vertex models of a 3D mesh (taken from Wikipedia, https://en.wikipedia.org/wiki/Vertex_normal#/media/File:Vertex_normals.png)
+A vertex normal is associated to a specific vertex and is the combination of the normals of the surrounding triangles (of course its length is equal to one). Here you can see the vertex models of a 3D mesh (taken from  [Wikipedia](https://en.wikipedia.org/wiki/Vertex_normal#/media/File:Vertex_normals.png))
 
 ![Vertex normals](vertex_normals.png)
 
 Normals will be  used for lighting.
 
-So let’s start creating our OBJ loader. First of all we will modify our Mesh class since now it’s mandatory to use a texture. Some of the obj files that we may load may not define texture coordinates and we must be able to render them using a colour instead of a texture. In this case the face definition will be like this: “f v//n”.
+So let’s start creating our OBJ loader. First of all we will modify our ```Mesh``` class since now it’s mandatory to use a texture. Some of the obj files that we may load may not define texture coordinates and we must be able to render them using a colour instead of a texture. In this case the face definition will be like this: “f v//n”.
 
-Our ```Mesh``` class will have a new attribute named colour
+Our ```Mesh``` class will have a new attribute named ```colour```
 
 ```java
 private Vector3f colour;
 ```
 
-And the constructor will not require a Texture instance any more. Instead we will provide getters and setters for texture and colour attributes.
+And the constructor will not require a ```Texture``` instance any more. Instead we will provide getters and setters for texture and colour attributes.
 
 ```java
 public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
 ```
 
-Of course, in the render and cleanup methods we must check if texture attribute is not null before using it. As you can see in the constructor we pass now a new array of floats named normals. How do we use normals for rendering ? The answer is easy it will be just another VBO inside our VAO, so we need to add this code.
+Of course, in the ```render``` and ```cleanup``` methods we must check if texture attribute is not null before using it. As you can see in the constructor we pass now a new array of floats named ```normals```. How do we use normals for rendering ? The answer is easy it will be just another VBO inside our VAO, so we need to add this code.
 
 ```java
 // Vertex normals VBO
@@ -58,7 +58,7 @@ glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
 glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 ```
 
-In our render method we must enable this VBO before rendering and disable it when we have finished.
+In our ```render``` method we must enable this VBO before rendering and disable it when we have finished.
 
 ```java
  // Draw the mesh
@@ -77,7 +77,7 @@ glBindVertexArray(0);
 glBindTexture(GL_TEXTURE_2D, 0);
 ```
 
-Now that we have finished the modifications in the Mesh class we can change our code to use either texture coordinates or a fixed colour. Thus we need to modify our fragment shader like this:
+Now that we have finished the modifications in the ```Mesh``` class we can change our code to use either texture coordinates or a fixed colour. Thus we need to modify our fragment shader like this:
 
 ```glsl
 #version 330
@@ -103,8 +103,8 @@ void main()
 ```
 
 As you can see we have create two new uniforms:
-* ```colour```: Will contain the base .
-* ```useColour```: It’s a flag that we will set to 1 when we don’t use textures.
+* ```colour```: Will contain the base colour.
+* ```useColour```: It’s a flag that we will set to 1 when we don’t want to use textures.
 
 In the ```Renderer``` class we need to create those two uniforms.
 
