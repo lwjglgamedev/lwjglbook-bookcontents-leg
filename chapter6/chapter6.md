@@ -61,7 +61,7 @@ Now that everithing has been set up let’s define our projection matrix. We wil
 * Distance to the near plane (z-near)
 * Distance to the far plane (z-far).
 
-We will instantiate  that matrix in our init method so we need to pass a reference to our Window  instance to get its size (you can see it in the source code). The new constants and variables are:
+We will instantiate  that matrix in our ```init``` method so we need to pass a reference to our ```Window```  instance to get its size (you can see it in the source code). The new constants and variables are:
 
 ```java
     /**
@@ -84,7 +84,7 @@ projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,
     Z_NEAR, Z_FAR);
 ```
 
-At this moment we will ignore that the aspect ratio can change (by resizing our window). This could be checked in our render method and change our projection matrix accordingly.
+At this moment we will ignore that the aspect ratio can change (by resizing our window). This could be checked in the ```render``` method and change our projection matrix accordingly.
 
 Now that we have our matrix, how do we use it? We need to use it in our shader, and it should be applied to all the vertices. At first, you could think in bundling it in the vertex input (like the coordinates and the colours), but think it twice. We would be wasting lots of space since the projection matrix should not change even between several render calls.
 
