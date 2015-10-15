@@ -109,7 +109,8 @@ void main()
 }
 ```
 
-As you can see we define our ```projectionMatrix``` as matrix of 4x4 elements and the position is obtained by multiplying it by our original coordinates. Now we need to pass the values of the projection matrix to our shader. First, we need to get a reference to the place where the uniform will hold its values. This done with the method ```glGetUniformLocation``` which receives two parameters:
+As you can see we define our ```projectionMatrix``` as matrix of 4x4 elements and the position is obtained by multiplying it by our original coordinates. Now we need to pass the values of the projection matrix to our shader. First, we need to get a reference to the place where the uniform will hold its values.
+This done with the method ```glGetUniformLocation``` which receives two parameters:
 * The Shader program Identifier.
 * The name of the uniform (it should match the once defined in the shader code).
 
