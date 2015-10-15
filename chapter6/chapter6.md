@@ -28,12 +28,13 @@ You can think about the projection matrix as a camera, which has a field of view
 
 ![Projection Matrix concepts](projection_matrix.png)
  
-Our projection matrix will correctly map our 3D coordinates so they can be correctly represented into our 2D screen. The mathematical representation of that matrix is as follows (don’t be scared).
+A projection matrix will correctly map 3D coordinates so they can be correctly represented into a 2D screen. The mathematical representation of that matrix is as follows (don’t be scared).
 
 ![Projection Matrix](projection_matrix_eq.png)
  
 Where aspect ratio is the relation between our screen width and our screen height ($$a=width/height$$). In order to obtain the projected coordinates of a given point we just need to multiply the projection matrix to the original coordinates. The result will be another vector that will contain the projected version.
-We will use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our ```pom.xml``` file.
+
+So we need to handle a set of mathematical entities such as vectors, matrices and include the operations that can be done between them. We could chose to warite all that code by our own from scracth or use an already existing library. We will choose the easy path and use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our ```pom.xml``` file.
 
 ```xml
         <dependency>
