@@ -1,23 +1,23 @@
 
 # Loading more complex models
 
-In this chapter we will learn to load more complex models defined in external files. Those models are created by 3D modelling tools (such as Blender, https://www.blender.org/). Now we are creating our models by hand directly coding the arrays that define their geometry, in this chapter we will learn how to load models define in OBJ format.
+In this chapter we will learn to load more complex models defined in external files. Those models will be created by 3D modelling tools (such as [Blender]( https://www.blender.org/)). Up to now we were creating our models by hand directly coding the arrays that define their geometry, in this chapter we will learn how to load models defined in OBJ format.
 
 OBJ (or .OBJ) is a geometry definition open file format developed by Wavefront Technologies which has been widely adopted. An OBJ file defines the vertices, texture coordinates and polygons that compose a 3D model. It’s a relative easy format to parse since is text based and each line defines an element (a vertex, a texture coordinate, etc.).
 
-Each line defines an element which can be a vertex, a texture coordinate, etc. Each line starts with a token with identifies the type of line:
+In an .obj file each line starts with a token with identifies the type of element:
 * Comments are lines which start with #.
 *   The token “v” defines a geometric vertex with coordinates (x, y, z, w). Example: v 0.155 0.211 0.32 1.0.
 * The token “vn” defines a vertex normal with coordinates (x, y, z). Example: vn 0.71 0.21 0.82. More on this later.
 * The token “vt” defines a texture coordinate. Example: vt 0.500 1. 
-* The token “f” defines a face. With the information contained tn these lines we wlill construct our indices array. We will handle only the case were faces are exported as triangles. It can have several variants:
+* The token “f” defines a face. With the information contained in these lines we will construct our indices array. We will handle only the case were faces are exported as triangles. It can have several variants:
     * It can define just vertex positions (f v1 v2 v3). Example: f 6 3 1. In this case this triangle is defined by the geometric vertices that occupy positions 6, 3 a and 1. (Vertex indices always starts by 1).
     * It can define vertex positions and texture coordinates (f v1/t1 v2/t2 V3/t3). Example: f 6/4 3/5 7/6.
     * It can define vertex positions and texture coordinates (f v1/t1/n1 v2/t2/n2 V3/t3/n3). Example: f 6/4/1 3/5/3 7/6/5. The first block is “6/4/1” and defines the coordinates, texture coordinates normal vertex. What you see here is the position, so we are saying pick the geometric vertex number six, the texture coordinate number 4 and the vertex normal number one. 
 
 OBJ format has many more entry types (like one to group polygons, defining materials, etc.). By now we will stick to this subset, our OBJ loader will ignore other entry types.
 
-Let’s first define what is a normal. When you have a plane its normal is a vector perpendicular to that plane and has length equal to one.
+But what is anormal ? Let’s define it first. When you have a plane its normal is a vector perpendicular to that plane which has a length equal to one.
 
 ![Normals](normals.png) 
 
