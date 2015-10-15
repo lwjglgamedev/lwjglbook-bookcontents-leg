@@ -32,7 +32,19 @@ float[] positions = new float[] {
 
 Of course, since we have 4 more vertices we need to update the array of colours. Just repeat the first four items by now.
 
-Finally, since a cube is made of six faces we need to draw twelve triangles (two per face), so we need to update our indices array. Remember that triangles must be define in counter clock wise order.
+```java
+float[] colours = new float[]{
+    0.5f, 0.0f, 0.0f,
+    0.0f, 0.5f, 0.0f,
+    0.0f, 0.0f, 0.5f,
+    0.0f, 0.5f, 0.5f,
+    0.5f, 0.0f, 0.0f,
+    0.0f, 0.5f, 0.0f,
+    0.0f, 0.0f, 0.5f,
+    0.0f, 0.5f, 0.5f,
+};```
+
+Finally, since a cube is made of six faces we need to draw twelve triangles (two per face), so we need to update the indices array. Remember that triangles must be defined in counter clock wise order.
 
 ```java
 int[] indices = new int[] {
@@ -51,7 +63,7 @@ int[] indices = new int[] {
 };
 ```
 
-In order to better view the cube we will change our rotating code in our ```DummyGame``` class to rotate along the three axis.
+In order to better view the cube we will change code that rorates the model in the ```DummyGame``` class to rotate along the three axis.
 
 ```java
 // Update rotation angle
