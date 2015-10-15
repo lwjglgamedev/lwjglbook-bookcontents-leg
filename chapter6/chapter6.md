@@ -147,9 +147,9 @@ Now, in our ```Renderer``` class we can invoke the ```createUniform``` method on
 shaderProgram.createUniform("projectionMatrix");
 ```
 
-At this moment, we already have a holder ready to be set up with data to be uses as our projection matrix. Since the projection matrix won’t change between rendering calls we may set up the values right after the creation of the uniform, but we will do it in our render method. You will see later that we may reuse that uniform to do additional operations that need to be done en each render call.
+At this moment, we already have a holder ready to be set up with data to be used as our projection matrix. Since the projection matrix won’t change between rendering calls we may set up the values right after the creation of the uniform, but we will do it in our render method. You will see later that we may reuse that uniform to do additional operations that need to be done en each render call.
 
-We will create another method in our ```ShaderProgram``` class to setup the data named ```setUniform```. Basically we transform our matrix into a 4x4 FloatBuffer by using the utility methods provided by JOML library and send them to the location we stored  in our locations map.
+We will create another method in our ```ShaderProgram``` class to setup the data named ```setUniform```. Basically we transform our matrix into a 4x4 ```FloatBuffer``` by using the utility methods provided by JOML library and send them to the location we stored  in our locations map.
 
 ```java
 public void setUniform(String uniformName, Matrix4f value) {
@@ -160,7 +160,7 @@ public void setUniform(String uniformName, Matrix4f value) {
 }
 ```
 
-Now we can use that method in our Renderer class in our render method, after the shader program has been binded:
+Now we can use that method in the ```Renderer``` class in the ```render``` method, after the shader program has been binded:
 
 ```java
 shaderProgram.setUniform("projectionMatrix", projectionMatrix);
