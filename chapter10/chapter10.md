@@ -20,11 +20,11 @@ The Phong algorithm considers three components for lighting:
 * **Diffuse reflectance**: It takes into consideration that surfaces that are facing the light source are brighter.
 * **Specular reflectance**: models how light reflects in polished or metallic surfaces
 
-At the end what we want to obtain is a factor that, multiplied by our model colour, will get that colour brighter or darker depending on the light. Let’s name our components as $$A$$ for ambient, $$D$$ for diffuse and $$S$$ for specular. That factor will be the addition of those components:
+At the end what we want to obtain is a factor that, multiplied by colour assigned to a fragment, will set that colour brighter or darker depending on the light it receives. Let’s name our components as $$A$$ for ambient, $$D$$ for diffuse and $$S$$ for specular. That factor will be the addition of those components:
 
 $$L = A + D + S$$
 
-In fact, those components are indeed colours, that is the colour components that each light component contributes to. Light will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour (obtained from a texture or a base colour). So the final colour will be: $$L * basecolour$$.
+In fact, those components are indeed colours, that is the colour components that each light component contributes to. This is due to the fact that light components will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour (obtained from a texture or a base colour). So the final colour will be: $$L * basecolour$$.
 
 Let’s view the first component, the ambient light component it’s just a constant factor that will make all of our objects brighter or darker. We can use to simulate light for a specific period of time (dawn, dusk, et.c) also it can be used to add some light to points that are not hit directly by ray lights but could be lighted by  indirect light (caused by reflections) in an easy way.
 
