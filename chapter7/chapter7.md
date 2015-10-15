@@ -1,6 +1,9 @@
 
 # Textures 
 
+
+## Create a 3D cube
+
 In this chapter we will learn how to load textures and use them in the rendering process. In order to show all the concepts related to textures we will transform the quad that we have been using in previous chapters into a 3D cube. With the code base we have created, in order to draw a cube we just need to correctly define the coordinates of a cube and it should be drawn correctly.
 
 In order to draw a cube we just need to define eight vertices.
@@ -87,13 +90,15 @@ This is can be done in the ```Window``` class at the end of the ```init``` metho
 glEnable(GL_DEPTH_TEST);
 ```
 
-Now our cube is being rendered correctly.
+Now our cube is being rendered correctly!.
 
 ![Cube with depth test](cube_depth_test.png)
  
 If you see the code for this part of the chapter you may see that we have done a minor reorganization in the ```Mesh``` class. The identifiers of the VBOs are now stored in a list to easily iterate over them.
 
-Now we are going to apply a texture to our cube. A texture is an image which is used to draw the colour of the pixels of a certain model. You can think about a texture like a skin that is wrapped around your 3D model. What you do is assign point in the image texture to the vertices sin your model. With that information OpenGL is able to calculate the colour to apply to the other pixels based on the texture image.
+## Adding texture to the cube
+
+Now we are going to apply a texture to our cube. A texture is an image which is used to draw the colour of the pixels of a certain model. You can think about a texture like a skin that is wrapped around your 3D model. What you do is assign points in the image texture to the vertices in your model. With that information OpenGL is able to calculate the colour to apply to the other pixels based on the texture image.
 
 ![Texture mapping](texture_mapping.png)
  
