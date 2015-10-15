@@ -14,17 +14,17 @@ Those coordinates are mapped, considering our window size, to window coordinates
  
 But, the problem is more serious than that. Modify the z cords of our quad from 0.0 to 1.0 and to -1.0. What do see ? The quad is exactly drawn in the same place no matter if it’s displaced along the z axis. Why is happening this ? Objects that are further away should be drawn smaller than objects that are closer, but we are drawing them with the same x and y coordinates. 
 
-But, wait. Should not be this handled by the z-coord? The answer is yes an now, The z coordinate tells OpenGL that an object is closer or far away, but OpenGL does not know nothing about the size of your object you could have two objects of different sizes, one closer and smaller and one bigger and further that could be projected, correctly,  into the screen with the same size (those would have same x and y coordinates and different z). OpenGL just uses the coordinates we are passing, so we must take care of this, we need to correctly project our coordinates.
+But, wait. Should not be this handled by the z-coord? The answer is yes an now, The z coordinate tells OpenGL that an object is closer or far away, but OpenGL does not know nothing about the size of your object you could have two objects of different sizes, one closer and smaller and one bigger and further that could be projected, correctly into the screen with the same size (those would have same x and y coordinates and different z). OpenGL just uses the coordinates we are passing, so we must take care of this, we need to correctly project our coordinates.
 
-How do we do this ? By using a projection matrix or frustrum. That matrix will take care of the aspect ratio (the relation between size and height) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and how far is the maximum distance that should be displayed.
+Now that we have diagnosed the problem, how do we do this ? The answer is by using a projection matrix or frustrum. The projection matrix will take care of the aspect ratio (the relation between size and height) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and how far is the maximum distance that should be displayed.
 
-A matrix is a bi-dimensional array of numbers arranged in columns and rows, each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix (2 rows and 2 columns).
+For those not familiar with matrices, a matrix is a bi-dimensional array of numbers arranged in columns and rows, each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix (2 rows and 2 columns).
 
 ![2x2 Matrix](2_2_matrix.png)
 
 Matrices have a number of basic operations that can be applied to them (such as addition, multiplication, etc.) that you can consult in any maths book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
 
-You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid, the following picture sows a top view of that area.
+You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid, the following picture shows a top view of that area.
 
 ![Projection Matrix concepts](projection_matrix.png)
  
