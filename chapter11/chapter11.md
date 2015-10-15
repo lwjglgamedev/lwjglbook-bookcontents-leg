@@ -94,7 +94,7 @@ Now we need to use that uniform. We will model how the sun appears to move acros
 
 ![Sun Movement](sun_movement.png)
  
-We need to update light direction so when the sun it’s at dawn (-90º) it’s direction is (-1,0,0) and its x coordinate progressively increases from -1 to  0 and the “y” coordinate increases to 1 as it approaches mid day.  Then the “x” coordinate increases to 1 and the “y” coordinates decreases to 0 again. This can be done by setting the x coordinate to the $$sine$$ of the angle and y coordinate to the $$cosine$$ of the angle.
+We need to update light direction so when the sun it’s at dawn (-90º) its direction is (-1,0,0) and its x coordinate progressively increases from -1 to  0 and the “y” coordinate increases to 1 as it approaches mid day.  Then the “x” coordinate increases to 1 and the “y” coordinates decreases to 0 again. This can be done by setting the x coordinate to the $$sine$$ of the angle and y coordinate to the $$cosine$$ of the angle.
 
 ![Sine and Cosine](sine_cosine.png) 
 
@@ -221,7 +221,7 @@ And that’s it, we can now simulate the movement of the, artificial, sun across
 
 ## Spot Light 
 
-Now we will implement a spot light which are very similar to a point light but the emitted light is restricted to a  3D cone. It models the light that comes out from focuses or any other light source that does not emit in all directions. A spot light has the same attributes as a point light but adds two new parameters, the cone angle and the cone direction.
+Now we will implement a spot light which are very similar to a point light but the emitted light is restricted to a 3D cone. It models the light that comes out from focuses or any other light source that does not emit in all directions. A spot light has the same attributes as a point light but adds two new parameters, the cone angle and the cone direction.
  
 ![Spot Light](spot_light.png)
 
@@ -235,7 +235,7 @@ How do we calculate if it’s inside the light cone or not ? We need to do a dot
 
 The dot product between L and C vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will now that it is inside the light cone (recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine).
 
-The second difference is that the point that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculate this, we will chose a simple approach by multiplying the attenuation by the following factor:
+The second difference is that the points that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculate this, we will chose a simple approach by multiplying the attenuation by the following factor:
 
 $$1 - (1-Cos(\alpha))/(1-Cos(cutOffAngle)$$
 
@@ -247,12 +247,11 @@ Another important thing when passing the uniforms is that translations should no
 
 ![Spot Light Sample](spot_light_sample.png)
 
-
 ## Multiple Lights
 
 So at last we have finally implemented all the four types of light, but currently we can only use one instance for each type. This is ok for ambient and directional light but we definitively want to use several point and spot lights. We need to set up our fragment shader to receive a list of lights, so we will use arrays to store that information. Let’s see how this can be done.
 
-Before we start, it’s important to note that in GLSL the length of the array must be set at compile time so it must be big enough to accommodate all the objects we need later. The first thing that we will do is define some constants to set up the maximum number of point and spot lights that we are going to use.
+Before we start, it’s important to note that in GLSL the length of the array must be set at compile time so it must be big enough to accommodate all the objects we need later, at runtime. The first thing that we will do is define some constants to set up the maximum number of point and spot lights that we are going to use.
 
 ```glsl
 const int MAX_POINT_LIGHTS = 5;
