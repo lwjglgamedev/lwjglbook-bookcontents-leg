@@ -34,7 +34,7 @@ A projection matrix will correctly map 3D coordinates so they can be correctly r
  
 Where aspect ratio is the relation between our screen width and our screen height ($$a=width/height$$). In order to obtain the projected coordinates of a given point we just need to multiply the projection matrix to the original coordinates. The result will be another vector that will contain the projected version.
 
-So we need to handle a set of mathematical entities such as vectors, matrices and include the operations that can be done between them. We could chose to warite all that code by our own from scracth or use an already existing library. We will choose the easy path and use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). We just need to add another dependency to our ```pom.xml``` file.
+So we need to handle a set of mathematical entities such as vectors, matrices and include the operations that can be done between them. We could chose to warite all that code by our own from scracth or use an already existing library. We will choose the easy path and use a specific library for dealing with math operations sin LWJGL which is called JOML (Java OpenGL Math Library). In order to use that librray we just need to add another dependency to our ```pom.xml``` file.
 
 ```xml
         <dependency>
@@ -54,7 +54,7 @@ And define the version of the library to use.
     </properties>
 ```
 
-Now let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named perspective. This methods need the following parameters:
+Now that everithing has been set up let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named ```perspective```. This methods need the following parameters:
 
 * Field of View: The Field of View angle in radians. We will define a constant that holds that value
 * Aspect Ratio.
