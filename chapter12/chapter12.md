@@ -222,7 +222,7 @@ public interface IHud {
 }
 ```
 
-By using that interface our different games can define custom HUDs but the rendering mechanisms do not need to be changed. Now we can get back to the ```Renderer``` class, which by the way has been moved to the engine graphics package because it’s generic enough to not be dependent on the specific implementation of each game. In the Render class we added a new method to create ,link and set up a new ```ShaderProgram``` that uses the shaders described above.
+By using that interface our different games can define custom HUDs but the rendering mechanism does not need to be changed. Now we can get back to the ```Renderer``` class, which by the way has been moved to the engine graphics package because it’s generic enough to not be dependent on the specific implementation of each game. In the ```Renderer``` class we added a new method to create, link and set up a new ```ShaderProgram``` that uses the shaders described above.
 
 ```java
 private void setupHudShader() throws Exception {
@@ -256,7 +256,7 @@ public void render(Window window, Camera camera, GameItem[] gameItems,
 }
 ```
 
-The renderHud method is as follows:
+The ```renderHud``` method is as follows:
 
 ```java
 private void renderHud(Window window, IHud hud) {
@@ -279,7 +279,7 @@ private void renderHud(Window window, IHud hud) {
 }
 ```
 
-The previous fragment of code, iterates over the elements that compose the HUD and multiplies the orthographic projection matrix by  the model matrix associated to each element. The orthographic projection matrix is updated in each call (because the screen dimensions can change), and it’s calculated in the following way:
+The previous fragment of code, iterates over the elements that compose the HUD and multiplies the orthographic projection matrix by  the model matrix associated to each element. The orthographic projection matrix is updated in each ```render``` call (because the screen dimensions can change), and it’s calculated in the following way:
 
 ```java
 public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
@@ -366,7 +366,7 @@ Now that we have rendered a text we can complete our HUD, we will add a compass 
 
 ![Compass](compass.png) 
 
-The compass will be modelled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change our fragment shader for the hud a little bit to detect if we have a texture or not. We will do this by using a uniform.
+The compass will be modeled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change our fragment shader for the HUD a little bit to detect if we have a texture or not. We will do this by using a uniform.
 
 ```glsl
 #version 330
@@ -392,7 +392,7 @@ void main()
 }
 ```
 
-In the ```Hud``` class we will create a new ```GameItem``` that loads de compass and add it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
+In the ```Hud``` class we will create a new ```GameItem``` that loads the compass and add it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
 
 ```java
 // Create compass
@@ -409,7 +409,7 @@ compassItem.setRotation(0f, 0f, 180f);
 gameItems = new GameItem[]{statusTextItem, compassItem};
 ```
 
-Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space like coordinates, and if we are expecting screen coordinates it would pointing downwards. The Hud class will also provide a method to update the angle of the compass that must take this also into consideration. 
+Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space like coordinates, and if we are expecting screen coordinates it would pointing downwards. The ```Hud``` class will also provide a method to update the angle of the compass that must take this also into consideration. 
 
 ```java
 public void rotateCompass(float angle) {
