@@ -1,6 +1,9 @@
 
 # Transformations
 
+
+## Projecting
+
 Let’s get back to our nice coloured quad we created in previous chapter. If you look carefully at it, it resembles more to a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
 
 If you revisit our vertex shader code we are just passing our coordinates directly, that is when we say that a vertex has a value for coordinate x of 0.5 we are saying to OpenGL to draw it in x position 0.5 in our screen. The following figure shows OpenGL coordinates (just for x and y axis).
@@ -186,7 +189,10 @@ What is happening now is that we are drawing the quad to close to our camera, we
 
 If we continue pushing backwards the quad we will see it smaller. Notice also that our quad does not resemble to a rectangle anymore.
 
-Let’s recall what we’ve done so far. We have learnt how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation. 
+
+## Applying Transformations
+
+Let’s recall what we’ve done so far. We have learned how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation. 
 
 So right now, in order to that representation we need to provide some basic operations to act upon any model:
 * Translation: Move an object by some amount in any of the three axis.
