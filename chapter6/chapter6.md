@@ -165,7 +165,7 @@ Now we can use that method in the ```Renderer``` class in the ```render``` metho
 shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 ```
 
-We are over, we can now show our quad correctly rendered, so you can now launch your program and will obtain a.... black background without any coloured quad. What’s happened? Did we break something? Actually no, remember that we are now simulating the effect of camera looking at our scene, and that we provided to distances, one to the farthest plane (equal to 1.000f) and one to the closest plane (equal to 0.01f). Our coordinates are:
+We are almost over, we can now show the quad correctly rendered, so you can now launch your program and will obtain a.... black background without any coloured quad. What’s happening? Did we break something? Well, actually no, remember that we are now simulating the effect of camera looking at our scene, and that we provided to distances, one to the farthest plane (equal to 1.000f) and one to the closest plane (equal to 0.01f). Our coordinates are:
 
 ```java
 float[] positions = new float[]{
@@ -184,7 +184,7 @@ What is happening now is that we are drawing the quad to close to our camera, we
 
 ![Square coloured](square_coloured.png) 
 
-If we continuing pushing backwards our quad we will see it smaller. Notice also that our quad does not resemble to a rectangle anymore.
+If we continue pushing backwards the quad we will see it smaller. Notice also that our quad does not resemble to a rectangle anymore.
 
 Let’s recall what we’ve done so far. We have learnt how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation. 
 
