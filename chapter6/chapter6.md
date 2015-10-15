@@ -390,7 +390,7 @@ public void render(Window window, GameItem[] gameItems) {
 }
 ```
 
-We update the projection matrix once per ```render``` call. By doing this way we can deal with window resize operations . Then we iterate over the ```GameItem``` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
+We update the projection matrix once per ```render``` call. By doing this way we can deal with window resize operations. Then we iterate over the ```GameItem``` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered, this is the reason why it it’s a separate variable in our Transformation class.
 
 We have moved the rendering code to draw a Mesh to this class:
 
@@ -410,7 +410,7 @@ public void render() {
 }
 ```
 
-Our vertex shader simply adds a new the called worldMatrix  and uses it with the projectionMatrix to calculate the position:
+Our vertex shader simply adds a new the called ```worldMatrix```  and uses it with the ```projectionMatrix``` to calculate the position:
 
 ```glsl
 #version 330
@@ -433,10 +433,10 @@ void main()
 
 As you can see the code is exactly the same, we are using the uniform to correctly project our coordinates taking into consideration our frustrum, position, scale and rotation information.
 
-Another important thing to think about is, why don’t we pass the translation, rotation and scale matrices instead of  combining them into a world matrix ? The reason is that we should try to limit the matrices we use in our shaders. Also keep in mind that the matrix multiplication that we do in our shader is done once per each vertex. The projection matrix does not change between render calls and the world matrix does not change per ```GameItem``` instance. If we passed the translation, rotation and scale matrices independently we will be doing two more matrices multiplication . Think about a model with tons of vertices and that’s a lot of extra operations.
+Another important thing to think about is, why don’t we pass the translation, rotation and scale matrices instead of  combining them into a world matrix ? The reason is that we should try to limit the matrices we use in our shaders. Also keep in mind that the matrix multiplication that we do in our shader is done once per each vertex. The projection matrix does not change between render calls and the world matrix does not change per ```GameItem``` instance. If we passed the translation, rotation and scale matrices independently we will be doing many more matrices multiplication. Think about a model with tons of vertices and that’s a lot of extra operations.
 
-But you may now think, that if the world matrix does not change per ```GameItem``` instance, why don’t do the matrix multiplication in our Java class by multiplying our projection matrix and the world matrix and send it as single uniform ? In this case we would be saving many more operations. The answer is that this a valid point right now but when we add more features to our game engine we will need to operate with world coordinates in our vertex shader so it’s better to use those two matrices.
+But you may now think, that if the world matrix does not change per ```GameItem``` instance, why we don’t do the matrix multiplication in our Java class. We would be by multiplying the projection matrix and the world matrix just once per GameItem and we would send it as single uniform. In this case we would be saving many more operations. The answer is that this a valid point right now but when we add more features to our game engine we will need to operate with world coordinates in the shaders so it’s better to handlen in and independet way those two matrices.
 
 
-Finally we only need to change our ```DummyGame``` class to create a instance of ```GameItem``` with its associated ```Mesh``` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
+Finally we only need to change the ```DummyGame``` class to create a instance of ```GameItem``` with its associated ```Mesh``` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
 
