@@ -110,11 +110,12 @@ void main()
 ```
 
 As you can see we define our ```projectionMatrix``` as matrix of 4x4 elements and the position is obtained by multiplying it by our original coordinates. Now we need to pass the values of the projection matrix to our shader. First, we need to get a reference to the place where the uniform will hold its values.
+
 This done with the method ```glGetUniformLocation``` which receives two parameters:
 * The Shader program Identifier.
 * The name of the uniform (it should match the once defined in the shader code).
 
-This method returns an identifier holding the uniform location, Since we may have more than one uniform, we will store those locations in a Map indexing by its name (We will need that location number later). So in our ```ShaderProgram``` class we create a new variable that holds those identifiers:
+This method returns an identifier holding the uniform location, since we may have more than one uniform, we will store those locations in a Map indexing by its name (We will need that location number later). So in the ```ShaderProgram``` class we create a new variable that holds those identifiers:
 
 ```java
 private final Map<String, Integer> uniforms;
@@ -147,6 +148,7 @@ shaderProgram.createUniform("projectionMatrix");
 ```
 
 At this moment, we already have a holder ready to be set up with data to be uses as our projection matrix. Since the projection matrix won’t change between rendering calls we may set up the values right after the creation of the uniform, but we will do it in our render method. You will see later that we may reuse that uniform to do additional operations that need to be done en each render call.
+
 We will create another method in our ```ShaderProgram``` class to setup the data named ```setUniform```. Basically we transform our matrix into a 4x4 FloatBuffer by using the utility methods provided by JOML library and send them to the location we stored  in our locations map.
 
 ```java
