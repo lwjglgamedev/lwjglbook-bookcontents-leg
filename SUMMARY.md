@@ -11,7 +11,7 @@
 * [Camera](chapter8/chapter8.md)
 * [Loading more complex models](chapter9/chapter9.md)
 * [Let there be light](chapter10/chapter10.md)
-* [Let there be even more light](chapter11/chapter11.md)
 * [HUD](chapter12/chapter12.md)
    * Sky Box
+* [Let there be even more light](chapter11/chapter11.md)
 
