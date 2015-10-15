@@ -150,7 +150,7 @@ public void setText(String text) {
 }
 ```
 
-As it has been said in the beginning of this chapter, we need first to render our 3D scene and the render our 2D HUD. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use a orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+As it has been said in the beginning of this chapter, we need first to render our 3D scene and the render our 2D HUD. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use an orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
 ![Orthopgraphic Projections](orthographic_projections.png) 
 
@@ -163,6 +163,7 @@ This matrix also corrects the distortions that otherwise will be generated due t
 ![Orthopgraphic Projection sample](orthographic_projection_sample.png) 
 
 This will allow us to use screen coordinates.
+
 So we will need another set of shaders, one vertex and one fragment shader in order to draw the objects in our HUD. The vertex shader is very simple.
 
 ```glsl
