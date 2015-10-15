@@ -1,9 +1,9 @@
 
 # A brief about coordinates
 
-In this chapter we will talk a little bit about coordinates and coordinates systems trying to introduce some fundamental mathematical concepts in a simple way to support the techniques and topics that we will address in subsequent chapters. We will assume some simplifications which may scarify preciseness for the sake of legibility.
+In this chapter we will talk a little bit about coordinates and coordinates systems trying to introduce some fundamental mathematical concepts in a simple way to support the techniques and topics that we will address in subsequent chapters. We will assume some simplifications which may sacrifice preciseness for the sake of legibility.
 
-We locate objects in space by specifying its coordinates. Think about a map, you specify a point in a map by stating its latitude or longitude, with just a pair of numbers that point is precisely identified. That pair of numbers are the coordinates (things are a  little bit more complex in reality, since a map is a projection of a non perfect ellipsoid, the earth, so more data is needed but it’s a good analogy).
+We locate objects in space by specifying its coordinates. Think about a map, you specify a point in a map by stating its latitude or longitude, with just a pair of numbers a point is precisely identified. That pair of numbers are the point coordinates (things are a  little bit more complex in reality, since a map is a projection of a non perfect ellipsoid, the earth, so more data is needed but it’s a good analogy).
 
 A coordinate system is a system which employs one or more numbers, that is, one or more coordinates to uniquely specify the position of a point. There are different coordinate systems (Cartesian, polar, etc.) and you can transform coordinates from one system to another. We will use the Cartesian coordinate system.
 
@@ -11,13 +11,13 @@ In the Cartesian coordinate system, for two dimensions, a coordinate is defined 
 
 ![Cartesian Coordinate System](cartesian_coordinate_system.png) 
 
-Continuing with the map analogy, coordinates systems define an origin. For geographic coordinates the origin is set in the point where the equator and the zero meridian cross. Depending on where we set the origin coordinates for a specific point  are different. We also may define the orientation of the axis. In the previous figure, x coordinates increase as long as we move to the right and y coordinates increase as we move upwards, but we could also define an alternative Cartesian coordinate system with different axis orientation and we would obtain different coordinates.
+Continuing with the map analogy, coordinate systems define an origin. For geographic coordinates the origin is set in the point where the equator and the zero meridian cross. Depending on where we set the origin coordinates for a specific point  are different. A coordinate system may also define the orientation of the axis. In the previous figure, x coordinates increase as long as we move to the right and y coordinates increase as we move upwards. But, we could also define an alternative Cartesian coordinate system with different axis orientation in which we would obtain different coordinates.
  
 ![Alternative Cartesian Coordinate System](alt_cartesian_coordinate_system.png)
 
 As you can see we need to define some arbitrary parameters, such as the origin and the axis orientation in order to give the appropriate meaning to the pair of numbers that constitute a coordinate.  We will refer to that coordinate system with the set of arbitrary parameters as the coordinate space. In order to work with a set of coordinates we must use the same coordinate space.  The good news are that we can transforms coordinates from one space to another just by performing translations and rotations.
 
-If we are dealing with 3D coordinates we need an additional axis, the z, and coordinates will be formed by a set of three numbers (x, y, z). 
+If we are dealing with 3D coordinates we need an additional axis, the z axis. 3D coordinates will be formed by a set of three numbers (x, y, z). 
  
 ![3D Cartesian Coordinate System](3d_cartesian_coordinate_system.png)
 
@@ -33,9 +33,9 @@ As in 2D Cartesian coordinate spaces we can change the orientation of the axis i
 
 Now that we have define some basic topics let’s talk about some common used terms that are used when dealing with 3D graphics. When we explain in later chapters how to render 3D models we will see that we use different 3D coordinate spaces, that is because each of those coordinate spaces have a context,  a purpose. A set of coordinates are meaningless unless they are referred to something. When you examine this coordinates (40.438031, -3.676626) they may say something to you or not, but if I say that they are geometric coordinates (latitude and longitude) you will see that they are the coordinates of place in Madrid.
 
-When we will load 3D objects we will get a set of 3D coordinates, that coordinates are expressed in a 3D coordinate space which is called object coordinate space. When the graphics designers are creating those 3D models they don’t know anything about the 3D scene that this model will be displayed, so they can only the define the coordinates using a model that is only relevant for the model.
+When we will load 3D objects we will get a set of 3D coordinates, those coordinates are expressed in a 3D coordinate space which is called object coordinate space. When the graphics designers are creating those 3D models they don’t know anything about the 3D scene that this model will be displayed, so they can only the define the coordinates using a coordinate space that is only relevant for the model.
 
-When we will be drawing a 3D scene we will refer all of our 3D objects to the so called world space coordinate space. We will need to transform 3D object coordinate spaces coordinates to world space coordinates. Some objects will need to be rotated, stretched or enlarged and translated.
+When we will be drawing a 3D scene we will refer all of our 3D objects to the so called world space coordinate space. We will need to transform from 3D object coordinate spaces coordinates to world space coordinates. Some objects will need to be rotated, stretched or enlarged and translated in order to be displayed properly in a 3D scene.
 
 We will also need to restrict the range of the 3D space that is shown, which is like moving a camera through our 3D space. Then we will need to transform world space coordinates to camera or view space coordinates. Finally these coordinates need to be transformed to screen coordinates, which are 2D, so we need to project 3D view coordinates to a 2D screen coordinate space.
 
