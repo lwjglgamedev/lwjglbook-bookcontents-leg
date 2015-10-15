@@ -119,8 +119,11 @@ Finally we need to model the reflectivity of the material, which will also modul
 
 We now know how to calculate the three components that will serve us to model a point light with an ambient light. But our light model is still not complete, the light that an object reflects is independent of the distance that the light is, we need to simulate light attenuation. 
 
-Attenuation is a function of the distance and light, the strength of light is inversely proportional to the square of distance. That fact is easy to visualize, as light is propagating its energy  is distributed along the surface of sphere with a radius that’s equal to the distance traveled by the light. The surface of a sphere is proportional to the square of its radius. We can calculate the attenuation factor with this formula: $$1.0 / (atConstant + atLinear*dist + atExponent*dist^{2})$$.
+Attenuation is a function of the distance and light. The intensity of light is inversely proportional to the square of distance. That fact is easy to visualize, as light is propagating its energy  is distributed along the surface of a sphere with a radius that’s equal to the distance traveled by the light. The surface of a sphere is proportional to the square of its radius. We can calculate the attenuation factor with this formula: $$1.0 / (atConstant + atLinear*dist + atExponent*dist^{2})$$.
+
 In order to simulate attenuation we just need to multiply that attenuation factor by the final colour. 
+
+## Implementation
 
 Now we can start coding all the concepts described above, we will start with our shaders. Most of the work will be done in the fragment shader but we need to pass some data from the vertex shader to it.  In previous chapter the fragment shader just received the texture coordinates, now we are going to pass also two more parameters:
 * The vertex normal (normalized) transformed to model view space coordinates.
