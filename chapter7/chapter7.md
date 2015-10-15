@@ -1,13 +1,13 @@
 
 # Textures 
 
-In this chapter we will learn how to load textures and use them in our rendering. In order to show all the concepts related to textures we will transform our quad into a 3D cube. With the code base we have created, in order to draw a cube we just need to correctly define the coordinates of our model and it should be drawn correctly.
+In this chapter we will learn how to load textures and use them in the rendering process. In order to show all the concepts related to textures we will transform the quad that we have been using in previous chapters into a 3D cube. With the code base we have created, in order to draw a cube we just need to correctly define the coordinates of a cube and it should be drawn correctly.
 
 In order to draw a cube we just need to define eight vertices.
 
 ![Cube coords](cube_coords.png)
  
-So our coordinates array will be like this:
+So the associated coordinates array will be like this:
 
 ```java
 float[] positions = new float[] {
@@ -30,7 +30,7 @@ float[] positions = new float[] {
 };
 ```
 
-Of course, since we have 4 more vertices we need to update our array of colours. Just repeat the first four items by now.
+Of course, since we have 4 more vertices we need to update the array of colours. Just repeat the first four items by now.
 
 Finally, since a cube is made of six faces we need to draw twelve triangles (two per face), so we need to update our indices array. Remember that triangles must be define in counter clock wise order.
 
