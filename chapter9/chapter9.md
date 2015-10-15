@@ -1,4 +1,5 @@
 
+
 # Loading more complex models
 
 In this chapter we will learn to load more complex models defined in external files. Those models will be created by 3D modelling tools (such as [Blender]( https://www.blender.org/)). Up to now we were creating our models by hand directly coding the arrays that define their geometry, in this chapter we will learn how to load models defined in OBJ format.
@@ -257,7 +258,7 @@ protected static class Face {
 ```
 When parsing faces we may see objects with no textures but with vector normals, in this case a face line could be like this ```f 11//1 17//1 13//1```, so we need to detect those cases.
  
-Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our ```Mesh``` class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique. OpenGL does not allow us to define different indices arrays per type of element (if so, we would not need to repeat vertices while applying textures).
+Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our ```Mesh``` class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique (note that the same number of elements does not imply the same length. Position elements, vertex coordinates, are 3D and are composed by three floats. Texture elements, texture coordinates, are 2D and thus are composed by two floats). OpenGL does not allow us to define different indices arrays per type of element (if so, we would not need to repeat vertices while applying textures).
 
 When you open an OBJ line you will first probably see that the list that holds the vertices positions has a higher number of elements than the lists that hold the texture coordinates and the number of vertices. That’s something that we need to solve. Let’s use a simple example which defines a quad with a texture with a pixel height (just for illustration purposes). The OBJ file may be like this (don’t pay too much attention about the normals coordinate since it’s just for illustration purpose).
 
@@ -280,9 +281,9 @@ When we have finished parsing the file we have the following lists (the number o
 
 ![Ordering I](ordering_i.png)
 
-Now we will use the face definitions to construct the final arrays including the indices. A thing to take into consideration is that  the order in which textures coordinates and vector normals are defined does not  correspond to the orders in which vertices are defined. If the size of the lists would be the same and they were ordered face definition lines would only just need to include a number per vertex.
+Now we will use the face definitions to construct the final arrays including the indices. A thing to take into consideration is that  the order in which textures coordinates and vector normals are defined does not  correspond to the orders in which vertices are defined. If the size of the lists would be the same and they were ordered, face definition lines would only just need to include a number per vertex.
 
-So we need to order the data and setup accordingly to our needs. The first thing that we must do is create three arrays and one list, one for the vertices, other for the texture coordinates, other for the normals and the list for the indices. The three arrays will have the same length (equal to the number of vertices). The vertices array will have a copy of the list of vertices.
+So we need to order the data and setup accordingly to our needs. The first thing that we must do is create three arrays and one list, one for the vertices, other for the texture coordinates, other for the normals and the list for the indices. As we have said before the three arrays will have the same number of elements (equal to the number of vertices). The vertices array will have a copy of the list of vertices.
 
 ![Ordering II](ordering_ii.png)
 
@@ -291,8 +292,7 @@ Our face is specifiying that the we should add the index of the element that occ
 
 ![Ordering III](ordering_iii.png)
 			
-
-Then we use the rest of the indices of the index group to set up the ```texturesArray``` and ```normalsArray```. The second index is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex (V1).
+Then we use the rest of the indices of the index group to set up the ```texturesArray``` and ```normalsArray```. The second index, in the index group, is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex (V1).
 
 ![Ordering IV](ordering_iv.png)
 			
@@ -310,7 +310,7 @@ After we have processed the second face the arrays and lists will be like this.
 
 ![Ordering VII](ordering_vii.png)
 
-The second face defines vertices which already has been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are set below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by  two in the case of texture coordinates.
+The second face defines vertices which already have been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are set below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by two in the case of texture coordinates.
 
 ```java
 private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
@@ -383,7 +383,7 @@ And we will get our familiar textured cube.
 
 ![Textured cube](textured_cube.png) 
 
-We can now try with other models. We can use the famous Standford Bunny (it can be freely downloaded) model, which is included used in the resources. This model is not textured so we can us it this way.
+We can now try with other models. We can use the famous Standford Bunny (it can be freely downloaded) model, which is included in the resources. This model is not textured so we can us it this way.
 
 ```java
 Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
@@ -395,7 +395,7 @@ gameItems = new GameItem[]{gameItem};
 
 ![Standford Bunny](standford_bunny.png)
 
-The model likes a little bit strange because we have no textures and there’s no light so we cannot appreciate the volumes but you can check that the model is correctly loaded. In the Window class when we set up the OpenGL parameters add this line.
+The model looks a little bit strange because we have no textures and there’s no light so we cannot appreciate the volumes but you can check that the model is correctly loaded. In the ```Window``` class when we set up the OpenGL parameters add this line.
 
 ```java
 glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -405,8 +405,9 @@ You should now see something like this when you zoom in.
 
 ![Standford Bunny Triangles](standford_bunny_triangles.png) 
 
-You can now see all the triangles that compose the model.
-You can use Blender to create your models. Blender is a powerful tool but it can be some bit of overwhelming at first, there are lots of options, lots of key combinations and you need to take your time to do the most basic things by the first time. When you export the models using blender please make sure to include the normals and export faces as triangles.
+Now you can now see all the triangles that compose the model.
+
+With this OBJ loader class you can now use Blender to create your models. Blender is a powerful tool but it can be some bit of overwhelming at first, there are lots of options, lots of key combinations and you need to take your time to do the most basic things by the first time. When you export the models using blender please make sure to include the normals and export faces as triangles.
 
 ![OBJ Export options](obj_export_options.png)
 
