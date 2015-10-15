@@ -91,7 +91,7 @@ public class Camera {
 }
 ```
 
-Next in our ```Transformation``` class we will hold a new matrix to hold the values of the view matrix.
+Next in the ```Transformation``` class we will hold a new matrix to hold the values of the view matrix.
 
 ```java
 private final Matrix4f viewMatrix;
@@ -112,7 +112,7 @@ public Matrix4f getViewMatrix(Camera camera) {
 }
 ```
 
-As you can see we first do the translation and then the rotation. . Finally we will remove the previous ```getWorldMatrix``` and add a new one called getModelViewMatrix.
+As you can see we first do the translation and then the rotation. Finally we will remove the previous method ```getWorldMatrix``` and add a new one called ```getModelViewMatrix```.
 
 ```java
 public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
@@ -129,7 +129,7 @@ public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
 
 The ```getModelViewMatrix``` method will be called per each ```GameItem``` instance so we must work over a copy of the view matrix so transformations do not get accumulated in each call (Remember that ```Matrix4f``` class is not immutable).
 
-In the render method of the ```Renderer``` class we just need to update the view matrix according to the camera values, just after the projection matrix is also updated.
+In the ```render``` method of the ```Renderer``` class we just need to update the view matrix according to the camera values, just after the projection matrix is also updated.
 
 ```java
 // Update projection Matrix
@@ -156,7 +156,7 @@ And that’s all, our base code supports the concept of a camera. Now we need to
 * Keys “Z” and “X” to move the camera up and down (y axis) respectively.
 
 We will use the mouse position to rotate the camera along the x and y axis when the right button of the mouse is pressed.
-As you can see we will be using the mouse for the first time. We will create a new class named MouseInput that will encapsulate mouse access. Here’s the code for that class.
+As you can see we will be using the mouse for the first time. We will create a new class named ```MouseInput``` that will encapsulate mouse access. Here’s the code for that class.
 
 ```java
 package org.lwjglb.engine;
@@ -255,7 +255,7 @@ The ```MouseInput``` class provides an ```init``` method which should be called 
 * ```glfwSetCursorEnterCallback```: Registers a callback that will be invoked when the mouse enters our window. We will be received mouse evevents even if the mouse is not in our window. We use this callback to track when the mouse is in our window.
 * ```glfwSetMouseButtonCallback```: Registers a callback that will be invoked when a mouse button is pressed.
 
-One important thing related to callbacks and GLFW is that we need to keep a reference to the callback implementation into our Java class. You see that we have one atribute per callback. This is because callbacks are implemente in native code and the Java part of GLFW des not hold any reference to them. If we don't hold a reference they will be garbage collected and you will see an exception like this:
+One important thing related to callbacks and GLFW is that we need to keep a reference to the callback implementation into our Java class. You see that we have one attribute per callback. This is because callbacks are implemented in native code and the Java part of GLFW des not hold any reference to them. If we don't hold a reference they will be garbage collected and you will see an exception like this:
 
 ```
 Exception in thread "GAME_LOOP_THREAD" org.lwjgl.system.libffi.ClosureError: Callback failed because the closure instance has been garbage collected
