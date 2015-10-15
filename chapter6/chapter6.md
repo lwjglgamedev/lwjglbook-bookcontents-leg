@@ -203,7 +203,7 @@ So right now, in order to that representation we need to provide some basic oper
 
 The operations described above are known as transformations. And you probable may be guessing that the way we are we going to achieve that is by multiplying our coordinates by a set of matrices (one for translation, one for rotation and one for scaling). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
 
-The reason why it is called world matrix is because we are transforming from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined using it’s own coordinate systems, they don’t know the size of your 3D space and the y need to be placed in it so when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate systems (the model one) to another coordinate systems (the one for our 3D world). 
+The reason why it is called world matrix is because we are transforming from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined using it’s own coordinate systems, they don’t know the size of your 3D space and they need to be placed in it so when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate systems (the model one) to another coordinate systems (the one for our 3D world). 
 
 That world matrix will be calculated like this (The order is important since multiplication using matrices is not commutative):
 
@@ -237,8 +237,9 @@ Scale Matrix Parameters:
 
 The rotation matrix is much more complex, but keep in mind that it can be constructed by the multiplication of 3 rotation matrices for a single axis.
 
-Now, in order to apply those concepts we need to refactor our code a little bit. In our game we will be loading a set of models which can be used to render many objects in different positions according to our game logic (imagine a FPS game which loads three models for different enemies, there are only three models but using these models we can draw as many enemies as we want). Do we need to create a VAO and the set of VBOs for each of those objects ? The answer is no, we only need to load it once per model. What we need to do is draw it independently according to its position, size and rotation. That is we need to transform those models when we are rendering it.
-So we will create a new class named GameItem that will hold a reference to a model, to a Mesh instance. A GameItem instance will have variables for storing its position, its rotation state and its scale. This is the definition of that class.
+Now, in order to apply those concepts we need to refactor our code a little bit. In our game we will be loading a set of models which can be used to render many objects in different positions according to our game logic (imagine a FPS game which loads three models for different enemies, there are only three models but using these models we can draw as many enemies as we want). Do we need to create a VAO and the set of VBOs for each of those objects ? The answer is no, we only need to load it once per model. What we need to do is draw it independently according to its position, size and rotation. We need to transform those models when we are rendering it.
+
+So we will create a new class named ```GameItem``` that will hold a reference to a model, to a ```Mesh``` instance. A ```GameItem``` instance will have variables for storing its position, its rotation state and its scale. This is the definition of that class.
 
 ```java
 package org.lwjglb.engine;
@@ -297,7 +298,7 @@ public class GameItem {
 }
 ```
 
-We will create another class which will deal with transformations named Transformation.
+We will create another class which will deal with transformations named ```Transformation```.
 
 ```java
 package org.lwjglb.engine.graph;
