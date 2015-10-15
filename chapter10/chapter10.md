@@ -100,19 +100,22 @@ This is what the specular component models, and it depends on the material chara
 
 Once the mechanism that’s behind sepecular reflection has been explained we are ready to calculate that component. First we need a vector that points from the light source to the vertex point.  When we were calculating the difusse component we calculated just the opposite, a vector that points to the light source. $$toLightDirection$$, so let’s  calculate it as $$fromLightDirection = -(toLightDirection)$$.
 
-Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named reflect. So, $$reflectedLight = reflect(fromLightSource, normal)$$.
+Then we need to calculate the reflected light that results from the impact of the $$fromLightDirection$$ into the surface by taking into consideration its normal. There’s a GLSL function that does that named ```reflect```. So, $$reflectedLight = reflect(fromLightSource, normal)$$.
 
 We also need a vector that points to the camera, let’s name it $$cameraDirection$$, and it will be calculated as the difference between the camera position and the vertex position: $$cameraDirection = cameraPos - vPos$$. The camera position vector and the vertex position need to be in the same coordinate system and the resulting vector needs to be normalized. The following figure sketches the main components we have calculated up to now.
 
 ![Specular lightning calculation](specular_lightining_calc.png)
  
-Now we need to calculate the light intensity that we see which we will call $$specularFactor$$, this component will be higher if the $$cameraDirection$$ and the $$reflectedLight$$ vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So $$specularFactor = cameraDirection \cdot reflectedLight$$. We only want this value to be between $$0$$ and $$1$$ so if it’s lower than $$0$$ it will be set to 0.
+Now we need to calculate the light intensity that we see which we will call $$specularFactor$$. This component will be higher if the $$cameraDirection$$ and the $$reflectedLight$$ vectors are parallel and point in the same direction and will take its lower value if they point in opposite directions. In order to calculate this the dot product comes to the rescue again. So $$specularFactor = cameraDirection \cdot reflectedLight$$. We only want this value to be between $$0$$ and $$1$$ so if it’s lower than $$0$$ it will be set to 0.
 
-We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light done by  powering the $$specularFactor$$ to a parameter named $$specularPower$$.
+We also need to take into consideration that this light must be more intense if the camera is pointing to the reflected light cone. This will be achieved by  powering the $$specularFactor$$ to a parameter named $$specularPower$$.
 
 $$specularFactor = specularFactor^{specularPower}$$.
 
 Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$lColour * reflectance * specularFactor * intensity$$.
+
+
+## Attenuation
 
 We now know how to calculate the three components that will serve us to model a point light with an ambient light. But our light model is still not complete, the light that an object reflects is independent of the distance that the light is, we need to simulate light attenuation. 
 
