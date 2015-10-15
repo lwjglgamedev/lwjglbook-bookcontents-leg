@@ -3,7 +3,6 @@
 
 Let’s get back to our nice coloured quad we created in previous chapter. If you look carefully at it, it resembles more to a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
 
-
 If you revisit our vertex shader code we are just passing our coordinates directly, that is when we say that a vertex has a value for coordinate x of 0.5 we are saying to OpenGL to draw it in x position 0.5 in our screen. The following figure shows OpenGL coordinates (just for x and y axis).
 
 ![Coordinates](coordinates.png)
