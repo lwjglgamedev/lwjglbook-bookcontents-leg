@@ -86,7 +86,7 @@ projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,
 
 At this moment we will ignore that the aspect ratio can change (by resizing our window). This could be checked in the ```render``` method and change our projection matrix accordingly.
 
-Now that we have our matrix, how do we use it? We need to use it in our shader, and it should be applied to all the vertices. At first, you could think in bundling it in the vertex input (like the coordinates and the colours), but think it twice. We would be wasting lots of space since the projection matrix should not change even between several render calls.
+Now that we have our matrix, how do we use it? We need to use it in our shader, and it should be applied to all the vertices. At first, you could think in bundling it in the vertex input (like the coordinates and the colours). In this case we would be wasting lots of space since the projection matrix should not change even between several render calls. You may also think on multiplying the vertices by the matrix in the java code but then, our VBOs would be useless and we will not be using the process power available in the graphics card.
 
 The answer is to use “uniforms”. Uniforms are global GLSL variables that shaders can use and that we will employ to communicate with them. 
 
