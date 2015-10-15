@@ -86,7 +86,7 @@ Let’s view now the specular component, but first  we need to examine how light
  
 ![Light reflection](light_reflection.png)
 
-Of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections that. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. You what we see is like a beam of light being reflected from the surface. That is, light is diffused when impact a surface, and that’s the disuse component that we have been talking about previously.
+Of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. You what we see is like a beam of light being reflected from the surface. That is, light is diffused when impact a surface, and that’s the disuse component that we have been talking about previously.
  
 ![Surface](surface.png)
  
