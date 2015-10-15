@@ -18,7 +18,7 @@ A camera can be displaced along the three axis (x, y and z) and also can rotate 
 
 ![Roll pitch and yaw](roll_pitch_yaw.png) 
 
-So basically what w e must do is to ebe able to move and rotate all of the objects of oa 3D world. How are we going to do this? The answer is to apply another transformation that will translate all of the vertices of all of the objects in the opposite direction of the movement of the camera and that will rotate them according to the camera rotation. This will be done of course with another matrix, the so called view matrix. This matrix will first perform the translation and then the rotation along the axis.
+So basically what we must do is to be able to move and rotate all of the objects of our 3D world. How are we going to do this? The answer is to apply another transformation that will translate all of the vertices of all of the objects in the opposite direction of the movement of the camera and that will rotate them according to the camera rotation. This will be done of course with another matrix, the so called view matrix. This matrix will first perform the translation and then the rotation along the axis.
 
 Let's see how we can construct that matrix. If you remember from the transformations chapter our transformation equation was like this:
 
