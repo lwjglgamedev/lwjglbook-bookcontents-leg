@@ -6,18 +6,19 @@ In this chapter we will learn how to add light to our 3D game engine. We will no
 Before we start, let us define some light types:
 * **Point light**: This type of light models a light source that’s emitted uniformly form a point in space in all directions.
 * Spot light: This type of light models a light source that’s emitted from a point in space, but instead of emitting in all directions is restricted to a cone.
-* **Directional light**: This type for light models the light that we receive from the sun, all the objects in the 3D the space are  hit by parallel ray lights coming from a specific direction. No matter if the object is close or of far all the right lights impact the objects with the same angle.
+* **Directional light**: This type for light models the light that we receive from the sun, all the objects in the 3D the space are  hit by parallel ray lights coming from a specific direction. No matter if the object is close or of far away, all the ray lights impact the objects with the same angle.
 * **Ambient light**: This type of light comes from everywhere in the space and illuminates all the objects in the same way.
  
 ![Light types](light_types.png)
 
-Thus, to model light we need to take into consideration the type of light plus, its position and some other parameters like its colour. Of course, the light hits objects and the way those objects absorb and reflect light is also important.
+Thus, to model light we need to take into consideration the type of light plus, its position and some other parameters like its colour. Of course, we must also consider the way that objects, impacted by ray lights, absorb and reflect light.
 
-The Phong shading algorithm will the effects of light for each point in our model, that is for every vertex. This is why it’s called a local illumination simulation, this is the reason which this algorithm will not calculate shadows, it will just calculate the light tp be applied to every vertex without taking into consideration if the vertex is behind an objects that blocks the light. We will overcome this in later chapters. But, because of that is a very simple and fast algorithm that provides very goof effects. We will use here a simplified version that does not take into account materials deeply.
-The Pong algorithm considers three components for lighting:
-	Ambient light: models light that comes from everywhere, this will serve us to illuminate (with the require intensity) the areas that are not hit by any light, it’s like a background light.
-	Diffuse reflectance: It takes into consideration that surfaces that are facing the light source are brighter.
-	Specular reflectance: models how light reflects in polished or metallic surfaces
+The Phong shading algorithm will model the effects of light for each point in our model, that is for every vertex. This is why it’s called a local illumination simulation, and this is the reason which this algorithm will not calculate shadows, it will just calculate the light to be applied to every vertex without taking into consideration if the vertex is behind an object that blocks the light. We will overcome this in later chapters. But, because of that, is a very simple and fast algorithm that provides very good effects. We will use here a simplified version that does not take into account materials deeply.
+
+The Phong algorithm considers three components for lighting:
+* **Ambient light**: models light that comes from everywhere, this will serve us to illuminate (with the require intensity) the areas that are not hit by any light, it’s like a background light.
+* **Diffuse reflectance**: It takes into consideration that surfaces that are facing the light source are brighter.
+* **Specular reflectance**: models how light reflects in polished or metallic surfaces
 
 At the end what we want to obtain is a factor that, multiplied by our model colour, will get that colour brighter or darker depending on the light. Let’s name our components as $$A$$ for ambient, $$D$$ for diffuse and $$S$$ for specular. That factor will be the addition of those components:
 
