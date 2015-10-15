@@ -86,7 +86,7 @@ Let’s view now the specular component, but first  we need to examine how light
  
 ![Light reflection](light_reflection.png)
 
-Of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. You what we see is like a beam of light being reflected from the surface. That is, light is diffused when impact a surface, and that’s the disuse component that we have been talking about previously.
+Of course, surfaces are not totally polished, and if you look at closer distance you will see a lot of imperfections. Besides that, you have many ray lights (photons in fact), that impact that surface, and that get reflected in a wide range of angles. Thus, what we see is like a beam of light being reflected from the surface. That is, light is diffused when impacting over a surface, and that’s the disuse component that we have been talking about previously.
  
 ![Surface](surface.png)
  
@@ -94,7 +94,7 @@ But when light impacts a polished surface, for instance a metal, the light suffe
 
 ![Polished surface](polished_surface.png) 
 
-This is what the specular component models, and it depends on the material characteristics. Regarding specular reflectance, it’s important to note that  the reflected light will only be visible if the camera is in a proper position, that is, is in the area of where the reflected light is emitted.
+This is what the specular component models, and it depends on the material characteristics. Regarding specular reflectance, it’s important to note that  the reflected light will only be visible if the camera is in a proper position, that is, if it's in the area of where the reflected light is emitted.
 
 ![Specular lightning](specular_lightining.png) 
 
