@@ -1,8 +1,11 @@
 # Camera 
 
-In this chapter we will learn how to setup move inside a rendered 3D scene, this capability is like having a camera that can move inside the 3D world and in fact is the term used to refer to it. In OpenGL there is no camera concept, or in other words the camera is always fixed, centred in the (0, 0, 0) position at the centre of the screen.
+In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact is the term used to refer to it.
 
-So what we will do is a simulation that gives us the impression that we have a camera capable of moving inside the 3D scene. How do we achieve this ? Well, if we cannot move the camera then we must move all the objects contained in our 3D space at once. In other words, if we cannot move a camera we will move the whole world.
+But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the (0, 0, 0) position at the center of the screen.
+
+So what we will do is a simulation that gives us the impression that we have a camera capable of moving inside the 3D scene. How do we achieve this? Well, if we cannot move the camera then we must move all the objects contained in our 3D space at once. In other words, if we cannot move a camera we will move the whole world.
+
 So, suppose that we would like to move the camera position along the z axis from a starting position (Cx, Cy, Cz) to a position (Cx, Cy, Cz+dz) to get closer to the object which is placed at the coordinates (Ox, Oy, Oz).
 
 ![Camera movement](camera_movement.png) 
@@ -15,15 +18,15 @@ A camera can be displaced along the three axis (x, y and z) and also can rotate 
 
 ![Roll pitch and yaw](roll_pitch_yaw.png) 
 
-And how are we going to do this ? The answer is to apply another transformation that will translate all of our vertices in the opposite direction of the movement of the camera and will rotate them according to the camera rotation. This will be done of course with another matrix, the so called view matrix. This matrix will first perform the translation and then the rotation along the axis.
-If you remember from the transformations chapter our transformation equation was like this:
+So basically what w e must do is to ebe able to move and rotate all of the objects of oa 3D world. How are we going to do this? The answer is to apply another transformation that will translate all of the vertices of all of the objects in the opposite direction of the movement of the camera and that will rotate them according to the camera rotation. This will be done of course with another matrix, the so called view matrix. This matrix will first perform the translation and then the rotation along the axis.
+
+Let's see how we can construct that matrix. If you remember from the transformations chapter our transformation equation was like this:
 
 ![Previous Transformation equation](prev_transformation_eq.png)
 
 The view matrix should be applied before multiplying by the projection matrix, so our equation should be now like this:
  
 ![New Transformation equation](new_transf_eq.png)
-
 
 Now we have three matrices. The projection matrix should change during our game cycle, in the worst case it may change once per render call. The view matrix will change once per render call if the camera moves and the world matrix changes once per ```GameItem``` instance. So, how many matrices should we push to or vertex shader ? You may see some code that uses three uniforms for each of those matrices, but the most logical conclusion would be to combine the projection and the view matrix, let’s callit pv matrix, and push the world and the pv matrices to our shader. We would have the possibility to work with world coordinates and would be avoiding some extra multiplications.
 
