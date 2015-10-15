@@ -12,7 +12,7 @@ If you recall, directional lighting hits all the objects by parallel rays all co
  
 Another characteristic of directional light is that it is not affected by attenuation.  Think again about Sun light, all objects that are hit by ray lights are illuminated with the same intensity, the distance from the sun is so huge that the position of the objects is irrelevant. In fact, directional lights are modeled as light sources placed at the infinity, if it was affected by attenuation it would have no effect in any object (it’s colour contribution would be equal to $$0$$).
 
-Besides that, directional light are composed also by a diffuse and specular components, the only differences with point lights is that they do not have a position but a direction and that they are not affected by attenuation.  Let’s get back to the direction attribute of directional light, and imagine we are modelling the movement of the sun across our 3D world, if we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, midnight and dusk.
+Besides that, directional light is composed also by a diffuse and specular components, the only differences with point lights is that it does not have a position but a direction and that it is not affected by attenuation.  Let’s get back to the direction attribute of directional light, and imagine we are modeling the movement of the sun across our 3D world. If we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, midnight and dusk.
 
 ![Sun as a directional light](sun_directional_light.png)
 
@@ -30,7 +30,7 @@ But, how do we model the fact that this light is located at the infinity ? The a
 * Mid day: (0, 1, 0, 0)
 * Dusk: (1, 0, 0, 0)
 
-This is the same case as when we pass the normals, for normals we set the w component to 0 to state that we are not interested in displacements, just in the direction. Also, when we deal with directional light we need to do the same, camera translations should not affect the direction of a directional light.
+This is the same case as when we pass the normals, for normals we set the w component to $$0$$ to state that we are not interested in displacements, just in the direction. Also, when we deal with directional light we need to do the same, camera translations should not affect the direction of a directional light.
 
 So let’s start coding and model our directional light. The first thing that we are going to do is to create a class that models its attributes. It will be another POJO with a copy constructor which stores the direction,  the colour and the intensity.
 
@@ -61,6 +61,7 @@ public class DirectionalLight {
 ```
 
 As you can see, we are still using a ```Vector3f``` to model the direction. Keep calm, we will deal with the w component when we transfer the directional light to the shader. And by the way, the next thing that we will do is to update the ```ShaderProgram``` to create and update the uniform that will hold the directional light.
+
 In our fragment shader we will define a structure that models a directional light.
 
 ```glsl
