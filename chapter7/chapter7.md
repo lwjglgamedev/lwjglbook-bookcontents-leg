@@ -104,12 +104,13 @@ Now we are going to apply a texture to our cube. A texture is an image which is 
  
 The texture image does not have to have the same size as the model, it can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture.  You can control how this process is done when a specific texture is created. 
 
-So basically what we must do is to assign texture coordinates to each of our vertices. Texture coordinates system are a bit different than the coordinates system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y.  Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is equal to 1.
+So basically what we must do, in order to apply a textura to a model, is assign texture coordinates to each of our vertices. Texture coordinates system are a bit different than the coordinates system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y. Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is equal to 1.
 
 ![Texture coordinates](texture_coordinates.png)
  
-How to we relate texture coordinates with our position coordinates ? Easy, the same way as we passed the colour, we set up a VBO which will have a texture coordinate for each vertex position. So let’s start modifying our code to use textures in our 3D cube.
-The first step is to load the image that will be used as a texture. For this tasks, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow a more verbose approach.  We will use a library called pngdecoder, so we need to declare that dependency in our ```pom.xml``` file. 
+How do we relate texture coordinates with our position coordinates? Easy, the same way as we passed the colour information, we set up a VBO which will have a texture coordinate for each vertex position.
+
+So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this tasks, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow a more verbose approach.  We will use a library called pngdecoder, thus, we need to declare that dependency in our ```pom.xml``` file. 
 
 ```xml
 <dependency>
