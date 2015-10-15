@@ -2,23 +2,23 @@
 
 In this chapter we will create a HUD (Heads-Up Display) for our game. That is, a set of 2D shapes and text that is displayed at any time over the 3D scene to show relevant information. We will create a simple HUD that will serve us to show some basic techniques for representing that information.
 
-You will see also that some little refactoring has been applied to the source code, especially in the Render class to prepare it for the separation of the 3D scene and the HUD rendering. 
+You will see also that some little refactoring has been applied to the source code, especially in the ```Renderer``` class to prepare it for the separation of the 3D scene and the HUD rendering. 
 
 ## Text rendering
 
-The first thing that we will do is render text. in order to do so what we are going to do is to map a texture that contains alphabet characters into a quad which is formed by a set of tiles, each of them representing a single letter. The first thing that we must do is to create the texture that contains the alphabet, there are many programs out there that can do this task, such as,  [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc.
+The first thing that we will do is render text. in order to do so what we are going to do is to map a texture that contains alphabet characters into a quad which is formed by a set of tiles, each of them representing a single letter. So to start we must create the texture that contains the alphabet, there are many programs out there that can do this task, such as,  [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc.
 
 We will use Codehead’s Bitmap Font Generator (CBFG). This tool lets you configure many options such as the texture size, the font type, the anti-aliasing to be applied, etc. The following figure depicts the configuration that we will use to generate our texture file. In this chapter we will assume that we will be rendering text encoded in ISO-8859-1 format, if you need to deal with different character sets you will need to tweak a little bit the code.
 
 ![CBG Configuration](CBG.png)
 
-When you have finished configuring all the settings you can export the result to several image formats. In this case we will export it as a BMP file and later on we will transform it to PNG so it can be loaded as a texture. When transform it to PNG we will set up also the black background as transparent so, that is, we will set the black colour to have an alpha value equals to 0 (You can use GIMP to do that). We will have something similar as the following picture.
+When you have finished configuring all the settings you can export the result to several image formats. In this case we will export it as a BMP file and later on we will transform it to PNG so it can be loaded as a texture. When transforming it to PNG we will set up also the black background as transparent, that is, we will set the black colour to have an alpha value equals to 0 (You can use GIMP to do that). We will have something similar as the following picture.
 
 ![Font Texture](font_texture.png) 
 
-We have all the characters displayed in rows and columns. In this case the images is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is in enclosed in the image. The column is calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operation. The row is calculated as follows: $$row = code / numberOfCols$$, in this case we will do a integer by integer operation so we can ignore the decimal part.
+We have all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column is calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operation. The row is calculated as follows: $$row = code / numberOfCols$$, in this case we will do a integer by integer operation so we can ignore the decimal part.
 
-We will create a new class named ```TextItem``` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc but it will allow us to present textual information in the HUD.  Here you can see the first lines and the constructor of this class.
+We will create a new class named ```TextItem``` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc. but it will allow us to present textual information in the HUD.  Here you can see the first lines and the constructor of this class.
 
 ```java
 package org.lwjglb.engine;
@@ -70,11 +70,11 @@ private Mesh buildMesh(Texture texture, int numCols, int numRows) {
     float tileHeight = (float)texture.getHeight() / (float)numRows;
 ```
 
-The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them represent a single character and we need to assign also the appropriate texture coordinates depending on the character code. The following picture shows the different elements that compose the tiles and the quad.
+The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them representing a single character. We need to assign also the appropriate texture coordinates depending on the character code. The following picture shows the different elements that compose the tiles and the quad.
 
 ![Text Quad](text_quad.png)
 
-So, for each character we need to create a tile which is formed by two triangles which can be defined by using four vertices (V1, V2, V3 and V4), the indices will be (0, 1, 2) for the first triangle (the lower one) and (3, 0, 2) for the other one (the upper one).  Texture coordinates are calculated based on the column and the row associated to each character, texture coordinates need to be in the range [0,1] so we just need to dived the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
+So, for each character we need to create a tile which is formed by two triangles which can be defined by using four vertices (V1, V2, V3 and V4). The indices will be (0, 1, 2) for the first triangle (the lower one) and (3, 0, 2) for the other one (the upper one).  Texture coordinates are calculated based on the column and the row associated to each character, texture coordinates need to be in the range [0,1] so we just need to divide the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
 
 The following loop creates all the vertex position, texture coordinates and indices associated to the quad that contains the text. 
 
@@ -126,10 +126,13 @@ for(int i=0; i<numChars; i++) {
 
 The are some important things to notice in the previous fragment of code:
 * We will represent the vertices using screen coordinates (remember that the origin of the screen coordinates is located at the top left corner). The y coordinate of the vertices on top of the triangles is lower than the y coordinate of the vertices on the bottom of the triangles.
-* We don’t scale the shape, so each tile is at a x distance equal to a character width. The height of the triangles will be the height of each character. This is because we want to represent the text as similar as possible as the original texture.
+* We don’t scale the shape, so each tile is at a x distance equal to a character width. The height of the triangles will be the height of each character. This is because we want to represent the text as similar as possible as the original texture. (Anyway we can later scale the result since ```TextItem``` class inherits from ```GameItem```).
 * We set a fixed value for the z coordinate, since it will be irrelevant in order to draw this object.
+
 The next figure shows the coordinates of some vertices.
- 
+
+![Text Quad coordinates](text_quad_coords.png) 
+
 Why do we use screen coordinates ? First of all, because we will be rendering 2D objects in our HUD and often is more handy to use them, and secondly because we will use an orthographic projection in order to draw them. We will explain what is an orthographic projection later on.
 
 The ```TextItem``` class is completed with other methods to get the text and to change it. Whenever the text is changed, we need to clean up the previous VAOs (stored in the Mesh instance) and create a new one. We do not need to destroy the texture, so we have created a new method in the ```Mesh``` class to just remove that data.
@@ -147,7 +150,7 @@ public void setText(String text) {
 }
 ```
 
-As it has been said in the beginning of this chapter, we need firs to render our 3D scene and the render our 2D HUD. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use a orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+As it has been said in the beginning of this chapter, we need first to render our 3D scene and the render our 2D HUD. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use a orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
 ![Orthopgraphic Projections](orthographic_projections.png) 
 
