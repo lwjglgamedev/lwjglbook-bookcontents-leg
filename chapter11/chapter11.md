@@ -6,13 +6,13 @@ In this chapter we are going to implement other light types that we introduced i
 
 ## Directional Light 
 
-If you recall, directional lighting hits all the objects by parallel rays all coming from the same direction. It models light sources that are very far away but have a high intensity such us the Sun.
+If you recall, directional lighting hits all the objects by parallel rays all coming from the same direction. It models light sources that are far away but have a high intensity such us the Sun.
 
 ![Directional Light](directional_light.png)
  
-Another characteristic of directional light is that it is not affected by attenuation.  Think again about Sun light, all objects that are hit by ray lights are illuminated with the same intensity, the distance from the sun is so huge that the position of the objects is irrelevant. In fact directional lights are modelled as light sources placed at the infinity, if it was affected by attenuation it would have no effect in any object (it’s colour contribution would be equal to $$0$$).
+Another characteristic of directional light is that it is not affected by attenuation.  Think again about Sun light, all objects that are hit by ray lights are illuminated with the same intensity, the distance from the sun is so huge that the position of the objects is irrelevant. In fact, directional lights are modeled as light sources placed at the infinity, if it was affected by attenuation it would have no effect in any object (it’s colour contribution would be equal to $$0$$).
 
-Besides that, directional light are composed also by a diffuse and a specular components, the only differences with point lights is that they do not have a position but a direction and that they are not affected by attenuation.  Let’s get back to the direction attribute of directional light, and imagine we are modelling the movement of the sun across our 3D world, if we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, midnight and dusk.
+Besides that, directional light are composed also by a diffuse and specular components, the only differences with point lights is that they do not have a position but a direction and that they are not affected by attenuation.  Let’s get back to the direction attribute of directional light, and imagine we are modelling the movement of the sun across our 3D world, if we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, midnight and dusk.
 
 ![Sun as a directional light](sun_directional_light.png)
 
