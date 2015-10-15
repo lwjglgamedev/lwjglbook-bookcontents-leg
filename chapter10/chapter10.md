@@ -72,13 +72,15 @@ Let’s summarize how we can calculate it, we define the following variables:
 * $$lColour$$: Colour of the light.
 * $$normal$$: The vertex normal.
 * 
-First we need to calculate the vector that points to the light source from current position: $$toLightDirection = lPos - vPos$$. The result needs to be normalized
+First we need to calculate the vector that points to the light source from current position: $$toLightDirection = lPos - vPos$$. The result of that operation needs to be normalized
 
 Then we need to calculate the diffuse factor (an scalar): $$diffuseFactor = normal \cdot toLightDirection$$. It’s calculated as dot product between two vectors, since we want it to be between $$-1$$ and $$1$$ both vectors need to be normalized. Colours need to be between $$0$$ and $$1$$ so if a value it’s lower than $$0$$ we will set it to 0.
 
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
 
 $$colour = lColour * diffuseFactor * intensity$$
+
+## Specular component
 
 Let’s view now the specular component, but first  we need to examine how light is reflected. When light hits a surface some part of it is absorbed and the other part is reflected, if you remember from your physics class, reflection is when light bounces off an object.
  
