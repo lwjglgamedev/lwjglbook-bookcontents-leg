@@ -1,5 +1,8 @@
 # Camera 
 
+**UPDATE: CHAPTER IN EARLY DRAFT. CODE WILL BE UPDATED TO CORRECT CAMERA ROTATION
+**
+
 In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact is the term used to refer to it.
 
 But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the (0, 0, 0) position at the center of the screen.
