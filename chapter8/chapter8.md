@@ -1,8 +1,5 @@
 # Camera 
 
-**UPDATE: CHAPTER IN EARLY DRAFT. CODE WILL BE UPDATED TO CORRECT CAMERA ROTATION
-**
-
 In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact is the term used to refer to it.
 
 But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the (0, 0, 0) position at the center of the screen.
@@ -71,9 +68,15 @@ public class Camera {
     }
     
     public void movePosition(float offsetX, float offsetY, float offsetZ) {
-        position.x += offsetX;
+        if ( offsetZ != 0 ) {
+            position.x += (float)Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
+            position.z += (float)Math.cos(Math.toRadians(rotation.y)) * offsetZ;
+        }
+        if ( offsetX != 0) {
+            position.x += (float)Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
+            position.z += (float)Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
+        }
         position.y += offsetY;
-        position.z += offsetZ;
     }
 
     public Vector3f getRotation() {
@@ -104,18 +107,24 @@ We will also provide a method to update its value. Like the projection matrix th
 
 ```java
 public Matrix4f getViewMatrix(Camera camera) {
-	viewMatrix.identity();
     Vector3f cameraPos = camera.getPosition();
     Vector3f rotation = camera.getRotation();
-    viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z).
-        rotateX((float)Math.toRadians(rotation.x)).
-        rotateY((float)Math.toRadians(rotation.y)).
-        rotateZ((float)Math.toRadians(rotation.z));
+        
+    viewMatrix.identity();
+    // First do the rotation so camera rotates over its position
+    viewMatrix.rotate((float)Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
+        .rotate((float)Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
+    // Then do the translation
+    viewMatrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
     return viewMatrix;
 }
 ```
 
-As you can see we first do the translation and then the rotation. Finally we will remove the previous method ```getWorldMatrix``` and add a new one called ```getModelViewMatrix```.
+As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but the coordinates origin. do the translation and then the rotation. Please also note that  in the ```movePosition``` method of the ```Camera``` class we just not simply increase the camera position by and offset, we also take into consideration the rotation along the y axis (the yaw), in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
+
+Besides what is mentioned above we do not have here a full free fly camrea (for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forwad). This will be done in later chapters since is a little bit complex.
+
+Finally we will remove the previous method ```getWorldMatrix``` and add a new one called ```getModelViewMatrix```.
 
 ```java
 public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
