@@ -1,7 +1,5 @@
 # Camera 
 
-**CHAPTER IN PROGRESS: Still to decide if free fly camera is included here or not**
-
 In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact is the term used to refer to it.
 
 But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the (0, 0, 0) position at the center of the screen.
@@ -122,9 +120,9 @@ public Matrix4f getViewMatrix(Camera camera) {
 }
 ```
 
-As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but the coordinates origin. do the translation and then the rotation. Please also note that  in the ```movePosition``` method of the ```Camera``` class we just not simply increase the camera position by and offset, we also take into consideration the rotation along the y axis (the yaw), in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
+As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the ```movePosition``` method of the ```Camera``` class we just not simply increase the camera position by and offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
 
-Besides what is mentioned above we do not have here a full free fly camrea (for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forwad). This will be done in later chapters since is a little bit complex.
+Besides what is mentioned above, we do not have here a full free fly camera (for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forward). This will be done in later chapters since is a little bit more complex.
 
 Finally we will remove the previous method ```getWorldMatrix``` and add a new one called ```getModelViewMatrix```.
 
