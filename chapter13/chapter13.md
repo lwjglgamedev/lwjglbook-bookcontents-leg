@@ -1,4 +1,6 @@
-# Sky Box
+# Sky Box and some optimizations
+
+## Skybox
 
 A skybox will allow us to set a background to give the illusion that our 3D world is bigger. That background is wrapped around the camera position and covers the whole space.  The technique that we are going to use here is to construct a big cube that will be displayed around the 3D scene, that is,  the centre of the camera position will be the centre of the cube. The sides of that cube will be a texture with hills a blue sky and clouds that will be mapped in a way that the image looks a continuous landscape.
 
@@ -170,4 +172,41 @@ You can play with the render method an comment the lines that prevent the skybox
 
 Although it is not what a sky box should do it can help you out to understand the sky box technique. This is a simple example, we will need to add other effects such as a sun moving through the sky or moving clouds. Also, in order to create bigger worlds we will need to split our world into fragments and only load the ones that are contiguous to the fragment where the player is currently in. We will try to introduce all these techniques later on.
 
+## Some optimizations
 
+From the previous example, the fact that the skybox is relative small makes the effect a little bit weird (you can see objects appearing magically from the hills). So, ok, let’s increase the skybox size and thus let’s increase the size of our world. Let’s scale the size of our skybox by a factor of 50 so our world will be composed by 40,000 GameItem instances (cubes).
+
+If you change the scale factor and rerun the example you will see that performance problem starts to arise and the movement through the 3D world is not smooth. It’s time to focus a little on performance (you may know the old saying that states that “premature optimization is the root of all evil”, but since this chapter 13, I hope nobody will say that this premature).
+
+Let’s start with a concept that will reduce the amount of data that is being rendered, we will explain face culling. In our examples we are rendered thousands of cubes, and a cube is made of six faces. We are rendering the six faces for each cube even if they are not visible. You can check this if you zoom in to a cube, you will see its interior like this.
+
+![Cube interior](cube_interior.png) 
+
+Faces that cannot be seen should be discarded immediately and this is what face culling does. In fact, for a cube you can only see 3 faces at the same time, so we can just discard half of the faces (40,000 * 3 * 2 triangles) just by applying face culling (this will only be valid if your game does not require you to dive into the inner side of a model, you can see why later on).
+
+Face culling checks, for every triangle if its facing towards us and discards the ones that are not facing that direction. But, how do we know if a face is facing towards us or not ? Well, the way that OpenGL does this is by the winding order of the vertices that compose a triangle.
+
+Remember from the first chapters that we may define of vertices in clockwise or counter-clockwise order. In OpenGL, by default, triangles that are in counter-clockwise order are facing towards the viewer and triangles that are in clockwise order are facing backwards. The key thing here, is that this order is checked while rendering and taking into consideration the point of view. So a triangle that has been defined in counter-clock wise order can be seen, at rendering, as clockwise because of the point of view.
+Let’s put it in practice, in the ```init``` method of the ```Window``` class add the following lines:
+
+```java
+glEnable(GL_CULL_FACE);
+glCullFace(GL_BACK);
+```
+The first line will enable face culling and the second line states that faces that are facing backwards should be culled (removed). With that line if you look upwards you will see something like this.
+
+![Sky box with face culling applied](skybox_face_culling.png)
+
+What’s happening ? if you review the vertices order for the top face you will see that is has been defined in counter-clockwise order.  Well, it was, but remember that the winding refers to the point of view. In fact, if you apply translation also to the skybox so you are able to see it form the upside you will see that the top face is rendered again once you are outside it.
+ 
+![Skybox with face culling from the outside](skybox_face_culling_exterior.png)
+
+Let’s sketch what’s happening. The following picture shows on of the triangles of the top face of  the skybox cube, which is defined by three vertices defined in counter-clockwise order.
+
+![Vertices defined in counter-clockwise order](cube_counter_clockwise.png) 
+
+But remember that we are inside the skybox, if we look at the cube form the interior, what we will see is that the vertices are defined in clockwise order.
+
+![Cube seen from the interior](cube_clockwise.png) 
+
+This is because, the skybox was defined to be looked from the outside. So we need to flip the definition for some of the faces in order to be viewed correctly and we will have face culling working properly.
