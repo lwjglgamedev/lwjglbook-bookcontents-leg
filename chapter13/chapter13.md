@@ -209,4 +209,126 @@ But remember that we are inside the skybox, if we look at the cube form the inte
 
 ![Cube seen from the interior](cube_clockwise.png) 
 
-This is because, the skybox was defined to be looked from the outside. So we need to flip the definition for some of the faces in order to be viewed correctly and we will have face culling working properly.
+This is because, the skybox was defined to be looked from the outside. So we need to flip the definition for some of the faces in order to be viewed correctly and we will have face culling working properly.An if you get inside a cube you will see that inner sides are not shown.
+
+But there’s still more room for optimization. Let’s review our rendering process. In the render method of the ```Renderer``` class what we are doing is iterate over a ```Gametem``` array and render the associated Mesh. For each ```GameItem``` we do the following:
+
+1.	Set up the model view matrix (unique per ```GameItem```).
+2.	Get the ```Mesh``` associated to the ```GameItem``` and activate the texture, bind the VAO and enable its attributes.
+3.	Perform a call to draw the triangles.
+4.	Disable the texture and the VAO elements.
+
+But, in our current game, we reuse the same ```Mesh``` for the 40,000 GameItems, we are repeating some operations that have the same effect again and again. This is not very efficient, keep in mind that each call to a OpenGL function is native call that incurs in some performance overhead. Besides that, we should always try to limit the state changes in OpenGL (activating and deactivating textures, VAOs are state changes).
+
+We need to change the way we do things and organize our structures around Meshes since it will be very frequent to have many GameItems with the same Mesh. Now we have an array of GameItems each of them pointing to the same Mesh. We have something like this.
+
+![GameIteam array](game_item_list.png) 
+
+Instead, we will create a Map of Meshes with a list of the GamItems that share that Mesh.
+
+![Mesh Map](mesh_map.png) 
+
+The rendering steps will be, for each Mesh:
+
+1.	Set up the model view matrix (unique per ```GameItem```).
+2.	Get the ```Mesh``` associated to the ```GameItem``` and Activate the Mesh texture, bind the VAO and enable its attributes.
+3.	For each ```GameItem``` associated:
+a.	Set up the model view matrix (unique per Game Item).
+b.	Perform a call to draw the triangles.
+4.	Disable the texture and the VAO elements.
+
+In the Scene class, we will store the following Map.
+
+```java
+private Map<Mesh, List<GameItem>> meshMap;
+``` 
+
+We still have the ```setGameItems``` method, but instead of just storing the array, we construct the mesh map.
+
+```java
+public void setGameItems(GameItem[] gameItems) {
+    int numGameItems = gameItems != null ? gameItems.length : 0;
+    for (int i=0; i<numGameItems; i++) {
+        GameItem gameItem = gameItems[i];
+        Mesh mesh = gameItem.getMesh();
+        List<GameItem> list = meshMap.get(mesh);
+        if ( list == null ) {
+            list = new ArrayList<>();
+            meshMap.put(mesh, list);
+        }
+        list.add(gameItem);
+    }
+}
+```
+
+The ```Mesh``` class now has a method to render a list of the associated GamItems and we have split the activating and deactivating code into separate methods.
+
+```java
+private void initRender() {
+    Texture texture = material.getTexture();
+    if (texture != null) {
+        // Activate firs texture bank
+        glActiveTexture(GL_TEXTURE0);
+        // Bind the texture
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
+    }
+
+    // Draw the mesh
+    glBindVertexArray(getVaoId());
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+}
+    
+private void endRender() {
+    // Restore state
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    glBindVertexArray(0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+public void render() {
+    initRender();
+        
+    glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+    endRender();
+}
+    
+public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
+    initRender();
+        
+    for (GameItem gameItem : gameItems) {
+        // Set up data requiered by gameItem
+        consumer.accept(gameItem);
+        // Render this game item
+        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+    }
+
+    endRender();
+}
+```
+
+As you can see we still have a the old method that renders the a ```Mesh``` taking into consideration that we have only one GameItem (this will may be used in the HUD, etc.). The new method renders a list of GameItems and receives as a paremeter a ```Consumer``` (a function, this uses the new functional programming paradigms introduced in Java 8), which will be used to setup what’s specific for each GameItem before drawing the triangles. We will use this to set up the model view matrix, since we do not want the ```Mesh``` class to be coupled with the uniforms names and the parameters involved when setting this up.
+
+In the ```renderScene``` method of the ```Renderer``` class you can see that we just iterate over the Mesh map and setup the model view matrix uniform via a lambda.
+
+```java
+for (Mesh mesh : mapMeshes.keySet()) {
+    sceneShaderProgram.setUniform("material", mesh.getMaterial());
+    mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
+        Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(gameItem, viewMatrix);
+        sceneShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+    }
+    );
+}
+```
+
+Another set of optimizations that we can do is that we are creating tons of objects in the render cycle. In particular, we are creating too many ```Matrix4f``` instances that holds a copy a the model view matrix for each ```GameItem``` instance. We will create specific matrices for that in the Transformation class, and reuse the same instance. If you check the code you will see also that we have changed the names of the methods, the ```getXX``` methods just return the store matrix instance and any method that changes the value of a matrix is called ```buildXX``` to clarify its purpose.
+
+We have also avoided the construction of new ```FloatBuffer``` instances each time we set a uniform for a Matrix and removed some other useless instantiations. With all that in place you can see now that the rendering is smoother and more agile.
+
+You can check all the details in the source code.
