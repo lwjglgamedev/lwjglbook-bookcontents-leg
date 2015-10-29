@@ -435,5 +435,171 @@ We will get something like this (remember that it is only a sample, in a real ga
 
 ![HUD with a compass](hud_compass.png)
 
-As you can see we have set up all the infrastructure needed in order to create a HUD for our games. Now it is just a matter of creating all the elements that represent relevant information to the user and  give them a professional look and feel.
+## Text rendering revisited
+
+Before reviewing other concepts let’s go back to the text rendering approach we have presented here. The solution is very simple and useful to present some of the concepts involved in rendering HUD elements but it presents some problems:
+
+* It does not support non latin character sets.
+* If you want to use several fonts you need to create a separate texture file for each font. Also, the only way to change the size is either to scale it, which may result in a poor quality rendered text, or to generate another texture file.
+* The most important one, characters in most of the fonts do not occupy the same size and we dividing the font texture in equally sized elements.  We have cleverly used “Consolas” font  which is [monospaced](https://en.wikipedia.org/wiki/Monospaced_font) (that is, all the characters occupy the same amount of horizontal space), but if you use  a non-monospaced font you will see annoying variable white spaces between the characters. 
+
+We need to change our approach an provide a more flexible way to render text. If you think about it, the overall mechanism is ok, that is, the way of rendering text by texturing quads for each character. The issue here is how to generate the textures. We need to be able to generate those texture dynamically by using the fonts available in the System.
+
+This is where ```java.awt.Font``` comes to the rescue, we will generate a texture by drawing each letter for a specified font family and size. That texture will be used in the same way as described above, but it will solve perfectly all the issues mentioned above. We will create a new class named ```FontTexture``` that will receive a Font instance and a charset name and will dynamically create a texture that contains all the available characters. This is the constructor.
+
+```java
+public FontTexture(Font font, String charSetName) throws Exception {
+    this.font = font;
+    this.charSetName = charSetName;
+    charMap = new HashMap<>();
+
+    buildTexture();
+}
+```
+
+The first step is to handle the non latin issue, given a char set and a font we will build a ```String``` that contains all the characters that can be rendered. 
+
+```java
+private String getAllAvailableChars(String charsetName) {
+    CharsetEncoder ce = Charset.forName(charsetName).newEncoder();
+    StringBuilder result = new StringBuilder();
+    for (char c = 0; c < Character.MAX_VALUE; c++) {
+        if (ce.canEncode(c)) {
+            result.append(c);
+        }
+    }
+    return result.toString();
+}
+```
+
+Let’s now review the method that actually creates the texture, named ```buildTexture```.
+
+```java
+private void buildTexture() throws Exception {
+    // Get the font metrics for each character for the selected font by using image
+    BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2D = img.createGraphics();
+    g2D.setFont(font);
+    FontMetrics fontMetrics = g2D.getFontMetrics();
+
+    String allChars = getAllAvailableChars(charSetName);
+    this.width = 0;
+    this.height = 0;
+    for (char c : allChars.toCharArray()) {
+        // Get the size for each character and update global image size
+        CharInfo charInfo = new CharInfo(width, fontMetrics.charWidth(c));
+        charMap.put(c, charInfo);
+        width += charInfo.getWidth();
+        height = Math.max(height, fontMetrics.getHeight());
+    }
+    g2D.dispose();
+```
+
+We first obtain the font metrics by creating a temporary image. Then we iterate over the ```String``` that contains all the available characters and get the width, with the help of the font metrics, of each of them. We store that information on a map, ```charMap```, which will use as a key the character. With that process we determine the size of the image that will have the texture (with a height equal to the maximum size of all the characters and its with equal to the sum of each character width). ```CharSet``` is an inner class that holds the information about a character (its width and where it starts, in the x coordinate, in the texture image).
+
+```java
+    public static class CharInfo {
+
+        private final int startX;
+
+        private final int width;
+
+        public CharInfo(int startX, int width) {
+            this.startX = startX;
+            this.width = width;
+        }
+
+        public int getStartX() {
+            return startX;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+    }
+```
+
+Then we will create an image that will contain all the available characters. We just draw the string over a ```BufferedImage```.
+
+```java
+    // Create the image associated to the charset
+    img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    g2D = img.createGraphics();
+    g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2D.setFont(font);
+    fontMetrics = g2D.getFontMetrics();
+    g2D.setColor(Color.WHITE);
+    g2D.drawString(allChars, 0, fontMetrics.getAscent());
+    g2D.dispose();
+```
+
+We are generating an image which contains all the characters in a single row (yes, we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most cards and you could always achieve that adding some extra empty space). Actually, if after that block of code, you put a line like this:
+
+```java
+ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
+```
+
+You will be able to view the image, which will be a long strip with all the available characters, drawn in white over transparent background using anti aliasing.
+
+![Font texture](texture_font.png)
+
+ 
+Then we just need to create a texture from that image, we just dump the image bytes using a PNG format (which is what the Texture class expects).
+
+```java
+    // Dump image to a byte buffer
+    InputStream is;
+    try (
+        ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        ImageIO.write(img, IMAGE_FORMAT, out);
+        out.flush();
+        is = new ByteArrayInputStream(out.toByteArray());
+    }
+
+    texture = new Texture(is);
+}
+```
+
+We have modified a little bit the ```Texture``` class to have another constructor that receives an ```InputStream```. Now we just need to change the TextItem class to receive a ```FontTexture``` instance in its constructor.
+
+```java
+public TextItem(String text, FontTexture fontTexture) throws Exception {
+    super();
+    this.text = text;
+    this.fontTexture = fontTexture;
+    setMesh(buildMesh());
+}
+```
+
+The ```buildMesh``` method only needs to be changed a little bit when setting quad and texture coordinates, this is a sample for one of the vertices.
+
+```java
+    float startx = 0;
+    for(int i=0; i<numChars; i++) {
+        FontTexture.CharInfo charInfo = fontTexture.getCharInfo(characters[i]);
+            
+        // Build a character tile composed by two triangles
+            
+        // Left Top vertex
+        positions.add(startx); // x
+        positions.add(0.0f); //y
+        positions.add(ZPOS); //z
+        textCoords.add( (float)charInfo.getStartX() / (float)fontTexture.getWidth());
+        textCoords.add(0.0f);
+        indices.add(i*VERTICES_PER_QUAD);
+		
+	  // .. More code
+	  startx += charInfo.getWidth();
+    }
+```
+
+You can check the rest of the changes directly in the source code. What we will wget (for Arial font with a size of 20) is this:
+
+![Text rendered improved](text_rendered_improved.png) 
+
+As you can see the quality of the rendered text has been increased a lot, you can play with different fonts and sizes and check it by your own. There’s still plenty of room for improvement (like supporting multiline texts, effects, etc.), but this will be left as an exercise for the reader.
+
+You may also notice that we are still able to apply scaling to the text (we pass a model view matrix in the shader). This may not be needed now for text but it may be useful for other HUD elements.
+
+We have set up all the infrastructure needed in order to create a HUD for our games. Now it is just a matter of creating all the elements that represent relevant information to the user and  give them a professional look and feel.
 
