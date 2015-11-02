@@ -1,2 +1,0 @@
-# Height Maps
-
