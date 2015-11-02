@@ -14,5 +14,5 @@
 * [Let there be even more light](chapter11/chapter11.md)
 * [HUD](chapter12/chapter12.md)
 * [Sky Box and some optimizations](chapter13/chapter13.md)
-* Height Maps
+* [Height Maps](chapter14/chapter14.md)
 
