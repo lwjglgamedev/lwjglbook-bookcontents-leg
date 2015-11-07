@@ -19,7 +19,10 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 ## Support
 
-If you like the book please rate it with a start and share it. You can also contribute to [support it](https://www.gitbook.com/donate/book/lwjglgamedev/3d-game-development-with-lwjgl). 
+If you like the book please rate it with a start and share it. You can also contribute.
+
+[![](https://img.shields.io/badge/donate-bitcoin-green.svg)](bitcoin:1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb?label=Book%20Donation)
+ 
 
 ## Comments are welcome
 
