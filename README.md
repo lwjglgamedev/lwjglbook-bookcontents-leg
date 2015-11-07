@@ -21,8 +21,9 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 If you like the book please rate it with a start and share it. You can also contribute.
 
-[![](https://img.shields.io/badge/donate-bitcoin-green.svg)](bitcoin:1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb?label=Book%20Donation)
- 
+[<img src="https://img.shields.io/badge/donate-bitcoin-green.svg">](bitcoin://1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb?label=Book Donation)
+
+[<img src="https://img.shields.io/badge/donate-bitcoin-green.svg">](http://www.google.com)
 
 ## Comments are welcome
 
