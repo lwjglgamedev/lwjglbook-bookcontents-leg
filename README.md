@@ -19,9 +19,7 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 ## Support
 
-If you like the book please rate it with a start and share it. You can also contribute.
-
-<a href="bitcoin:1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb?label=Book" target="_blank"><img src="https://img.shields.io/badge/donate-bitcoin-green.svg"></a>
+If you like the book please rate it with a start and share it.
 
 ## Comments are welcome
 
