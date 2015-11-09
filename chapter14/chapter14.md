@@ -59,7 +59,9 @@ int height = buffImage.getHeight();
 int width = buffImage.getWidth();
 ```
 
-Then we load the texture file and setup the variables that we will need to construct the Mesh. The incx and incz variables will have the increment to be applied to each vertex in the x and z coordinates so the Mesh covers the range [STARTX, -STARTX] and [STARTZ, -STARTZ].
+Then we load the texture file and setup the variables that we will need to construct the ```Mesh```. The ```incx``` and ```incz``` variables will have the increment to be applied to each vertex in the x and z coordinates so the Mesh covers the range [STARTX, -STARTX] and [STARTZ, -STARTZ].
+
+```java
 Texture texture = new Texture(textureFile);
 
 float incx = Math.abs(STARTX * 2) / (width - 1);
@@ -68,8 +70,11 @@ float incz = Math.abs(STARTZ * 2) / (height - 1);
 List<Float> positions = new ArrayList();
 List<Float> textCoords = new ArrayList();
 List<Integer> indices = new ArrayList();
+```
 
-Then we are ready to iterate over the image, creating a vertex per each pixel, setting its texture coordinates and setting up the indices to define correctly the triangles that compose the Mesh.
+Then we are ready to iterate over the image, creating a vertex per each pixel, setting its texture coordinates and setting up the indices to define correctly the triangles that compose the ```Mesh```.
+
+```java
 for (int row = 0; row < height; row++) {
     for (int col = 0; col < width; col++) {
         // Create vertex for current position
@@ -98,17 +103,23 @@ for (int row = 0; row < height; row++) {
         }
     }
 }
+```
 
 The process of creating the vertex coordinates is self explanatory, let’s ignore at this moment why we multiply the texture coordinates by a number and how the height is calculated. You can see that for each vertex we define the indices of two triangles except if we are in the last row or column. Let’s review with a 3x3 image to visualize how they are constructed. A 3x3 image contains 9 vertices, and thus 4 quads formed by 2*4 triangles. The following picture  shows that grid, naming each vertex in the form Vrc (r: row, c: column).
+
+![Height map vertices](heightmap_vertices.png)
  
 When we are processing the first vertex (V00), we define the indices of the two triangles shaded in red.
 
- 
+![Height map indices I](heightmap_indices_i.png) 
+
 When we define the second vertex (V01), ), we define the indices of the two triangles shaded in red, but when we define the third vertex (V02) we do not need to define more indices, the triangles have already been defined. 
 
- 
+![Height map indices II](heightmap_indices_ii.png) 
 
-You can easily see how the process continues for the rest of vertices. Now, once we have created all the vertex positions, the texture coordinates and the indices we just need to create a Mesh and the associated Material with all that data.
+You can easily see how the process continues for the rest of vertices. Now, once we have created all the vertex positions, the texture coordinates and the indices we just need to create a ```Mesh``` and the associated Material with all that data.
+
+```java
 float[] posArr = Utils.listToArray(positions);
 int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
 float[] textCoordsArr = Utils.listToArray(textCoords);
@@ -116,6 +127,7 @@ float[] normalsArr = calcNormals(posArr, width, height);
 this.mesh = new Mesh(posArr, textCoordsArr, normalsArr, indicesArr);
 Material material = new Material(texture, 0.0f);
 mesh.setMaterial(material);
+```
 
 You can see that we calculate the normals taking as an input the vertex positions. Before we see how normals can be calculated, let’s see how heights are obtained. We have created a method named getHeight which calculates the height for a vertex.
 private float getHeight(int x, int z, BufferedImage buffImage) {
