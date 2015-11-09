@@ -21,7 +21,7 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 If you like the book please rate it with a start and share it.
 
-<a href="mailto:lwjglgamedev@gmail.com" target="_blank">email</a>
+<a href="bitcoin:lwjglgamedev@gmail.com" target="_blank">email</a>
 
 ## Comments are welcome
 
