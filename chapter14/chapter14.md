@@ -162,11 +162,16 @@ Let’s graphically explain how the normal will be calculated. Imagine that we h
 
 Then we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vector. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the dot product between $$\vec{P1}$$ and $$\vec{P2}$$, $$\vec{V12} = \vec{P1} \times \vec{P2}$$.
 
- 
-If we calculate the rest of the normals for the rest of the surfaces (V23 = V2 *V3, V34 = V3 * V4 and V41 = V4 * V1, the normal for P0 will be the sum (normalized) of all the normals of the surrounding surfaces: N0 = Normalize(Normalize(V12)+Normalize(V23) +Normalize(V34) +Normalize(V41).
+![Normals calculation II](normals_calc_ii.png) 
 
+If we calculate the rest of the normals for the rest of the surfaces ($$\vec{V23} = \vec{V2} \times \vec{V3}$$, $$\vec{V34} = \vec{V3} \times \vec{V4}$$ and $$\vec{V41} = \vec{V4} \times \vec{V1}$$, the normal for $$\vec{P0}$$ will be the sum (normalized) of all the normals of the surrounding surfaces: $$\hat{N0} = \hat{V12} +
+ \hat{V23} + \hat{V34} + \hat{V41}$$.
+
+![Normals calculation III](normals_calc_iii.png)
  
 The implementation of the method that calculates the normals is as follows.
+
+
 private float[] calcNormals(float[] posArr, int width, int height) {
     Vector3f v0 = new Vector3f();
     Vector3f v1 = new Vector3f();
