@@ -156,7 +156,7 @@ This is what we are doing when calculating the texture coordinates, we are multi
 
 The only thing that’s pending is how to calculate normals. Remember that we need normals so light can be applied to the terrain. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find other approaches that only use the heights of adjacent points without performing  cross product operations and are more efficient. Nevertheless since this will only be done at startup, the method resented here will not hurt performance so much.
 
-Let’s graphically explain how the normal will be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$) the vectors that it’s tangent to the surface that connects those points. These vectors ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$) are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = P1 – P0$$, etc.) 
+Let’s graphically explain how the normal will be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$) the vectors that it’s tangent to the surface that connects those points. These vectors ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$) are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = \vec{P1} – \vec{P0}$$, etc.) 
 
 ![Normals calculation I](normals_calc_i.png) 
 
