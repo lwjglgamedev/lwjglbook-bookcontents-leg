@@ -130,6 +130,8 @@ mesh.setMaterial(material);
 ```
 
 You can see that we calculate the normals taking as an input the vertex positions. Before we see how normals can be calculated, let’s see how heights are obtained. We have created a method named getHeight which calculates the height for a vertex.
+
+```java
 private float getHeight(int x, int z, BufferedImage buffImage) {
     float result = 0;
     if (x >= 0 && x < buffImage.getWidth() && z >= 0 && z < buffImage.getHeight()) {
@@ -138,17 +140,26 @@ private float getHeight(int x, int z, BufferedImage buffImage) {
     }
     return result;
 }
+```
 
-The method receives the x an z coordinates for a pixel, gets the RGB colour (the sum of the individual R, G and B components) and  assigns a value contained between minY and maxY (minY por black colour and maxY for white colour).
+The method receives the x an z coordinates for a pixel, gets the RGB colour (the sum of the individual R, G and B components) and  assigns a value contained between ```minY``` and ```maxY``` (```minY``` for black colour and ```maxY``` for white colour).
+
 Let’s review now how texture coordinates are calculated. The first option is to wrap the texture along the whole mesh, the top left vertex would have  (0, 0) texture coordinates and the bottom right vertex would have (1, 1) texture coordinates. The problem with this approach is that the texture should be huge in order to provide good results, if not, it would be stretched  too much.
-But we can still use a small texture with very good results by employing e vary efficient technique that is based that if we set texture coordinates that are beyond (1,1), we get back to origin and start counting again. The following picture shows this behaviour.
- 
-This is what we are doing when calculating the texture coordinates, we are multiplying the texture coordinates (calculated as if the texture just was wrapped covering the whole mesh) by a factor, the textInc parameter, to increase the number of pixels of the texture to be used between adjacent vertices.
 
- 
+But we can still use a small texture with very good results by employing e vary efficient technique that is based that if we set texture coordinates that are beyond (1,1), we get back to origin and start counting again. The following picture shows this behavior.
+
+![Texture coordinates I](texture_coordinates_i.png) 
+
+This is what we are doing when calculating the texture coordinates, we are multiplying the texture coordinates (calculated as if the texture just was wrapped covering the whole mesh) by a factor, the ```textInc``` parameter, to increase the number of pixels of the texture to be used between adjacent vertices.
+
+![Texture coordinates II](texture_coordinates_ii.png) 
+
 The only thing that’s pending is how to calculate normals. Remember that we need normals so light can be applied to the terrain. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find other approaches that only use the heights of adjacent points without performing  cross product operations and are more efficient. Nevertheless since this will only be done at startup, the method resented here will not hurt performance so much.
-Let’s graphically explain how the normal will be calculated. Imagine that we have a point named P0. We first calculate for each of the surrounding points (P1, P2, P3 and P4) the vectors that it’s tangent to the surface that connects those points. These vectors (V1, V2, V3 and V4) are calculated by subtracting each adjacent point from P0 (V1 = P1 – P0, etc.) 
- 
+
+Let’s graphically explain how the normal will be calculated. Imagine that we have a point named P0. We first calculate for each of the surrounding points (P1, P2, P3 and P4) the vectors that it’s tangent to the surface that connects those points. These vectors (V1, V2, V3 and V4) are calculated by subtracting each adjacent point from P0 ($$V1 = P1 – P0$$, etc.) 
+
+![Normals calculation I](normals_calc_i.png) 
+
 Then we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vector. For instance, the normal of the surface that connects P1 and P2 (shaded in blue) is calculated as the dot product between P1 and P2, V12 = P1 * P2.
 
  
