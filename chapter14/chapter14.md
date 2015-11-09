@@ -156,11 +156,11 @@ This is what we are doing when calculating the texture coordinates, we are multi
 
 The only thing that’s pending is how to calculate normals. Remember that we need normals so light can be applied to the terrain. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find other approaches that only use the heights of adjacent points without performing  cross product operations and are more efficient. Nevertheless since this will only be done at startup, the method resented here will not hurt performance so much.
 
-Let’s graphically explain how the normal will be calculated. Imagine that we have a point named P0. We first calculate for each of the surrounding points (P1, P2, P3 and P4) the vectors that it’s tangent to the surface that connects those points. These vectors (V1, V2, V3 and V4) are calculated by subtracting each adjacent point from P0 ($$V1 = P1 – P0$$, etc.) 
+Let’s graphically explain how the normal will be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$) the vectors that it’s tangent to the surface that connects those points. These vectors ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$) are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = P1 – P0$$, etc.) 
 
 ![Normals calculation I](normals_calc_i.png) 
 
-Then we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vector. For instance, the normal of the surface that connects P1 and P2 (shaded in blue) is calculated as the dot product between P1 and P2, V12 = P1 * P2.
+Then we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vector. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the dot product between $$\vec{P1}$$ and $$\vec{P2}$$, $$\vec{V12} = \vec{P1} \times \vec{P2}$$.
 
  
 If we calculate the rest of the normals for the rest of the surfaces (V23 = V2 *V3, V34 = V3 * V4 and V41 = V4 * V1, the normal for P0 will be the sum (normalized) of all the normals of the surrounding surfaces: N0 = Normalize(Normalize(V12)+Normalize(V23) +Normalize(V34) +Normalize(V41).
