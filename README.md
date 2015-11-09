@@ -21,22 +21,6 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 If you like the book please rate it with a start and share it.
 
-<script src="http://coinwidget.com/widget/coin.js"></script>
-<script>
-CoinWidgetCom.go({
-	wallet_address: "asasasas"
-	, currency: "bitcoin"
-	, counter: "count"
-	, alignment: "bl"
-	, qrcode: true
-	, auto_show: false
-	, lbl_button: "Donate"
-	, lbl_address: "My Bitcoin Address:"
-	, lbl_count: "donations"
-	, lbl_amount: "BTC"
-});
-</script>
-
 ## Comments are welcome
 
 Suggestions and corrections are more than welcome (and if you do like it please rate it with a star). [Please send them](https://www.gitbook.com/book/lwjglgamedev/3d-game-development-with-lwjgl/contact) and make the corrections you consider in order to improve the book.
