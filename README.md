@@ -21,8 +21,6 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 If you like the book please rate it with a start and share it.
 
-<a href="bitcoin:lwjglgamedev@gmail.com" target="_blank">email</a>
-
 ## Comments are welcome
 
 Suggestions and corrections are more than welcome (and if you do like it please rate it with a star). [Please send them](https://www.gitbook.com/book/lwjglgamedev/3d-game-development-with-lwjgl/contact) and make the corrections you consider in order to improve the book.
