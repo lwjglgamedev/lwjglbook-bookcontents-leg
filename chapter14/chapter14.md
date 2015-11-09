@@ -17,31 +17,47 @@ That mesh will form a giant quad that will be rendered across x and z axis using
 ![Height map coordinates](heightmap_coordinates.png) 
 
 The process of creating a 3D terrain from a height map will be as follows:
-Load the image that contains the height map. (We will use a BufferedImage instance to get access to each pixel).
-•	For each image pixel create a vertex which heights will be based on the pixel colour.
-•	Assign the correct texture coordinate to the vertex.
-•	Set up the indices to draw the triangles associated to the vertex.
-We will create a class named HeightMapMesh that will create a Mesh based on a height map performing the steps described above. Let’s first review the constants defined for that class:
+* Load the image that contains the height map. (We will use a ```BufferedImage``` instance to get access to each pixel).
+* For each image pixel create a vertex which heights will be based on the pixel colour.
+* Assign the correct texture coordinate to the vertex.
+* Set up the indices to draw the triangles associated to the vertex.
+
+We will create a class named ```HeightMapMesh``` that will create a ```Mesh``` based on a height map performing the steps described above. Let’s first review the constants defined for that class:
+
+```java
 private static final int MAX_COLOUR = 255 * 255 * 255;
+```
 
 As we have explained above, we will calculate the height of each vertex based on the colour of each pixel of the image used as height map. Images are usually greyscale, for a PNG image that means that each RGB component for each pixel can vary from 0 to 255, so we have 256 discrete values to define different heights. This may be enough precision for you or not, if it’s not we can use the three RGB components to have more intermediate values, in this case the height can be calculated form a range that gets from 0 to 255^3. In this case, (we will not be limited to use greyscale images).
+
 The next constants are:
+
+```java
 private static final float STARTX = -0.5f;
 
 private static final float STARTZ = -0.5f;
+```
 
 The mesh will be formed by a set of vertices (one per pixel) which x and z coordinates will be in the range of -0.5 (STARTX) to 0.5 for x axis and -0.5 (STARTZ) to 0.5 for z axis. Later on the resulting mesh can be scaled to accommodate its size in the world. Regarding y axis, we will set up two parameters, minY and maxY, for setting the lowest and highest value that the y coordinate can have. At the end, the terrain will be contained in a cube  in the range [STARTX, -STARTX], [minY, maxY] and [STARTZ, -STARTZ].
-The mesh will be created in the constructor of the HeightMapMesh class, which is defined like this.
-public HeightMapMesh(float minY, float maxY, String heightMapFile, String textureFile, int textInc) throws Exception {
 
-It receives the minimum and maximum vale for the y axis, the name of the file that contains the image to be used as height map and the texture file to be used. It also receives an integer named textInc that we will discuss later on.
-The first thing that we do in the constructor is to load the height map image into a BufferedImage.
+The mesh will be created in the constructor of the ```HeightMapMesh``` class, which is defined like this.
+
+```java
+public HeightMapMesh(float minY, float maxY, String heightMapFile, String textureFile, int textInc) throws Exception {
+```
+
+It receives the minimum and maximum vale for the y axis, the name of the file that contains the image to be used as height map and the texture file to be used. It also receives an integer named ```textInc``` that we will discuss later on.
+
+The first thing that we do in the constructor is to load the height map image into a ```BufferedImage```.
+
+```java
 this.minY = minY;
 this.maxY = maxY;
         
 BufferedImage buffImage = ImageIO.read(getClass().getResourceAsStream(heightMapFile));
 int height = buffImage.getHeight();
 int width = buffImage.getWidth();
+```
 
 Then we load the texture file and setup the variables that we will need to construct the Mesh. The incx and incz variables will have the increment to be applied to each vertex in the x and z coordinates so the Mesh covers the range [STARTX, -STARTX] and [STARTZ, -STARTZ].
 Texture texture = new Texture(textureFile);
