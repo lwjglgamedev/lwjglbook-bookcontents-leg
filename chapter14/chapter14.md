@@ -171,7 +171,7 @@ If we calculate the rest of the normals for the rest of the surfaces ($$\vec{V23
  
 The implementation of the method that calculates the normals is as follows.
 
-
+```java
 private float[] calcNormals(float[] posArr, int width, int height) {
     Vector3f v0 = new Vector3f();
     Vector3f v1 = new Vector3f();
@@ -243,11 +243,15 @@ private float[] calcNormals(float[] posArr, int width, int height) {
     }
     return Utils.listToArray(normals);
 }
+```
 
 Finally, in order to build larger terrains, we have two options:
-•	Create a larger height map.
-•	Reuse a heightmap and tile it through the 3D space. The heightmap will be like a terrain block that could be translated across the world like tiles. In order to do so, the pixels of the edge of the heightmap must be the same (the left edge must be equal to the right side and the top edge must be equal to the bottom one) to avoid gaps between the tiles.
-We will use the second approach (and select an appropriate height map). We will create a class named Terrain that will  create a square of height map tiles, defined like
+* Create a larger height map.
+* Reuse a height map and tile it through the 3D space. The height map will be like a terrain block that could be translated across the world like tiles. In order to do so, the pixels of the edge of the height map must be the same (the left edge must be equal to the right side and the top edge must be equal to the bottom one) to avoid gaps between the tiles.
+
+We will use the second approach (and select an appropriate height map). We will create a class named ```Terrain``` that will  create a square of height map tiles, defined like this.
+
+```java
 package org.lwjglb.engine.items;
 
 import org.lwjglb.engine.graph.HeightMapMesh;
@@ -276,9 +280,10 @@ public class Terrain {
         return gameItems;
     }
 }
+```
 
-If we create a Terrain instance in the DummyGame class, we can get something like this.
+If we create a Terrain instance in the ```DummyGame``` class, we can get something like this.
 
- 
+![Terrain result](terrain_result.png) 
 
 You can move the camera around the terrain and see how it’s rendered, since we still do not have implemented collision detection you can pass through it and look it from above. Because we have face culling enabled, some parts of the terrain are not rendered when looking from above.
