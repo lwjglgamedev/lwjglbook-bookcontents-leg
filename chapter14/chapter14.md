@@ -64,7 +64,7 @@ Then we load the texture file and setup the variables that we will need to const
 ```java
 Texture texture = new Texture(textureFile);
 
-float incx = Math.abs(STARTX * 2) / (width - 1);
+float incx = getWidth() / (width - 1);
 float incz = Math.abs(STARTZ * 2) / (height - 1);
 
 List<Float> positions = new ArrayList();
@@ -244,7 +244,6 @@ private float[] calcNormals(float[] posArr, int width, int height) {
     return Utils.listToArray(normals);
 }
 ```
-
 Finally, in order to build larger terrains, we have two options:
 * Create a larger height map.
 * Reuse a height map and tile it through the 3D space. The height map will be like a terrain block that could be translated across the world like tiles. In order to do so, the pixels of the edge of the height map must be the same (the left edge must be equal to the right side and the top edge must be equal to the bottom one) to avoid gaps between the tiles.
@@ -260,18 +259,18 @@ public class Terrain {
 
     private final GameItem[] gameItems;
 
-    public Terrain(int size, float scale, float minY, float maxY, String heightMap, String textureFile, int textInc) throws Exception {
-        gameItems = new GameItem[size * size];
+    public Terrain(int blocksPerRow, float scale, float minY, float maxY, String heightMap, String textureFile, int textInc) throws Exception {
+        gameItems = new GameItem[blocksPerRow * blocksPerRow];
         HeightMapMesh heightMapMesh = new HeightMapMesh(minY, maxY, heightMap, textureFile, textInc);
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                float x = -scale + col * scale;
-                float z = -scale + row * scale;
+        for (int row = 0; row < blocksPerRow; row++) {
+            for (int col = 0; col < blocksPerRow; col++) {
+                float x = (col - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getWidth();
+                float z = (row - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getHeight();
 
                 GameItem terrainBlock = new GameItem(heightMapMesh.getMesh());
                 terrainBlock.setScale(scale);
                 terrainBlock.setPosition(x, 0, z);
-                gameItems[row * size + col] = terrainBlock;
+                gameItems[row * blocksPerRow + col] = terrainBlock;
             }
         }
     }
@@ -281,6 +280,19 @@ public class Terrain {
     }
 }
 ```
+We will explain the overall process, we have blocks that have the following coordinates (for x and z and with the constants defined above).
+
+![Terrain Construction I](terrain_construction_1.png)
+
+Let's create a terrain formed by a 3x3 grid and that we wont' scale the terrain blocks (taht is, the variable ```blocksPerRow``` will have a 3 and the variable ```scale``` will have a 1). We want the grid to be centered at (0, 0) coordinates.
+
+We need to translate the blocks to have the following coordinates.
+
+
+
+The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The formula to calculate the x displacement is this one:
+
+
 
 If we create a Terrain instance in the ```DummyGame``` class, we can get something like this.
 
