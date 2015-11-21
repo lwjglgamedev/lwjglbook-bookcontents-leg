@@ -286,9 +286,9 @@ We will explain the overall process, we have blocks that have the following coor
 
 Let's create a terrain formed by a 3x3 grid and that we wont' scale the terrain blocks (taht is, the variable ```blocksPerRow``` will have a 3 and the variable ```scale``` will have a 1). We want the grid to be centered at (0, 0) coordinates.
 
-We need to translate the blocks to have the following coordinates.
+We need to translate the blocks so the vertices will have the following coordinates.
 
-
+![Terrain Construction II](terrain_construction_2.png)
 
 The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The formula to calculate the x displacement is this one:
 
