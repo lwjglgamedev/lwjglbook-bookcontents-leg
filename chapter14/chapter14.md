@@ -266,7 +266,7 @@ public class Terrain {
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 float x = -scale + col * scale;
-                float z = scale - row * scale;
+                float z = -scale + row * scale;
 
                 GameItem terrainBlock = new GameItem(heightMapMesh.getMesh());
                 terrainBlock.setScale(scale);
