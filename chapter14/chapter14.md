@@ -264,12 +264,12 @@ public class Terrain {
         HeightMapMesh heightMapMesh = new HeightMapMesh(minY, maxY, heightMap, textureFile, textInc);
         for (int row = 0; row < blocksPerRow; row++) {
             for (int col = 0; col < blocksPerRow; col++) {
-                float x = (col - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getWidth();
-                float z = (row - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getHeight();
+                float xDisplacement = (col - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getWidth();
+                float zDisplacement = (row - ((float) blocksPerRow - 1) / (float) 2) * scale * HeightMapMesh.getHeight();
 
                 GameItem terrainBlock = new GameItem(heightMapMesh.getMesh());
                 terrainBlock.setScale(scale);
-                terrainBlock.setPosition(x, 0, z);
+                terrainBlock.setPosition(xDisplacement, 0, zDisplacement);
                 gameItems[row * blocksPerRow + col] = terrainBlock;
             }
         }
