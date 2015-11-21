@@ -1,7 +1,6 @@
 
 # Transformations
 
-
 ## Projecting
 
 Let’s get back to our nice coloured quad we created in previous chapter. If you look carefully at it, it resembles more to a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
