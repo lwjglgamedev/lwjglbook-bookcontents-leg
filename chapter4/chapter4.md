@@ -218,7 +218,7 @@ float[] vertices = new float[]{
 
 The following picture depicts the triangle in our coordinates system.
 
-![Coordinates System](coordinates.png) 
+![Coordinates Syste](triangle_coordinates.png)
 
 Now that we have our coordinates, we need to store them into our graphics card and tell OpenGL about the structure. We will introduce now two important concepts Vertex Array Objects (VAOs) and Vertex Buffer Object (VBOs). If you get lost in the next code fragments remember that at the end what we are doing is sending the data that models the objects we want to draw to the graphics card memory. When we store it we get an identifier that serves us later to refer to it while drawing.
 
