@@ -43,7 +43,9 @@ Those libraries are placed under ```target/natives``` directory. When you execut
 
 Chapter 1 source code is taken directly from the getting started sample in the LWJGL site ([http://www.lwjgl.org/guide](http://www.lwjgl.org/guide)). You will see that we are not using Swing or JavaFX as our GUI library. Instead of that we are using [GLFW](www.glfw.org) which is a library to handle GUI components (Windows, etc.) and events (key presses, mouse movements, etc.) with an Open GL Context attached in a straight forward way. Previous versions of LWJGL provided a custom GUI API but, for LWJGL 3, GLFW is the preferred windowing API.
 
-The samples source code is very well documented and straight forward so we won’t repeat the comments here. If you have your environment correctly set up you should be execute it and see a window with red background.
+The samples source code is very well documented and straight forward so we won’t repeat the comments here. **NOTE**: If you have been using alpha LWJGL 3 versions, you must be aware that some parts of the API have changed. 
+
+If you have your environment correctly set up you should be execute it and see a window with red background.
 
 ![Hello World](hello_world.png)
 
