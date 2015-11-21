@@ -292,7 +292,11 @@ We need to translate the blocks so the vertices will have the following coordina
 
 The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The vertex drain in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement, taking into consideration the scale and the block width, is this one:
 
-$$xDisplacement=(col - (blocksPerRow -1 ) / 2)$$
+$$xDisplacement=(col - (blocksPerRow -1 ) / 2) \times scale \times width$$
+
+And the equivalent formula for z displacement is:
+
+$$zDisplacement=(row - (blocksPerRow -1 ) / 2) \times scale \times height$$
 
 If we create a Terrain instance in the ```DummyGame``` class, we can get something like this.
 
