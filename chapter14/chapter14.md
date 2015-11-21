@@ -290,7 +290,7 @@ We need to translate the blocks so the vertices will have the following coordina
 
 ![Terrain Construction II](terrain_construction_2.png)
 
-The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The formula to calculate the x displacement is this one:
+The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The vertex drain in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement is this one:
 
 
 
