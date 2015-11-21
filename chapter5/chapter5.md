@@ -100,7 +100,7 @@ glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
 
 Our ```Mesh``` counts the number of vertices by dividing the position array by 3 (since we are passing X, Y and Z coordinates)). Now that we can render more complex shapes, let us try to render a more complex shape, let us render a quad. A quad can be constructed by using two triangles as shown in the next figure.
 
-![quad coordinates](quad_coordinates.png)
+![Quad coordinates](quad_coordinates.png)
 
 As you can each of the two triangles is composed by three vertices, the first one formed by the vertices: V1, V2 and V4 (the orange one) and the second one formed by the vertices V4, V2, V3 (the green one). Vertices are specified in a counter clockwise order, so the float array to be passed will be [V1, V2, V4, V4, V2, V3], thus, the init method in our ```DummyGame``` class will be:
 
