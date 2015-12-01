@@ -134,7 +134,9 @@ With all that information we are able to calculate the positions of the vertices
  
 ![Cell](cell.png)
 
-You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle associated to the current position, is by checking if the z coordinate is above or below that diagonal. In our case, if the z value of the current position is less than the z value of the diagonal for a x value equals to de position x coordinate.
+You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle associated to the current position, is by checking if the z coordinate is above or below that diagonal. In our case, if current position z value is less than the z value of the diagonal setting the x value to the x vañue of current position we are in T1. If its greater than that we are in T2.
+
+
 We just need to calculate the diagonal z coordinate and compare it with the z coordinate of the current position, and we can do that by calculating the line equation that matches the diagonal.
 The equation of a line that passes from two points (in 2D) is:
 y-y1=m*(x-x1).
