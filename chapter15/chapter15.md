@@ -5,7 +5,10 @@ Once we have created a terrain the next step is to detect collisions to avoid tr
 In order to detect a collision we must compare current position $$y$$ value with the $$y$$ value of the point of the terrain we are currently in. If we are above terrain’s $$y$$ value there’s no collision, if not, we need to get back. Simple concept, does it ? Indeed it is but we need to perform several calculations before we are able to do that comparison.
 
 The first thing we need to define what our current position is. Since we do not have a player concept yet the answer is easy, the current position will be the camera position. So we already have one of the components of the comparison, thus, the next thing to calculate is terrain height at current position.
-Our terrain is composed by a grid of terrain blocks as shown in the next figure.
+
+As it's been said before, the terrain is composed by a grid of terrain blocks as shown in the next figure.
+
+
  
 Each terrain block is constructed from the same height map mesh, but is scaled and displaced precisely to form the terrain grid. So, what we need to do first is determine in which terrain block the current position is in. In order to do that we will calculate the bounding box of each terrain block. Since the terrain will not be displaced or scaled at runtime, we can store the results of calculating the bounding boxes for each terrain block in the terrain constructor. By doing this way we access them later at any time without repeating those operations again and again.
 We will create a new method that calculates the bounding box of a terrain block, named getBoundingBox.
