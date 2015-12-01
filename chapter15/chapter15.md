@@ -150,7 +150,8 @@ The slope can be calculate in the following way:
 
 $$$$m=(z1-z2)/(x1-x2)$$
 
-So the equation of the diagonal to get the z value given a xpos is like this:
+So the equation of the diagonal to get the $$z$$ value given a $$x$$ position is like this:
+
 Z= m*(xpos-x1)+z1=((z1-z2)/(x1-x2))*(zpos-x1)+z1
 Where x1 and z1 are the z and z coordinates of the vertex V1 of the previous figure and x2 and z2 are the z and z coordinates of the vertex V2.
 So the method to get the triangle that the current position is in, named getTriangle, applying all the calculations described above gets like this:
