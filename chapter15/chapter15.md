@@ -212,8 +212,10 @@ $$a\cdot x+b\cdot y+c\cdot z+d=0$$
 The values of the constants of the previous equation are:
 
 $$a=(B_{y}-A_{y}) \cdot (C_{z} - A_{z}) - (C_{y} - A_{y}) \cdot (B_{z}-A_{z})$$
-        float a = (pB.y - pA.y) * (pC.z - pA.z) - (pC.y - pA.y) * (pB.z - pA.z);
-        float b = (pB.z - pA.z) * (pC.x - pA.x) - (pC.z - pA.z) * (pB.x - pA.x);
+
+$$b=(B_{z}-A_{z}) \cdot (C_{x} - A_{x}) - (C_{z} - A_{z}) \cdot (B_{z}-A_{z})$$
+
+
         float c = (pB.x - pA.x) * (pC.y - pA.y) - (pC.x - pA.x) * (pB.y - pA.y);
 Where A, B and C are the three vertices needed to define the plane.
 We have the x and z coordinates of the current position and we need to calculate the y value:
