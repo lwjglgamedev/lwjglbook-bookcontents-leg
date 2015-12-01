@@ -221,8 +221,11 @@ Where $$A$$, $$B$$ and $$C$$ are the three vertices needed to define the plane.
 
 Then, with previous equations and the values of the $$x$$ and $$z$$ coordinates for the current position we are able to calculate the y value, that is the hieght of the terrain at the current position:
 
-float y = (-d - a * x - c * z) / b;
-This is calculated in the following method:
+$$y = (-d - a \cdot x - c \cdot z) / b$$
+
+The method that performs the previous calculations is the following:
+
+```java
 protected float interpolateHeight(Vector3f pA, Vector3f pB, Vector3f pC, float x, float z) {
     // Plane equation ax+by+cz+d=0
     float a = (pB.y - pA.y) * (pC.z - pA.z) - (pC.y - pA.y) * (pB.z - pA.z);
@@ -233,6 +236,7 @@ protected float interpolateHeight(Vector3f pA, Vector3f pB, Vector3f pC, float x
     float y = (-d - a * x - c * z) / b;
     return y;
 }
+```
 
 And that’s all ! we are now able to detect the collisions, in the DummyGame class we can change the following lines when we update the camera position:
 // Update camera position
