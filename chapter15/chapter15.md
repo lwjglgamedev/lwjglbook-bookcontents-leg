@@ -124,7 +124,8 @@ $$cellHeight = \frac{boundingBox.height}{verticesPerRow}$$
 Once we have those variables we can calculate the row and the column of the cell we are currently in width is quite straight forward:
 
 $$col = \frac{position.x – boundingBox.x}{boundingBox.width}$$
-$$col = \frac{row = position.z – boundingBox.y}{boundingBox.height}$$
+
+$$row = \frac{position.z – boundingBox.y}{boundingBox.height}$$
 
 The following picture shows all the variables  described above for a sample terrain block.
 
