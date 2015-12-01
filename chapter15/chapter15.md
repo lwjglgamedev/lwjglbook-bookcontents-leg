@@ -150,6 +150,8 @@ So the equation of the diagonal to get the z value given a xpos is like this:
 Z= m*(xpos-x1)+z1=((z1-z2)/(x1-x2))*(zpos-x1)+z1
 Where x1 and z1 are the z and z coordinates of the vertex V1 of the previous figure and x2 and z2 are the z and z coordinates of the vertex V2.
 So the method to get the triangle that the current position is in, named getTriangle, applying all the calculations described above gets like this:
+
+```java
 protected Vector3f[] getTriangle(Vector3f position, Rectangle2D.Float boundingBox, GameItem terrainBlock) {
     // Get the column and row of the heightmap associated to the current position
     float cellWidth = boundingBox.width / (float) verticesPerCol;
@@ -190,8 +192,10 @@ protected float getWorldHeight(int row, int col, GameItem gameItem) {
     float y = heightMapMesh.getHeight(row, col);
     return y * gameItem.getScale() + gameItem.getPosition().y;
 }
+```
 
-You can see that we have two additional methods. The first one, named getDiagonalZCoord, calculates the z coordinate of the diagonal given a x position and two vertices. The other one, is used to retrieve the height of the triangle vertices, the y coordinate. When the terrain mesh is constructed the hieght of each vertex is precalculated and stored, we only need to translate it to world coordinates.
+You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the z coordinate of the diagonal given a x position and two vertices. The other one, is used to retrieve the height of the triangle vertices, the y coordinate. When the terrain mesh is constructed the hieght of each vertex is precalculated and stored, we only need to translate it to world coordinates.
+
 Ok, so we have the triangle coordinates that the current position is in, finally we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
 
  
