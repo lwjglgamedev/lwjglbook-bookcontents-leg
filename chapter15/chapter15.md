@@ -138,10 +138,10 @@ You can see that the cell is divided by a diagonal that separates the two triang
 
 We can determine that by calculating the line equation that matches the diagonal.
 
-The equation of a line that passes from two points (in 2D) is:
+If you rememeber your school math classes, the equation of a line that passes from two points (in 2D) is:
 
+$$y-y1=m\\dot(x-x1)$$
 
-y-y1=m*(x-x1).
 Where m is the line slope, that is, how much the height changes when moving through the x axis. Not that the “y” coordinates are the “z” ones in our case, and that we are using 2D coordinates since the value of “y” is not going to be calculated by this method. So, in our case the line equation should be rewritten like this.
 z-z1=m(z-z1)
 The slope formula is like this:
