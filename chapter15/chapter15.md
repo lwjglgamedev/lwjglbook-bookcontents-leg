@@ -140,10 +140,12 @@ We can determine that by calculating the line equation that matches the diagonal
 
 If you rememeber your school math classes, the equation of a line that passes from two points (in 2D) is:
 
-$$y-y1=m\\dot(x-x1)$$
+$$y-y1=m\cdot(x-x1)$$
 
 Where m is the line slope, that is, how much the height changes when moving through the x axis. Note that, in our case, the “y” coordinates are the “z” ones. Also note, that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that x an z coodrinates are enough. So, in our case the line equation should be rewritten like this.
-z-z1=m(z-z1)
+
+$$z-z1=m\cdot(z-z1)$$
+
 The slope formula is like this:
 m=(z1-z2)/(x1-x2)
 So the equation of the diagonal to get the z value given a xpos is like this:
