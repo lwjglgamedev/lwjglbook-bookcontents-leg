@@ -114,12 +114,19 @@ Let’s first start with the process of determining the triangle that we are in.
 * $$cellHeight$$ is the height of a cell.
 
 All of the variables defined above are expressed in world coordinates.  To calculate the width of a cell we just need to divide the bounding box width by the number of vertices per column:
-cellWidth = boundingBox.width / verticesPerCol  
-And the variable cellHeight is calculated analogous 
-cellHeight = boundingBox.hieght / verticesPerRow 
-Once we have those variables we need to calculate the row and the column of the cell we are currently in width is quite straight forward:
-col = position.x – boundingBox.x / boundingBox.width
-row = position.z – boundingBox.y / boundingBox.height
+
+$$cellWidth = boundingBox.width / verticesPerCol$$
+
+And the variable ```cellHeight``` is calculated analogous 
+
+$$cellHeight = boundingBox.hieght / verticesPerRow$$
+
+Once we have those variables we can calculate the row and the column of the cell we are currently in width is quite straight forward:
+
+$$col = (position.x – boundingBox.x) / boundingBox.width$$
+$$col = (row = position.z – boundingBox.y) / boundingBox.height$$
+
+
 The following picture shows all the variables  described above for a sample terrain block.
  
 With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell where the current position is in. How we can do this ? Let’s examine the triangles contained in a cell.
