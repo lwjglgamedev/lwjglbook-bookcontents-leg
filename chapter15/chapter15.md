@@ -104,13 +104,15 @@ The first thing that to we do in that method is to determine the terrain block t
 
 Once we have found the terrain block, we need to calculate the triangle which we are in. This is done in the ```getTriangle``` method that will be described later on. After that, we have the coordinates of the triangle that we are in, cinluding their heights. But, we need the height of apoint that is not located at any of those vertices but in a point in between. This is done in the $$interpolateHeight$$ method. We will also explain how this is done later on.
 
-Let’s first start with  determine the triangle that we are in. The quad that forms a terrain block can be seen as a grid in which each cell is formed by two triangles Let’s define some variables first:
-•	boundingBox.x is the x coordinates of the quad.
-•	boundingBox.y is the z coordinates of the quad (Altogh you see a “y”, it models the z axis).
-•	boundingBox.width is the width of the quad
-•	boundingBox .height is the height of the quad.
-•	cellWidth is the width  of a cell.
-•	cellHeight is the height of a cell.
+Let’s first start with the process of determining the triangle that we are in. The quad that forms a terrain block can be seen as a grid in which each cell is formed by two triangles Let’s define some variables first:
+
+* boundingBox.x is the x coordinate of the origien of the bounding box associated to the quad.
+* boundingBox.y is the z coordinates  of the origien of the bounding box associated to the quad (Altogh you see a “y”, it models the z axis).
+* boundingBox.width is the width of the quad
+* boundingBox .height is the height of the quad.
+* cellWidth is the width  of a cell.
+* cellHeight is the height of a cell.
+
 All of the variables defined above are expressed in world coordinates.  To calculate the width of a cell we just need to divide the bounding box width by the number of vertices per column:
 cellWidth = boundingBox.width / verticesPerCol  
 And the variable cellHeight is calculated analogous 
