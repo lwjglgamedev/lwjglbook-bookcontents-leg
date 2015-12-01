@@ -8,10 +8,15 @@ The first thing we need to define what our current position is. Since we do not 
 
 As it's been said before, the terrain is composed by a grid of terrain blocks as shown in the next figure.
 
-
+![](terrain_grid.png)
  
-Each terrain block is constructed from the same height map mesh, but is scaled and displaced precisely to form the terrain grid. So, what we need to do first is determine in which terrain block the current position is in. In order to do that we will calculate the bounding box of each terrain block. Since the terrain will not be displaced or scaled at runtime, we can store the results of calculating the bounding boxes for each terrain block in the terrain constructor. By doing this way we access them later at any time without repeating those operations again and again.
-We will create a new method that calculates the bounding box of a terrain block, named getBoundingBox.
+Each terrain block is constructed from the same height map mesh, but is scaled and displaced precisely to form a terrain grid that looks like a continuous landscape.
+
+So, what we need to do first is determine in which terrain block the current position is in. In order to do that we will calculate the bounding box of each terrain block taking into consideration the displacement and the scaling. Since the terrain will not be displaced or scaled at runtime, we can do those calculations in the ```Terrain``` class constructor. By doing this way we access them later at any time without repeating those operations in eacha game loop cycle.
+
+We will create a new method that calculates the bounding box of a terrain block, named ```getBoundingBox```.
+
+```java
 private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
     float scale = terrainBlock.getScale();
     Vector3f position = terrainBlock.getPosition();
@@ -23,13 +28,21 @@ private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
     Rectangle2D.Float boundingBox = new Rectangle2D.Float(topLeftX, topLeftZ, width, height);
     return boundingBox;
 }
+```
 
 We need to calculate the world coordinates of our terrain block. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to [STARTX, STARTZ], so we need to transform that coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
+
+![Model to world coordinates](model_to_world_coordinates.png)
  
 As it’s been said above, this is done in the Terrain class constructor, so we need to add a new attribute which will hold the bounding boxes:
-private final Rectangle2D.Float[][] boundingBoxes;
 
-In the constructor, while we are creating the terrain blocks we just need to invoke the method that calculates the bounding box.
+```java
+private final Rectangle2D.Float[][] boundingBoxes;
+```
+
+In the ```Terrain``` constructor, while we are creating the terrain blocks we just need to invoke the method that calculates the bounding box.
+
+```java
 public Terrain(int terrainSize, float scale, float minY, float maxY, String heightMapFile, String textureFile, int textInc) throws Exception {
     this.terrainSize = terrainSize;
     gameItems = new GameItem[terrainSize * terrainSize];
@@ -55,8 +68,11 @@ public Terrain(int terrainSize, float scale, float minY, float maxY, String heig
         }
     }
 }
+```
 
-So, with all the bounding boxes pre-calculated, we are ready to create a new method that will return the height of the terrain taking as a parameter the current position. This method will be named getHeightVector and its defined like this.
+So, with all the bounding boxes pre-calculated, we are ready to create a new method that will return the height of the terrain taking as a parameter the current position. This method will be named ```getHeightVector``` and its defined like this.
+
+```java
 public float getHeight(Vector3f position) {
     float result = Float.MIN_VALUE;
     // For each terrain block we get the bounding box, translate it to view coodinates
@@ -81,6 +97,7 @@ public float getHeight(Vector3f position) {
 
     return result;
 }
+```
 
 The first thing that to we do in that method is to determine the terrain block that we are in. Since we already have the bounding box for each terrain block, the algorithm is easy. We just simply need to iterate over them and check if the current position is inside (the class Rectangle2D provides a method for this).
 Once we have found the terrain block we need to get, for the mesh associated to it, the triangle which we are in, this is done in the getTriangle method. An finally, we have the heights of the terrain vertices but we need to calculate the height of a point that is inside the triangle which is done in the interpolateHeight method. We will explain how this is done.
