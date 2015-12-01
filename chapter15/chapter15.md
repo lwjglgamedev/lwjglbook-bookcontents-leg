@@ -142,7 +142,7 @@ If you rememeber your school math classes, the equation of a line that passes fr
 
 $$y-y1=m\\dot(x-x1)$$
 
-Where m is the line slope, that is, how much the height changes when moving through the x axis. Not that the “y” coordinates are the “z” ones in our case, and that we are using 2D coordinates since the value of “y” is not going to be calculated by this method. So, in our case the line equation should be rewritten like this.
+Where m is the line slope, that is, how much the height changes when moving through the x axis. Note that, in our case, the “y” coordinates are the “z” ones. Also note, that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that x an z coodrinates are enough. So, in our case the line equation should be rewritten like this.
 z-z1=m(z-z1)
 The slope formula is like this:
 m=(z1-z2)/(x1-x2)
