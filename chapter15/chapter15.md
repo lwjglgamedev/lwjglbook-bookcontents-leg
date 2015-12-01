@@ -217,8 +217,10 @@ $$b=(B_{z}-A_{z}) \cdot (C_{x} - A_{x}) - (C_{z} - A_{z}) \cdot (B_{z}-A_{z})$$
 
 $$c=(B_{x}-A_{x}) \cdot (C_{y} - A_{y}) - (C_{x} - A_{x}) \cdot (B_{y}-A_{y})$$
 
-Where A, B and C are the three vertices needed to define the plane.
-We have the x and z coordinates of the current position and we need to calculate the y value:
+Where $$A$$, $$B$$ and $$C$$ are the three vertices needed to define the plane.
+
+Then, with previous equations and the values of the x and z coordinates for the current position we are able to calculate the y value, that is the hieght of the terrain at the current position:
+
 float y = (-d - a * x - c * z) / b;
 This is calculated in the following method:
 protected float interpolateHeight(Vector3f pA, Vector3f pB, Vector3f pC, float x, float z) {
