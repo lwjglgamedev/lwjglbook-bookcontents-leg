@@ -146,8 +146,10 @@ Where m is the line slope, that is, how much the height changes when moving thro
 
 $$z-z1=m\cdot(z-z1)$$
 
-The slope formula is like this:
-m=(z1-z2)/(x1-x2)
+The slope can be calculate in the following way:
+
+$$$$m=(z1-z2)/(x1-x2)$$
+
 So the equation of the diagonal to get the z value given a xpos is like this:
 Z= m*(xpos-x1)+z1=((z1-z2)/(x1-x2))*(zpos-x1)+z1
 Where x1 and z1 are the z and z coordinates of the vertex V1 of the previous figure and x2 and z2 are the z and z coordinates of the vertex V2.
