@@ -126,12 +126,15 @@ Once we have those variables we can calculate the row and the column of the cell
 $$col = (position.x – boundingBox.x) / boundingBox.width$$
 $$col = (row = position.z – boundingBox.y) / boundingBox.height$$
 
-
 The following picture shows all the variables  described above for a sample terrain block.
+
+![Terrain block variables](terrain_block_variables.png)
+
+With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell. How we can do this ? Let’s examine the triangles that form a single cell.
  
-With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell where the current position is in. How we can do this ? Let’s examine the triangles contained in a cell.
- 
-The quad is divided by its diagonal that separates the two triangles that compose it. That way to determine  the triangle that the current position is in, is checking if the z coordinate is above that diagonal. That is, if the z coordinate value of the current position is less than the z value of the diagonal for a x value equals to de position x coordinate.
+![Cell](cell.png)
+
+You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle that the current position is in, is checking if the z coordinate is above that diagonal. That is, if the z coordinate value of the current position is less than the z value of the diagonal for a x value equals to de position x coordinate.
 We just need to calculate the diagonal z coordinate and compare it with the z coordinate of the current position, and we can do that by calculating the line equation that matches the diagonal.
 The equation of a line that passes from two points (in 2D) is:
 y-y1=m*(x-x1).
