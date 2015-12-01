@@ -99,8 +99,10 @@ public float getHeight(Vector3f position) {
 }
 ```
 
-The first thing that to we do in that method is to determine the terrain block that we are in. Since we already have the bounding box for each terrain block, the algorithm is easy. We just simply need to iterate over them and check if the current position is inside (the class Rectangle2D provides a method for this).
-Once we have found the terrain block we need to get, for the mesh associated to it, the triangle which we are in, this is done in the getTriangle method. An finally, we have the heights of the terrain vertices but we need to calculate the height of a point that is inside the triangle which is done in the interpolateHeight method. We will explain how this is done.
+The first thing that to we do in that method is to determine the terrain block that we are in. Since we already have the bounding box for each terrain block, the algorithm is simple. We just simply need to iterate over the array of bounding boxes and check if the current position is inside (the class 
+```Rectangle2D``` already provides a method for this).
+
+Once we have found the terrain block, we need to calculate the triangle which we are in. This is done in the ```getTriangle``` method that will be described later on. An finally, we have the heights of the terrain vertices but we need to calculate the height of a point that is inside the triangle which is done in the interpolateHeight method. We will explain how this is done.
 Let’s first start with  determine the triangle that we are in. The quad that forms a terrain block can be seen as a grid in which each cell is formed by two triangles Let’s define some variables first:
 •	boundingBox.x is the x coordinates of the quad.
 •	boundingBox.y is the z coordinates of the quad (Altogh you see a “y”, it models the z axis).
