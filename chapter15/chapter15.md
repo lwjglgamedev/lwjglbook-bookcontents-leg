@@ -149,7 +149,7 @@ $$z-z1=m\cdot(z-z1)$$
 
 The slope can be calculate in the following way:
 
-$$m=(z1-z2)/(x1-x2)$$
+$$m=\frac{z1-z2}{x1-x2}$$
 
 So the equation of the diagonal to get the $$z$$ value given a $$x$$ position is like this:
 
