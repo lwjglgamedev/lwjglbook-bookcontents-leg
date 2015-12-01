@@ -219,7 +219,7 @@ $$c=(B_{x}-A_{x}) \cdot (C_{y} - A_{y}) - (C_{x} - A_{x}) \cdot (B_{y}-A_{y})$$
 
 Where $$A$$, $$B$$ and $$C$$ are the three vertices needed to define the plane.
 
-Then, with previous equations and the values of the x and z coordinates for the current position we are able to calculate the y value, that is the hieght of the terrain at the current position:
+Then, with previous equations and the values of the $$x$$ and $$z$$ coordinates for the current position we are able to calculate the y value, that is the hieght of the terrain at the current position:
 
 float y = (-d - a * x - c * z) / b;
 This is calculated in the following method:
