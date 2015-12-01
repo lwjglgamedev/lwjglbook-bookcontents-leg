@@ -202,7 +202,7 @@ protected float getWorldHeight(int row, int col, GameItem gameItem) {
 }
 ```
 
-You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the z coordinate of the diagonal given a x position and two vertices. The other one, is used to retrieve the height of the triangle vertices, the y coordinate. When the terrain mesh is constructed the hieght of each vertex is precalculated and stored, we only need to translate it to world coordinates.
+You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the $$z$$ coordinate of the diagonal given a $$x$$ position and two vertices. The other one, named ```getWorldHeight```, is used to retrieve the height of the triangle vertices, the $$y$$ coordinate. When the terrain mesh is constructed the height of each vertex is precalculated and stored, we only need to translate it to world coordinates.
 
 Ok, so we have the triangle coordinates that the current position is in, finally we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
 
