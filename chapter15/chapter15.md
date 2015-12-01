@@ -206,9 +206,6 @@ You can see that we have two additional methods. The first one, named ```getDiag
 
 Ok, so we have the triangle coordinates that the current position is in, finally we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
 
- 
-
- 
 The plane equation is as follows:
 ax+by+cz+d=0
 The values of the constants of the previous equation are:
