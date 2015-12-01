@@ -115,16 +115,16 @@ Let’s first start with the process of determining the triangle that we are in.
 
 All of the variables defined above are expressed in world coordinates.  To calculate the width of a cell we just need to divide the bounding box width by the number of vertices per column:
 
-$$cellWidth = boundingBox.width / verticesPerCol$$
+$$cellWidth = \frac{boundingBox.width}{verticesPerCol}$$
 
 And the variable ```cellHeight``` is calculated analogous 
 
-$$cellHeight = boundingBox.hieght / verticesPerRow$$
+$$cellHeight = \frac{boundingBox.height}{verticesPerRow}$$
 
 Once we have those variables we can calculate the row and the column of the cell we are currently in width is quite straight forward:
 
-$$col = (position.x – boundingBox.x) / boundingBox.width$$
-$$col = (row = position.z – boundingBox.y) / boundingBox.height$$
+$$col = \frac{position.x – boundingBox.x}{boundingBox.width}$$
+$$col = \frac{row = position.z – boundingBox.y}{boundingBox.height}$$
 
 The following picture shows all the variables  described above for a sample terrain block.
 
