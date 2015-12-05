@@ -32,7 +32,7 @@ private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
 
 We need to calculate the world coordinates of our terrain block. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to [STARTX, STARTZ], so we need to transform that coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
 
-![Model to world coordinates](model_to_world_coordinates.png)
+![Model to world coordinates](model_to_world_coordinates_n.png)
  
 As it’s been said above, this is done in the Terrain class constructor, so we need to add a new attribute which will hold the bounding boxes:
 
