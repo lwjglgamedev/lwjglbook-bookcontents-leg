@@ -16,4 +16,5 @@
 * [Sky Box and some optimizations](chapter13/chapter13.md)
 * [Height Maps](chapter14/chapter14.md)
 * [Terrain Collisions](chapter15/chapter15.md)
+* Shadows
 
