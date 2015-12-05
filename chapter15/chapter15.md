@@ -129,7 +129,7 @@ $$row = \frac{position.z - boundingBox.y}{boundingBox.height}$$
 
 The following picture shows all the variables  described above for a sample terrain block.
 
-![Terrain block variables](model_to_world_coordinates_n.png)
+![Terrain block variables](terrain_block_variables_n.png)
 
 With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell. How we can do this ? Let’s examine the triangles that form a single cell.
  
