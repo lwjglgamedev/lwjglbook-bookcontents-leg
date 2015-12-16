@@ -6,25 +6,30 @@ Let us firs examine what are the attributes that define the fog effect. The firs
 
 Thus, in order to apply the fog effect we need to find a way to fade our 3D scene objects into the fog colour as long as they get far away from the camera. Objects that are close to the camera will not be affected by the fog, but objects that are far away will not be distinguishable.  So we need to be able to calculate a factor that can be used to blend the fog colour and each fragment colour in order to simulate that effect. That factor will need to be dependent on the distance to the camera.
 
-Let’s name that factor as fogFactor, and set its range from 0 to 1. When fogFactor takes the 1 value, it means that the object will not be affected by fog, it’s a nearby object. When fogFactor takes the 0 value, it means that the objects will be completely hidden in the fog.
+Let’s name that factor as $$fogFactor$$, and set its range from 0 to 1. When $$fogFactor$$ takes the 1 value, it means that the object will not be affected by fog, it’s a nearby object. When $$fogFactor$$ takes the 0 value, it means that the objects will be completely hidden in the fog.
+
 Then, the equation needed to calculate the fog colour will be:
 
+$$finalColour = (1 - fogFactor) \cdot fogColour + fogFactor \codt framentColour$$
 
-finalColour = (1 – fogFactor) * fogColour + fogFactor * fragmentColour
-Where:
-•	finalColour is the colour that results from applying the fog effect.
-•	fogFactor is the parameters that controls how the fog colour and the fragment colour are blended. It basically controls the object visibility.
-•	fogColour is the colour of the fog.
-•	fragmentColour, is the colour of the fragment without applying any fog effect on it.
-Now we need to find a way to calculate fogFactor depending on the distance. We can chose different models, and the first one could be to use a linear model. That is a model that, given a distance, changes the fogFactor value in a linear way. 
-As we have said, the f
+* $$finalColour$$ is the colour that results from applying the fog effect.
+* $$fogFactor$$ is the parameters that controls how the fog colour and the fragment colour are blended. It basically controls the object visibility.
+* $$fogColour$$ is the colour of the fog.
+* $$fragmentColour$$, is the colour of the fragment without applying any fog effect on it.
+
+Now we need to find a way to calculate $$fogFactor$$ depending on the distance. We can chose different models, and the first one could be to use a linear model. That is a model that, given a distance, changes the fogFactor value in a linear way. 
+
 So the first thing that we need to do is to model how it affects the objects contained in our 3D scene. We know that objects closer to the camera will not be affected and that objects that are too far away will not be distinguishable.  We need to calculate a factor that is dependent on the distance and that can be used to calculate the final colour.
+
 The first option is to chose a linear model. In this model we should define the following parameters:
-•	fogStart: The distance at where fog effects starts to be applied.
-•	fogFinish: The distance at where fog effects reaches its maximum value.
-•	distance: Distance to the camera
+* $$fogStart$$: The distance at where fog effects starts to be applied.
+* $$fogFinish$$: The distance at where fog effects reaches its maximum value.
+* $$distance$$: Distance to the camera.
+
 With those parameters, the equation to be applied would be:
-fogFactor = (fogFinish – distance) / ( fogFinish – fogStart)
+
+$$fogFactor = \frac{(fogFinish - distance)}{(fogFinish - fogStart)}$$
+
 For objects at distance lower than fogStart we just simply set the fogFactor to 1. The following graph shows how the fogFactor changes with the distance.
  
 The previous model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
