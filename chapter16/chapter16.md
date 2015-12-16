@@ -28,7 +28,7 @@ The first option is to chose a linear model. In this model we should define the 
 
 With those parameters, the equation to be applied would be:
 
-$$fogFactor = \frac{(fogFinish - distance)}{(fogFinish - fogStart)}$$
+$$\displaystyle fogFactor = \frac{(fogFinish - distance)}{(fogFinish - fogStart)}$$
 
 For objects at distance lower than fogStart we just simply set the fogFactor to 1. The following graph shows how the fogFactor changes with the distance.
  
