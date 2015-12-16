@@ -201,6 +201,10 @@ And we will get something like this when the night falls.
 ![Fog at night](fog_at_night.png)
 
 One important thing to highlight is that we must wisely choose the fog colour. This is even more important when we have no skybox but a fixed colour background.  We should set up the fog colour to be equal to the clear colour. If you uncomment the code that render the skybox and rerun the example you will get something like this.
- 
+
+![Black clear colour](fog_clear_colour_black.png) 
+
 But if we modify the clear colour to be equal to ```(0.5, 0.5, 0.5)``` the result will be like this.
+
+![](fog_clear_colour_grey.png)
  
