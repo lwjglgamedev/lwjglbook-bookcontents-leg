@@ -162,13 +162,19 @@ And we will get an effect like this:
 ![Fog effect](fog_effect.png) 
 
 You will see that distant objects get faded in the distance and that fog starts to disappear when you approach to them. There’s a problem, though with the skybox, it looks a little bit weird that the horizon is not affected by the fog. There are several ways to solve this:
-•	Use a different skybox in which you only see a sky.
-•	Remove the skybox, since you have a dense fog, you should not be able to see a background.
+
+* Use a different skybox in which you only see a sky.
+* Remove the skybox, since you have a dense fog, you should not be able to see a background.
+
 Maybe none of the two solutions fits you, and you can try to match the fog colour to the skybox background but you will end up doing complex calculations and the result will not be much better.
+
 If you let the example run you will see how directional light gets dimmed and the scene darkens, but there’s a problem with the fog, it is not affected by light and you will get something like this.
- 
+
+![Glowing fog](glowing_fog.png) 
 
 Distant objects are set to the fig colour which is a constants and it produces like a glowing in the dark effect (which may be ok for you or not). We need to change the funcion that calculates the fog to take into consideration the  light. The function will receive the ambient light and the directional light to modulate the fog colour. 
+
+```glsl
 vec4 calcFog(vec3 pos, vec4 colour, Fog fog, vec3 ambientLight, DirectionalLight dirLight)
 {
     vec3 fogColor = fog.colour * (ambientLight + dirLight.colour * dirLight.intensity);
@@ -179,17 +185,22 @@ vec4 calcFog(vec3 pos, vec4 colour, Fog fog, vec3 ambientLight, DirectionalLight
     vec3 resultColour = mix(fogColor, colour.xyz, fogFactor);
     return vec4(resultColour.xyz, 1);
 }
+```
 
 As you can see with the directional light we just use the colour and the intensity, we are not interested in the direction. With that modification we just need to slightly modify the call to the function like this:
+
+```glsl
 if ( fog.active == 1 ) 
 {
     fragColor = calcFog(mvVertexPos, fragColor, fog, ambientLight, directionalLight);
 }
+```
 
 And we will get something like this when the night falls.
  
+![Fog at night](fog_at_night.png)
 
 One important thing to highlight is that we must wisely choose the fog colour. This is even more important when we have no skybox but a fixed colour background.  We should set up the fog colour to be equal to the clear colour. If you uncomment the code that render the skybox and rerun the example you will get something like this.
  
-But if we modify the clear colour to be equal to (0.5, 0.5, 0.5) the result will be like this.
+But if we modify the clear colour to be equal to ```(0.5, 0.5, 0.5)``` the result will be like this.
  
