@@ -143,19 +143,23 @@ vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
 
 As you can see we first calculate the distance to the vertex. The vertex coordinates are defined in the ```pos``` variable and we just need to calculate the length. Then we  calculate the fog factor using the exponential model with an exponent of two (which is equivalent to multiply it twice). We clamp the ```fogFactor``` to a range between o and 1 and use the mix function in GLSL which is used to blend the fog colour and the fragment colour (defined by variable colour).  It's equivalent to apply this equation:
 
+$$resultColour = (1 - fogFactor) \cdot fog.colour + fogFactor \cdot colour$$
 
-resultColour= (1 – fogFactor) * fog.colour + fogFactor * colour
-The result colour is just returned. At the end of the fragment shader after applying all the light effects we just simply assign it to the fragment colour if the fog is active.
+At the end of the fragment shader after applying all the light effects we just simply assign the returned value to the fragment colour if the fog is active.
+
+```glsl
 if ( fog.active == 1 ) 
 {
     fragColor = calcFog(mvVertexPos, fragColor, fog);
 }
+```
 
 With all that code completed, we can set up a Fog with the following data:
 scene.setFog(new Fog(true, new Vector3f(0.5f, 0.5f, 0.5f), 0.15f));
 
 And we will get an effect like this:
- 
+
+![Fog effect](fog_effect.png) 
 
 You will see that distant objects get faded in the distance and that fog starts to disappear when you approach to them. There’s a problem, though with the skybox, it looks a little bit weird that the horizon is not affected by the fog. There are several ways to solve this:
 •	Use a different skybox in which you only see a sky.
