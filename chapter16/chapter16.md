@@ -10,7 +10,7 @@ Let’s name that factor as $$fogFactor$$, and set its range from 0 to 1. When $
 
 Then, the equation needed to calculate the fog colour will be:
 
-$$finalColour = (1 - fogFactor) \cdot fogColour + fogFactor \codt framentColour$$
+$$finalColour = (1 - fogFactor) \cdot fogColour + fogFactor \cdot framentColour$$
 
 * $$finalColour$$ is the colour that results from applying the fog effect.
 * $$fogFactor$$ is the parameters that controls how the fog colour and the fragment colour are blended. It basically controls the object visibility.
