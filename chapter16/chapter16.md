@@ -36,12 +36,12 @@ For objects at distance lower than $$fogStart$$ we just simply set the $$fogFact
  
 The previous model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
 
-$$\displaystyle focFactor = e^{-(distance \cdot fogDensity)^{exponent}}$$
+$$\displaystyle focFactor = e^{-(distance \cdot fogDensity)^{exponent}} = \frac{1}{e^{(distance \cdot fogDensity)^{exponent}}}$$
 
-fogFactor = e^-(distance*fogDensity)^exponent= 1 / e^(distance*fogdensity)^exponent
 The new variables that come into play are:
-•	fogDensity which models the thickness or density of the fog.
-•	exponent which is used to control how fast the fog increases with distance
+* $$fogDensity$$ which models the thickness or density of the fog.
+* $$exponent$$ which is used to control how fast the fog increases with distance
+
 The following picture shows two graphs for the equation above for different values of the exponent (2 for the blue line and 4 for the red one)
 
  
