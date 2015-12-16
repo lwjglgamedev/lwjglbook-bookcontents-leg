@@ -44,20 +44,30 @@ The new variables that come into play are:
 
 The following picture shows two graphs for the equation above for different values of the exponent (2 for the blue line and 4 for the red one)
 
- 
+![Exponential model](exponential_model.png) 
+
 In our code we will use a formula which sets a value of two for the exponent (you can easily modify the example to use different values).
+
 Now that the theory has been explained we can put it into practice. We will implement the effect in the scene fragment shader since we have there all the variables we need. We will start by defining a struct that models the fog attributes.
+
+```glsl
 struct Fog
 {
     int active;
     vec3 colour;
     float density;
 };
+```
 
-The “active” attribuye will be used to activate or deactivate the fog effect. The fog will be passed to the shader through another uniform named “fog”.
+The ```active``` attribute will be used to activate or deactivate the fog effect. The fog will be passed to the shader through another uniform named ```fog```.
+
+```glsl
 uniform Fog fog;
+```
 
 We will create also a new class named Fog that will be handled in the Java code, which is another POJO which contaings the fog attributes.
+
+```java
 package org.lwjglb.engine.graph.weather;
 
 import org.joml.Vector3f;
@@ -85,9 +95,13 @@ public class Fog {
     }
 
    // Getters and setters here….
+```
 
-We will add a Fog instance in the Scene class. As a default, the Scene class will initialize the Fog instance to the constant NOFOG which defines a deactivated instance.
+We will add a ```Fog``` instance in the ```Scene``` class. As a default, the ```Scene``` class will initialize the ```Fog``` instance to the constant ```NOFOG``` which defines a deactivated instance.
+
 Since we added a new uniform type we need to modify the ShaderProgram class to create and initialize the fog uniform.
+
+
 public void createFogUniform(String uniformName) throws Exception {
     createUniform(uniformName + ".active");
     createUniform(uniformName + ".colour");
