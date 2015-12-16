@@ -31,8 +31,11 @@ With those parameters, the equation to be applied would be:
 $$\displaystyle fogFactor = \frac{(fogFinish - distance)}{(fogFinish - fogStart)}$$
 
 For objects at distance lower than fogStart we just simply set the fogFactor to 1. The following graph shows how the fogFactor changes with the distance.
+
+![Linear model](linear_model.png)
  
 The previous model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
+
 fogFactor = e^-(distance*fogDensity)^exponent= 1 / e^(distance*fogdensity)^exponent
 The new variables that come into play are:
 •	fogDensity which models the thickness or density of the fog.
