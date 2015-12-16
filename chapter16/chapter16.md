@@ -101,7 +101,7 @@ We will add a ```Fog``` instance in the ```Scene``` class. As a default, the ```
 
 Since we added a new uniform type we need to modify the ShaderProgram class to create and initialize the fog uniform.
 
-
+```java
 public void createFogUniform(String uniformName) throws Exception {
     createUniform(uniformName + ".active");
     createUniform(uniformName + ".colour");
@@ -113,14 +113,23 @@ public void setUniform(String uniformName, Fog fog) {
     setUniform(uniformName + ".colour", fog.getColour() );
     setUniform(uniformName + ".density", fog.getDensity());
 }
+```
 
-In the Renderer class we just need to create the uniform in the setupSceneShader method:
+In the ```Renderer``` class we just need to create the uniform in the ```setupSceneShader``` method:
+
+```java
 sceneShaderProgram.createFogUniform("fog");
+```
 
- And use it in the renderScene method:
+ And use it in the ```renderScene``` method:
+
+```java
 sceneShaderProgram.setUniform("fog", scene.getFog());
+```
 
 We are now able to define fog characteristics in our game, but we need to get back to the fragment shader in order to apply the fog effect. We will create a function named calFog which is defined like this.
+
+```glsl
 vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
 {
     float distance = length(pos);
@@ -130,8 +139,11 @@ vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
     vec3 resultColour = mix(fog.colour, colour.xyz, fogFactor);
     return vec4(resultColour.xyz, 1);
 }
+```
 
-As you can see we first calculate the distance to the vertex. The vertex coordinates are defined in the pos variable and we just need to calculate the length. Then we just calculate the fog factor using the exponential model with an exponent of two (which is equivalent to multiply it twice). We clamp the fogFactor to a range between o and 1 and use the mix function in GLSL which is used to blend the fog colour and the fragment colour (defined by variable colour).  Is equivalent to apply this equation:
+As you can see we first calculate the distance to the vertex. The vertex coordinates are defined in the ```pos``` variable and we just need to calculate the length. Then we  calculate the fog factor using the exponential model with an exponent of two (which is equivalent to multiply it twice). We clamp the ```fogFactor``` to a range between o and 1 and use the mix function in GLSL which is used to blend the fog colour and the fragment colour (defined by variable colour).  It's equivalent to apply this equation:
+
+
 resultColour= (1 – fogFactor) * fog.colour + fogFactor * colour
 The result colour is just returned. At the end of the fragment shader after applying all the light effects we just simply assign it to the fragment colour if the fog is active.
 if ( fog.active == 1 ) 
