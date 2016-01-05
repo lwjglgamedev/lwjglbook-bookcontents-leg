@@ -8,13 +8,16 @@ We may think in increasing the detail of our models by increasing the number of 
 
 Let’s go back to the plain surface example, a plane cane be defined by two triangles which form a quad. If you remember form the lightning chapters, the element that models how light reflects are surface normals. In this case, we have a single normal for the whole surface, each fragment of the surface uses the same normal when calculating how light affects them. This is shown in the next figure.
 
- 
+![Surface Normals](surface_normals.png) 
 
 If we could change the normals for each fragment of the surface we could model surface imperfections to render them in a more realistic way.
- 
+
+![Fragment Normals](fragment_normals.png) 
 
 The way we are going to achieve this is bay loading another texture which stores the normals for the surface. Each pixel of the normal texture will contain the values of the x, y and z coordinates of the normal stored as an RGB value. 
+
 Let’s use the following texture to draw a quad.
+
  
 An example of a normal map texture for the image above could be the following.
  
