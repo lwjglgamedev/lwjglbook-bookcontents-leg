@@ -18,6 +18,6 @@
 * [Terrain Collisions](chapter15/chapter15.md)
 * [Fog](chapter16/chapter16.md)
 * [Normal Mapping](chapter17/chapter17.md)
-* [Animations](chapter18/chapter18.md)
+* [Shadows](chapter18/chapter18.md)
 * [Animations](chapter19/chapter19.md)
 
