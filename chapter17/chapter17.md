@@ -1,6 +1,5 @@
 # Normal Mapping
 
-
 In this chapter we will explain a technique that will dramatically improve how our 3D models look like. We are now able to apply textures to complex 3D models, but we are still far away from what real objects look like. Surfaces in the real world are not perfectly plain, they have imperfections that our 3D models currently do not have. 
 In order to render more realistic scenes we are going to use normal maps. If you look at a flat surface in the real word you will see that those imperfections can be seen even at distance by the way that the light reflects on it. In a 3D scene a flat surface will have no imperfections, we can apply a texture to it but we won’t change the way that light reflects on it. That’s the thing that makes the difference.
 We may think in increasing the detail of our models by increasing the number of triangles and reflect those imperfections but performance will degrade. What we need is a way to change the way light reflects on surfaces to increase the realism. This is achieved with the normal mapping technique.
