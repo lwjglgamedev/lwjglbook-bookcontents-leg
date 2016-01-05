@@ -17,6 +17,6 @@
 * [Height Maps](chapter14/chapter14.md)
 * [Terrain Collisions](chapter15/chapter15.md)
 * [Fog](chapter16/chapter16.md)
-* [Shadows](chapter17/chapter17.md)
+* [Normal Mapping](chapter17/chapter17.md)
 * [Animations](chapter18/chapter18.md)
 
