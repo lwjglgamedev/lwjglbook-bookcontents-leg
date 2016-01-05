@@ -19,5 +19,5 @@
 * [Fog](chapter16/chapter16.md)
 * [Normal Mapping](chapter17/chapter17.md)
 * [Animations](chapter18/chapter18.md)
-* Animations
+* [Animations](chapter19/chapter19.md)
 
