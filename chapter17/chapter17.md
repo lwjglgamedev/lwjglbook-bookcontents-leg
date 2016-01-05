@@ -134,7 +134,9 @@ Remember that the colour we get are the normal coordinates, but since they are s
 
 And that’s all, we can use the returned value as the normal for that fragment in all the lightning calculations.
 
-Since we changed the Material definition and the texture uniforms, the way in which we create them in the ShaderProgram class has changed. 
+Since we changed the ```Material``` definition and the texture uniforms, the way in which we create them in the ```ShaderProgram``` class has changed.
+
+```java
 public void createMaterialUniform(String uniformName) throws Exception {
     createUniform(uniformName + ".colour");
     createUniform(uniformName + ".texture_sampler");
@@ -154,9 +156,13 @@ public void setUniform(String uniformName, Material material) {
     setUniform(uniformName + ".hasNormalMap", material.hasNormalMap() ? 1 : 0);
     setUniform(uniformName + ".reflectance", material.getReflectance());
 }
+```
 
-There are some thing that are interesting in the code above, we are setting a 0 for the material texture uniform (texture_sampler) and a 1 for the normal map texture (normalMap). If you recall from the texture chapter. We are using more than one texture, so we must set up the texture unit for each separate texture.
-We need to take this also into consideration when we are rendering a Mesh.
+You may notice some interesting thins in the code above. We are setting a 0 for the material texture uniform (```texture_sampler```) and a 1 for the normal map texture (```normalMap```). If you recall from the texture chapter. We are using more than one texture, so we must set up the texture unit for each separate texture.
+
+We need to take this also into consideration when we are rendering a ```Mesh```.
+
+```java
 private void initRender() {
     Texture texture = material.getTexture();
     if (texture != null) {
@@ -179,6 +185,7 @@ private void initRender() {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 }
+```
 
 As you can see we need to bind to each of the textures available and activate the associated texture unit in order to be able to work with more than one texture. In the renderScene method in the Renderer class we do not need to explicitly set up the uniform of the texture since it’s already contained in the Material.
 In order to show the improvements that normal maps provide we have created an example that shows two quads side by side. The right quad has a texture map applied and the left one not. We also have removed the terrain, the skybox and the HUD and setup a directional light with can be changed with the left and right cursor keys so you can see the effect. IN order to achieve this we have modified the base source code a bit in order to support not having a skybox or a terrain. We have also clamped the light effect in the fragment shader in the rang [0, 1] to avoid over exposing effect of the image. 
