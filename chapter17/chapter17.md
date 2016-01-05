@@ -18,12 +18,18 @@ The way we are going to achieve this is bay loading another texture which stores
 
 Let’s use the following texture to draw a quad.
 
- 
+![Texture](rock.png) 
+
 An example of a normal map texture for the image above could be the following.
- 
-As you can see is if like we had applied a colour transformation to the original texure. Each pixel stores normal information using colour components. Once thing that you will usually see when looking at normal maps is that the dominant colours tend to blue. This is due to the fact that normals point to the positive z axis. The z component will usually have a much higher value than the x and y ones for plain surfaces as the normal points out of the surface. Since x, y, z coordinates are mapped to RGB, the blue component will have also a higher value.
+
+![Normal map texture](rock_normals.png) 
+
+As you can see is if like we had applied a colour transformation to the original texture. Each pixel stores normal information using colour components. Once thing that you will usually see when looking at normal maps is that the dominant colours tend to blue. This is due to the fact that normals point to the positive z axis. The z component will usually have a much higher value than the x and y ones for plain surfaces as the normal points out of the surface. Since x, y, z coordinates are mapped to RGB, the blue component will have also a higher value.
+
 So, to render an object using normal maps we just need an extra texture and use it while rendering fragments to get the appropriate normal value.
-Let’s start changing our code in order to support normal maps. We will add a new texture instance to the Material class so we can attach a normal map texture to our game items. This instance will have its own getters and setters and method to check if the material has a normal map or not.
+Let’s start changing our code in order to support normal maps. We will add a new texture instance to the ```Material``` class so we can attach a normal map texture to our game items. This instance will have its own getters and setters and method to check if the material has a normal map or not.
+
+```java
 public class Material {
 
     private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -50,8 +56,11 @@ public class Material {
         this.normalMap = normalMap;
     }
 }
+```
 
-We will use the normal map texture in our depth shader, buts since we are working in view coordinates space we need to pass the model view matrix. So we need to modify the scene vertex shader.
+We will use the normal map texture in the scene fragment shader, but since we are working in view coordinates space we need to pass the model view matrix in order to do the proper transformation. Thus, we need to modify the scene vertex shader.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -75,11 +84,17 @@ void main()
     mvVertexPos = mvPos.xyz;
     outModelViewMatrix = modelViewMatrix;
 }
+```
 
 In the scene fragment shader we need to add another input parameter.
-in mat4 outModelViewMatrix;
 
-We will also modify the Material struct definition in the fragment shader. The Material will have now references to the textures. We will not have them spread as separated uniforms, they are not contained in the Material definition.
+```glsl
+in mat4 outModelViewMatrix;
+```
+
+We will also modify the ```Material``` struct definition in the fragment shader. The ```Material``` will have now references to the textures. We will not have them spread as separated uniforms, they are now contained in the Material definition.
+
+```glsl
 struct Material
 {
     vec3 colour;
@@ -89,9 +104,12 @@ struct Material
     int hasNormalMap;
     float reflectance;
 };
+```
 
-We will create a new function that calculates the normal for the current fragment.
-Vec3 calcNormal(Material material, vec3 normal, vec2 text_coord, mat4 modelViewMatrix)
+Also, in the fragment shader, we will create a new function that calculates the normal for the current fragment.
+
+```glsl
+vec3 calcNormal(Material material, vec3 normal, vec2 text_coord, mat4 modelViewMatrix)
 {
     vec3 newNormal = normal;
     if ( material.hasNormalMap == 1 )
@@ -102,15 +120,20 @@ Vec3 calcNormal(Material material, vec3 normal, vec2 text_coord, mat4 modelViewM
     }
     return newNormal;
 }
+```
  
 The function takes the following parameters:
-•	The material instance.
-•	The vertex normal.
-•	The texture coordinates.
-•	The model view matrix.
-The first thing we do is to check if this material has a normal map associated or not. If not, we just simply use the vertex normal as usual. If it has a normal map, we the normal data stored in the normal texture map associated to the current texture coordinates.
-Remember that the colour we get are the normal coordinates, but since they are stored as RGB values they are contained in the range [0, 1]. We need to transform them to be in the range [-1, 1], so we just multiply by two and subtract 1 .
-Then we normalize that value and transform it to view model coordinate space (as with the vertex normal). And that’s all we can use the returned value as the normal for that fragment in all the lightning calculations.
+* The material instance.
+* The vertex normal.
+* The texture coordinates.
+* The model view matrix.
+
+The first thing we do in that function is to check if this material has a normal map associated or not. If not, we just simply use the vertex normal as usual. If it has a normal map, we the normal data stored in the normal texture map associated to the current texture coordinates.
+
+Remember that the colour we get are the normal coordinates, but since they are stored as RGB values they are contained in the range [0, 1]. We need to transform them to be in the range [-1, 1], so we just multiply by two and subtract 1 . Then, we normalize that value and transform it to view model coordinate space (as with the vertex normal).
+
+And that’s all, we can use the returned value as the normal for that fragment in all the lightning calculations.
+
 Since we changed the Material definition and the texture uniforms, the way in which we create them in the ShaderProgram class has changed. 
 public void createMaterialUniform(String uniformName) throws Exception {
     createUniform(uniformName + ".colour");
