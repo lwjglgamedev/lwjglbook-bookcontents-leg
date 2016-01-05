@@ -187,14 +187,16 @@ private void initRender() {
 }
 ```
 
-As you can see we need to bind to each of the textures available and activate the associated texture unit in order to be able to work with more than one texture. In the renderScene method in the Renderer class we do not need to explicitly set up the uniform of the texture since it’s already contained in the Material.
-In order to show the improvements that normal maps provide we have created an example that shows two quads side by side. The right quad has a texture map applied and the left one not. We also have removed the terrain, the skybox and the HUD and setup a directional light with can be changed with the left and right cursor keys so you can see the effect. IN order to achieve this we have modified the base source code a bit in order to support not having a skybox or a terrain. We have also clamped the light effect in the fragment shader in the rang [0, 1] to avoid over exposing effect of the image. 
+As you can see we need to bind to each of the textures available and activate the associated texture unit in order to be able to work with more than one texture. In the ```renderScene``` method in the ```Renderer``` class we do not need to explicitly set up the uniform of the texture since it’s already contained in the ```Material```.
+
+In order to show the improvements that normal maps provide, we have created an example that shows two quads side by side. The right quad has a texture map applied and the left one not. We also have removed the terrain, the skybox and the HUD and setup a directional light with can be changed with the left and right cursor keys so you can see the effect. We have modified the base source code a bit in order to support not having a skybox or a terrain. We have also clamped the light effect in the fragment shader in the rang [0, 1] to avoid over exposing effect of the image. 
 The result is shown in the next figure.
 
- 
+![Normal mapping result](normal_mapping_result.png) 
 
 As you can see the quad that has a normal texture applied gives the impression of having more volume. Although it is, in essence, a plain surface like the other quad, you can see how the light reflects.
-But, although the code we have set up, work perfectly with this example you need to be aware of it’s limitations. The code only works for normal map textures that are created using object space coordinates. If this is the case we can apply the model view matrix transformations to translate the normal coordinates to the view space.
-But, usually normal maps are not defined in that way. They usually are defined in the called tangent space. The tangent space is a coordinate system that is local to each triangle of the model. In that coordinate space the z axis always points out of the surface. This is the reason why when you look at a normal map it’s usually bluish, even for complex models with opposing faces.
-We will stick with this simple implementation by now, but keep in mind that you must always use normal maps defined in object space. If you use maps defined in tangent space you will get weird results. In order to be able to work with them we need to setup specific matrices to transform coordinates to the tangent space.
+But, although the code we have set up, work perfectly with this example you need to be aware of its limitations. The code only works for normal map textures that are created using object space coordinates. If this is the case we can apply the model view matrix transformations to translate the normal coordinates to the view space.
 
+But, usually normal maps are not defined in that way. They usually are defined in the called tangent space. The tangent space is a coordinate system that is local to each triangle of the model. In that coordinate space the z axis always points out of the surface. This is the reason why when you look at a normal map its usually bluish, even for complex models with opposing faces.
+
+We will stick with this simple implementation by now, but keep in mind that you must always use normal maps defined in object space. If you use maps defined in tangent space you will get weird results. In order to be able to work with them we need to setup specific matrices to transform coordinates to the tangent space.
