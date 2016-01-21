@@ -270,13 +270,17 @@ Let's continue, but before we use the depth maps to actually calculate shadows, 
 
 ![Depth map](depth_map.png)
  
-The darker the colour, the closest to the light position. What’s the effect of the light position in the depth map ? You can play with the multiplication factor of the directional light and you will see that the size of the objects rendered in the texture do not decrease. Remember that we are using an orthographic projection matrix and objects do not get smaller with distance. What you will see is that all colours get brighter as seen in the next picture.
+The darker the colour, the colser to the light position. What’s the effect of the light position in the depth map ? You can play with the multiplication factor of the directional light and you will see that the size of the objects rendered in the texture do not decrease. Remember that we are using an orthographic projection matrix and objects do not get smaller with distance. What you will see is that all colours get brighter as seen in the next picture.
  
 Does that mean that we can choose a high distance for the light position without consequences ? The answer is not, if light is too far away from the objects we want to render, these objects can be out of the bounding box that defines the orthographic projection matrix. In this case you will get a nice white texture which would be useless for shadow mapping. Ok, then we simply increase the bounding box size and everything will be ok, right ? The answer is again not. If you chose huge dimensions for the orthographic projection matrix your objects will be drawn very small in the texture, and the depth values can even overlap leading to strange results.  Ok, so you can think in increasing the texture size, but, again in this case you are limited and textures cannot grow indefinitely to use huge bounding boxes.
+
 So as you can see selecting the light position and the orthographic projection parameters is a complex equilibrium which makes difficult to get right results using shadow mapping.
 
-Let’s go back to our rendering process, once we have calculated the depth map we can use it while rendering the scene. First we need to modify the scene vertex shader. Up to now, the vertex shader  projected the vertex coordinates from model view space to the  using a perspective matrix. Now we need to project also the vertex coordinates form light space coordinates using a projection matrix to be used in the fragment shader to calculate the shadows.
+Let’s go back to the rendering process, once we have calculated the depth map we can use it while rendering the scene. First we need to modify the scene vertex shader. Up to now, the vertex shader  projected the vertex coordinates from model view space to the  using a perspective matrix. Now we need to project also the vertex coordinates form light space coordinates using a projection matrix to be used in the fragment shader to calculate the shadows.
+
 The vertex shader is modified like this.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -304,9 +308,13 @@ void main()
     mlightviewVertexPos = orthoProjectionMatrix * modelLightViewMatrix * vec4(position, 1.0);
     outModelViewMatrix = modelViewMatrix;
 }
+```
 
- We use new uniforms for the light view matrix and the orthographic projection matrix.
+We use new uniforms for the light view matrix and the orthographic projection matrix.
+
 In the fragment shader we will create a new function to calculate the shadows that is defined like this.
+
+```glsl
 float calcShadow(vec4 position)
 {
     float shadowFactor = 1.0;
@@ -321,8 +329,9 @@ float calcShadow(vec4 position)
 
     return 1 - shadowFactor;
 }
+```
 
-The function receives the position in light view space projected using the orthographic projection matrix. It returns 0 if the position is in shadow and 1 if it’s not. First, the coordinates are transformed to texture coordinates. Screen coordinates are in the range [-1, 1], but texture coordinates are in the range [0, 1]. With that coordinates we get the depth value from the texture and compare it with the z value of the fragment coordinates. If the z value if the fragment has a lower value than the one stored in the texture that means that the fragment is not in shade.
+The function receives the position in light view space projected using the orthographic projection matrix. It returns $$0$$ if the position is in shadow and $$1$$ if it’s not. First, the coordinates are transformed to texture coordinates. Screen coordinates are in the range $$[-1, 1$$], but texture coordinates are in the range $$[0, 1]$$. With that coordinates we get the depth value from the texture and compare it with the z value of the fragment coordinates. If the z value if the fragment has a lower value than the one stored in the texture that means that the fragment is not in shade.
 In the fragment shader, the return value from the calcShadow function to modulate the light colour contributions from point, spot and directional lights. The ambient light is not affected by the shadow.
 float shadow = calcShadow(mlightviewVertexPos);    
 fragColor = baseColour * ( vec4(ambientLight, 1.0) + totalLight * shadow );
