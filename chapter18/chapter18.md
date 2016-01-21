@@ -183,7 +183,9 @@ private void setupDepthShader() throws Exception {
 }
 ```
 
-Now we need to create a new method that uses those shaders which will be named renderDepthMap. This method will be invoked in the principal render method.
+Now we need to create a new method that uses those shaders which will be named ```renderDepthMap```. This method will be invoked in the principal render method.
+
+```java
 public void render(Window window, Camera camera, Scene scene, IHud hud) {
     clear();
 
@@ -194,16 +196,24 @@ public void render(Window window, Camera camera, Scene scene, IHud hud) {
 
 	// Rest of the code here ....
 	
+```
 
- If you look at the code you will see that the new method is invoked at the very beginning before we have set the view port. This is due to the fact that method we will change the view port to match the dimensions of the texture that holds the depth map. Because of that, we will always need to set, after the renderDepthMap has been finished, the view port to the screen dimensions (without checking if the window has been resized).
-Let’s define now the renderDepthMap method. The first thing that we will do is to bind to the FBO we have created in the ShadowMap class and set the view port to match the texture dimensions.
+ If you look at the code you will see that the new method is invoked at the very beginning before we have set the view port. This is due to the fact that this new method will change the view port to match the dimensions of the texture that holds the depth map. Because of that, we will always need to set, after the ```renderDepthMap``` has been finished, the view port to the screen dimensions (without checking if the window has been resized).
+ 
+Let’s define now the ```renderDepthMap``` method. The first thing that we will do is to bind to the FBO we have created in the ```ShadowMap``` class and set the view port to match the texture dimensions.
+
+```java
 glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.getDepthMapFBO());
 glViewport(0, 0, ShadowMap.SHADOW_MAP_WIDTH, ShadowMap.SHADOW_MAP_HEIGHT);
+```
  
 Then we clear the depth buffer contents and bind the depth shaders. Since we are only dealing with depth values we do not need to clear colour information.
+
+```java
 glClear(GL_DEPTH_BUFFER_BIT);
 
 depthShaderProgram.bind();
+```
 
 Now we need to setup the matrices, and here comes part of the tricky part. We use the light as a camera so we need to create a view matrix which needs a position and three angles. As it has been said at the beginning of the chapter we will support  only directional lights, and that type of lights does not define a position but a direction. If we were using point lights this would be easy, the position of the light would be the position of the view matrix, but we do not have that.
 We will take a simple approach to calculate the light position. Directional lights are defined by a vector, usually, normalized, which points to the direction where the light is. We will multiply that direction vector by a configurable factor so it defines a point at a reasonable distance for the scene we want to draw. We will use that direction in order to calculate the rotation angle for that view matrix.
