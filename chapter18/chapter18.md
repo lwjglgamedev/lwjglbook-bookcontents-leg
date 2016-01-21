@@ -331,14 +331,22 @@ float calcShadow(vec4 position)
 }
 ```
 
-The function receives the position in light view space projected using the orthographic projection matrix. It returns $$0$$ if the position is in shadow and $$1$$ if it’s not. First, the coordinates are transformed to texture coordinates. Screen coordinates are in the range $$[-1, 1$$], but texture coordinates are in the range $$[0, 1]$$. With that coordinates we get the depth value from the texture and compare it with the z value of the fragment coordinates. If the z value if the fragment has a lower value than the one stored in the texture that means that the fragment is not in shade.
+The function receives the position in light view space projected using the orthographic projection matrix. It returns $$0$$ if the position is in shadow and $$1$$ if it’s not. First, the coordinates are transformed to texture coordinates. Screen coordinates are in the range $$[-1, 1$$], but texture coordinates are in the range $$[0, 1]$$. With that coordinates we get the depth value from the texture and compare it with the $$z$$ value of the fragment coordinates. If the $$z$$ value if the fragment has a lower value than the one stored in the texture that means that the fragment is not in shade.
+
 In the fragment shader, the return value from the calcShadow function to modulate the light colour contributions from point, spot and directional lights. The ambient light is not affected by the shadow.
+
+```glsl
 float shadow = calcShadow(mlightviewVertexPos);    
 fragColor = baseColour * ( vec4(ambientLight, 1.0) + totalLight * shadow );
+```
 
-In the renderScene method of the Renderer class we just need to pass the uniform for the orthographic projection and light view matrices (we need to modify also the method that initializes the shader to create the new uniforms). You can consult this in the book’s source code. If to run the DummyGame class, which has been modified to setup a floating cube over a plane with a directional light which angle can be changed by using up and down keys, you should see something like this.
+In the ```renderScene``` method of the ```Renderer``` class we just need to pass the uniform for the orthographic projection and light view matrices (we need to modify also the method that initializes the shader to create the new uniforms). You can consult this in the book’s source code. If to run the ```DummyGame``` class, which has been modified to setup a floating cube over a plane with a directional light which angle can be changed by using up and down keys, you should see something like this.
  
+![Shadow Map result](shadow_map_result.png)
 
 Although shadows are working (you can check that by moving light direction), the implementation presents some problems. First of all, there are strange lines in the objects that are lightened up, this effect is called shadow acne, and it’s produced by the limited resolution of the texture that stores the depth map. The second problem is that the borders of the shadow are not smooth and look blocky. The cause is the same again, the texture resolution. We will solve these problems in order to improve shadow quality.
 
+## Shadow Mapping improvements
+
+Coming soon...
 
