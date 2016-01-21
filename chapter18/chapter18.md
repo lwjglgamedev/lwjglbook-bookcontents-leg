@@ -132,8 +132,11 @@ glDrawBuffer(GL_NONE);
 glReadBuffer(GL_NONE);
 ```
 
-Now we are ready to render the scene from the light perspective into FBO in the Renderer class. In order to do that, we will create a specific set of vertex and fragments shaders. 
-The vertex shader, named depth_vertex.fs, is defined like this.
+Now we are ready to render the scene from the light perspective into FBO in the ```Renderer``` class. In order to do that, we will create a specific set of vertex and fragments shaders. 
+
+The vertex shader, named ```depth_vertex.fs```, is defined like this.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -147,19 +150,28 @@ void main()
 {
     gl_Position = orthoProjectionMatrix * modelLightViewMatrix * vec4(position, 1.0f);
 }
+```
 
-We expect to receive the same input data as the scene shader. In fact, we only need the position, but to reuse as much as code as possible we will pass it anyway. We also need a pair of matrices. Remember that we must render the scene from the light point of view, so we need to transform our models to light space coordinate. This is done through the modelLightViewMatrix matrix, which is analogous to view model matrix used for a camera. The light is our camera now. 
-Then we need to transform those coordinates to screen space, we need to project them. And this is one of the differences while calculating shadow maps for directional lights versus point lights. For point lights we would use a perspective projection matrix as if we were rendering the scene normally. Directional lights, instead, affect all objects in the same way independently of the distance. Directional lights are located at an infinite point and do not have a position but a direction. An orthographic projection does not render distant objects smaller, and because of this characteristic is the most suitable for directional lights.
-The fragment shader is even simpler. It just outputs the z coordinate as the depth value.
+We expect to receive the same input data as the scene shader. In fact, we only need the position, but to reuse as much as code as possible we will pass it anyway. We also need a pair of matrices. Remember that we must render the scene from the light point of view, so we need to transform our models to light space coordinate. This is done through the ```modelLightViewMatrix``` matrix, which is analogous to view model matrix used for a camera. The light is our camera now. 
+
+Then we need to transform those coordinates to screen space, that is, we need to project them. And this is one of the differences while calculating shadow maps for directional lights versus point lights. For point lights we would use a perspective projection matrix as if we were rendering the scene normally. Directional lights, instead, affect all objects in the same way independently of the distance. Directional lights are located at an infinite point and do not have a position but a direction. An orthographic projection does not render distant objects smaller, and because of this characteristic is the most suitable for directional lights.
+
+The fragment shader is even simpler. It just outputs the $$z$$ coordinate as the depth value.
+
+```glsl
 #version 330
 
 void main()
 {
     gl_FragDepth = gl_FragCoord.z;
 }
+```
 
-In fact, you can remove that line, since we are only generating depth values, it will be automatically generated.
-Once we have defined the new shaders for depth rendering we can use them in the Renderer class. We define a new method for setting up those shaders, named setupDepthShader, whichi will be invoked where the others shaders are initialized.
+In fact, you can remove that line, since we are only generating depth values, the depth value it will be automatically returned.
+
+Once we have defined the new shaders for depth rendering we can use them in the ```Renderer``` class. We define a new method for setting up those shaders, named ```setupDepthShader```, whichi will be invoked where the others shaders are initialized.
+
+```java
 private void setupDepthShader() throws Exception {
     depthShaderProgram = new ShaderProgram();
     depthShaderProgram.createVertexShader(Utils.loadResource("/shaders/depth_vertex.vs"));
@@ -169,6 +181,7 @@ private void setupDepthShader() throws Exception {
     depthShaderProgram.createUniform("orthoProjectionMatrix");
     depthShaderProgram.createUniform("modelLightViewMatrix");
 }
+```
 
 Now we need to create a new method that uses those shaders which will be named renderDepthMap. This method will be invoked in the principal render method.
 public void render(Window window, Camera camera, Scene scene, IHud hud) {
