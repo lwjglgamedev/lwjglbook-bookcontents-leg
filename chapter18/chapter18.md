@@ -216,20 +216,31 @@ depthShaderProgram.bind();
 ```
 
 Now we need to setup the matrices, and here comes part of the tricky part. We use the light as a camera so we need to create a view matrix which needs a position and three angles. As it has been said at the beginning of the chapter we will support  only directional lights, and that type of lights does not define a position but a direction. If we were using point lights this would be easy, the position of the light would be the position of the view matrix, but we do not have that.
+
 We will take a simple approach to calculate the light position. Directional lights are defined by a vector, usually, normalized, which points to the direction where the light is. We will multiply that direction vector by a configurable factor so it defines a point at a reasonable distance for the scene we want to draw. We will use that direction in order to calculate the rotation angle for that view matrix.
 
- 
+![Light position](light_position.png) 
+
 This is the fragment that calculates the light position and the rotation angles
+
+```java
 float lightAngleX = (float)Math.toDegrees(Math.acos(lightDirection.z));
 float lightAngleY = (float)Math.toDegrees(Math.asin(lightDirection.x));
 float lightAngleZ = 0;
 Matrix4f lightViewMatrix = transformation.updateLightViewMatrix(new Vector3f(lightDirection).mul(light.getShadowPosMult()), new Vector3f(lightAngleX, lightAngleY, lightAngleZ));
+```
 
 Next we need to calculate the orthographic projection matrix.
-Matrix4f orthoProjMatrix = transformation.updateOrthoProjectionMatrix(orthCoords.left, orthCoords.right, orthCoords.bottom, orthCoords.top, orthCoords.near, orthCoords.far);
 
-We have modified the Transformation class to include the lightViewmatrix and the orthographic projection matrix. Previously we had a orthographic 2D projection matrix, so we have renamed the previous methods and attributes. You can check the definition in the source code which is straight forward.
-Then we render the scene  objects as in the renderScene method but using the previous matrices to work in light space coordinate system
+```java
+Matrix4f orthoProjMatrix = transformation.updateOrthoProjectionMatrix(orthCoords.left, orthCoords.right, orthCoords.bottom, orthCoords.top, orthCoords.near, orthCoords.far);
+```
+
+We have modified the Transformation class to include the light view matrix and the orthographic projection matrix. Previously we had a orthographic 2D projection matrix, so we have renamed the previous methods and attributes. You can check the definition in the source code which is straight forward.
+
+Then we render the scene  objects as in the ```renderScene``` method but using the previous matrices to work in light space coordinate system.
+
+```java
 depthShaderProgram.setUniform("orthoProjectionMatrix", orthoProjMatrix);
 Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
 for (Mesh mesh : mapMeshes.keySet()) {
@@ -241,19 +252,25 @@ for (Mesh mesh : mapMeshes.keySet()) {
 }
 
 // Unbind
- depthShaderProgram.unbind();
+depthShaderProgram.unbind();
 glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
 
-The parameterization of the orthographic projection matrix is defined in the directional Light. Think of the orthographic projection matrix as a bounding box that contains all the objects that we want to render. When projection we transform form light space coordinates space to coordinates in the range [-1, 1], only the objects that fit into that bounding box will be inside that range, and thus, be visible. That bounding box is defined by 6  parameters:  left, right, bottom, top, near, far. Since, the light position is now the origin, these parameters define the distance form that origin to the left or right (x-axis) up or down (y-axis) and to the nearest or farthest plane (z-axis).  
-One of the trickiest points in  getting shadows map to work is determine the light position and the orthographic projection matrix parameters. This is way all these parameters are now defined in the DirectionalLight class so it can be set properly according to each scene.
+The parameterization of the orthographic projection matrix is defined in the directional Light. Think of the orthographic projection matrix as a bounding box that contains all the objects that we want to render. When projection we transform form light space coordinates space to coordinates in the range $$[-1, 1]$$, only the objects that fit into that bounding box will be inside that range, and thus, be visible. That bounding box is defined by 6  parameters:  left, right, bottom, top, near, far. Since, the light position is now the origin, these parameters define the distance form that origin to the left or right (x-axis) up or down (y-axis) and to the nearest or farthest plane (z-axis).  
+
+One of the trickiest points in  getting shadows map to work is determine the light position and the orthographic projection matrix parameters. This is way all these parameters are now defined in the ```DirectionalLight``` class so it can be set properly according to each scene.
+
 You can implement a more automatic approach, by calculating the centre of the camera frustum, get back in the light direction and build a orthographic projection that contains all the objects in the scene.  The following figure shows a 3D scene as looked form above, the camera position and its frustum (in blue) and the optimal light position and bounding box in red. 
  
+![Generic Light position calculation](generic_light_pos_calculation.png)
 
-The probem with the approach above is that is difficult to calculate and if you have small objects and the bounding box is big you may get strange results. The approach presented here is simpler for small scenes and you can tweak it to match your models (even you can chose to explicitly set light’s position to avoid strange effects if camera moves far away from the origin). If you want a more generic model that can be applied to any scene you should extend it to support cascading shadow maps.
-Before we use the depth maps to actually calculate shadows, you could render a quad with the generated texture to see how  a real depth map looks like. You could get something like this for a scene composed by a rotating cube floating over a plane with a perpendicular directional light.
+The problem with the approach above is that is difficult to calculate and if you have small objects and the bounding box is big you may get strange results. The approach presented here is simpler for small scenes and you can tweak it to match your models (even you can chose to explicitly set light’s position to avoid strange effects if camera moves far away from the origin). If you want a more generic model that can be applied to any scene you should extend it to support cascading shadow maps.
 
+Let's continue, but before we use the depth maps to actually calculate shadows, you could render a quad with the generated texture to see how  a real depth map looks like. You could get something like this for a scene composed by a rotating cube floating over a plane with a perpendicular directional light.
+
+![Depth map](depth_map.png)
  
-The darker the colour, the closes to the light position. What’s the effect of the light position in the depth map ? You can play with the multiplication factor of the directional light and you will see that the size of the objects rendered in the texture do not decrease. Remember that we are using an orthographic projection matrix and objects do not get smaller with distance. What you will see is that all colours get brighter as seen in the next picture.
+The darker the colour, the closest to the light position. What’s the effect of the light position in the depth map ? You can play with the multiplication factor of the directional light and you will see that the size of the objects rendered in the texture do not decrease. Remember that we are using an orthographic projection matrix and objects do not get smaller with distance. What you will see is that all colours get brighter as seen in the next picture.
  
 Does that mean that we can choose a high distance for the light position without consequences ? The answer is not, if light is too far away from the objects we want to render, these objects can be out of the bounding box that defines the orthographic projection matrix. In this case you will get a nice white texture which would be useless for shadow mapping. Ok, then we simply increase the bounding box size and everything will be ok, right ? The answer is again not. If you chose huge dimensions for the orthographic projection matrix your objects will be drawn very small in the texture, and the depth values can even overlap leading to strange results.  Ok, so you can think in increasing the texture size, but, again in this case you are limited and textures cannot grow indefinitely to use huge bounding boxes.
 So as you can see selecting the light position and the orthographic projection parameters is a complex equilibrium which makes difficult to get right results using shadow mapping.
