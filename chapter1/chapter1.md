@@ -37,7 +37,9 @@ We use a special plugin named ```mavennatives``` which unpacks the native librar
             </plugin>
 ```
 
-Those libraries are placed under ```target/natives``` directory. When you execute the samples from Netbeans you need to specify the directory where the Java Virtual Machine will look for native libraries. This is done with the command line property: ```“-Djava.library.path”``` which sould be set to: ```“-Djava.library.path="target\natives”```. This is done automatically for you in the ```nbactions.xml``` file. In case you want to change it or learn how to do it manually, right click in your project and select “Properties”. In the dialog that is shown select “Run” category and set the correct value for VM Options.
+Those libraries are placed under ```target/natives``` directory. We have also set up two profiles to set a property for the which will be used in the native dependencies declaration of each project. The profiles will set up the correct values for Windows and Linux OS families.
+
+When you execute the samples from Netbeans you need to specify the directory where the Java Virtual Machine will look for native libraries. This is done with the command line property: ```“-Djava.library.path”``` which should be set to: ```“-Djava.library.path="target\natives”```. This is done automatically for you in the ```nbactions.xml``` file. In case you want to change it or learn how to do it manually, right click in your project and select “Properties”. In the dialog that is shown select “Run” category and set the correct value for VM Options.
 
 ![VM Settings](vm_settings.png) 
 
