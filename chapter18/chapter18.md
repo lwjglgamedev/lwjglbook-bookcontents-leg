@@ -14,21 +14,22 @@ The following picture shows the case for a point light, PA can reach the source 
 
 ![Shadow Concepts I](shadow_concepts_I.png)
 
-So how we can check if we can cast that ray without collisions in an efficient manner?  Alight source can , theoretically cast infinitely ray lights, and how do we check if a ray light is blocked or not ? 
+So how we can check if we can cast that ray without collisions in an efficient manner?  A light source can , theoretically cast infinitely ray lights, and how do we check if a ray light is blocked or not ? 
 What we can do instead is to look at the 3D scene from the light’s point and render the scene from that point. We set the camera at the light position and render the scene so we can store the depth for each fragment, which is equivalent to calculate the distance of each fragment to the light source. We are storing the minimum distance as seen from the light source  as a shadow map.
 
 The following picture shows a cube floating over a plane and  a perpendicular light.
 
 ![Shadow Concepts II](shadow_concepts_II.png) 
 
-The scene as seen from the light perspective would be something like this (the darkare the colour, the closest to the light source).
+The scene as seen from the light perspective would be something like this (the darker the colour, the closer to the light source).
 
+![Rendering from light perspective](render_light_perspective.png)
  
-Next we render the 3D scene as usual and check the distance for each fragment to the light source with the minimum stored distance. If the distance is less that the value stored in the shadow map, then the object is in light, otherwise is in shadow.
-where the rays coming from the source of light get stopped. We can have several objects that could be hit by the same ray light. But we store the minimum distance. 
+With taht information  we can render the 3D scene as usual and check the distance for each fragment to the light source with the minimum stored distance. If the distance is less that the value stored in the shadow map, then the object is in light, otherwise is in shadow. We can have several objects that could be hit by the same ray light. But we store the minimum distance. 
+
 Thus, shadow mapping is a two step process:
-•	First we render the scene from the light space into a shadow map to get the minimum distances.
-•	Second we render the scene from the camera point of view and use that depth  map to calculate if objects are in shadow or not.
+* First we render the scene from the light space into a shadow map to get the minimum distances.
+* Second we render the scene from the camera point of view and use that depth  map to calculate if objects are in shadow or not.
 In order to render the depth map we need to talk about the depth buffer. When we render a scene all the depth information is stored in a buffer named, obviously, depth-buffer (also z-buffer). But. That depth information is the z value of each of the fragment that is rendered. If you recall from the first chapters what we are doing while rendering a scene is transforming from world coordinates to screen coordinates, we are drawing in a coordinate space which ranges from 0 to 1 for x and y values. If an object is more distant than other, we must calculate how this affects their x and y coordinate through the perspective projection matrix- This is not calculated automatically depending on the z value, but that value sets the depth of that fragment.
 Besides that, we are also enabling depth testing. In the Window class we have set the following line:
 glEnable(GL_DEPTH_TEST); 
