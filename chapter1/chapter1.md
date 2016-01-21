@@ -39,6 +39,44 @@ We use a special plugin named ```mavennatives``` which unpacks the native librar
 
 Those libraries are placed under ```target/natives``` directory. We have also set up two profiles to set a property for the which will be used in the native dependencies declaration of each project. The profiles will set up the correct values for Windows and Linux OS families.
 
+```xml
+	<profiles>
+		<profile>
+			<id>windows-profile</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<native.target>natives-windows</native.target>
+			</properties>				
+		</profile>
+		<profile>
+			<id>linux-profile</id>
+			<activation>
+				<os>
+					<family>Linux</family>
+				</os>
+			</activation>
+			<properties>
+				<native.target>natives-linux</native.target>
+			</properties>				
+		</profile>
+	</profiles>
+```
+
+In each project, the LWJGL platform dependency will use the correct property established in the profile for the current platform.
+
+```xml
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-platform</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${native.target}</classifier>
+        </dependency>
+```
+
 When you execute the samples from Netbeans you need to specify the directory where the Java Virtual Machine will look for native libraries. This is done with the command line property: ```“-Djava.library.path”``` which should be set to: ```“-Djava.library.path="target\natives”```. This is done automatically for you in the ```nbactions.xml``` file. In case you want to change it or learn how to do it manually, right click in your project and select “Properties”. In the dialog that is shown select “Run” category and set the correct value for VM Options.
 
 ![VM Settings](vm_settings.png) 
