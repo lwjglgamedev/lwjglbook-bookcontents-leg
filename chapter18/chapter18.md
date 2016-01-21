@@ -48,7 +48,9 @@ public void clear() {
 In order to start building the depth map we want to get that depth information as viewed from the light perspective. We need to setup a camera in the light position, render the scene and store that depth information into a texture so we can access to it later.
 
 
-Therefore the first thing we need to do is add support for creating that textures.  We will modify the Texture class to support the creation of empty textures by adding a new constructor. This constructor expects the dimensions of the texture and the format of the pixels it stores.
+Therefore, the first thing we need to do is add support for creating that textures.  We will modify the ```Texture``` class to support the creation of empty textures by adding a new constructor. This constructor expects the dimensions of the texture and the format of the pixels it stores.
+
+```java
 public Texture(int width, int height, int pixelFormat) throws Exception {
     this.id = glGenTextures();
     this.width = width;
@@ -60,8 +62,9 @@ public Texture(int width, int height, int pixelFormat) throws Exception {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
+```
 
-We set the texture wrapping mode to GL_CLAMP_TO_EDGE since we do not want the texture to repeat in case we exceed the [0, 1] range.
+We set the texture wrapping mode to ```GL_CLAMP_TO_EDGE``` since we do not want the texture to repeat in case we exceed the [0, 1] range.
 So now that we are able to create empty textures, we need to be able to render a scene into it. In order to do that we need to use Frame Buffers Objects (or FBOs). A FrameBuffer  is a collection of buffers that can be used as a destination for rendering. When we have been rendering to the screen we have using OpenGL’s default rendering. OpenGL allows us to render to user defined buffers by using FBOs. We will isolate the rest of the code of the process of creating FBOs for shadow mapping by creating a new class named ShadowMap. This is the definition of that class.
 package org.lwjglb.engine.graph;
 
