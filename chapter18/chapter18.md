@@ -39,11 +39,14 @@ Besides that, we are also enabling depth testing. In the Window class we have se
 glEnable(GL_DEPTH_TEST); 
 ```
 
-By setting this line we are enabling depth testing, that is, we prevent fragments that cannot be seen, because they are behind other objects, to be drawn Before a fragment is drawn its z value is compared with the z value of the z-buffer. If it has a higher z value (it’s far away) than the z value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the z value of a fragment given an x, y coordinates in screen space, that is in the range [0, 1]. The z value is also in that range.
+By setting this line we are enabling depth testing, that is, we prevent fragments that cannot be seen, because they are behind other objects, to be drawn Before a fragment is drawn its $$z$$ value is compared with the $$z$$ value of the z-buffer. If it has a higher $$z$$ value (it’s far away) than the $$z$$ value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the $$z$$ value of a fragment given a apir of $$x$$ and $$y$$ coordinates in screen space, that is in the range $$[0, 1]$$. The $$z$$ value is also in that range.
 The presence of the depth buffer is the reason why to clear the screen before performing any render operation we clear not only the colour but the depth information also.
+
+```java
 public void clear() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+```
 
 In order to start building the depth map we want to get that depth information as viewed from the light perspective. We need to setup a camera in the light position, render the scene and store that depth information into a texture so we can access to it later.
 
@@ -64,8 +67,10 @@ public Texture(int width, int height, int pixelFormat) throws Exception {
 }
 ```
 
-We set the texture wrapping mode to ```GL_CLAMP_TO_EDGE``` since we do not want the texture to repeat in case we exceed the [0, 1] range.
-So now that we are able to create empty textures, we need to be able to render a scene into it. In order to do that we need to use Frame Buffers Objects (or FBOs). A FrameBuffer  is a collection of buffers that can be used as a destination for rendering. When we have been rendering to the screen we have using OpenGL’s default rendering. OpenGL allows us to render to user defined buffers by using FBOs. We will isolate the rest of the code of the process of creating FBOs for shadow mapping by creating a new class named ShadowMap. This is the definition of that class.
+We set the texture wrapping mode to ```GL_CLAMP_TO_EDGE``` since we do not want the texture to repeat in case we exceed the $$[0, 1]$$ range.
+So now that we are able to create empty textures, we need to be able to render a scene into it. In order to do that we need to use Frame Buffers Objects (or FBOs). A Frame Buffer  is a collection of buffers that can be used as a destination for rendering. When we have been rendering to the screen we have using OpenGL’s default rendering. OpenGL allows us to render to user defined buffers by using FBOs. We will isolate the rest of the code of the process of creating FBOs for shadow mapping by creating a new class named ```ShadowMap```. This is the definition of that class.
+
+
 package org.lwjglb.engine.graph;
 
 import static org.lwjgl.opengl.GL11.*;
