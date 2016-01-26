@@ -348,5 +348,19 @@ Although shadows are working (you can check that by moving light direction), the
 
 ## Shadow Mapping improvements
 
-Coming soon...
+Now that we have the shadow mapping mechanism working, let’s solve the problems we have. Let’s first start with the shadow acne problem. The depth map texture is limited in size, and because of that, several fragments can be mapped to the same pixel in that texture depth. Te texture depth stores the minimum depth, sop at the end we have several fragments that share the same depth in that texture although they are at different distances. 
 
+We can solve this by increasing, by a little bit the depth comparison in the fragment shader, we add a bias.
+
+```glsl
+float bias = 0.005;
+if ( projCoords.z - bias < texture(shadowMap, projCoords.xy).r ) 
+{
+    // Current fragment is not in shade
+    shadowFactor = 0;
+}
+```
+
+Now, the shadow acne has disappeared.
+
+![Shadow without acne](shadow_no_acne.png)
