@@ -353,7 +353,7 @@ Now that we have the shadow mapping mechanism working, let’s solve the problem
 We can solve this by increasing, by a little bit the depth comparison in the fragment shader, we add a bias.
 
 ```glsl
-float bias = 0.005;
+float bias = 0.05;
 if ( projCoords.z - bias < texture(shadowMap, projCoords.xy).r ) 
 {
     // Current fragment is not in shade
