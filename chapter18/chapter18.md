@@ -364,3 +364,33 @@ if ( projCoords.z - bias < texture(shadowMap, projCoords.xy).r )
 Now, the shadow acne has disappeared.
 
 ![Shadow without acne](shadow_no_acne.png)
+
+Now we are going to solve de shadow edges problem, which is also caused by the texture resolution. For each fragment we are going to sample the depth texture with the fragment’s position value and the surrounding values. Then we will calculate the average and assign that value as the shadow value. In this case his value won’t be $$0$$ or $$1$$ but can take values in between in order to get smoother edges.
+
+![Depth average value](depth_average_value.png)
+
+The surrounding values must be at one pixel distance of the current fragment position in texture coordinates.  So we need to calculate the increment of one pixel in texture coordinates which is equal to $$1 / textureSize$$.
+
+In the fragment Shader we just need to modify the shadow facto calculation to get an average value.
+
+```glsl
+float shadowFactor = 0.0;
+vec2 inc = 1.0 / textureSize(shadowMap, 0);
+for(int row = -1; row <= 1; ++row)
+{
+    for(int col = -1; col <= 1; ++col)
+    {
+        float textDepth = texture(shadowMap, projCoords.xy + vec2(row, col) * inc).r; 
+        shadowFactor += projCoords.z - bias > textDepth ? 1.0 : 0.0;        
+    }    
+}
+shadowFactor /= 9.0;
+```
+
+The result looks now smoother.
+
+![Final result](final_result.png)
+
+The technique can be improved a little bit, you can check about solving peter panning effect (caused by the bias factor) and other techniques to improve the shadow edges. In any case, with the concepts explained here you have a good basis to start modifying the sample.
+
+In order to render multiple lights you just need to  render a separate depth map for each light source. While rendering the scene you will need to sample all those depth maps to calculate the appropriate shadow factor.
