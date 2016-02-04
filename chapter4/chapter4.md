@@ -80,7 +80,7 @@ The structure is quite similar to our vertex shader. In this case we will set a 
 Now that we have our shaders created, how do we use them? This is the sequence of steps we need to follow:
 1.	Create a OpenGL Program
 2.	Load the vertex and shader code files.
-3.	For each shader, create a new shader program and specify its type (vertex, shader).
+3.	For each shader, create a new shader program and specify its type (vertex, fragment).
 4.	Compile the shader.
 5.	Attach the shader to the program.
 6.	Link the program.
