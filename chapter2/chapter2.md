@@ -83,7 +83,23 @@ So What are we doing in the above method ? In summary we calculate how many seco
 1.	Calculate the time at which we should exit this wait method and start another iteration of our game loop (which is the variable endTi**me).
 2.	Compare current time with that end time and wait just one second if we have not reached that time yet.
 
-Now  it is time to structure our code base in order to start writing our first version of our Game Engine. First of all we will encapsulate all the GLFW Window initialization code in a class named ```Window``` allowing some basic parameterization of its characteristics (such as title and size). That ```Window``` class will also provide a method to detect key presses which will be used in our game loop:
+Now  it is time to structure our code base in order to start writing our first version of our Game Engine. But before doing that we will talk about another way of controlling the rendering rate. In the code presented above, we are doing micro-sleeps in order to control how much time we need to wait. But we can chose another approach in order to limit the frame rate, we can use vsync (vertical synchronization). The main purpose of v-sync is to avoid screen tearing. What is screen tearing ? It’s a visual effect that is produced when we update the video memory while it’s being rendered. The result will be that part of the image will represent the previous image and the other part will represent the updated one. If we enable v-sync we won’t send an image to the GPU while is being rendered into the screen.
+
+When we enable v-sync we are synchronizing to the refresh card of the video card, which at the end will result in a constant frame rate. This is done with the following line:
+
+```java
+glfwSwapInterval(1);
+```
+
+With that line we are specifying that we must wait, at least, one screen update before drawing to the screen. In fact, we are not directly drawing, we store the information and a buffer and we swap it with this method:
+
+```java
+glfwSwapBuffers(windowHandle);
+```
+ 
+So, if we enable v-sync we achieve a constant frame rate without performing the micro-sleeps to check the available time. Besides that, , the frame rate will match the refresh rate of our graphics card, that is, if it’s set to 60Hz (60 times per second), we will have 60 Frames Per Second. We can scale down that rate by setting a number higher than one in the ```glfwSwapInterval``` method (if we set it to 2, we would get 30 FPS).
+
+Let’s get back to reorganize the source code. First of all we will encapsulate all the GLFW Window initialization code in a class named ```Window``` allowing some basic parameterization of its characteristics (such as title and size). That ```Window``` class will also provide a method to detect key presses which will be used in our game loop:
 
 ```java
 public boolean isKeyPressed(int keyCode) {
@@ -139,16 +155,16 @@ public class GameEngine implements Runnable {
 
     private final Thread gameLoopThread;
 
-    public GameEngine(String windowTitle, int width, int height, IMageLogoc gameLogic) throws Exception {
+    public GameEngine(String windowTitle, int width, int height, boolean vsSync, IGameLogic gameLogic) throws Exception {
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
-        window = new Window(windowTitle, width, height);
+        window = new Window(windowTitle, width, height, vsSync);
         this.gameLogic = gameLogic;
         //..[Removed code]..
     }
 
 ```
 
-As you can see we create a new Thread which will execute the run method of our ```GameEngine``` class which will contain our game loop:
+The vSync parameter allows us to select if we want to use v-sync or not. You can see we create a new Thread which will execute the run method of our ```GameEngine``` class which will contain our game loop:
 
 ```java
 public void start() {
@@ -193,9 +209,10 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            boolean vSync = true;
             IGameLogic gameLogic = new DummyGame();
             GameEngine gameEng = new GameEngine("GAME",
-                600, 480, gameLogic);
+                600, 480, vSync, gameLogic);
             gameEng.start();
         } catch (Exception excp) {
             excp.printStackTrace();
