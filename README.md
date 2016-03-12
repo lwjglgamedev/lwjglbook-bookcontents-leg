@@ -19,7 +19,7 @@ The source code of this book will be published in [GitHub](https://github.com/lw
 
 ## Support
 
-If you like the book please rate it with a start and share it. If you want to contribute with a donation you can do it [here](http://lwjglgamedevbok.tip.me).
+If you like the book please rate it with a start and share it. If you want to contribute with a donation you can do a donation to this Bitcoin address: 1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb.
 
 ## Comments are welcome
 
