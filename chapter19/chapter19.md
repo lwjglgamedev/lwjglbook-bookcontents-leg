@@ -4,4 +4,4 @@ By now we have just loaded static 3D models, in this chapter we will learn how t
 
 This where skeletal animation comes to play. In skeletal animation the way a model animates is defined by its underlying skeleton. A skeleton is defined by a hierarchy of special points called joints. Those points are defined by their position and rotation. Since it's a hierarchy the final position for each joint is affected by their parents. For instance, think on a wrist, the position of a wrist is modified if a character moves the elbow and also if it moves the shoulder.
 
-Joints do not need to represent a physical bone or articulation, they are artifacts that allows the creatives to model an animation.
+Joints do not need to represent a physical bone or articulation, they are artifacts that allows the creatives to model an animation. Besides joints we still have vertices, the points that define the triangles that compose a 3D model. But, in skeletal animation, vertices are drawn based on the position of the joints it is related to.
