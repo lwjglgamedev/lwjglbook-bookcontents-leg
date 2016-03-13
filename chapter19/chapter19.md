@@ -1,3 +1,3 @@
 # Animations
 
-By now we have just loaded static 3D models, in this chapter we will learn how to animate them.
+By now we have just loaded static 3D models, in this chapter we will learn how to animate them. When thinking about animations the first approach is to create different meshes for each model positions, load them up into the GPU and draw them sequentially to create the illusion of animation. Although this approach is perfect for some games it's not very efficient (in terms of memory consumption).  
