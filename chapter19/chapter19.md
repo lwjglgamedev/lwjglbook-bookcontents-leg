@@ -106,3 +106,13 @@ Let’s review the structure presented above:
 The following picture tries to depict the relation between the components described above using sample data.
  
 ![Mesh elements](mesh_elements.png)
+
+Ok, so now that we understand the mesh model file we can parse it. If you look at the source code you will see that a new package has been created to host parsers for model formats. There’s one for OBJ files under ```org.lwjglb.engine.loaders.obj``` and  the code for MD5 files is under ```org.lwjglb.engine.loaders.md5```.
+
+All the parsing code is based on regular expressions to extract the information from the MD5 text files. The parsers will create a hierarchy of objects that mimic the structure of the information components contained in the MD5 files. It may not be the most efficient parser in the world but I think it will serve to better understand the process.
+
+The starting class to parse a MD5 model file is ```MD5Model``` class. This class receives as a parameter in its parse method the contents of a MD5 file an creates a hierarchy that contains the header, the list of joints and the list of meshes with all the subelements. The code is very straightforward so, I won’t include it here.
+
+A few comments about the parsing code:
+* The subelements of a Mesh are defined as inner classes inside the ```MD5Mesh``` class.
+* You can check how the fourth component of the joints orientation are calculated in the ```calculateQuaternion``` method form the ```MD5Utils``` class.
