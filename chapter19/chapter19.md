@@ -116,3 +116,6 @@ The starting class to parse a MD5 model file is ```MD5Model``` class. This class
 A few comments about the parsing code:
 * The subelements of a Mesh are defined as inner classes inside the ```MD5Mesh``` class.
 * You can check how the fourth component of the joints orientation are calculated in the ```calculateQuaternion``` method form the ```MD5Utils``` class.
+
+
+WRITING IN PROGRESS
