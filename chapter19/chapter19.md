@@ -282,6 +282,8 @@ private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector3f de
 ```
 
 Then we need to calculate the vertices position based on the information contained in the weights and joints. This is done in the following block
+
+```java
     for (MD5Mesh.MD5Vertex vertex : vertices) {
         Vector3f vertexPos = new Vector3f();
         Vector2f vertexTextCoords = vertex.getTextCoords();
@@ -302,10 +304,15 @@ Then we need to calculate the vertices position based on the information contain
 
        vertexInfoList.add(new VertexInfo(vertexPos));
     }
+```
 
-Let’s examine what we are doing here. We iterate over the vertices information and sotre the texture coordinates in a list, no need to apply any transformation here. The we get the starting and total number of weights to consider to calculate the vertex position.
-The vertex position is calculated by using all the weights that is related to. Each weights has a position and a bias. The sum of all bias of the weights associated to each vertex must be equal to 1.0. Each weight also has a position which is defined in  joint’s local space, so we need to transform it to model space coordinates using the joint’s orientation and positions (like if it were a transformation matrix) to which it refers to.
-So, the vertex position can be expressed by this formula.
+Let’s examine what we are doing here. We iterate over the vertices information and store the texture coordinates in a list, no need to apply any transformation here. The we get the starting and total number of weights to consider to calculate the vertex position.
+
+The vertex position is calculated by using all the weights that is related to. Each weights has a position and a bias. The sum of all bias of the weights associated to each vertex must be equal to 1.0. Each weight also has a position which is defined in  joint’s local space, so we need to transform it to model space coordinates using the joint’s orientation and position (like if it were a transformation matrix) to which it refers to.
+
+To sum up, the vertex position can be expressed by this formula:
+
+$$V$$
 Vpos = SUM(j*wp)*wb
 Where:
 •	Jt is the joint’s transformation matrix.
