@@ -117,5 +117,265 @@ A few comments about the parsing code:
 * The subelements of a Mesh are defined as inner classes inside the ```MD5Mesh``` class.
 * You can check how the fourth component of the joints orientation are calculated in the ```calculateQuaternion``` method form the ```MD5Utils``` class.
 
+Now that we have parsed a file we must transform that object hierarchy into something that can be processed by the game Engine, we must create a ```GameItem``` instance. In order to do that we will  create a new class named ```MD5Loader``` that will take a ```MD5Model``` instance and will construct a ```GameItem```.
+
+Before we start, as you noticed, a MD5 model has several Meshes, but our ```GameItem``` class only supports a single Mesh. We need to change this first, the class ```GameItem``` now looks like this.
+
+```java
+package org.lwjglb.engine.items;
+
+import org.joml.Vector3f;
+import org.lwjglb.engine.graph.Mesh;
+
+public class GameItem {
+
+    private Mesh[] meshes;
+
+    private final Vector3f position;
+
+    private float scale;
+
+    private final Vector3f rotation;
+
+    public GameItem() {
+        position = new Vector3f(0, 0, 0);
+        scale = 1;
+        rotation = new Vector3f(0, 0, 0);
+    }
+
+    public GameItem(Mesh mesh) {
+        this();
+        this.meshes = new Mesh[]{mesh};
+    }
+
+    public GameItem(Mesh[] meshes) {
+        this();
+        this.meshes = meshes;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public void setPosition(float x, float y, float z) {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float x, float y, float z) {
+        this.rotation.x = x;
+        this.rotation.y = y;
+        this.rotation.z = z;
+    }
+
+    public Mesh getMesh() {
+        return meshes[0];
+    }
+    
+    public Mesh[] getMeshes() {
+        return meshes;
+    }
+
+    public void setMeshes(Mesh[] meshes) {
+        this.meshes = meshes;
+    }
+
+    public void setMesh(Mesh mesh) {
+        if (this.meshes != null) {
+            for (Mesh currMesh : meshes) {
+                currMesh.cleanUp();
+            }
+        }
+        this.meshes = new Mesh[]{mesh};
+    }
+}
+```
+
+With the modification above we can now define the contents for the ```MD5Loader``` class. This class will have a method named ```process``` that will receive a ```MD5Model``` instance an a default colour (for the meshes that do not define a texture) and will return a ```GameItem``` instance. The body of that method is shown below.
+
+```java
+public static GameItem process(MD5Model md5Model, Vector3f defaultColour) throws Exception {
+    List<MD5Mesh> md5MeshList = md5Model.getMeshes();
+    int numMeshes = md5MeshList.size();
+    Mesh[] meshes = new Mesh[numMeshes];
+    for (int i = 0; i < numMeshes; i++) {
+        Mesh mesh = generateMesh(md5Model, md5MeshList.get(i), defaultColour);
+        meshes[i] = mesh;
+    }
+    GameItem gameItem = new GameItem(meshes);            
+        
+    return gameItem;
+}
+```
+
+As you can see we just iterate over the meshes defined into the MD5Model class and transform them into instances of the class org.lwjglb.engine.graph.Mesh by using the generateMesh method which is the one that really does the work. Before we examine that method we will create an Inner class that will serve us to build the positions and normals array.
+private static class VertexInfo {
+
+    public Vector3f position;
+
+    public Vector3f normal;
+
+    public VertexInfo(Vector3f position) {
+        this.position = position;
+        normal = new Vector3f(0, 0, 0);
+    }
+
+    public VertexInfo() {
+        position = new Vector3f();
+        normal = new Vector3f();
+    }
+
+    public static float[] toPositionsArr(List<VertexInfo> list) {
+        int length = list != null ? list.size() * 3 : 0;
+        float[] result = new float[length];
+        int i = 0;
+        for (VertexInfo v : list) {
+            result[i] = v.position.x;
+            result[i + 1] = v.position.y;
+            result[i + 2] = v.position.z;
+            i += 3;
+        }
+        return result;
+    }
+
+    public static float[] toNormalArr(List<VertexInfo> list) {
+        int length = list != null ? list.size() * 3 : 0;
+        float[] result = new float[length];
+        int i = 0;
+        for (VertexInfo v : list) {
+            result[i] = v.normal.x;
+            result[i + 1] = v.normal.y;
+            result[i + 2] = v.normal.z;
+            i += 3;
+        }
+        return result;
+    }
+}
+
+Let’s get back to the generateMesh method, the first we do is get the mesh vertices information, the weights and the structure of the joints.
+private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
+    List<VertexInfo> vertexInfoList = new ArrayList<>();
+    List<Float> textCoords = new ArrayList<>();
+    List<Integer> indices = new ArrayList<>();
+
+    List<MD5Mesh.MD5Vertex> vertices = md5Mesh.getVertices();
+    List<MD5Mesh.MD5Weight> weights = md5Mesh.getWeights();
+    List<MD5JointInfo.MD5JointData> joints = md5Model.getJointInfo().getJoints();
+
+Then we need to calculate the vertices position based on the information contained in the weights and joints. This is done in the following block
+    for (MD5Mesh.MD5Vertex vertex : vertices) {
+        Vector3f vertexPos = new Vector3f();
+        Vector2f vertexTextCoords = vertex.getTextCoords();
+        textCoords.add(vertexTextCoords.x);
+        textCoords.add(vertexTextCoords.y);
+
+        int startWeight = vertex.getStartWeight();
+        int numWeights = vertex.getWeightCount();
+
+        for (int i = startWeight; i < startWeight + numWeights; i++) {
+            MD5Mesh.MD5Weight weight = weights.get(i);
+            MD5JointInfo.MD5JointData joint = joints.get(weight.getJointIndex());
+            Vector3f rotatedPos = new Vector3f(weight.getPosition()).rotate(joint.getOrientation());
+            Vector3f acumPos = new Vector3f(joint.getPosition()).add(rotatedPos);
+            acumPos.mul(weight.getBias());
+            vertexPos.add(acumPos);
+        }
+
+       vertexInfoList.add(new VertexInfo(vertexPos));
+    }
+
+Let’s examine what we are doing here. We iterate over the vertices information and sotre the texture coordinates in a list, no need to apply any transformation here. The we get the starting and total number of weights to consider to calculate the vertex position.
+The vertex position is calculated by using all the weights that is related to. Each weights has a position and a bias. The sum of all bias of the weights associated to each vertex must be equal to 1.0. Each weight also has a position which is defined in  joint’s local space, so we need to transform it to model space coordinates using the joint’s orientation and positions (like if it were a transformation matrix) to which it refers to.
+So, the vertex position can be expressed by this formula.
+Vpos = SUM(j*wp)*wb
+Where:
+•	Jt is the joint’s transformation matrix.
+•	Wp is the weights position.
+•	Wb is the weight bias.
+This equation is what we implement in the body of the loop (we do not have the transformation matrix since we have the joint position and rotation separately but the result is the same).
+With the code above we will be able to construct the positions and texture coordinates data but we still need to build up the indices and the normals. Indices can be calculated by using the triangles information, just by iteration through the list that holds triangles indices we can build the indices. 
+Normals can be calculated also using triangles information. Let V0, V1 and V2 be the vertices positions (in object’s model space). The normal for the triangle can be calculate according to this formula:
+N = (V2 – V0)  x ( V1 – V0)
+Where N should be normalized after. The following figure shows the geometric interpretation of the formula above.
+ 
+For each vertex we compute its normal by the normalized sum of all the normals of the triangles it belongs to. The code that performs those calculations is shown below.
+    for (MD5Mesh.MD5Triangle tri : md5Mesh.getTriangles()) {
+        indices.add(tri.getVertex0());
+        indices.add(tri.getVertex1());
+        indices.add(tri.getVertex2());
+
+        // Normals
+        VertexInfo v0 = vertexInfoList.get(tri.getVertex0());
+        VertexInfo v1 = vertexInfoList.get(tri.getVertex1());
+        VertexInfo v2 = vertexInfoList.get(tri.getVertex2());
+        Vector3f pos0 = v0.position;
+        Vector3f pos1 = v1.position;
+        Vector3f pos2 = v2.position;
+
+        Vector3f normal = (new Vector3f(pos2).sub(pos0)).cross(new Vector3f(pos1).sub(pos0));
+        normal.normalize();
+
+        v0.normal.add(normal).normalize();
+        v1.normal.add(normal).normalize();
+        v2.normal.add(normal).normalize();
+     }
+
+The we just need to transform the Lists to arrays and process the texture  information.
+        float[] positionsArr = VertexInfo.toPositionsArr(vertexInfoList);
+        float[] textCoordsArr = Utils.listToArray(textCoords);
+        float[] normalsArr = VertexInfo.toNormalArr(vertexInfoList);
+        int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
+        Mesh mesh = new Mesh(positionsArr, textCoordsArr, normalsArr, indicesArr);
+
+        handleTexture(mesh, md5Mesh, defaultColour);
+
+        return mesh;
+
+The texture is processed in the handleTexture method:
+private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
+    String texturePath = md5Mesh.getTexture();
+    if (texturePath != null && texturePath.length() > 0) {
+        Texture texture = new Texture(texturePath);
+        Material material = new Material(texture);
+
+        // Handle normal Maps;
+        int pos = texturePath.lastIndexOf(".");
+        if (pos > 0) {
+            String basePath = texturePath.substring(0, pos);
+            String extension = texturePath.substring(pos, texturePath.length());
+            String normalMapFileName = basePath + NORMAL_FILE_SUFFIX + extension;
+            if (Utils.existsResourceFile(normalMapFileName)) {
+                Texture normalMap = new Texture(normalMapFileName);
+                material.setNormalMap(normalMap);
+            }
+        }
+        mesh.setMaterial(material);
+    } else {
+        mesh.setMaterial(new Material(defaultColour, 1));
+    }
+}
+
+The implementation is very straight forward, the only peculiarity is that if a mesh defines a texture named “texture.png” its normal texture map will be defined in a file “texture_normal.png”. We  need to check if that file exists and load it accordingly.
+
+We can now load a MD5 file an render it as we render other GameItems, but before doing that we need to disable cull face in order to render it properly since not all the triangles will be drawn in the correct direction. We will add support to the Window class to set these parameters at runtime (you can check it in the source code the changes).
+If you load some of the sample models you will get something like this.
+
+ 
+
+What you see here is the binding pose, it’s the static representation of the MD5 model used for the animators  to model them easily.  In order to get animation to work we must process the animation definition file.
+
 
 WRITING IN PROGRESS
