@@ -329,8 +329,12 @@ Normals can be calculated also using triangles information. Let $$V_{0}$$, $$V_{
 $$N=(V_{2}-V_{0})\times(V_{1}-V_{0})$$
 
 Where N should be normalized after. The following figure shows the geometric interpretation of the formula above.
- 
+
+![Normal calculation](nomal_calculation.png)
+
 For each vertex we compute its normal by the normalized sum of all the normals of the triangles it belongs to. The code that performs those calculations is shown below.
+
+```java
     for (MD5Mesh.MD5Triangle tri : md5Mesh.getTriangles()) {
         indices.add(tri.getVertex0());
         indices.add(tri.getVertex1());
@@ -351,19 +355,26 @@ For each vertex we compute its normal by the normalized sum of all the normals o
         v1.normal.add(normal).normalize();
         v2.normal.add(normal).normalize();
      }
+```
 
-The we just need to transform the Lists to arrays and process the texture  information.
-        float[] positionsArr = VertexInfo.toPositionsArr(vertexInfoList);
-        float[] textCoordsArr = Utils.listToArray(textCoords);
-        float[] normalsArr = VertexInfo.toNormalArr(vertexInfoList);
-        int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
-        Mesh mesh = new Mesh(positionsArr, textCoordsArr, normalsArr, indicesArr);
+The we just need to transform the Lists to arrays and process the texture information.
 
-        handleTexture(mesh, md5Mesh, defaultColour);
+```java
+     float[] positionsArr = VertexInfo.toPositionsArr(vertexInfoList);
+     float[] textCoordsArr = Utils.listToArray(textCoords);
+     float[] normalsArr = VertexInfo.toNormalArr(vertexInfoList);
+     int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
+     Mesh mesh = new Mesh(positionsArr, textCoordsArr, normalsArr, indicesArr);
 
-        return mesh;
+     handleTexture(mesh, md5Mesh, defaultColour);
 
-The texture is processed in the handleTexture method:
+     return mesh;
+}
+```
+
+The texture is processed in the ```handleTexture``` method:
+
+```java
 private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
     String texturePath = md5Mesh.getTexture();
     if (texturePath != null && texturePath.length() > 0) {
@@ -386,13 +397,15 @@ private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultCo
         mesh.setMaterial(new Material(defaultColour, 1));
     }
 }
+```
 
 The implementation is very straight forward, the only peculiarity is that if a mesh defines a texture named “texture.png” its normal texture map will be defined in a file “texture_normal.png”. We  need to check if that file exists and load it accordingly.
 
 We can now load a MD5 file an render it as we render other GameItems, but before doing that we need to disable cull face in order to render it properly since not all the triangles will be drawn in the correct direction. We will add support to the Window class to set these parameters at runtime (you can check it in the source code the changes).
+
 If you load some of the sample models you will get something like this.
 
- 
+![Binding pose](binding_pose.png) 
 
 What you see here is the binding pose, it’s the static representation of the MD5 model used for the animators  to model them easily.  In order to get animation to work we must process the animation definition file.
 
