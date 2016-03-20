@@ -221,7 +221,9 @@ public static GameItem process(MD5Model md5Model, Vector3f defaultColour) throws
 }
 ```
 
-As you can see we just iterate over the meshes defined into the MD5Model class and transform them into instances of the class org.lwjglb.engine.graph.Mesh by using the generateMesh method which is the one that really does the work. Before we examine that method we will create an Inner class that will serve us to build the positions and normals array.
+As you can see we just iterate over the meshes defined into the ```MD5Model``` class and transform them into instances of the class ```org.lwjglb.engine.graph.Mesh``` by using the ```generateMesh``` method which is the one that really does the work. Before we examine that method we will create an inner class that will serve us to build the positions and normals array.
+
+```java
 private static class VertexInfo {
 
     public Vector3f position;
@@ -264,8 +266,11 @@ private static class VertexInfo {
         return result;
     }
 }
+```
 
-Let’s get back to the generateMesh method, the first we do is get the mesh vertices information, the weights and the structure of the joints.
+Let’s get back to the ```generateMesh``` method, the first we do is get the mesh vertices information, the weights and the structure of the joints.
+
+```java
 private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
     List<VertexInfo> vertexInfoList = new ArrayList<>();
     List<Float> textCoords = new ArrayList<>();
@@ -274,6 +279,7 @@ private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector3f de
     List<MD5Mesh.MD5Vertex> vertices = md5Mesh.getVertices();
     List<MD5Mesh.MD5Weight> weights = md5Mesh.getWeights();
     List<MD5JointInfo.MD5JointData> joints = md5Model.getJointInfo().getJoints();
+```
 
 Then we need to calculate the vertices position based on the information contained in the weights and joints. This is done in the following block
     for (MD5Mesh.MD5Vertex vertex : vertices) {
