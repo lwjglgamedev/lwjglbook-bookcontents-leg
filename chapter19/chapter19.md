@@ -312,16 +312,22 @@ The vertex position is calculated by using all the weights that is related to. E
 
 To sum up, the vertex position can be expressed by this formula:
 
-$$V$$
-Vpos = SUM(j*wp)*wb
+$$Vpos = \sum\limits_{i=ws}^{ws + wc} (Jt_{i} \times Wp_{i}) \dot Wb_{i}$$
+
 Where:
-•	Jt is the joint’s transformation matrix.
-•	Wp is the weights position.
-•	Wb is the weight bias.
+* The summation starts from $$ws$$ (Weight start) up to $$wc$$ (Weight count) weights.
+* $$Jt_{i}$$ is the joint’s transformation matrix associated to the weight $$W_{i}$$.
+* $$Wp_{i}$$ is the weight position.
+* $$Wb_{i}$$ is the weight bias.
+
 This equation is what we implement in the body of the loop (we do not have the transformation matrix since we have the joint position and rotation separately but the result is the same).
-With the code above we will be able to construct the positions and texture coordinates data but we still need to build up the indices and the normals. Indices can be calculated by using the triangles information, just by iteration through the list that holds triangles indices we can build the indices. 
-Normals can be calculated also using triangles information. Let V0, V1 and V2 be the vertices positions (in object’s model space). The normal for the triangle can be calculate according to this formula:
-N = (V2 – V0)  x ( V1 – V0)
+
+With the code above we will be able to construct the positions and texture coordinates data but we still need to build up the indices and the normals. Indices can be calculated by using the triangles information, just by iterating through the list that holds those triangles.
+
+Normals can be calculated also using triangles information. Let $$V_{0}$$, $$V_{1}$$ and $$V_{2}$$ be the triangle vertices (in object’s model space). The normal for the triangle can be calculate according to this formula:
+
+$$N=(V_{2}-V_{0})\times(V_{1}-V_{0})$$
+
 Where N should be normalized after. The following figure shows the geometric interpretation of the formula above.
  
 For each vertex we compute its normal by the normalized sum of all the normals of the triangles it belongs to. The code that performs those calculations is shown below.
