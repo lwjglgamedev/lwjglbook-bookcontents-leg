@@ -20,7 +20,7 @@ So let’s start by writing the code that parses MD5 files. The MD5 format defin
 
 A MD5 file is composed by a header an different sections contained between braces. Let’s start examining the mesh definition file. In the resources folder you will find several models in MD5 format. If you open one of them you can see a structure similar like this.
 
-![MD5 Structure](md5_structure.png) 
+![MD5 Structure](md5_model_structure.png) 
 
 The first structure that you can find in the mesh definition file is the header. You can see below header’s content from one of the samples provided:
 
@@ -408,6 +408,7 @@ If you load some of the sample models you will get something like this.
 ![Binding pose](binding_pose.png) 
 
 What you see here is the binding pose, it’s the static representation of the MD5 model used for the animators  to model them easily.  In order to get animation to work we must process the animation definition file.
+-----------
 
 
 WRITING IN PROGRESS
