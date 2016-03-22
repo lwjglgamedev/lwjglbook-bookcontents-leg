@@ -409,7 +409,87 @@ If you load some of the sample models you will get something like this.
 ![Binding pose](binding_pose.png) 
 
 What you see here is the binding pose, it’s the static representation of the MD5 model used for the animators  to model them easily.  In order to get animation to work we must process the animation definition file.
------------
+
+A MD5 animation definition file, like the model definition one,  is composed by a header an different sections contained between braces. If you open one of those files you can see a structure similar like this.
+
+![MD5 Animation structure](md5_animation_structure.png)
+The first structure that you can find in the animation file, as in the case of the mesh definition file, is the header. You can see below header’s content from one of the samples provided:
+
+```
+MD5Version 10
+commandline ""
+
+numFrames 140
+numJoints 33
+frameRate 24
+numAnimatedComponents 198
+```
+The header defines the following attributes:
+* The version of the MD5 specification that it complies to.
+* The command used to generate this file (from a 3D modelling tool).
+* The number frames defined in the file.
+* The number of joints defined in the hierarchy section.
+* The frame rate, frames per second, that was used while creating this animation. This parameter can be used to calculate the time between frames.
+* The number of components that each frame defines.
+
+The hierarchy section is the one that comes first and defines the joints for this animation. You can see a fragment below:
+
+```
+hierarchy {
+	"origin"	-1 0 0	//
+	"body"	0 63 0	// origin ( Tx Ty Tz Qx Qy Qz )
+	"body2"	1 0 0	// body
+	"SPINNER"	2 56 6	// body2 ( Qx Qy Qz )
+    ....
+}
+```
+
+A joint. In the hierarchy section, is defined by the following attributes: 
+* Joint name, a textual attribute between quotes.
+* Joint parent, using an index which points to the  parent joint using its position in the joints list. The root joint has a parent equals to -1.
+* Joint flags, which set how this joint position an orientation will be changed according to the data define in each animation frame.
+* The start index, inside the animation data of each frame that is used when applying the flags.
+
+The next section is the bounds one. This section defines a bounding box which contains the model for each animation frame. It will contain a line for each of the animation frames and it look like this:
+
+```
+bounds {
+	( -24.3102264404 -44.2608566284 -0.181215778 ) ( 31.0861988068 38.7131576538 117.7417449951 )
+	( -24.3102283478 -44.1887664795 -0.1794649214 ) ( 31.1800289154 38.7173080444 117.7729110718 )
+	( -24.3102359772 -44.1144447327 -0.1794776917 ) ( 31.2042789459 38.7091217041 117.8352737427 )
+    ....
+}
+```
+
+Each bounding box is defined by two 3 component vectors in model space coordinates. The first vector defines the minimum bound  and the second one the maximum.
+
+The next section is the base frame data. In this section, the position and orientation of each joint is set up before the deformations of each animation frame are applied. You can see a fragment below:
+
+```
+baseframe {
+	( 0 0 0 ) ( -0.5 -0.5 -0.5 )
+	( -0.8947336078 70.7142486572 -6.5027675629 ) ( -0.3258574307 -0.0083037354 0.0313780755 )
+	( 0.0000001462 0.0539700091 -0.0137935728 ) ( 0 0 0 )
+    ....
+}
+```
+
+Each line is associated to a joint and define the following attributes:
+* Position of the joint, as a three components vector.
+* Orientation of the joint, as the three components of a quaternion (as in the model file).
+
+After that you will find several frame definitions, as many as the value assigned to the numFrames header attribute. Each frame section is like a huge array of floats that will be used by the joints when applying the transformations for each frame. You can see a fragment below.
+
+```
+frame 1 {
+	 -0.9279100895 70.682762146 -6.3709330559 -0.3259022534 -0.0100501738 0.0320306309
+	 0.3259022534 0.0100501738 -0.0320306309
+	 -0.1038384438 -0.1639953405 -0.0152553488 0.0299418624
+     ....
+}
+```
+
+The base class that parses a MD5 animation file is named ```MD5AnimModel```. This class creates all the objects hierarchy that maps the contents of that file and you can check the source code for the details. The structure is similar to the MD5 model definition file.  Now that we are able to load that information we will use it to generate an animation.
 
 
 WRITING IN PROGRESS
