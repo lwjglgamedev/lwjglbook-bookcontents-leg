@@ -37,6 +37,7 @@ The header defines the following attributes:
 * The command used to generate this file (from a 3D modelling tool).
 * The number of Joints that are defined in the joints section
 * The number of Meshes (the number of meshes sections expected).
+
 The Joints sections defines the joints, as it names states, their positions and their relationships. A fragment of the joints section of one of the sample models is shown below.
 
 ```text
