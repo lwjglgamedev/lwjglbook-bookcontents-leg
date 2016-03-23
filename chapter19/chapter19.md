@@ -724,11 +724,20 @@ First of all, we get the binding pose position, we iterate over the weights asso
 
 So, given a vertex position, we are calculating it’s frame position as
 
-Vfp = SUM(wb*JointFramePos*Jt-1)*Vpos
-Where Vpos is the binding pose position, so
-Vfp = SUM(wb*JointFramePost*Jt-1*Jt*Wpi*Wbi), wchi is equal to SUM(wb*JointFramePost* Wpi*Wbi).
-Since, the multiplizaton of a matrix by its inverse is the identity matrix. This is the reason why we calculate the inverse joint matrix of the joints defined for the binding pose. We need to somehow undo the modificications of the binding pose to apply the transformations for this frame.
-We support vertices with variable weights, up to a maximum of 4, and we also support the rendering of non animated items. In this case, the weights will be equal to 0 and we will get the original position.
+$$Vfp = \sum\limits_{i=0}^{MAX WEIGTHS} Wb_{i} \dot (Jfp_{i} \times Jt^{-1}_{i}) \times Vpos$$
+
+Where:
+* $$Wfvp$$ is the vertex final position
+* $$Wb$$ is the vertex weight
+* $$Jfp$$ is the joint matrix transformation matrix for this frame
+* $$Jt^{-1}$$ is the inverse of the joint transformation matrix for the binding pose. The multiplication of this matrix and $$Jfp$$ is what's contained in the ```jointsMatrix``` uniform.
+* $$Vpos$$ is the vertex position in the binding position.
+
+$$Vpos$$ is calcualted by usin the $$Jt$$ matrix, which is the matrix of the joint transformation matrix for the binding pose. So, at the end we are somehow undoing the modificications of the binding pose to apply the transformations for this frame. This is the reason why we need the inverse binding pose matrix.
+
+The shader supports vertices with variable number of weights, up to a maximum of 4, and also supports the rendering of non animated items. In this case, the weights will be equal to 0 and we will get the original position.
+
+```glsl
 The rest of the shader stays more or less the same, we just use the updated position and pass the correct values to be used by the fragment shader.
     vec4 mvPos = modelViewMatrix * initPos;
     gl_Position = projectionMatrix * mvPos;
@@ -738,17 +747,22 @@ The rest of the shader stays more or less the same, we just use the updated posi
     mlightviewVertexPos = orthoProjectionMatrix * modelLightViewMatrix * vec4(position, 1.0);
     outModelViewMatrix = modelViewMatrix;
 }
+```
 
-So, in order to test the animation we just need to pass the jointsMatrix to the shader. Since this information is tored only in instances of the AnimGameItem class, the code is very simple.  In the loop that renders the Meshes, we add this fragment.
+So, in order to test the animation we just need to pass the ```jointsMatrix``` to the shader. Since this information is stored only in instances of the ```AnimGameItem``` class, the code is very simple.  In the loop that renders the Meshes, we add this fragment.
+
+```java
 if ( gameItem instanceof AnimGameItem ) {
     AnimGameItem animGameItem = (AnimGameItem)gameItem;
     AnimatedFrame frame = animGameItem.getCurrentFrame();
     sceneShaderProgram.setUniform("jointsMatrix", frame.getJointMatrices());
 }
+```
 
 Of course, yo will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar (each time the key is pressed a new frame is set and the jointsMatrix uniform changes).
 You will see something like this.
  
+![First animation](Animation.png)
 
 Although the animation is smooth, the sample presents some problems. First of all, light is not correctly applied and the shadow represents the binding pose but not the current frame. We will solve all these problems now.
 
