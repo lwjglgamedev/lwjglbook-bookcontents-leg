@@ -210,14 +210,17 @@ With the modification above we can now define the contents for the ```MD5Loader`
 ```java
 public static GameItem process(MD5Model md5Model, Vector3f defaultColour) throws Exception {
     List<MD5Mesh> md5MeshList = md5Model.getMeshes();
-    int numMeshes = md5MeshList.size();
-    Mesh[] meshes = new Mesh[numMeshes];
-    for (int i = 0; i < numMeshes; i++) {
-        Mesh mesh = generateMesh(md5Model, md5MeshList.get(i), defaultColour);
-        meshes[i] = mesh;
+
+    List<Mesh> list = new ArrayList<>();
+    for (MD5Mesh md5Mesh : md5Model.getMeshes()) {
+        Mesh mesh = generateMesh(md5Model, md5Mesh, defaultColour);
+        handleTexture(mesh, md5Mesh, defaultColour);
+        list.add(mesh);
     }
-    GameItem gameItem = new GameItem(meshes);            
-        
+    Mesh[] meshes = new Mesh[list.size()];
+    meshes = list.toArray(meshes);
+    GameItem gameItem = new GameItem(meshes);
+
     return gameItem;
 }
 ```
@@ -367,13 +370,11 @@ The we just need to transform the Lists to arrays and process the texture inform
      int[] indicesArr = indices.stream().mapToInt(i -> i).toArray();
      Mesh mesh = new Mesh(positionsArr, textCoordsArr, normalsArr, indicesArr);
 
-     handleTexture(mesh, md5Mesh, defaultColour);
-
      return mesh;
 }
 ```
 
-The texture is processed in the ```handleTexture``` method:
+Going back to the ```process``` method you can see that there's a method named ```handleTexture```, which is responsible for loading textures. This is the definition of that method:
 
 ```java
 private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
