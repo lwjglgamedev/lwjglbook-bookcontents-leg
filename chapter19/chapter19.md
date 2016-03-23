@@ -634,9 +634,20 @@ Now we have all information needed to calculate the transformation matrices to g
 }
 ```
 
-You can see that we create an instance of the AnimatedFrame class that holds the information that will be use during animation. This class also uses the inverse matrices, we will see later on why this done this way.
+You can see that we create an instance of the AnimatedFrame class that holds the information that will be use during animation. This class also uses the inverse matrices, we will see later on why this done this way. An important thing to note is the setMatrix method if the AnimatedFrame which is defined like this.
 
-The ```generateMesh``` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
+```java
+public void setMatrix(int pos, Matrix4f localJointMatrix, Matrix4f invJointMatrix) {
+    localJointMatrices[pos] = localJointMatrix;
+    Matrix4f mat = new Matrix4f(localJointMatrix);
+    mat.mul(invJointMatrix);
+    jointMatrices[pos] = mat;
+}
+```
+
+The variable ```localJointMatrix``` stores the transformation matrix for a the joint that occupies the position “i” for the current frame. The ```invJointMatrix``` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the ```localJointMatrix``` by the  invJointMatrix. This result will be used later to cmpute the final positions. We store also the original joint transformation matrix, the variable ```localJointMatrix```, so we can use it to calculate this joint childs transformation matrices.
+
+Let's get back to the MD5Loader class. The ```generateMesh``` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
 * An array that holds the weight bias associated to this vertex.
 * An array that hold the joint indices associated to this vertex (through the weights).
 
