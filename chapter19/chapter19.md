@@ -660,4 +660,96 @@ We limit the size of those arrays to a value of 4. The ```Mesh``` class has also
 
 ![Static VAO vs animation VAO](static_vao_vs_animation_vao.png)
 
+Now that we have all the pieces to solve the puzzle we just need to use them in the shader. We first need to modify the input data to receive the weights and the joint indices.
+
+```glsl
+#version 330
+
+const int MAX_WEIGHTS = 4;
+const int MAX_JOINTS = 150;
+
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoord;
+layout (location=2) in vec3 vertexNormal;
+layout (location=3) in vec4 jointWeights;
+layout (location=4) in ivec4 jointIndices;
+```
+
+We have defined two constants:
+* ```MAX_WEIGHTS```, defines the maximum number of weights that come in the weights VBO (an solo the joint indices)
+* ```MAX_JOINTS```, defines the maximum number of joints we are going to support (more on this later).
+
+Then we define the output data and the uniforms.
+
+```glsl
+out vec2 outTexCoord;
+out vec3 mvVertexNormal;
+out vec3 mvVertexPos;
+out vec4 mlightviewVertexPos;
+out mat4 outModelViewMatrix;
+
+uniform mat4 jointsMatrix[MAX_JOINTS];
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 modelLightViewMatrix;
+uniform mat4 orthoProjectionMatrix;
+```
+
+You can see that we have a new uniform named ```jointsMatrix``` which is an array of matrices (with a maximum length set by the ```MAX_JOINTS``` constant). That array of matrices holds the joint matrices calculated for all the joints in the present frame, and was calculated in the ```MD5Loader``` class when processing a frame. Thus, that array holds the transformations that need to be applied to a joint in the present animation frame and will serve as the basis for calculating the vertex final position.
+
+With the new data in the VBOS and this uniform we will transform the binding pose position.  This is done in the following block.
+
+```glsl
+    vec4 initPos = vec4(0, 0, 0, 0);
+    int count = 0;
+    for(int i = 0; i < MAX_WEIGHTS; i++)
+    {
+        float weight = jointWeights[i];
+        if(weight > 0) {
+            count++;
+            int jointIndex = jointIndices[i];
+            vec4 tmpPos = jointsMatrix[jointIndex] * vec4(position, 1.0);
+            initPos += weight * tmpPos;
+        }
+    }
+    if (count == 0)
+    {
+        initPos = vec4(position, 1.0);
+    }
+```
+
+First of all, we get the binding pose position, we iterate over the weights associated to this vertex and modify the position using the weights and the joint matrices for this frame (stored in the jointsMatrix uniform) by using the index that is stored in the input.
+
+![Relation to jointsMatrix](relation_to_joints_matrix.png) 
+
+So, given a vertex position, we are calculating it’s frame position as
+
+Vfp = SUM(wb*JointFramePos*Jt-1)*Vpos
+Where Vpos is the binding pose position, so
+Vfp = SUM(wb*JointFramePost*Jt-1*Jt*Wpi*Wbi), wchi is equal to SUM(wb*JointFramePost* Wpi*Wbi).
+Since, the multiplizaton of a matrix by its inverse is the identity matrix. This is the reason why we calculate the inverse joint matrix of the joints defined for the binding pose. We need to somehow undo the modificications of the binding pose to apply the transformations for this frame.
+We support vertices with variable weights, up to a maximum of 4, and we also support the rendering of non animated items. In this case, the weights will be equal to 0 and we will get the original position.
+The rest of the shader stays more or less the same, we just use the updated position and pass the correct values to be used by the fragment shader.
+    vec4 mvPos = modelViewMatrix * initPos;
+    gl_Position = projectionMatrix * mvPos;
+    outTexCoord = texCoord;
+    mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
+    mvVertexPos = mvPos.xyz;
+    mlightviewVertexPos = orthoProjectionMatrix * modelLightViewMatrix * vec4(position, 1.0);
+    outModelViewMatrix = modelViewMatrix;
+}
+
+So, in order to test the animation we just need to pass the jointsMatrix to the shader. Since this information is tored only in instances of the AnimGameItem class, the code is very simple.  In the loop that renders the Meshes, we add this fragment.
+if ( gameItem instanceof AnimGameItem ) {
+    AnimGameItem animGameItem = (AnimGameItem)gameItem;
+    AnimatedFrame frame = animGameItem.getCurrentFrame();
+    sceneShaderProgram.setUniform("jointsMatrix", frame.getJointMatrices());
+}
+
+Of course, yo will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar (each time the key is pressed a new frame is set and the jointsMatrix uniform changes).
+You will see something like this.
+ 
+
+Although the animation is smooth, the sample presents some problems. First of all, light is not correctly applied and the shadow represents the binding pose but not the current frame. We will solve all these problems now.
+
 WRITING IN PROGRESS
