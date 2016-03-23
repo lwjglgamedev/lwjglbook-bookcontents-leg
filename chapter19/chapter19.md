@@ -1,5 +1,8 @@
 # Animations
 
+## Introduction
+
+
 By now we have just loaded static 3D models, in this chapter we will learn how to animate them. When thinking about animations the first approach is to create different meshes for each model positions, load them up into the GPU and draw them sequentially to create the illusion of animation. Although this approach is perfect for some games it's not very efficient (in terms of memory consumption).
 
 This where skeletal animation comes to play. In skeletal animation the way a model animates is defined by its underlying skeleton. A skeleton is defined by a hierarchy of special points called joints. Those points are defined by their position and rotation. Since it's a hierarchy the final position for each joint is affected by their parents. For instance, think on a wrist, the position of a wrist is modified if a character moves the elbow and also if it moves the shoulder.
@@ -410,6 +413,8 @@ If you load some of the sample models you will get something like this.
 ![Binding pose](binding_pose.png) 
 
 What you see here is the binding pose, it’s the static representation of the MD5 model used for the animators  to model them easily.  In order to get animation to work we must process the animation definition file.
+
+## Animate the model
 
 A MD5 animation definition file, like the model definition one,  is composed by a header an different sections contained between braces. If you open one of those files you can see a structure similar like this.
 
