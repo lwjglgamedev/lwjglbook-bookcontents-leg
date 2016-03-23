@@ -615,14 +615,22 @@ If the first bit of that flag field is equal to 1, we should change the x compon
 Now we have all information needed to calculate the transformation matrices to get the final position for each joint for the current animation frame. But there’s another thing that we must consider, the position of each joint is relative to its parent position, so we need to get the transformation matrix associated to each parent and use it in order to get a transformation matrix that is in model space coordinates.
 
 ```java
-private static List<AnimatedFrame> processAnimationFrames(MD5Model md5Model, MD5AnimModel animModel, List<Matrix4f> invJointMatrices) {
-    List<AnimatedFrame> animatedFrames = new ArrayList<>();
-    List<MD5Frame> frames = animModel.getFrames();
-    for(MD5Frame frame : frames) {
-        AnimatedFrame data = processAnimationFrame(md5Model, animModel, frame, invJointMatrices);
-        animatedFrames.add(data);
+        // Calculate translation and rotation matrices for this joint
+        Matrix4f translateMat = new Matrix4f().translate(position);
+        Matrix4f rotationMat = new Matrix4f().rotate(orientation);
+        Matrix4f jointMat = translateMat.mul(rotationMat);
+            
+        // Joint position is relative to joint's parent index position. Use parent matrices
+        // to transform it to model space
+        if ( joint.getParentIndex() > -1 ) {
+            Matrix4f parentMatrix = result.getLocalJointMatrices()[joint.getParentIndex()];
+            jointMat = new Matrix4f(parentMatrix).mul(jointMat);
+        }
+
+        result.setMatrix(i, jointMat, invJointMatrices.get(i));
     }
-    return animatedFrames;
+        
+    return result;
 }
 ```
 
