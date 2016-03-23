@@ -645,7 +645,7 @@ public void setMatrix(int pos, Matrix4f localJointMatrix, Matrix4f invJointMatri
 }
 ```
 
-The variable ```localJointMatrix``` stores the transformation matrix for a the joint that occupies the position “i” for the current frame. The ```invJointMatrix``` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the ```localJointMatrix``` by the  invJointMatrix. This result will be used later to cmpute the final positions. We store also the original joint transformation matrix, the variable ```localJointMatrix```, so we can use it to calculate this joint childs transformation matrices.
+The variable ```localJointMatrix``` stores the transformation matrix for a the joint that occupies the position “i” for the current frame. The ```invJointMatrix``` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the ```localJointMatrix``` by the  invJointMatrix. This result will be used later to compute the final positions. We store also the original joint transformation matrix, the variable ```localJointMatrix```, so we can use it to calculate this joint childs transformation matrices.
 
 Let's get back to the MD5Loader class. The ```generateMesh``` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
 * An array that holds the weight bias associated to this vertex.
