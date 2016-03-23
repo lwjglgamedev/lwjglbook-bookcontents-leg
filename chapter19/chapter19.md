@@ -497,5 +497,148 @@ frame 1 {
 
 The base class that parses a MD5 animation file is named ```MD5AnimModel```. This class creates all the objects hierarchy that maps the contents of that file and you can check the source code for the details. The structure is similar to the MD5 model definition file.  Now that we are able to load that information we will use it to generate an animation.
 
+We will generate the animation in the shader, so instead of pre-calculating all the positions for each frame we need to prepare the data we need so in the vertex shader we can compute the final positions. 
+Let’s get back to the process method in the ```MD5Loader``` class, we need to modify it to take into consideration the animation information. The new definition for that method is shown below:
+
+```java
+public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Vector3f defaultColour) throws Exception {
+    List<Matrix4f> invJointMatrices = calcInJointMatrices(md5Model);
+    List<AnimatedFrame> animatedFrames = processAnimationFrames(md5Model, animModel, invJointMatrices);
+        
+    List<Mesh> list = new ArrayList<>();
+    for (MD5Mesh md5Mesh : md5Model.getMeshes()) {
+        Mesh mesh = generateMesh(md5Model, md5Mesh);
+        handleTexture(mesh, md5Mesh, defaultColour);
+        list.add(mesh);
+    }
+        
+    Mesh[] meshes = new Mesh[list.size()];
+    meshes = list.toArray(meshes);
+        
+    AnimGameItem result = new AnimGameItem(meshes, animatedFrames, invJointMatrices);
+    return result;
+}
+```
+
+There are some changes here, the most obvious is that the method now receives a ```MD5AnimModel``` instance. The next one is that we do not return a ```GameItem``` instance but and ```AnimGameItem``` one. This class inherits from the ```GameItem``` class but adds support for animations. We will see why this done this way later one.
+
+If we continue with the process method, the first thing we do is call the ```calcInJointMatrices``` method, which is defined like this:
+
+```java
+private static List<Matrix4f> calcInJointMatrices(MD5Model md5Model) {
+    List<Matrix4f> result = new ArrayList<>();
+        
+    List<MD5JointInfo.MD5JointData> joints = md5Model.getJointInfo().getJoints();
+    for(MD5JointInfo.MD5JointData joint : joints) {
+        Matrix4f translateMat = new Matrix4f().translate(joint.getPosition());
+        Matrix4f rotationMat = new Matrix4f().rotate(joint.getOrientation());
+        Matrix4f mat = translateMat.mul(rotationMat);
+        mat.invert();
+        result.add(mat);
+    } 
+    return result;
+}
+```
+ 
+This method iterates over the joints contained in the MD5 model definition file, calculates the transformation matrix associated to each joint and then it gets the inverse of those matrices. This information is used to construct the AnimationGameItem instance.
+
+Let’s continue with the ```process``` method, the next thing we do is process the animation frames by calling the ```processAnimationFrames``` method:
+
+```java
+private static List<AnimatedFrame> processAnimationFrames(MD5Model md5Model, MD5AnimModel animModel, List<Matrix4f> invJointMatrices) {
+    List<AnimatedFrame> animatedFrames = new ArrayList<>();
+    List<MD5Frame> frames = animModel.getFrames();
+    for(MD5Frame frame : frames) {
+        AnimatedFrame data = processAnimationFrame(md5Model, animModel, frame, invJointMatrices);
+        animatedFrames.add(data);
+    }
+    return animatedFrames;
+}
+```
+
+This method process each animation frame, defined in the MD5 animation definition file, and returns a list of ```AnimatedFrame``` instances. The real work is done in the ```processAnimationFrame``` method. Let’s explain what this method will do.
+
+We first, iterate over the joints defined in the hierarchy section in the MD5 animaton file.
+
+```java
+private static AnimatedFrame processAnimationFrame(MD5Model md5Model, MD5AnimModel animModel, MD5Frame frame, List<Matrix4f> invJointMatrices) {
+    AnimatedFrame result = new AnimatedFrame();
+        
+    MD5BaseFrame baseFrame = animModel.getBaseFrame();
+    List<MD5Hierarchy.MD5HierarchyData> hierarchyList = animModel.getHierarchy().getHierarchyDataList();
+
+    List<MD5JointInfo.MD5JointData> joints = md5Model.getJointInfo().getJoints();
+    int numJoints = joints.size();
+    float[] frameData = frame.getFrameData();
+    for (int i = 0; i < numJoints; i++) {
+        MD5JointInfo.MD5JointData joint = joints.get(i);
+```
+
+We get the position and orientation of the base frame element associated to each joint. 
+
+```java
+        MD5BaseFrame.MD5BaseFrameData baseFrameData = baseFrame.getFrameDataList().get(i);
+        Vector3f position = baseFrameData.getPosition();
+        Quaternionf orientation = baseFrameData.getOrientation();
+```
+
+In principle, that information should be assigned to the the joint’s position and orientation, but it needs to be transformed according to the joint’s flag. If you recall, when the structure of the animation file was presented, each joint in the hierarchy section defines a flag. That flag models how the position and orientation information should be changed according to the information defined in each animation frame.
+
+If the first bit of that flag field is equal to 1, we should change the x component of the base frame position with the data contained in the animation frame we are processing. That animation farme defines a bug afloat array, so which I elements should we take. The answer is also in the joints definition which includes a startIndex attribute. If the second bit of the gal is equal to 1, we should change the y component of the base frame position with the value at startIndex + 1, and so on. The next bits are for the z position, and the x, y and z components of the orientation.
+
+```java
+        int flags = hierarchyList.get(i).getFlags();
+        int startIndex = hierarchyList.get(i).getStartIndex();
+
+        if ( (flags & 1 ) > 0) {
+            position.x = frameData[startIndex++];
+        }
+        if ( (flags & 2) > 0) {
+            position.y = frameData[startIndex++];
+        }
+        if ( (flags & 4) > 0) {
+            position.z = frameData[startIndex++];
+        }
+        if ( (flags & 8) > 0) {
+            orientation.x = frameData[startIndex++];
+        }
+        if ( (flags & 16) > 0) {
+            orientation.y = frameData[startIndex++];
+        }
+        if ( (flags & 32) > 0) {
+            orientation.z = frameData[startIndex++];
+        }
+        // Update Quaternion's w component
+        orientation = MD5Utils.calculateQuaternion(orientation.x, orientation.y, orientation.z);
+```
+ 
+Now we have all information needed to calculate the transformation matrices to get the final position for each joint for the current animation frame. But there’s another thing that we must consider, the position of each joint is relative to its parent position, so we need to get the transformation matrix associated to each parent and use it in order to get a transformation matrix that is in model space coordinates.
+
+```java
+private static List<AnimatedFrame> processAnimationFrames(MD5Model md5Model, MD5AnimModel animModel, List<Matrix4f> invJointMatrices) {
+    List<AnimatedFrame> animatedFrames = new ArrayList<>();
+    List<MD5Frame> frames = animModel.getFrames();
+    for(MD5Frame frame : frames) {
+        AnimatedFrame data = processAnimationFrame(md5Model, animModel, frame, invJointMatrices);
+        animatedFrames.add(data);
+    }
+    return animatedFrames;
+}
+```
+
+You can see that we create an instance of the AnimatedFrame class that holds the information that will be use during animation. This class also uses the inverse matrices, we will see later on why this done this way.
+
+The ```generateMesh``` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
+* An array that holds the weight bias associated to this vertex.
+* An array that hold the joint indices associated to this vertex (through the weights).
+
+We limit the size of those arrays to a value of 4. The ```Mesh``` class has also been modified to receive those parameters and include it in the VAO information processed by the shaders. You can check the details in the source code, but So let’s recap what we have done:
+
+* We are still loading the binding pose with their final positions calculated as the sum of the joints positions and orientations through the weights information.
+* That information is loaded in the shaders as VBOs but it’s complemented by the bias of the weights associated to each vertex and the indices if the joints that affect it. This information is common to all the animation frames, since it’s defined in the MD5 definition file. This is the reason why we limit the size of the bias and joint indices arrays, the y will be loaded as VBOs once when the model is sent to the GPU.
+* For each animation frame we store the transformation matrices to be applied to each joint according to the positions and orientations defined in the base frame. 
+* We also have calculated the inverse matrices of the transformation matrices associated to the joints that define the binding pose. That is, we know how to undo the transformations done in the binding pose. We will see how this will be applied later.
+
+![Static VAO vs animation VAO](static_vao_vs_animation_vao.png)
 
 WRITING IN PROGRESS
