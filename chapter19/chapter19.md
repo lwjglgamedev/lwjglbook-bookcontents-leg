@@ -766,4 +766,84 @@ You will see something like this.
 
 Although the animation is smooth, the sample presents some problems. First of all, light is not correctly applied and the shadow represents the binding pose but not the current frame. We will solve all these problems now.
 
-WRITING IN PROGRESS
+## Correcting animation issues
+
+The first issue that will address is the lightning problem. You may have already noticed the case, its due to the fact that we are not transforming normals. Thus, the normals that are used in the fragment shader are the ones that correspond to the binding pose. We need to transform them in the same way as the positions.
+
+This issue is easy to solve, we just need to include the normals in the loop that iterates over the weights in the vertex shader.
+
+```glsl
+    vec4 initPos = vec4(0, 0, 0, 0);
+    vec4 initNormal = vec4(0, 0, 0, 0);
+    int count = 0;
+    for(int i = 0; i < MAX_WEIGHTS; i++)
+    {
+        float weight = jointWeights[i];
+        if(weight > 0) {
+            count++;
+            int jointIndex = jointIndices[i];
+            vec4 tmpPos = jointsMatrix[jointIndex] * vec4(position, 1.0);
+            initPos += weight * tmpPos;
+
+            vec4 tmpNormal = jointsMatrix[jointIndex] * vec4(vertexNormal, 0.0);
+            initNormal += weight * tmpNormal;
+        }
+    }
+    if (count == 0)
+    {
+        initPos = vec4(position, 1.0);
+        initNormal = vec4(vertexNormal, 0.0);
+    }
+```
+
+Then we just calculate the output vertex normal as always:
+
+```glsl
+mvVertexNormal = normalize(modelViewMatrix * initNormal).xyz;
+```
+
+The next issue is the shadow problem. If you recall from the shadows chapter, we are using shadow maps to draw shadows. We are rendering the scene from the light perspective in order to create a depth map that tells us if a point is in shadow or not. But, as in the case of the normals, we are just passing the binding pose coordinates and not changing them according to the current frame. This is the reason why the shadow does not corresponds to the current position.
+
+The solution is easy, we just need to modify the depth vertex shader to use the jointsMatrix and the weights and joint indices to transform the position. This is how the depth vertex shader looks like.
+
+```glsl
+#version 330
+
+const int MAX_WEIGHTS = 4;
+const int MAX_JOINTS = 150;
+
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoord;
+layout (location=2) in vec3 vertexNormal;
+layout (location=3) in vec4 jointWeights;
+layout (location=4) in ivec4 jointIndices;
+
+uniform mat4 jointsMatrix[MAX_JOINTS];
+uniform mat4 modelLightViewMatrix;
+uniform mat4 orthoProjectionMatrix;
+
+void main()
+{
+    vec4 initPos = vec4(0, 0, 0, 0);
+    int count = 0;
+    for(int i = 0; i < MAX_WEIGHTS; i++)
+    {
+        float weight = jointWeights[i];
+        if(weight > 0) {
+            count++;
+            int jointIndex = jointIndices[i];
+            vec4 tmpPos = jointsMatrix[jointIndex] * vec4(position, 1.0);
+            initPos += weight * tmpPos;
+        }
+    }
+    if (count == 0)
+    {
+        initPos = vec4(position, 1.0);
+    }
+    gl_Position = orthoProjectionMatrix * modelLightViewMatrix * initPos;
+}
+```
+
+You need to modify the Renderer class to set up the new uniforms for this shader, and the final result will be much better. The light will be applied correctly and the shadow will change for each animation frame as shown in the next figure.
+
+![](animation_refined.png)
