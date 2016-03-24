@@ -846,4 +846,4 @@ void main()
 
 You need to modify the Renderer class to set up the new uniforms for this shader, and the final result will be much better. The light will be applied correctly and the shadow will change for each animation frame as shown in the next figure.
 
-![](animation_refined.png)
+![Animation refined](animation_refined.png)
