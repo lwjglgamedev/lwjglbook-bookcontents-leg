@@ -847,3 +847,5 @@ void main()
 You need to modify the Renderer class to set up the new uniforms for this shader, and the final result will be much better. The light will be applied correctly and the shadow will change for each animation frame as shown in the next figure.
 
 ![Animation refined](animation_refined.png)
+
+And that's all, you have now a working example that animates MD5 models. The source code can still be improved and you can modify the matrices that are loaded in each render cycle to interpeolate betweeen frames positions. You can check the sources used for this chapter to see how this can be done.
