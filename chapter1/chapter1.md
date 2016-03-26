@@ -66,7 +66,7 @@ Those libraries are placed under ```target/natives``` directory. We have also se
 	</profiles>
 ```
 
-In each project, the LWJGL platform dependency will use the correct property established in the profile for the current platform.
+Inside each project, the LWJGL platform dependency will use the correct property established in the profile for the current platform.
 
 ```xml
         <dependency>
@@ -76,6 +76,8 @@ In each project, the LWJGL platform dependency will use the correct property est
             <classifier>${native.target}</classifier>
         </dependency>
 ```
+
+Besides that, every project generates a runnable jar (one that can be executed by typing java -jar name_of_the_jar.jar). This is achieved by suing the maven-jar-plugin which creates a jar with a ```MANIFEST.MF``` file with the correct values. The most important attribute for that file is the ```Main-Class``` one, which sets the entry point for the program. In addition, all the dependencies are set as entries in the ```Class-Path``` attribute for that file. In order to execute it in another computer you just need to copy the main jar file and the lib directory (with all the jars included there) which are located under the target directory.
 
 When you execute the samples from Netbeans you need to specify the directory where the Java Virtual Machine will look for native libraries. This is done with the command line property: ```“-Djava.library.path”``` which should be set to: ```“-Djava.library.path="target\natives”```. This is done automatically for you in the ```nbactions.xml``` file. In case you want to change it or learn how to do it manually, right click in your project and select “Properties”. In the dialog that is shown select “Run” category and set the correct value for VM Options.
 
