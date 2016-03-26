@@ -141,7 +141,7 @@ The parameter ```filename``` specifies the name of the file, that must be in the
 The first thing that we will do in that method is to read the file contents and store all the lines in an array. Then we create several lists that will hold the vertices, the texture coordinates, the normals and the faces.
 
 ```java
-List<String> lines = Files.readAllLines(Paths.get(OBJLoader.class.getResource(fileName).toURI()));
+List<String> lines = Utils.readAllLines(fileName);
 
 List<Vector3f> vertices = new ArrayList<>();
 List<Vector2f> textures = new ArrayList<>();
