@@ -1,6 +1,6 @@
 # Normal Mapping
 
-In this chapter we will explain a technique that will dramatically improve how our 3D models look like. We are now able to apply textures to complex 3D models, but we are still far away from what real objects look like. Surfaces in the real world are not perfectly plain, they have imperfections that our 3D models currently do not have. 
+In this chapter we will explain a technique that will dramatically improve how our 3D models look like. By now, we are now able to apply textures to complex 3D models, but we are still far away from what real objects look like. Surfaces in the real world are not perfectly plain, they have imperfections that our 3D models currently do not have. 
 
 In order to render more realistic scenes we are going to use normal maps. If you look at a flat surface in the real word you will see that those imperfections can be seen even at distance by the way that the light reflects on it. In a 3D scene a flat surface will have no imperfections, we can apply a texture to it but we won’t change the way that light reflects on it. That’s the thing that makes the difference.
 
@@ -10,7 +10,7 @@ Let’s go back to the plain surface example, a plane cane be defined by two tri
 
 ![Surface Normals](surface_normals.png) 
 
-If we could change the normals for each fragment of the surface we could model surface imperfections to render them in a more realistic way.
+If we could change the normals for each fragment of the surface we could model surface imperfections to render them in a more realistic way. This is shown in the next figure.
 
 ![Fragment Normals](fragment_normals.png) 
 
