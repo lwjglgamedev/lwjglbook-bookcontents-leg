@@ -312,7 +312,7 @@ public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
 }
 ```
 
-As you can see we still have a the old method that renders the a ```Mesh``` taking into consideration that we have only one GameItem (this will may be used in the HUD, etc.). The new method renders a list of GameItems and receives as a paremeter a ```Consumer``` (a function, this uses the new functional programming paradigms introduced in Java 8), which will be used to setup what’s specific for each GameItem before drawing the triangles. We will use this to set up the model view matrix, since we do not want the ```Mesh``` class to be coupled with the uniforms names and the parameters involved when setting this up.
+As you can see we still have the old method that renders the a ```Mesh``` taking into consideration that we have only one GameItem (this may be used in other cases, this is why it has not been removed). The new method renders a list of GameItems and receives as a parameter a ```Consumer``` (a function, that uses the new functional programming paradigms introduced in Java 8), which will be used to setup what’s specific for each GameItem before drawing the triangles. We will use this to set up the model view matrix, since we do not want the ```Mesh``` class to be coupled with the uniforms names and the parameters involved when setting these things up.
 
 In the ```renderScene``` method of the ```Renderer``` class you can see that we just iterate over the Mesh map and setup the model view matrix uniform via a lambda.
 
@@ -327,7 +327,7 @@ for (Mesh mesh : mapMeshes.keySet()) {
 }
 ```
 
-Another set of optimizations that we can do is that we are creating tons of objects in the render cycle. In particular, we are creating too many ```Matrix4f``` instances that holds a copy a the model view matrix for each ```GameItem``` instance. We will create specific matrices for that in the Transformation class, and reuse the same instance. If you check the code you will see also that we have changed the names of the methods, the ```getXX``` methods just return the store matrix instance and any method that changes the value of a matrix is called ```buildXX``` to clarify its purpose.
+Another set of optimizations that we can do is that we are creating tons of objects in the render cycle. In particular, we were creating too many ```Matrix4f``` instances that holds a copy a the model view matrix for each ```GameItem``` instance. We will create specific matrices for that in the Transformation class, and reuse the same instance. If you check the code you will see also that we have changed the names of the methods, the ```getXX``` methods just return the store matrix instance and any method that changes the value of a matrix is called ```buildXX``` to clarify its purpose.
 
 We have also avoided the construction of new ```FloatBuffer``` instances each time we set a uniform for a Matrix and removed some other useless instantiations. With all that in place you can see now that the rendering is smoother and more agile.
 
