@@ -392,7 +392,7 @@ void main()
 }
 ```
 
-To add the compass the the HUD we just need to create a new ```GameItem``` instance, tn the ```Hud``` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
+To add the compass the the HUD we just need to create a new ```GameItem``` instance, tn the ```Hud``` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so usually you will need to increase its size.
 
 ```java
 // Create compass
@@ -409,7 +409,7 @@ compassItem.setRotation(0f, 0f, 180f);
 gameItems = new GameItem[]{statusTextItem, compassItem};
 ```
 
-Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space like coordinates, and if we are expecting screen coordinates it would pointing downwards. The ```Hud``` class will also provide a method to update the angle of the compass that must take this also into consideration. 
+Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space  coordinates. If we are expecting screen coordinates it would pointing downwards. The ```Hud``` class will also provide a method to update the angle of the compass that must take this also into consideration. 
 
 ```java
 public void rotateCompass(float angle) {
