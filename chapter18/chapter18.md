@@ -8,14 +8,14 @@ We will use a technique named Shadow mapping which is widely used in games and d
 
 We will explain here an approach which will serve you to add shadows for most of the cases, but what it’s more important it will serve you to understand its limitations. The code presented here is far from being perfect but I think it will be easy to understand. It is also designed to support directional lights (which in my opinion is the more complex case) but you will learn how it can be extended to support other type of lights (such us point lights). If you want to achieve more advanced results you should use more advance techniques such as Cascaded Shadow Maps. In any case the concepts explained here will serve you as a basis.
 
-So let’s start by thinking in how we could check if a specific area (indeed a fragment) is in shadow or not. While drawing  that area if we could cast rays to the light source, if we can reach the light source without any collision then that pixel is in light. If not, then the pixel is in shadow. 
+So let’s start by thinking in how we could check if a specific area (indeed a fragment) is in shadow or not. While drawing  that area if we can cast rays to the light source, if we can reach the light source without any collision then that pixel is in light. If not, then the pixel is in shadow. 
 
-The following picture shows the case for a point light, PA can reach the source light, but PB and PC can’t so they are in shadow.
+The following picture shows the case for a point light, the point PA can reach the source light, but points PB and PC can’t so they are in shadow.
 
 ![Shadow Concepts I](shadow_concepts_I.png)
 
-So how we can check if we can cast that ray without collisions in an efficient manner?  A light source can , theoretically cast infinitely ray lights, and how do we check if a ray light is blocked or not ? 
-What we can do instead is to look at the 3D scene from the light’s point and render the scene from that point. We set the camera at the light position and render the scene so we can store the depth for each fragment, which is equivalent to calculate the distance of each fragment to the light source. We are storing the minimum distance as seen from the light source  as a shadow map.
+So, how we can check if we can cast that ray without collisions in an efficient manner?  A light source can, theoretically cast infinitely ray lights, so how do we check if a ray light is blocked or not ? 
+What we can do instead of casting ray lights is to look at the 3D scene from the light’s persèctive and render the scene from that location. We can set the camera at the light position and render the scene so we can store the depth for each fragment. This is equivalent to calculate the distance of each fragment to the light source. At the end, what we are doing is storing the minimum distance as seen from the light source  as a shadow map.
 
 The following picture shows a cube floating over a plane and  a perpendicular light.
 
@@ -25,7 +25,7 @@ The scene as seen from the light perspective would be something like this (the d
 
 ![Rendering from light perspective](render_light_perspective.png)
  
-With taht information  we can render the 3D scene as usual and check the distance for each fragment to the light source with the minimum stored distance. If the distance is less that the value stored in the shadow map, then the object is in light, otherwise is in shadow. We can have several objects that could be hit by the same ray light. But we store the minimum distance. 
+With that information  we can render the 3D scene as usual and check the distance for each fragment to the light source with the minimum stored distance. If the distance is less that the value stored in the shadow map, then the object is in light, otherwise is in shadow. We can have several objects that could be hit by the same ray light. But we store the minimum distance. 
 
 Thus, shadow mapping is a two step process:
 * First we render the scene from the light space into a shadow map to get the minimum distances.
