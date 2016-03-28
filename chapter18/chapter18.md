@@ -169,7 +169,7 @@ void main()
 
 In fact, you can remove that line, since we are only generating depth values, the depth value it will be automatically returned.
 
-Once we have defined the new shaders for depth rendering we can use them in the ```Renderer``` class. We define a new method for setting up those shaders, named ```setupDepthShader```, whichi will be invoked where the others shaders are initialized.
+Once we have defined the new shaders for depth rendering we can use them in the ```Renderer``` class. We define a new method for setting up those shaders, named ```setupDepthShader```, which will be invoked where the others shaders are initialized.
 
 ```java
 private void setupDepthShader() throws Exception {
@@ -198,7 +198,7 @@ public void render(Window window, Camera camera, Scene scene, IHud hud) {
 	
 ```
 
- If you look at the code you will see that the new method is invoked at the very beginning before we have set the view port. This is due to the fact that this new method will change the view port to match the dimensions of the texture that holds the depth map. Because of that, we will always need to set, after the ```renderDepthMap``` has been finished, the view port to the screen dimensions (without checking if the window has been resized).
+If you look at the above code you will see that the new method is invoked at the very beginning, before we have set the view port. This is due to the fact that this new method will change the view port to match the dimensions of the texture that holds the depth map. Because of that, we will always need to set, after the ```renderDepthMap``` has been finished, the view port to the screen dimensions (without checking if the window has been resized).
  
 Let’s define now the ```renderDepthMap``` method. The first thing that we will do is to bind to the FBO we have created in the ```ShadowMap``` class and set the view port to match the texture dimensions.
 
@@ -215,7 +215,7 @@ glClear(GL_DEPTH_BUFFER_BIT);
 depthShaderProgram.bind();
 ```
 
-Now we need to setup the matrices, and here comes part of the tricky part. We use the light as a camera so we need to create a view matrix which needs a position and three angles. As it has been said at the beginning of the chapter we will support  only directional lights, and that type of lights does not define a position but a direction. If we were using point lights this would be easy, the position of the light would be the position of the view matrix, but we do not have that.
+Now we need to setup the matrices, and here comes the tricky part. We use the light as a camera so we need to create a view matrix which needs a position and three angles. As it has been said at the beginning of the chapter we will support  only directional lights, and that type of lights does not define a position but a direction. If we were using point lights this would be easy, the position of the light would be the position of the view matrix, but we do not have that.
 
 We will take a simple approach to calculate the light position. Directional lights are defined by a vector, usually, normalized, which points to the direction where the light is. We will multiply that direction vector by a configurable factor so it defines a point at a reasonable distance for the scene we want to draw. We will use that direction in order to calculate the rotation angle for that view matrix.
 
@@ -236,7 +236,7 @@ Next we need to calculate the orthographic projection matrix.
 Matrix4f orthoProjMatrix = transformation.updateOrthoProjectionMatrix(orthCoords.left, orthCoords.right, orthCoords.bottom, orthCoords.top, orthCoords.near, orthCoords.far);
 ```
 
-We have modified the Transformation class to include the light view matrix and the orthographic projection matrix. Previously we had a orthographic 2D projection matrix, so we have renamed the previous methods and attributes. You can check the definition in the source code which is straight forward.
+We have modified the ```Transformation``` class to include the light view matrix and the orthographic projection matrix. Previously we had a orthographic 2D projection matrix, so we have renamed the previous methods and attributes. You can check the definition in the source code which is straight forward.
 
 Then we render the scene  objects as in the ```renderScene``` method but using the previous matrices to work in light space coordinate system.
 
