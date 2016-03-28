@@ -117,11 +117,11 @@ When we are processing the first vertex (V00), we define the indices of the two 
 
 ![Height map indices I](heightmap_indices_i.png) 
 
-When we define the second vertex (V01), ), we define the indices of the two triangles shaded in red, but when we define the third vertex (V02) we do not need to define more indices, the triangles have already been defined. 
+When we are processing the second vertex (V01), we define the indices of the two triangles shaded in red. But, when we are processing the the third vertex (V02) we do not need to define more indices, the triangles for that row have already been defined. 
 
 ![Height map indices II](heightmap_indices_ii.png) 
 
-You can easily see how the process continues for the rest of vertices. Now, once we have created all the vertex positions, the texture coordinates and the indices we just need to create a ```Mesh``` and the associated Material with all that data.
+You can easily see how the process continues for the rest of vertices. Now, once we have created all the vertices positions, the texture coordinates and the indices we just need to create a ```Mesh``` and the associated ```Material``` with all that data.
 
 ```java
 float[] posArr = Utils.listToArray(positions);
@@ -133,7 +133,7 @@ Material material = new Material(texture, 0.0f);
 mesh.setMaterial(material);
 ```
 
-You can see that we calculate the normals taking as an input the vertex positions. Before we see how normals can be calculated, let’s see how heights are obtained. We have created a method named getHeight which calculates the height for a vertex.
+You can see that we calculate the normals taking as an input the vertex positions. Before we see how normals can be calculated, let’s see how heights are obtained. We have created a method named ```getHeight``` which calculates the height for a vertex.
 
 ```java
 private float getHeight(int x, int z, BufferedImage buffImage) {
@@ -148,9 +148,9 @@ private float getHeight(int x, int z, BufferedImage buffImage) {
 
 The method receives the x an z coordinates for a pixel, gets the RGB colour (the sum of the individual R, G and B components) and  assigns a value contained between ```minY``` and ```maxY``` (```minY``` for black colour and ```maxY``` for white colour).
 
-Let’s review now how texture coordinates are calculated. The first option is to wrap the texture along the whole mesh, the top left vertex would have  (0, 0) texture coordinates and the bottom right vertex would have (1, 1) texture coordinates. The problem with this approach is that the texture should be huge in order to provide good results, if not, it would be stretched  too much.
+Let’s view now how texture coordinates are calculated. The first option is to wrap the texture along the whole mesh, the top left vertex would have  (0, 0) texture coordinates and the bottom right vertex would have (1, 1) texture coordinates. The problem with this approach is that the texture should be huge in order to provide good results, if not, it would be stretched  too much.
 
-But we can still use a small texture with very good results by employing e vary efficient technique that is based that if we set texture coordinates that are beyond (1,1), we get back to origin and start counting again. The following picture shows this behavior.
+But we can still use a small texture with very good results by employing a very efficient technique. If we set texture coordinates that are beyond the (1,1) range, we get back to origin and start counting again from the start. The following picture shows this behavior.
 
 ![Texture coordinates I](texture_coordinates_i.png) 
 
