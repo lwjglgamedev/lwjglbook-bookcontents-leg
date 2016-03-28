@@ -15,15 +15,15 @@ The process of creating a sky box can be summarized in the following steps:
 
 Then, let’s start with the texture. You will find that there are lots of pre-generated textures for you to use in the internet. The one used in the sample for this chapter has been downloaded from here: [http://www.custommapmakers.org/skyboxes.php](http://www.custommapmakers.org/skyboxes.php). The concrete sample that we have used is this one: [http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip](http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip) and has been created by Colin Lowndes. 
 
-The textures from that site are composed by separate TGA files, one for each side of the cube.  The texture loader that we have created expects a single file in PNG format so we need to compose a single PNG image with the images of each face. We could apply other techniques, such us cube mapping, in order to apply those texture method but they will be explained in later chapters. The result image is something like this.
+The textures from that site are composed by separate TGA files, one for each side of the cube.  The texture loader that we have created expects a single file in PNG format so we need to compose a single PNG image with the images of each face. We could apply other techniques, such us cube mapping, in order to apply the textures automatically. But, in order to keep this chapter as simple as possible, you will have to manuallay arrange them into a single file. The result image will look like this.
 
 ![Sky Box Texture](skybox_texture.png) 
 
-Then we need to create a .obj file which contains a cube with the correct texture coordinates for each face. The picture below shows the tiles associated to each face (you can find the .obj file used in this chapter in the book’s source code).
+After that, we need to create a .obj file which contains a cube with the correct texture coordinates for each face. The picture below shows the tiles associated to each face (you can find the .obj file used in this chapter in the book’s source code).
 
 ![Sky Box cube faces](skybox_cube_faces.png) 
 
-We will create a new class named ```SkyBox``` with a constructor that receives the  path to the OBJ model  that contains the sky box cube and the texture file. This class will inherit from ```GameItem``` as the HUD class from the previous chapter. Why it should inherit from ```GameItem``` ? First of all, for convenience,  we can reuse most of the code that deals with meshes and textures. Secondly, because, although the skybox will not move we will be interested in applying rotations and scaling to it. If you think about it a ```SkyBox``` is indeed a game item. The definition of the ```SkyBox``` class is as follows.
+Onca the resoures have been set up, we can start coding. We will start by creating a new class named ```SkyBox``` with a constructor that receives the  path to the OBJ model  that contains the sky box cube and the texture file. This class will inherit from ```GameItem``` as the HUD class from the previous chapter. Why it should inherit from ```GameItem``` ? First of all, for convenience,  we can reuse most of the code that deals with meshes and textures. Secondly, because, although the skybox will not move we will be interested in applying rotations and scaling to it. If you think about it a ```SkyBox``` is indeed a game item. The definition of the ```SkyBox``` class is as follows.
 
 ```java
 package org.lwjglb.engine;
