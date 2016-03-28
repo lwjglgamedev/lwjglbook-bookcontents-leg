@@ -16,7 +16,7 @@ When you have finished configuring all the settings in CBG you can export the re
 
 ![Font Texture](font_texture.png) 
 
-We have all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column is calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operation. The row is calculated as follows: $$row = code / numberOfCols$$, in this case we will do a integer by integer operation so we can ignore the decimal part.
+As you can see, the image has all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column can be calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operator. The row can be calculated as follows: $$row = code / numberOfCols$$, in this case we will do a integer by integer operation so we can ignore the decimal part.
 
 We will create a new class named ```TextItem``` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc. but it will allow us to present textual information in the HUD.  Here you can see the first lines and the constructor of this class.
 
@@ -52,9 +52,9 @@ public class TextItem extends GameItem {
     }
 ```
 
-As you can see this class extends the ```GameItem``` class, this is because we will be interested in changing the text position in the screen and may also need to scale and rotate it. The constructor receives the text itself and the relevant data of the texture that will be used to render it (the file that contains the image and the number of columns and rows).
+As you can see this class extends the ```GameItem``` class, this is because we will be interested in changing the text position in the screen and may also need to scale and rotate it. The constructor receives the text to be displayed and the relevant data of the texture file that will be used to render it (the file that contains the image and the number of columns and rows).
 
-In the constructor we load the texture image file and invoke a method that will create a Mesh instance that models our text. Let’s examine the ```buildMesh``` method.
+In the constructor we load the texture image file and invoke a method that will create a ```Mesh``` instance that models our text. Let’s examine the ```buildMesh``` method.
 
 ```java
 private Mesh buildMesh(Texture texture, int numCols, int numRows) {
