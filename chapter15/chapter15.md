@@ -135,15 +135,15 @@ With all that information we are able to calculate the positions of the vertices
  
 ![Cell](cell.png)
 
-You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle associated to the current position, is by checking if the $$z$$ coordinate is above or below that diagonal. In our case, if current position $$z$$ value is less than the $$z$$ value of the diagonal setting the $$x$$ value to the $$x$$ value of current position we are in T1. If its greater than that we are in T2.
+You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle associated to the current position, is by checking if the $$z$$ coordinate is above or below that diagonal. In our case, if current position $$z$$ value is less than the $$z$$ value of the diagonal setting the $$x$$ value to the $$x$$ value of current position we are in T1. If it's greater than that we are in T2.
 
 We can determine that by calculating the line equation that matches the diagonal.
 
-If you rememeber your school math classes, the equation of a line that passes from two points (in 2D) is:
+If you remember your school math classes, the equation of a line that passes from two points (in 2D) is:
 
 $$y-y1=m\cdot(x-x1)$$
 
-Where m is the line slope, that is, how much the height changes when moving through the $$x$$ axis. Note that, in our case, the $$y$$ coordinates are the $$z$$ ones. Also note, that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that $$x$$ an $$z$$ coodrinates are enough. So, in our case the line equation should be rewritten like this.
+Where m is the line slope, that is, how much the height changes when moving through the $$x$$ axis. Note that, in our case, the $$y$$ coordinates are the $$z$$ ones. Also note, that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that $$x$$ an $$z$$ coordinates are enough. So, in our case the line equation should be rewritten like this.
 
 $$z-z1=m\cdot(z-z1)$$
 
@@ -202,9 +202,9 @@ protected float getWorldHeight(int row, int col, GameItem gameItem) {
 }
 ```
 
-You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the $$z$$ coordinate of the diagonal given a $$x$$ position and two vertices. The other one, named ```getWorldHeight```, is used to retrieve the height of the triangle vertices, the $$y$$ coordinate. When the terrain mesh is constructed the height of each vertex is precalculated and stored, we only need to translate it to world coordinates.
+You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the $$z$$ coordinate of the diagonal given a $$x$$ position and two vertices. The other one, named ```getWorldHeight```, is used to retrieve the height of the triangle vertices, the $$y$$ coordinate. When the terrain mesh is constructed the height of each vertex is pre-calculated and stored, we only need to translate it to world coordinates.
 
-Ok, so we have the triangle coordinates that the current position is in, finally we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
+Ok, so we have the triangle coordinates that the current position is in. Finally, we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
 
 The plane equation is as follows:
 $$a\cdot x+b\cdot y+c\cdot z+d=0$$
@@ -219,7 +219,7 @@ $$c=(B_{x}-A_{x}) \cdot (C_{y} - A_{y}) - (C_{x} - A_{x}) \cdot (B_{y}-A_{y})$$
 
 Where $$A$$, $$B$$ and $$C$$ are the three vertices needed to define the plane.
 
-Then, with previous equations and the values of the $$x$$ and $$z$$ coordinates for the current position we are able to calculate the y value, that is the hieght of the terrain at the current position:
+Then, with previous equations and the values of the $$x$$ and $$z$$ coordinates for the current position we are able to calculate the y value, that is the height of the terrain at the current position:
 
 $$y = (-d - a \cdot x - c \cdot z) / b$$
 
