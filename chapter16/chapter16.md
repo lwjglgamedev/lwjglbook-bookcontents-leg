@@ -2,11 +2,11 @@
 
 Before we deal with more complex topics we will review how to create a fog effect in our game engine. With that effect we will simulate how distant objects get dimmed and seem to vanish into a dense fog.
 
-Let us firs examine what are the attributes that define the fog effect. The first one is the fog colour. In the real world the fog has a gray colour, but we can use this effect to simulate wide areas invaded by a fog with different colours. The next one is the density of the fog.
+Let us first examine what are the attributes that define fog. The first one is the fog colour. In the real world the fog has a gray colour, but we can use this effect to simulate wide areas invaded by a fog with different colours. The attribute is the fog's density.
 
 Thus, in order to apply the fog effect we need to find a way to fade our 3D scene objects into the fog colour as long as they get far away from the camera. Objects that are close to the camera will not be affected by the fog, but objects that are far away will not be distinguishable.  So we need to be able to calculate a factor that can be used to blend the fog colour and each fragment colour in order to simulate that effect. That factor will need to be dependent on the distance to the camera.
 
-Let’s name that factor as $$fogFactor$$, and set its range from 0 to 1. When $$fogFactor$$ takes the 1 value, it means that the object will not be affected by fog, it’s a nearby object. When $$fogFactor$$ takes the 0 value, it means that the objects will be completely hidden in the fog.
+Let’s name that factor as $$fogFactor$$, and set its range from 0 to 1. When $$fogFactor$$ takes the 1 value, it means that the object will not be affected by fog, that is, it’s a nearby object. When $$fogFactor$$ takes the 0 value, it means that the objects will be completely hidden in the fog.
 
 Then, the equation needed to calculate the fog colour will be:
 
@@ -19,9 +19,7 @@ $$finalColour = (1 - fogFactor) \cdot fogColour + fogFactor \cdot framentColour$
 
 Now we need to find a way to calculate $$fogFactor$$ depending on the distance. We can chose different models, and the first one could be to use a linear model. That is a model that, given a distance, changes the fogFactor value in a linear way. 
 
-So the first thing that we need to do is to model how it affects the objects contained in our 3D scene. We know that objects closer to the camera will not be affected and that objects that are too far away will not be distinguishable.  We need to calculate a factor that is dependent on the distance and that can be used to calculate the final colour.
-
-The first option is to chose a linear model. In this model we should define the following parameters:
+The linear model can be defined by the following parameters:
 * $$fogStart$$: The distance at where fog effects starts to be applied.
 * $$fogFinish$$: The distance at where fog effects reaches its maximum value.
 * $$distance$$: Distance to the camera.
@@ -34,7 +32,7 @@ For objects at distance lower than $$fogStart$$ we just simply set the $$fogFact
 
 ![Linear model](linear_model.png)
  
-The previous model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
+The linear model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in a smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
 
 $$\displaystyle focFactor = e^{-(distance \cdot fogDensity)^{exponent}} = \frac{1}{e^{(distance \cdot fogDensity)^{exponent}}}$$
 
@@ -42,7 +40,7 @@ The new variables that come into play are:
 * $$fogDensity$$ which models the thickness or density of the fog.
 * $$exponent$$ which is used to control how fast the fog increases with distance
 
-The following picture shows two graphs for the equation above for different values of the exponent (2 for the blue line and 4 for the red one)
+The following picture shows two graphs for the equation above for different values of the exponent ($$2$$ for the blue line and $$4$$ for the red one)
 
 ![Exponential model](exponential_model.png) 
 
