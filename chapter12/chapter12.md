@@ -437,11 +437,11 @@ We will get something like this (remember that it is only a sample, in a real ga
 
 ## Text rendering revisited
 
-Before reviewing other concepts let’s go back to the text rendering approach we have presented here. The solution is very simple and useful to present some of the concepts involved in rendering HUD elements but it presents some problems:
+Before reviewing other topics let’s go back to the text rendering approach we have presented here. The solution is very simple and handy to introduce the concepts involved in rendering HUD elements but it presents some problems:
 
 * It does not support non latin character sets.
-* If you want to use several fonts you need to create a separate texture file for each font. Also, the only way to change the size is either to scale it, which may result in a poor quality rendered text, or to generate another texture file.
-* The most important one, characters in most of the fonts do not occupy the same size and we dividing the font texture in equally sized elements.  We have cleverly used “Consolas” font  which is [monospaced](https://en.wikipedia.org/wiki/Monospaced_font) (that is, all the characters occupy the same amount of horizontal space), but if you use  a non-monospaced font you will see annoying variable white spaces between the characters. 
+* If you want to use several fonts you need to create a separate texture file for each font. Also, the only way to change the text size is either to scale it, which may result in a poor quality rendered text, or to generate another texture file.
+* The most important one, characters in most of the fonts do not occupy the same size but we are dividing the font texture in equally sized elements.  We have cleverly used “Consolas” font  which is [monospaced](https://en.wikipedia.org/wiki/Monospaced_font) (that is, all the characters occupy the same amount of horizontal space), but if you use  a non-monospaced font you will see annoying variable white spaces between the characters. 
 
 We need to change our approach an provide a more flexible way to render text. If you think about it, the overall mechanism is ok, that is, the way of rendering text by texturing quads for each character. The issue here is how to generate the textures. We need to be able to generate those texture dynamically by using the fonts available in the System.
 
