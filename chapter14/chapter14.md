@@ -160,15 +160,15 @@ This is what we will do when setting the texture coordinates. We will be multipl
 
 The only thing that’s pending now is normal calculation. Remember that we need normals so light can be applied to the terrain correctly. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find more efficient approaches that only use the heights of adjacent points without performing  cross product operations. Nevertheless since this will only be done at startup, the method presented here will not hurt performance so much.
 
-Let’s graphically explain how the normal will be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$) the vectors that it’s tangent to the surface that connects those points. These vectors ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$) are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = \vec{P1}-\vec{P0}$$, etc.) 
+Let’s graphically explain how a normal can be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate, for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$), the vectors that are tangent to the surface that connects these points. These vectors, ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$), are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = \vec{P1}-\vec{P0}$$, etc.) 
 
 ![Normals calculation I](normals_calc_i.png) 
 
-Then we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vector. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the dot product between $$\vec{P1}$$ and $$\vec{P2}$$, $$\vec{V12} = \vec{P1} \times \vec{P2}$$.
+Then, we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vectors. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the cross product between $$\vec{P1}$$ and $$\vec{P2}$$, $$\vec{V12} = \vec{P1} \times \vec{P2}$$.
 
 ![Normals calculation II](normals_calc_ii.png) 
 
-If we calculate the rest of the normals for the rest of the surfaces ($$\vec{V23} = \vec{V2} \times \vec{V3}$$, $$\vec{V34} = \vec{V3} \times \vec{V4}$$ and $$\vec{V41} = \vec{V4} \times \vec{V1}$$, the normal for $$\vec{P0}$$ will be the sum (normalized) of all the normals of the surrounding surfaces: $$\hat{N0} = \hat{V12} +
+If we calculate the rest of the normals for the rest of the surfaces ($$\vec{V23} = \vec{V2} \times \vec{V3}$$, $$\vec{V34} = \vec{V3} \times \vec{V4}$$ and $$\vec{V41} = \vec{V4} \times \vec{V1}$$), the normal for $$\vec{P0}$$ will be the sum (normalized) of all the normals of the surrounding surfaces: $$\hat{N0} = \hat{V12} +
  \hat{V23} + \hat{V34} + \hat{V41}$$.
 
 ![Normals calculation III](normals_calc_iii.png)
