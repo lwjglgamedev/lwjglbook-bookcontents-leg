@@ -252,7 +252,7 @@ Finally, in order to build larger terrains, we have two options:
 * Create a larger height map.
 * Reuse a height map and tile it through the 3D space. The height map will be like a terrain block that could be translated across the world like tiles. In order to do so, the pixels of the edge of the height map must be the same (the left edge must be equal to the right side and the top edge must be equal to the bottom one) to avoid gaps between the tiles.
 
-We will use the second approach (and select an appropriate height map). We will create a class named ```Terrain``` that will  create a square of height map tiles, defined like this.
+We will use the second approach (and select an appropriate height map). To support this, we will create a class named ```Terrain``` that will  create a square of height map tiles, defined like this.
 
 ```java
 package org.lwjglb.engine.items;
@@ -284,17 +284,17 @@ public class Terrain {
     }
 }
 ```
-We will explain the overall process, we have blocks that have the following coordinates (for x and z and with the constants defined above).
+Let's explain the overall process, we have blocks that have the following coordinates (for x and z and with the constants defined above).
 
 ![Terrain Construction I](terrain_construction_1.png)
 
-Let's create a terrain formed by a 3x3 grid and that we wont' scale the terrain blocks (taht is, the variable ```blocksPerRow``` will have a 3 and the variable ```scale``` will have a 1). We want the grid to be centered at (0, 0) coordinates.
+Let's suppose that we are create¡ing a terrain formed by a 3x3 blocks grid. Let's assume also thatwe wont' scale the terrain blocks (that is, the variable ```blocksPerRow``` will be $$3$$ and the variable ```scale``` will be $$1$$). We want the grid to be centered at (0, 0) coordinates.
 
 We need to translate the blocks so the vertices will have the following coordinates.
 
 ![Terrain Construction II](terrain_construction_2.png)
 
-The translation is done by calling setPosition, buy remember what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adquate coordinates. The vertex drain in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement, taking into consideration the scale and the block width, is this one:
+The translation is aschived by calling ```setPosition``` method, but remember that what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adequate coordinates. The vertex drawn in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement, taking into consideration the scale and the block width, is this one:
 
 $$xDisplacement=(col - (blocksPerRow -1 ) / 2) \times scale \times width$$
 
@@ -306,4 +306,4 @@ If we create a Terrain instance in the ```DummyGame``` class, we can get somethi
 
 ![Terrain result](terrain_result.png) 
 
-You can move the camera around the terrain and see how it’s rendered, since we still do not have implemented collision detection you can pass through it and look it from above. Because we have face culling enabled, some parts of the terrain are not rendered when looking from above.
+You can move the camera around the terrain and see how it’s rendered. Since we still do not have implemented collision detection you can pass through it and look it from above. Because we have face culling enabled, some parts of the terrain are not rendered when looking from below.
