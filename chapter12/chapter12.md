@@ -154,15 +154,15 @@ Now that we have set up the infrastucture needed to darw  text, How do we do it?
 
 ![Orthopgraphic Projections](orthographic_projections.png) 
 
-This projection is very convenient in order to draw 2D objects because it "ignores" the z coordinate, the distance to the view, so the size of the objects does not decrease with the distance (as in the perspective projection). In order to project an object using an ortographic projection we will need to use another matrix, the orthographic matrix which you can see below.
+This projection is very convenient in order to draw 2D objects because it "ignores" the values of the z coordinates, that is, the distance to the view. With this projection the objects sizes do not decrease with the distance (as in the perspective projection). In order to project an object using an ortographic projection we will need to use another matrix, the orthographic matrix which formula is shown below.
 
 ![Orthopgraphic Projection Matrix](orthographic_matrix.png)
  
-This matrix also corrects the distortions that otherwise will be generated due to the fact that our window is not always a square but a rectangle. The right and bottom parameters will be the screen size, the left and the top ones will be the origin. The orthographic projection matrix transforms screen coordinates to 3D space coordinates, the following picture shows how this mapping is done.
+This matrix also corrects the distortions that otherwise will be generated due to the fact that our window is not always a perfect square but a rectangle. The right and bottom parameters will be the screen size, the left and the top ones will be the origin. The orthographic projection matrix is used to transform screen coordinates to 3D space coordinates. The following picture shows how this mapping is done.
 
 ![Orthopgraphic Projection sample](orthographic_projection_sample.png) 
 
-This will allow us to use screen coordinates.
+The properties of this matrix, will allow us to use screen coordinates.
 
 So we will need another set of shaders, one vertex and one fragment shader in order to draw the objects in our HUD. The vertex shader is very simple.
 
