@@ -347,7 +347,7 @@ But the sample is not fnished yet. If you play with the zoom so the text overlap
 
 ![Text with opaque background](text_opaque.png)
 
-The text is not drawn with a transparent background. This is due to the fact that we must explicitly enable support for blending so the alpha component has any effect. We will do this in the Window class when we set up the other initialization parameters with the following fragment of code.
+The text is not drawn with a transparent background. In order to achieve that, we must explicitly enable support for blending so the alpha component can be used. We will do this in the ```Window``` class when we set up the other initialization parameters with the following fragment of code.
 
 ```java
 // Support for transparencies
@@ -362,11 +362,11 @@ Now you will see the text drawn with a transparent background.
 
 ## Complete the HUD
 
-Now that we have rendered a text we can complete our HUD, we will add a compass that rotates depending on the direction the camera is facing. In this case we will add a new GameItem to the Hud class that will have a mesh that models a compass. 
+Now that we have rendered a text we can add more elements to the HUD. We will add a compass that rotates depending on the direction the camera is facing. In this case, we will add a new GameItem to the Hud class that will have a mesh that models a compass. 
 
 ![Compass](compass.png) 
 
-The compass will be modeled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change our fragment shader for the HUD a little bit to detect if we have a texture or not. We will do this by using a uniform.
+The compass will be modeled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change the fragment shader for the HUD a little bit to detect if we have a texture or not. We will be able to do this by setting a new uniform named ```hasTexture```.
 
 ```glsl
 #version 330
@@ -392,7 +392,7 @@ void main()
 }
 ```
 
-In the ```Hud``` class we will create a new ```GameItem``` that loads the compass and add it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
+To add the compass the the HUD we just need to create a new ```GameItem``` instance, tn the ```Hud``` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so often you will need to increase its size.
 
 ```java
 // Create compass
