@@ -12,23 +12,23 @@ We will be creating a grid of vertices, one for each pixel of the image. Those v
 
 ![Height map grid](heightmap_grid.png) 
 
-That mesh will form a giant quad that will be rendered across x and z axis using the data contained in the height map to change the elevation in the y axis.
+That mesh will form a giant quad that will be rendered across x and z axis using thepixel colours to change the elevation in the y axis.
 
 ![Height map coordinates](heightmap_coordinates.png) 
 
-The process of creating a 3D terrain from a height map will be as follows:
+The process of creating a 3D terrain from a height map can be summarized as follows:
 * Load the image that contains the height map. (We will use a ```BufferedImage``` instance to get access to each pixel).
-* For each image pixel create a vertex which heights will be based on the pixel colour.
+* For each image pixel create a vertex with its height is based on the pixel colour.
 * Assign the correct texture coordinate to the vertex.
 * Set up the indices to draw the triangles associated to the vertex.
 
-We will create a class named ```HeightMapMesh``` that will create a ```Mesh``` based on a height map performing the steps described above. Let’s first review the constants defined for that class:
+We will create a class named ```HeightMapMesh``` that will create a ```Mesh``` based on a height map image performing the steps described above. Let’s first review the constants defined for that class:
 
 ```java
 private static final int MAX_COLOUR = 255 * 255 * 255;
 ```
 
-As we have explained above, we will calculate the height of each vertex based on the colour of each pixel of the image used as height map. Images are usually greyscale, for a PNG image that means that each RGB component for each pixel can vary from 0 to 255, so we have 256 discrete values to define different heights. This may be enough precision for you or not, if it’s not we can use the three RGB components to have more intermediate values, in this case the height can be calculated form a range that gets from 0 to 255^3. In this case, (we will not be limited to use greyscale images).
+As we have explained above, we will calculate the height of each vertex based on the colour of each pixel of the image used as height map. Images are usually greyscale, for a PNG image that means that each RGB component for each pixel can vary from $$0$$ to $$255$$, so we have $$256$$ discrete values to define different heights. This may be enough precision for you, but if  it’s not we can use the three RGB components to have more intermediate values, in this case the height can be calculated form a range that gets from $$0$$ to $$255^{3}$$. We will choose the second approach so we are not limited to greyscale images.
 
 The next constants are:
 
