@@ -63,7 +63,7 @@ The ```active``` attribute will be used to activate or deactivate the fog effect
 uniform Fog fog;
 ```
 
-We will create also a new class named Fog that will be handled in the Java code, which is another POJO which contaings the fog attributes.
+We will create also a new class named ```Fog``` which is another POJO (Plain Old Java Object) which contains the fog attributes.
 
 ```java
 package org.lwjglb.engine.graph.weather;
@@ -95,9 +95,9 @@ public class Fog {
    // Getters and setters here….
 ```
 
-We will add a ```Fog``` instance in the ```Scene``` class. As a default, the ```Scene``` class will initialize the ```Fog``` instance to the constant ```NOFOG``` which defines a deactivated instance.
+We will add a ```Fog``` instance in the ```Scene``` class. As a default, the ```Scene``` class will initialize the ```Fog``` instance to the constant ```NOFOG``` which models a deactivated instance.
 
-Since we added a new uniform type we need to modify the ShaderProgram class to create and initialize the fog uniform.
+Since we added a new uniform type we need to modify the ```ShaderProgram``` class to create and initialize the fog uniform.
 
 ```java
 public void createFogUniform(String uniformName) throws Exception {
@@ -125,7 +125,7 @@ sceneShaderProgram.createFogUniform("fog");
 sceneShaderProgram.setUniform("fog", scene.getFog());
 ```
 
-We are now able to define fog characteristics in our game, but we need to get back to the fragment shader in order to apply the fog effect. We will create a function named calFog which is defined like this.
+We are now able to define fog characteristics in our game, but we need to get back to the fragment shader in order to apply the fog effect. We will create a function named ```calcFog``` which is defined like this.
 
 ```glsl
 vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
