@@ -4,7 +4,7 @@ Once we have created a terrain the next step is to detect collisions to avoid tr
 
 In order to detect a collision we must compare current position $$y$$ value with the $$y$$ value of the point of the terrain we are currently in. If we are above terrain’s $$y$$ value there’s no collision, if not, we need to get back. Simple concept, does it ? Indeed it is but we need to perform several calculations before we are able to do that comparison.
 
-The first thing we need to define what our current position is. Since we do not have a player concept yet the answer is easy, the current position will be the camera position. So we already have one of the components of the comparison, thus, the next thing to calculate is terrain height at current position.
+The first thing we need to define is what we understand for the term "current position". Since we do not have yet a player concept the answer is easy, the current position will be the camera position. So we already have one of the components of the comparison, thus, the next thing to calculate is terrain height at current position.
 
 As it's been said before, the terrain is composed by a grid of terrain blocks as shown in the next figure.
 
@@ -12,7 +12,7 @@ As it's been said before, the terrain is composed by a grid of terrain blocks as
  
 Each terrain block is constructed from the same height map mesh, but is scaled and displaced precisely to form a terrain grid that looks like a continuous landscape.
 
-So, what we need to do first is determine in which terrain block the current position is in. In order to do that we will calculate the bounding box of each terrain block taking into consideration the displacement and the scaling. Since the terrain will not be displaced or scaled at runtime, we can do those calculations in the ```Terrain``` class constructor. By doing this way we access them later at any time without repeating those operations in eacha game loop cycle.
+So, what we need to do first is determine in which terrain block the current position, the camera, is in. In order to do that, we will calculate the bounding box of each terrain block taking into consideration the displacement and the scaling. Since the terrain will not be displaced or scaled at runtime, we can perform those calculations in the ```Terrain``` class constructor. By doing this way we access them later at any time without repeating those operations in each game loop cycle.
 
 We will create a new method that calculates the bounding box of a terrain block, named ```getBoundingBox```.
 
