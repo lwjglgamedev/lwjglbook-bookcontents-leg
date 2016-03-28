@@ -39,8 +39,8 @@ Besides that, in our source code we are enabling depth testing. In the Window cl
 glEnable(GL_DEPTH_TEST); 
 ```
 
-By setting this line we prevent fragments that cannot be seen, because they are behind other objects, to be drawn. Before a fragment is drawn its $$z$$ value is compared with the $$z$$ value of the z-buffer. If it has a higher $$z$$ value (it’s far away) than the $$z$$ value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the $$z$$ value of a fragment given a apir of $$x$$ and $$y$$ coordinates in screen space, that is in the range $$[0, 1]$$. The $$z$$ value is also in that range.
-The presence of the depth buffer is the reason why to clear the screen before performing any render operation we clear not only the colour but the depth information also.
+By setting this line we prevent fragments that cannot be seen, because they are behind other objects, to be drawn. Before a fragment is drawn its $$z$$ value is compared with the $$z$$ value of the z-buffer. If it has a higher $$z$$ value (it’s far away) than the $$z$$ value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the $$z$$ value of a fragment given a pair of $$x$$ and $$y$$ coordinates in screen space, that is in the range $$[0, 1]$$. Thus, the $$z$$ value is also in that range.
+The presence of the depth buffer is the reason why we need to clear the screen before performing any render operation. We need to clear not only the colour but the depth information also:
 
 ```java
 public void clear() {
