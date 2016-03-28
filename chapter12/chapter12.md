@@ -164,7 +164,7 @@ This matrix also corrects the distortions that otherwise will be generated due t
 
 The properties of this matrix, will allow us to use screen coordinates.
 
-So we will need another set of shaders, one vertex and one fragment shader in order to draw the objects in our HUD. The vertex shader is very simple.
+We can now continue with thee implementation of the HUD. The next thing that we should do is create another set of shaders, a vertex and a fragment shaders, in order to draw the objects of the HUD. The vertex shader is actually very simple.
 
 ```glsl
 #version 330
@@ -184,7 +184,7 @@ void main()
 }
 ```
 
-It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix that combines the orthographic projection matrix and the model matrix associated to each element. That matrix is the multiplication of the ortographic projection matrix and the model matrix, $$projModelMatrix  =  ortographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in the java code to avoid doing it for each vertex, we will just do it once per item. Remember that our vertices should be expressed in screen coordinates.
+It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix. That matrix is the multiplication of the ortographic projection matrix and the model matrix, $$projModelMatrix  =  ortographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in java code than in the shadere. By doing so we will be doing that multipliaztion once per item insted of doing it for each vertex. Remember that our vertices should be expressed in screen coordinates.
 
 The fragment shader is also very simple.
 
@@ -204,7 +204,7 @@ void main()
 }
 ```
 
-It just uses the texture coordinates and multiples that colour by a base colour. This can be used to change the colour of the text to be rendered. Now that we have created two more shaders we can use them in the Renderer class, but before that we will create an interface named ```IHud``` that will contain all the objects that are to be displayed in the HUD. The interface also provides a default cleanup method.
+It just uses the texture coordinates and multiples that colour by a base colour. This can be used to change the colour of the text to be rendered without the need of creating several texture files. Now that we have created the new pair of shaders we can use them in the ```Renderer``` class. But, before that, we will create a new interface named ```IHud``` that will contain all the elements that are to be displayed in the HUD. This interface will also provide a default ```cleanup``` method.
 
 ```java
 package org.lwjglb.engine;
