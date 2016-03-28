@@ -150,15 +150,15 @@ The method receives the x an z coordinates for a pixel, gets the RGB colour (the
 
 Let’s view now how texture coordinates are calculated. The first option is to wrap the texture along the whole mesh, the top left vertex would have  (0, 0) texture coordinates and the bottom right vertex would have (1, 1) texture coordinates. The problem with this approach is that the texture should be huge in order to provide good results, if not, it would be stretched  too much.
 
-But we can still use a small texture with very good results by employing a very efficient technique. If we set texture coordinates that are beyond the (1,1) range, we get back to origin and start counting again from the start. The following picture shows this behavior.
+But we can still use a small texture with very good results by employing a very efficient technique. If we set texture coordinates that are beyond the $$[1, 1]$$ range, we get back to origin and start counting again from the start. The following picture shows this behavior tiling the same texture in several quads that extend beyond the $$[1, 1]$$ range.
 
 ![Texture coordinates I](texture_coordinates_i.png) 
 
-This is what we are doing when calculating the texture coordinates, we are multiplying the texture coordinates (calculated as if the texture just was wrapped covering the whole mesh) by a factor, the ```textInc``` parameter, to increase the number of pixels of the texture to be used between adjacent vertices.
+This is what we will do when setting the texture coordinates. We will be multiplying the texture coordinates (calculated as if the texture just was wrapped covering the whole mesh) by a factor, the ```textInc``` parameter, to increase the number of pixels of the texture to be used between adjacent vertices.
 
 ![Texture coordinates II](texture_coordinates_ii.png) 
 
-The only thing that’s pending is how to calculate normals. Remember that we need normals so light can be applied to the terrain. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find other approaches that only use the heights of adjacent points without performing  cross product operations and are more efficient. Nevertheless since this will only be done at startup, the method resented here will not hurt performance so much.
+The only thing that’s pending now is normal calculation. Remember that we need normals so light can be applied to the terrain correctly. Without normals our terrain will be rendered with the same colour no matter how light hits each point. The method that we will use here may not be the most efficient for height maps but it will help you understand how normals can be auto-calculated. If you search for other solutions you may find more efficient approaches that only use the heights of adjacent points without performing  cross product operations. Nevertheless since this will only be done at startup, the method presented here will not hurt performance so much.
 
 Let’s graphically explain how the normal will be calculated. Imagine that we have a vertex named $$\vec{P0}$$. We first calculate for each of the surrounding vertices ($$\vec{P1}$$, $$\vec{P02}$$, $$\vec{P3}$$ and $$\vec{P4}$$) the vectors that it’s tangent to the surface that connects those points. These vectors ($$\vec{V1}$$, $$\vec{V2}$$, $$\vec{V3}$$ and $$\vec{V4}$$) are calculated by subtracting each adjacent point from $$\vec{P0}$$ ($$\vec{V1} = \vec{P1}-\vec{P0}$$, etc.) 
 
