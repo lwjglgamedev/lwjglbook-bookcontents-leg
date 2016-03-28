@@ -211,14 +211,14 @@ But remember that we are inside the skybox, if we look at the cube form the inte
 
 This is because, the skybox was defined to be looked from the outside. So we need to flip the definition of some of the faces in order to be viewed correctly when face culling is enabled.
 
-But there’s still more room for optimization. Let’s review our rendering process. In the render method of the ```Renderer``` class what we are doing is iterate over a ```Gametem``` array and render the associated Mesh. For each ```GameItem``` we do the following:
+But there’s still more room for optimization. Let’s review our rendering process. In the ```render``` method of the ```Renderer``` class what we are doing is iterate over a ```Gametem``` array and render the associated ```Mesh```. For each ```GameItem``` we do the following:
 
 1.	Set up the model view matrix (unique per ```GameItem```).
 2.	Get the ```Mesh``` associated to the ```GameItem``` and activate the texture, bind the VAO and enable its attributes.
 3.	Perform a call to draw the triangles.
 4.	Disable the texture and the VAO elements.
 
-But, in our current game, we reuse the same ```Mesh``` for the 40,000 GameItems, we are repeating some operations that have the same effect again and again. This is not very efficient, keep in mind that each call to a OpenGL function is native call that incurs in some performance overhead. Besides that, we should always try to limit the state changes in OpenGL (activating and deactivating textures, VAOs are state changes).
+But, in our current game, we reuse the same ```Mesh``` for the 40,000 GameItems, we are repeating the operations from point 2 to point 4 again and again. This is not very efficient, keep in mind that each call to an OpenGL function is a native call that incurs in some performance overhead. Besides that, we should always try to limit the state changes in OpenGL (activating and deactivating textures, VAOs are state changes).
 
 We need to change the way we do things and organize our structures around Meshes since it will be very frequent to have many GameItems with the same Mesh. Now we have an array of GameItems each of them pointing to the same Mesh. We have something like this.
 
@@ -228,16 +228,16 @@ Instead, we will create a Map of Meshes with a list of the GamItems that share t
 
 ![Mesh Map](mesh_map.png) 
 
-The rendering steps will be, for each Mesh:
+The rendering steps will be, for each ```Mesh```:
 
 1.	Set up the model view matrix (unique per ```GameItem```).
-2.	Get the ```Mesh``` associated to the ```GameItem``` and Activate the Mesh texture, bind the VAO and enable its attributes.
+2.	Get the ```Mesh``` associated to the ```GameItem``` and Activate the ```Mesh``` texture, bind the VAO and enable its attributes.
 3.	For each ```GameItem``` associated:
 a.	Set up the model view matrix (unique per Game Item).
 b.	Perform a call to draw the triangles.
 4.	Disable the texture and the VAO elements.
 
-In the Scene class, we will store the following Map.
+In the Scene class, we will store the following ```Map```.
 
 ```java
 private Map<Mesh, List<GameItem>> meshMap;
