@@ -177,15 +177,16 @@ From the previous example, the fact that the skybox is relative small makes the 
 
 If you change the scale factor and rerun the example you will see that performance problem starts to arise and the movement through the 3D world is not smooth. It’s time to put an eye on performance (you may know the old saying that states that “premature optimization is the root of all evil”, but since this chapter 13, I hope nobody will say that this premature).
 
-Let’s start with a concept that will reduce the amount of data that is being rendered, we will explain face culling. In our examples we are rendered thousands of cubes, and a cube is made of six faces. We are rendering the six faces for each cube even if they are not visible. You can check this if you zoom in to a cube, you will see its interior like this.
+Let’s start with a concept that will reduce the amount of data that is being rendered, which is named face culling. In our examples we are rendering thousands of cubes, and a cube is made of six faces. We are rendering the six faces for each cube even if they are not visible. You can check this if you zoom inside a cube, you will see its interior like this.
 
 ![Cube interior](cube_interior.png) 
 
 Faces that cannot be seen should be discarded immediately and this is what face culling does. In fact, for a cube you can only see 3 faces at the same time, so we can just discard half of the faces (40,000 * 3 * 2 triangles) just by applying face culling (this will only be valid if your game does not require you to dive into the inner side of a model, you can see why later on).
 
-Face culling checks, for every triangle if its facing towards us and discards the ones that are not facing that direction. But, how do we know if a face is facing towards us or not ? Well, the way that OpenGL does this is by the winding order of the vertices that compose a triangle.
+Face culling checks, for every triangle if its facing towards us and discards the ones that are not facing that direction. But, how do we know if a triangle is facing towards us or not ? Well, the way that OpenGL does this is by the winding order of the vertices that compose a triangle.
 
-Remember from the first chapters that we may define of vertices in clockwise or counter-clockwise order. In OpenGL, by default, triangles that are in counter-clockwise order are facing towards the viewer and triangles that are in clockwise order are facing backwards. The key thing here, is that this order is checked while rendering and taking into consideration the point of view. So a triangle that has been defined in counter-clock wise order can be seen, at rendering, as clockwise because of the point of view.
+Remember from the first chapters that we may define the vertices of a triangle in clockwise or counter-clockwise order. In OpenGL, by default, triangles that are in counter-clockwise order are facing towards the viewer and triangles that are in clockwise order are facing backwards. The key thing here, is that this order is checked while rendering taking into consideration the point of view. So a triangle that has been defined in counter-clock wise order can be interpreted, at rendering time, as being defined lockwise because of the point of view.
+
 Let’s put it in practice, in the ```init``` method of the ```Window``` class add the following lines:
 
 ```java
@@ -200,7 +201,7 @@ What’s happening ? if you review the vertices order for the top face you will 
  
 ![Skybox with face culling from the outside](skybox_face_culling_exterior.png)
 
-Let’s sketch what’s happening. The following picture shows on of the triangles of the top face of  the skybox cube, which is defined by three vertices defined in counter-clockwise order.
+Let’s sketch what’s happening. The following picture shows one of the triangles of the top face of  the skybox cube, which is defined by three vertices defined in counter-clockwise order.
 
 ![Vertices defined in counter-clockwise order](cube_counter_clockwise.png) 
 
@@ -208,7 +209,7 @@ But remember that we are inside the skybox, if we look at the cube form the inte
 
 ![Cube seen from the interior](cube_clockwise.png) 
 
-This is because, the skybox was defined to be looked from the outside. So we need to flip the definition for some of the faces in order to be viewed correctly and we will have face culling working properly.An if you get inside a cube you will see that inner sides are not shown.
+This is because, the skybox was defined to be looked from the outside. So we need to flip the definition of some of the faces in order to be viewed correctly when face culling is enabled.
 
 But there’s still more room for optimization. Let’s review our rendering process. In the render method of the ```Renderer``` class what we are doing is iterate over a ```Gametem``` array and render the associated Mesh. For each ```GameItem``` we do the following:
 
