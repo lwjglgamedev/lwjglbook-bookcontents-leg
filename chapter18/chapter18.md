@@ -50,8 +50,7 @@ public void clear() {
 
 In order to start building the depth map we want to get that depth information as viewed from the light perspective. We need to setup a camera in the light position, render the scene and store that depth information into a texture so we can access to it later.
 
-
-Therefore, the first thing we need to do is add support for creating that textures.  We will modify the ```Texture``` class to support the creation of empty textures by adding a new constructor. This constructor expects the dimensions of the texture and the format of the pixels it stores.
+Therefore, the first thing we need to do is add support for creating those textures.  We will modify the ```Texture``` class to support the creation of empty textures by adding a new constructor. This constructor expects the dimensions of the texture and the format of the pixels it stores.
 
 ```java
 public Texture(int width, int height, int pixelFormat) throws Exception {
@@ -68,7 +67,8 @@ public Texture(int width, int height, int pixelFormat) throws Exception {
 ```
 
 We set the texture wrapping mode to ```GL_CLAMP_TO_EDGE``` since we do not want the texture to repeat in case we exceed the $$[0, 1]$$ range.
-So now that we are able to create empty textures, we need to be able to render a scene into it. In order to do that we need to use Frame Buffers Objects (or FBOs). A Frame Buffer  is a collection of buffers that can be used as a destination for rendering. When we have been rendering to the screen we have using OpenGL’s default rendering. OpenGL allows us to render to user defined buffers by using FBOs. We will isolate the rest of the code of the process of creating FBOs for shadow mapping by creating a new class named ```ShadowMap```. This is the definition of that class.
+
+So now that we are able to create empty textures, we need to be able to render a scene into it. In order to do that we need to use Frame Buffers Objects (or FBOs). A Frame Buffer is a collection of buffers that can be used as a destination for rendering. When we have been rendering to the screen we have using OpenGL’s default buffer. OpenGL allows us to render to user defined buffers by using FBOs. We will isolate the rest of the code of the process of creating FBOs for shadow mapping by creating a new class named ```ShadowMap```. This is the definition of that class.
 
 ```java
 package org.lwjglb.engine.graph;
@@ -123,9 +123,9 @@ public class ShadowMap {
 }
 ```
 
-The ```ShadowMap``` class defines two constants that determine the size of the texture that will  hold the depth map. It also defines two attributes, one for the FBO and one for the texture. In the constructor, we create a new FBO and a new Texture. We will use a s a pixel format the constant ```GL_DEPTH_COMPONENT``` since we are only interested in storing depth values. Then we attach the FBO to the texture instance.
+The ```ShadowMap``` class defines two constants that determine the size of the texture that will  hold the depth map. It also defines two attributes, one for the FBO and one for the texture. In the constructor, we create a new FBO and a new ```Texture```. For the FBO we will use as the pixel format the constant ```GL_DEPTH_COMPONENT``` since we are only interested in storing depth values. Then we attach the FBO to the texture instance.
 
-The following lines explicitly set the FBO to not render any colour. A FBO needs a colour buffer, but we are not going to needed this is why we set the colour buffers to be used as ```GL_NONE```.
+The following lines explicitly set the FBO to not render any colour. A FBO needs a colour buffer, but we are not going to needed. This is why we set the colour buffers to be used as ```GL_NONE```.
 
 ```java
 glDrawBuffer(GL_NONE);
@@ -152,7 +152,7 @@ void main()
 }
 ```
 
-We expect to receive the same input data as the scene shader. In fact, we only need the position, but to reuse as much as code as possible we will pass it anyway. We also need a pair of matrices. Remember that we must render the scene from the light point of view, so we need to transform our models to light space coordinate. This is done through the ```modelLightViewMatrix``` matrix, which is analogous to view model matrix used for a camera. The light is our camera now. 
+We expect to receive the same input data as the scene shader. In fact, we only need the position, but to reuse as much as code as possible we will pass it anyway. We also need a pair of matrices. Remember that we must render the scene from the light point of view, so we need to transform our models to light's coordinate space. This is done through the ```modelLightViewMatrix``` matrix, which is analogous to view model matrix used for a camera. The light is our camera now. 
 
 Then we need to transform those coordinates to screen space, that is, we need to project them. And this is one of the differences while calculating shadow maps for directional lights versus point lights. For point lights we would use a perspective projection matrix as if we were rendering the scene normally. Directional lights, instead, affect all objects in the same way independently of the distance. Directional lights are located at an infinite point and do not have a position but a direction. An orthographic projection does not render distant objects smaller, and because of this characteristic is the most suitable for directional lights.
 
