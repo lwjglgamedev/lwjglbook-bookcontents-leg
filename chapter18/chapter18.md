@@ -277,7 +277,7 @@ Does that mean that we can choose a high distance for the light position without
 
 So as you can see selecting the light position and the orthographic projection parameters is a complex equilibrium which makes difficult to get right results using shadow mapping.
 
-Let’s go back to the rendering process, once we have calculated the depth map we can use it while rendering the scene. First we need to modify the scene vertex shader. Up to now, the vertex shader  projected the vertex coordinates from model view space to the  using a perspective matrix. Now we need to project also the vertex coordinates from light space coordinates using a projection matrix to be used in the fragment shader to calculate the shadows.
+Let’s go back to the rendering process, once we have calculated the depth map we can use it while rendering the scene. First we need to modify the scene vertex shader. Up to now, the vertex shader  projected the vertex coordinates from model view space to the screen space using a perspective matrix. Now we need to project also the vertex coordinates from light space coordinates using a projection matrix to be used in the fragment shader to calculate the shadows.
 
 The vertex shader is modified like this.
 
