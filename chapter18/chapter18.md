@@ -33,13 +33,13 @@ Thus, shadow mapping is a two step process:
 
 In order to render the depth map we need to talk about the depth buffer. When we render a scene all the depth information is stored in a buffer named, obviously, depth-buffer (also z-buffer). That depth information is the $$z$$ value of each of the fragment that is rendered. If you recall from the first chapters what we are doing while rendering a scene is transforming from world coordinates to screen coordinates. We are drawing to a coordinate space which ranges from $$0$$ to $$1$$ for $$x$$ and $$y$$ axis. If an object is more distant than other, we must calculate how this affects their $$x$$ and $$y$$ coordinates through the perspective projection matrix. This is not calculated automatically depending on the $$z$$ value, this must be done us. What is actually stored in the z coordinate its the depth of that fragment, nothing less but nothing more.
 
-Besides that, we are also enabling depth testing. In the Window class we have set the following line:
+Besides that, in our source code we are enabling depth testing. In the Window class we have set the following line:
 
 ```glsl
 glEnable(GL_DEPTH_TEST); 
 ```
 
-By setting this line we are enabling depth testing, that is, we prevent fragments that cannot be seen, because they are behind other objects, to be drawn Before a fragment is drawn its $$z$$ value is compared with the $$z$$ value of the z-buffer. If it has a higher $$z$$ value (it’s far away) than the $$z$$ value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the $$z$$ value of a fragment given a apir of $$x$$ and $$y$$ coordinates in screen space, that is in the range $$[0, 1]$$. The $$z$$ value is also in that range.
+By setting this line we prevent fragments that cannot be seen, because they are behind other objects, to be drawn. Before a fragment is drawn its $$z$$ value is compared with the $$z$$ value of the z-buffer. If it has a higher $$z$$ value (it’s far away) than the $$z$$ value of the buffer it’s discarded. Remember that this is done in screen space, so we are comparing the $$z$$ value of a fragment given a apir of $$x$$ and $$y$$ coordinates in screen space, that is in the range $$[0, 1]$$. The $$z$$ value is also in that range.
 The presence of the depth buffer is the reason why to clear the screen before performing any render operation we clear not only the colour but the depth information also.
 
 ```java
