@@ -334,22 +334,24 @@ float calcShadow(vec4 position)
 
 The function receives the position in light view space projected using the orthographic projection matrix. It returns $$0$$ if the position is in shadow and $$1$$ if it’s not. First, the coordinates are transformed to texture coordinates. Screen coordinates are in the range $$[-1, 1$$], but texture coordinates are in the range $$[0, 1]$$. With that coordinates we get the depth value from the texture and compare it with the $$z$$ value of the fragment coordinates. If the $$z$$ value if the fragment has a lower value than the one stored in the texture that means that the fragment is not in shade.
 
-In the fragment shader, the return value from the calcShadow function to modulate the light colour contributions from point, spot and directional lights. The ambient light is not affected by the shadow.
+In the fragment shader, the return value from the ```calcShadow``` function to modulate the light colour contributions from point, spot and directional lights. The ambient light is not affected by the shadow.
 
 ```glsl
 float shadow = calcShadow(mlightviewVertexPos);    
 fragColor = baseColour * ( vec4(ambientLight, 1.0) + totalLight * shadow );
 ```
 
-In the ```renderScene``` method of the ```Renderer``` class we just need to pass the uniform for the orthographic projection and light view matrices (we need to modify also the method that initializes the shader to create the new uniforms). You can consult this in the book’s source code. If to run the ```DummyGame``` class, which has been modified to setup a floating cube over a plane with a directional light which angle can be changed by using up and down keys, you should see something like this.
+In the ```renderScene``` method of the ```Renderer``` class we just need to pass the uniform for the orthographic projection and light view matrices (we need to modify also the method that initializes the shader to create the new uniforms). You can consult this in the book’s source code.
+
+If to run the ```DummyGame``` class, which has been modified to setup a floating cube over a plane with a directional light which angle can be changed by using up and down keys, you should see something like this.
  
 ![Shadow Map result](shadow_map_result.png)
 
-Although shadows are working (you can check that by moving light direction), the implementation presents some problems. First of all, there are strange lines in the objects that are lightened up, this effect is called shadow acne, and it’s produced by the limited resolution of the texture that stores the depth map. The second problem is that the borders of the shadow are not smooth and look blocky. The cause is the same again, the texture resolution. We will solve these problems in order to improve shadow quality.
+Although shadows are working (you can check that by moving light direction), the implementation presents some problems. First of all, there are strange lines in the objects that are lightened up. This effect is called shadow acne, and it’s produced by the limited resolution of the texture that stores the depth map. The second problem is that the borders of the shadow are not smooth and look blocky. The cause is the same again, the texture resolution. We will solve these problems in order to improve shadow quality.
 
 ## Shadow Mapping improvements
 
-Now that we have the shadow mapping mechanism working, let’s solve the problems we have. Let’s first start with the shadow acne problem. The depth map texture is limited in size, and because of that, several fragments can be mapped to the same pixel in that texture depth. Te texture depth stores the minimum depth, sop at the end we have several fragments that share the same depth in that texture although they are at different distances. 
+Now that we have the shadow mapping mechanism working, let’s solve the problems we have. Let’s first start with the shadow acne problem. The depth map texture is limited in size, and because of that, several fragments can be mapped to the same pixel in that texture depth. The texture depth stores the minimum depth, so at the end, we have several fragments that share the same depth in that texture although they are at different distances. 
 
 We can solve this by increasing, by a little bit the depth comparison in the fragment shader, we add a bias.
 
@@ -372,7 +374,7 @@ Now we are going to solve de shadow edges problem, which is also caused by the t
 
 The surrounding values must be at one pixel distance of the current fragment position in texture coordinates.  So we need to calculate the increment of one pixel in texture coordinates which is equal to $$1 / textureSize$$.
 
-In the fragment Shader we just need to modify the shadow facto calculation to get an average value.
+In the fragment Shader we just need to modify the shadow factor calculation to get an average value.
 
 ```glsl
 float shadowFactor = 0.0;
@@ -392,6 +394,6 @@ The result looks now smoother.
 
 ![Final result](final_result.png)
 
-The technique can be improved a little bit, you can check about solving peter panning effect (caused by the bias factor) and other techniques to improve the shadow edges. In any case, with the concepts explained here you have a good basis to start modifying the sample.
+Now our sample looks much better. Nevertheless, the shadow mapping technique presented here can still be improved a lot. You can check about solving peter panning effect (caused by the bias factor) and other techniques to improve the shadow edges. In any case, with the concepts explained here you have a good basis to start modifying the sample.
 
 In order to render multiple lights you just need to  render a separate depth map for each light source. While rendering the scene you will need to sample all those depth maps to calculate the appropriate shadow factor.
