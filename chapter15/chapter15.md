@@ -30,17 +30,17 @@ private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
 }
 ```
 
-We need to calculate the world coordinates of our terrain block. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to [STARTX, STARTZ], so we need to transform that coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
+Now we need to calculate the world coordinates of the terrain blocks. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to ```[STARTX, STARTZ]```. Thus,we need to transform those coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
 
-![Model to world coordinates](model_to_world_coordinates_n.png)
+![Model to world coordinates](model_to_world_coordinates.png)
  
-As it’s been said above, this is done in the Terrain class constructor, so we need to add a new attribute which will hold the bounding boxes:
+As it’s been said above, this can be done in the Terrain class constructor since it won't change at run time. So we need to add a new attribute which will hold the bounding boxes:
 
 ```java
 private final Rectangle2D.Float[][] boundingBoxes;
 ```
 
-In the ```Terrain``` constructor, while we are creating the terrain blocks we just need to invoke the method that calculates the bounding box.
+In the ```Terrain``` constructor, while we are creating the terrain blocks, we just need to invoke the method that calculates the bounding box.
 
 ```java
 public Terrain(int terrainSize, float scale, float minY, float maxY, String heightMapFile, String textureFile, int textInc) throws Exception {
