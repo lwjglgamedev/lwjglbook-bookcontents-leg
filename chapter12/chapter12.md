@@ -135,7 +135,7 @@ The next figure shows the coordinates of some vertices.
 
 Why do we use screen coordinates ? First of all, because we will be rendering 2D objects in our HUD and often is more handy to use them, and secondly because we will use an orthographic projection in order to draw them. We will explain what is an orthographic projection later on.
 
-The ```TextItem``` class is completed with other methods to get the text and to change it. Whenever the text is changed, we need to clean up the previous VAOs (stored in the Mesh instance) and create a new one. We do not need to destroy the texture, so we have created a new method in the ```Mesh``` class to just remove that data.
+The ```TextItem``` class is completed with other methods to get the text and to change it at run time. Whenever the text is changed, we need to clean up the previous VAOs (stored in the ```Mesh``` instance) and create a new one. We do not need to destroy the texture, so we have created a new method in the ```Mesh``` class to just remove that data.
 
 ```java
 public String getText() {
@@ -150,7 +150,7 @@ public void setText(String text) {
 }
 ```
 
-As it has been said in the beginning of this chapter, we need first to render our 3D scene and the render our 2D HUD. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use an orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+Now that we have set up the infrastucture needed to darw  text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use an orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
 ![Orthopgraphic Projections](orthographic_projections.png) 
 
