@@ -150,7 +150,7 @@ public void setText(String text) {
 }
 ```
 
-Now that we have set up the infrastucture needed to darw  text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. The HUD is composed by 2D objects, texts, shapes and we won’t apply any lightning effects. Besides that we will use an orthographic projection (also named orthogonal projection) in order to render all those objects. An Orthographic projection is a 2D representation of a 3D object, you may have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+Now that we have set up the infrastucture needed to darw  text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. In order to render the HUD we will use an orthographic projection (also named orthogonal projection). An Orthographic projection is a 2D representation of a 3D object. You may already have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
 ![Orthopgraphic Projections](orthographic_projections.png) 
 
