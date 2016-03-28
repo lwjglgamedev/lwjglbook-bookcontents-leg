@@ -38,7 +38,11 @@ private static final float STARTX = -0.5f;
 private static final float STARTZ = -0.5f;
 ```
 
-The mesh will be formed by a set of vertices (one per pixel) which x and z coordinates will be in the range of -0.5 (STARTX) to 0.5 for x axis and -0.5 (STARTZ) to 0.5 for z axis. Later on the resulting mesh can be scaled to accommodate its size in the world. Regarding y axis, we will set up two parameters, minY and maxY, for setting the lowest and highest value that the y coordinate can have. At the end, the terrain will be contained in a cube  in the range [STARTX, -STARTX], [minY, maxY] and [STARTZ, -STARTZ].
+The mesh will be formed by a set of vertices (one per pixel) whose x and z coordinates will be in the range following range:
+* [-0.5, 0.5], that is, [```STARTX```, ```-STARTX```] for the x axis.
+* [-0.5, 0.5], that is, [```STARTZ```, ```-STARTZ```] for the z axis.
+ 
+Don't worry too much about those values, later on the resulting mesh can be scaled to accommodate its size in the world. Regarding y axis, we will set up two parameters, minY and maxY, for setting the lowest and highest value that the y coordinate can have. At the end, the terrain will be contained in a cube  in the range [STARTX, -STARTX], [minY, maxY] and [STARTZ, -STARTZ].
 
 The mesh will be created in the constructor of the ```HeightMapMesh``` class, which is defined like this.
 
