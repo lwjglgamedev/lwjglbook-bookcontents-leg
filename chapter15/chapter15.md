@@ -252,10 +252,10 @@ if ( camera.getPosition().y <= height )  {
 }
 ```
 
-As you can see the concept of detecting terrain collisions is easy to undesrtand but we need to carefully perform a set of calculations and be aware of the different coordinate systems we are dealing with.
+As you can see the concept of detecting terrain collisions is easy to understand but we need to carefully perform a set of calculations and be aware of the different coordinate systems we are dealing with.
 
-Besides that, although the algorithm presented here is valid in most of the cases, there are still situations that need to be handled carefully. One effect that you may observe is the one called tunnelling. Imagine the following situation, we are travelling at a fast speed through our terrain and because of that, the position increment gets a high value. This avñue can get so hight that, since we are detecting collisions with the final position, we may have skipped obstacles that lay in between.
+Besides that, although the algorithm presented here is valid in most of the cases, there are still situations that need to be handled carefully. One effect that you may observe is the one called tunnelling. Imagine the following situation, we are travelling at a fast speed through our terrain and because of that, the position increment gets a high value. This value can get so high that, since we are detecting collisions with the final position, we may have skipped obstacles that lay in between.
 
 ![Tunnelling](tunnelling.png)
 
-There are many possible solutions to avoid that effect, the simplest one is to split the calculation to be performed in smaller increments, that added will sum up the desired final position displacement.
+There are many possible solutions to avoid that effect, the simplest one is to split the calculation to be performed in smaller increments.
