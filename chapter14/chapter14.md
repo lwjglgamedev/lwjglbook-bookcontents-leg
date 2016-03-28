@@ -42,7 +42,7 @@ The mesh will be formed by a set of vertices (one per pixel) whose x and z coord
 * [-0.5, 0.5], that is, [```STARTX```, ```-STARTX```] for the x axis.
 * [-0.5, 0.5], that is, [```STARTZ```, ```-STARTZ```] for the z axis.
  
-Don't worry too much about those values, later on the resulting mesh can be scaled to accommodate its size in the world. Regarding y axis, we will set up two parameters, minY and maxY, for setting the lowest and highest value that the y coordinate can have. At the end, the terrain will be contained in a cube  in the range [STARTX, -STARTX], [minY, maxY] and [STARTZ, -STARTZ].
+Don't worry too much about those values, later on the resulting mesh can be scaled to accommodate its size in the world. Regarding y axis, we will set up two parameters, ```minY``` and ```maxY```, for setting the lowest and highest value that the y coordinate can have. These parameters are not constant because we may want to change them at run time, independently of the scaling applied. At the end, the terrain will be contained in a cube  in the range ```[STARTX, -STARTX]```, ```[minY, maxY]``` and ```[STARTZ, -STARTZ]```.
 
 The mesh will be created in the constructor of the ```HeightMapMesh``` class, which is defined like this.
 
