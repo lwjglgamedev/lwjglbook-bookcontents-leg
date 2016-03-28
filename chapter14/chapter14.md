@@ -8,7 +8,7 @@ So what’s a height map? A height map is an image which is used to generate a 3
 
 The image above it’s like if you were looking at a fragment of land from above. With that image we will build a mesh composed by triangles formed by vertices. The altitude of each vertex will be calculated depending on the colour of each of the image pixels. Black colour will represent the lowest value and white the highest one. 
 
-We will be creating a grid of vertices, one for each pixel of the image. Those vertices will be used to form triangles that will compose the mesh.
+We will be creating a grid of vertices, one for each pixel of the image. Those vertices will be used to form triangles that will compose the mesh as shown in the next figure.
 
 ![Height map grid](heightmap_grid.png) 
 
