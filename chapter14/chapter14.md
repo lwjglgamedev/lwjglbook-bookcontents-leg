@@ -52,7 +52,7 @@ public HeightMapMesh(float minY, float maxY, String heightMapFile, String textur
 
 It receives the minimum and maximum vale for the y axis, the name of the file that contains the image to be used as height map and the texture file to be used. It also receives an integer named ```textInc``` that we will discuss later on.
 
-The first thing that we do in the constructor is to load the height map image into a ```BufferedImage```.
+The first thing that we do in the constructor is to load the height map image into a ```BufferedImage``` instance.
 
 ```java
 this.minY = minY;
@@ -63,7 +63,7 @@ int height = buffImage.getHeight();
 int width = buffImage.getWidth();
 ```
 
-Then we load the texture file and setup the variables that we will need to construct the ```Mesh```. The ```incx``` and ```incz``` variables will have the increment to be applied to each vertex in the x and z coordinates so the Mesh covers the range [STARTX, -STARTX] and [STARTZ, -STARTZ].
+Then, we load the texture file and setup the variables that we will need to construct the ```Mesh```. The ```incx``` and ```incz``` variables will have the increment to be applied to each vertex in the x and z coordinates so the Mesh covers the range stated above.
 
 ```java
 Texture texture = new Texture(textureFile);
@@ -76,7 +76,7 @@ List<Float> textCoords = new ArrayList();
 List<Integer> indices = new ArrayList();
 ```
 
-Then we are ready to iterate over the image, creating a vertex per each pixel, setting its texture coordinates and setting up the indices to define correctly the triangles that compose the ```Mesh```.
+After that we are ready to iterate over the image, creating a vertex per each pixel, setting up its texture coordinates and setting up the indices to define correctly the triangles that compose the ```Mesh```.
 
 ```java
 for (int row = 0; row < height; row++) {
@@ -109,7 +109,7 @@ for (int row = 0; row < height; row++) {
 }
 ```
 
-The process of creating the vertex coordinates is self explanatory, let’s ignore at this moment why we multiply the texture coordinates by a number and how the height is calculated. You can see that for each vertex we define the indices of two triangles except if we are in the last row or column. Let’s review with a 3x3 image to visualize how they are constructed. A 3x3 image contains 9 vertices, and thus 4 quads formed by 2*4 triangles. The following picture  shows that grid, naming each vertex in the form Vrc (r: row, c: column).
+The process of creating the vertex coordinates is self explanatory. Let’s ignore at this moment why we multiply the texture coordinates by a number and how the height is calculated. You can see that for each vertex we define the indices of two triangles (except if we are in the last row or column). Let’s visualize it with a $$3\times3$$ image to visualize how they are constructed. A $$3\times3$$ image contains $$9$$ vertices, and thus $$4$$ quads formed by $$2\times4$$ triangles. The following picture  shows that grid, naming each vertex in the form Vrc (r: row, c: column).
 
 ![Height map vertices](heightmap_vertices.png)
  
