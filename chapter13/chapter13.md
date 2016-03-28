@@ -151,9 +151,9 @@ private void renderSkyBox(Window window, Camera camera, Scene scene) {
 }
 ```
 
-The method above  is quite similar to the other render ones but there’s a difference that needs to be explained. As you can see pass the projection matrix and the model view matrix as usual. But, when we get the view matrix, we set some of the components to 0. Why we do this ? The reason behind that is that we do not want translation to be applied to the sky box.
+The method above  is quite similar to the other render ones but there’s a difference that needs to be explained. As you can see, we pass the projection matrix and the model view matrix as usual. But, when we get the view matrix, we set some of the components to 0. Why we do this ? The reason behind that is that we do not want translation to be applied to the sky box.
 
-Remember  that when we move the camera, what we are actually doing is moving the whole world. So if we just multiply the view matrix as it is, the skybox will be displaced. But we do not want this, we want to stick it at the coordinates origin at (0, 0, 0). This achieved by removing setting to 0 the parts of the view matrix that contain the translation increments (the ```m30```, ```m31``` and ```m32``` components). 
+Remember  that when we move the camera, what we are actually doing is moving the whole world. So if we just multiply the view matrix as it is, the skybox will be displaced when the camera movees. But we do not want this, we want to stick it at the origin coordinates at (0, 0, 0). This is achieved by setting to 0 the parts of the view matrix that contain the translation increments (the ```m30```, ```m31``` and ```m32``` components). 
 
 You may think that you could avoid using the view matrix at all since the sky box must be fixed at the origin. In that case what you will see is that the skybox will not rotate with the camera, which is not what we want. We need it to rotate but not translate.
 
