@@ -222,7 +222,7 @@ public interface IHud {
 }
 ```
 
-By using that interface our different games can define custom HUDs but the rendering mechanism does not need to be changed. Now we can get back to the ```Renderer``` class, which by the way has been moved to the engine graphics package because it’s generic enough to not be dependent on the specific implementation of each game. In the ```Renderer``` class we added a new method to create, link and set up a new ```ShaderProgram``` that uses the shaders described above.
+By using that interface our different games can define custom HUDs but the rendering mechanism does not need to be changed. Now we can get back to the ```Renderer``` class, which by the way has been moved to the engine graphics package because now it’s generic enough to not be dependent on the specific implementation of each game. In the ```Renderer``` class we have added a new method to create, link and set up a new ```ShaderProgram``` that uses the shaders described above.
 
 ```java
 private void setupHudShader() throws Exception {
@@ -237,7 +237,7 @@ private void setupHudShader() throws Exception {
 }
 ```
 
-The ```render``` method firs invokes the method ```renderScene``` which contains the code from previous chapter that rendered the 3D scene and a new method, named ```renderHud```, to render the HUD.
+The ```render``` method first invokes the method ```renderScene``` which contains the code from previous chapter that rendered the 3D scene, and a new method, named ```renderHud```, to render the HUD.
 
 ```java
 public void render(Window window, Camera camera, GameItem[] gameItems,
@@ -336,14 +336,14 @@ In the ```DummyGame``` class we create an instance of that class an initialize i
 
 ![Text result](text_result.png) 
 
-In the Texture class we need to modify the way textures are interpolated in order for the text to be more clear (you will only notice if you play with the text scaling).
+In the ```Texture``` class we need to modify the way textures are interpolated to improve text readibility (you will only notice if you play with the text scaling).
 
 ```java
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 ```
 
-If you play with the zoom so the text overlaps with the cube you will see this effect.
+But the sample is not fnished yet. If you play with the zoom so the text overlaps with the cube you will see this effect.
 
 ![Text with opaque background](text_opaque.png)
 
