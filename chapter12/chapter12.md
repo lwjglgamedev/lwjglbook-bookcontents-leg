@@ -519,7 +519,7 @@ We first obtain the font metrics by creating a temporary image. Then we iterate 
     }
 ```
 
-Then we will create an image that will contain all the available characters. We just draw the string over a ```BufferedImage```.
+Then we will create an image that will contain all the available characters. In order to do this, we just draw the string over a ```BufferedImage```.
 
 ```java
     // Create the image associated to the charset
@@ -533,18 +533,17 @@ Then we will create an image that will contain all the available characters. We 
     g2D.dispose();
 ```
 
-We are generating an image which contains all the characters in a single row (yes, we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most cards and you could always achieve that adding some extra empty space). Actually, if after that block of code, you put a line like this:
+We are generating an image which contains all the characters in a single row (we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any caseyou could always achieve that by adding some extra empty space). You can even see the image that we are generating, if after that block of code, you put a line like this:
 
 ```java
 ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
 ```
 
-You will be able to view the image, which will be a long strip with all the available characters, drawn in white over transparent background using anti aliasing.
+The image will be written to a temporary file. That file woll contain a long strip with all the available characters, drawn in white over transparent background using anti aliasing.
 
 ![Font texture](texture_font.png)
-
  
-Then we just need to create a texture from that image, we just dump the image bytes using a PNG format (which is what the Texture class expects).
+Finally, we just need to create a ```Texture``` instance from that image, we just dump the image bytes using a PNG format (which is what the ```Texture``` class expects).
 
 ```java
     // Dump image to a byte buffer
@@ -560,7 +559,7 @@ Then we just need to create a texture from that image, we just dump the image by
 }
 ```
 
-We have modified a little bit the ```Texture``` class to have another constructor that receives an ```InputStream```. Now we just need to change the TextItem class to receive a ```FontTexture``` instance in its constructor.
+You may notice that we have modified a little bit the ```Texture``` class to have another constructor that receives an ```InputStream```. Now we just need to change the ```TextItem``` class to receive a ```FontTexture``` instance in its constructor.
 
 ```java
 public TextItem(String text, FontTexture fontTexture) throws Exception {
@@ -593,11 +592,11 @@ The ```buildMesh``` method only needs to be changed a little bit when setting qu
     }
 ```
 
-You can check the rest of the changes directly in the source code. What we will wget (for Arial font with a size of 20) is this:
+You can check the rest of the changes directly in the source code. The following picture shows what you will get for an Arial font with a size of 20:
 
 ![Text rendered improved](text_rendered_improved.png) 
 
-As you can see the quality of the rendered text has been increased a lot, you can play with different fonts and sizes and check it by your own. There’s still plenty of room for improvement (like supporting multiline texts, effects, etc.), but this will be left as an exercise for the reader.
+As you can see the quality of the rendered text has been improved a lot, you can play with different fonts and sizes and check it by your own. There’s still plenty of room for improvement (like supporting multiline texts, effects, etc.), but this will be left as an exercise for the reader.
 
 You may also notice that we are still able to apply scaling to the text (we pass a model view matrix in the shader). This may not be needed now for text but it may be useful for other HUD elements.
 
