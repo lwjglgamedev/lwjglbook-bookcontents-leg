@@ -46,7 +46,7 @@ public class SkyBox extends GameItem {
 }
 ```
 
-If you check the source code for this chapter you will see that we have done some refactoring. We have created a class named ```Scene``` which groups all the information related to the 3D world. This the definition and the attributes of the ```Scene``` class, that contains an instance of the ```SkyBox``` class.
+If you check the source code for this chapter you will see that we have done some refactoring. We have created a class named ```Scene``` which groups all the information related to the 3D world. This is the definition and the attributes of the ```Scene``` class, that contains an instance of the ```SkyBox``` class.
 
 ```java
 package org.lwjglb.engine;
@@ -66,7 +66,7 @@ public class Scene {
     // More code here...
 ```
 
-The next step is to create another set of vertex and fragment shaders for the skybox. But, why not reuse the scene shaders that we already have. The answer is that, actually, the shaders that we will need a simplified version of those shaders, we will not be applying lights to the light box (or to be more precise, we don’t need point, spot or directional lights).  Below you can see the skybox vertex shader.
+The next step is to create another set of vertex and fragment shaders for the skybox. But, why not reuse the scene shaders that we already have? The answer is that, actually, the shaders that we will need are a simplified version of those shaders, we will not be applying lights to the sky box (or to be more precise, we won’t need point, spot or directional lights).  Below you can see the skybox vertex shader.
 
 ```glsl
 #version 330
@@ -87,7 +87,7 @@ void main()
 }
 ```
 
-You can see that we still use the model view matrix. You may see some other implementations that increase the size of the cube that models the sky box at start time and do not need to multiply the model and the view matrix. We have chosen this approach because it’s more flexible and it allow s to change the size of the skybox at runtime, but you can easily switch to the other approach if you want. 
+You can see that we still use the model view matrix. At is has been explained beore we will scale the skybox, so we need that transformation matrix. You may see some other implementations that increase the size of the cube that models the sky box at start time and do not need to multiply the model and the view matrix. We have chosen this approach because it’s more flexible and it allows us to change the size of the skybox at runtime, but you can easily switch to the other approach if you want. 
 
 The fragment shader is also very simple.
 
@@ -107,10 +107,9 @@ void main()
 }
 ```
 
-As you can see, we added an ambient light uniform to the shader. The purpose of this uniform is to modify the colour of the texture to simulate day and night (If not, the skybox will look like if were at midday when the rest of the world is dark).
+As you can see, we added an ambient light uniform to the shader. The purpose of this uniform is to modify the colour of the skybox texture to simulate day and night (If not, the skybox will look like if it was midday when the rest of the world is dark).
 
-
-In the  ```Renderer``` class we just have added a new method to use those shaders and setup the uniforms (nothing new here).
+In the ```Renderer``` class we just have added a new method to use those shaders and setup the uniforms (nothing new here).
 
 ```java
 private void setupSkyBoxShader() throws Exception {
