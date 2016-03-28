@@ -139,7 +139,7 @@ vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
 }
 ```
 
-As you can see we first calculate the distance to the vertex. The vertex coordinates are defined in the ```pos``` variable and we just need to calculate the length. Then we  calculate the fog factor using the exponential model with an exponent of two (which is equivalent to multiply it twice). We clamp the ```fogFactor``` to a range between o and 1 and use the mix function in GLSL which is used to blend the fog colour and the fragment colour (defined by variable colour).  It's equivalent to apply this equation:
+As you can see we first calculate the distance to the vertex. The vertex coordinates are defined in the ```pos``` variable and we just need to calculate the length. Then we  calculate the fog factor using the exponential model with an exponent of two (which is equivalent to multiply it twice). We clamp the ```fogFactor``` to a range between $$0$$ and $$1$$ and use the ```mix``` function. In GLSL, the ```mix``` function is used to blend the fog colour and the fragment colour (defined by variable colour).  It's equivalent to apply this equation:
 
 $$resultColour = (1 - fogFactor) \cdot fog.colour + fogFactor \cdot colour$$
 
@@ -153,7 +153,10 @@ if ( fog.active == 1 )
 ```
 
 With all that code completed, we can set up a Fog with the following data:
+
+```java
 scene.setFog(new Fog(true, new Vector3f(0.5f, 0.5f, 0.5f), 0.15f));
+```
 
 And we will get an effect like this:
 
@@ -170,7 +173,7 @@ If you let the example run you will see how directional light gets dimmed and th
 
 ![Glowing fog](glowing_fog.png) 
 
-Distant objects are set to the fig colour which is a constants and it produces like a glowing in the dark effect (which may be ok for you or not). We need to change the funcion that calculates the fog to take into consideration the  light. The function will receive the ambient light and the directional light to modulate the fog colour. 
+Distant objects are set to the fog colour which is a constant and not affected by light. This fact produces like a glowing in the dark effect (which may be ok for you or not). We need to change the funcion that calculates the fog to take into consideration the  light. The function will receive the ambient light and the directional light to modulate the fog colour. 
 
 ```glsl
 vec4 calcFog(vec3 pos, vec4 colour, Fog fog, vec3 ambientLight, DirectionalLight dirLight)
