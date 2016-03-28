@@ -14,7 +14,7 @@ If we could change the normals for each fragment of the surface we could model s
 
 ![Fragment Normals](fragment_normals.png) 
 
-The way we are going to achieve this is bay loading another texture which stores the normals for the surface. Each pixel of the normal texture will contain the values of the x, y and z coordinates of the normal stored as an RGB value. 
+The way we are going to achieve this is by loading another texture which stores the normals for the surface. Each pixel of the normal texture will contain the values of the $$x$$, y and $$z$$ coordinates of the normal stored as an RGB value. 
 
 Let’s use the following texture to draw a quad.
 
@@ -24,9 +24,10 @@ An example of a normal map texture for the image above could be the following.
 
 ![Normal map texture](rock_normals.png) 
 
-As you can see is if like we had applied a colour transformation to the original texture. Each pixel stores normal information using colour components. Once thing that you will usually see when looking at normal maps is that the dominant colours tend to blue. This is due to the fact that normals point to the positive z axis. The z component will usually have a much higher value than the x and y ones for plain surfaces as the normal points out of the surface. Since x, y, z coordinates are mapped to RGB, the blue component will have also a higher value.
+As you can see is if like we had applied a colour transformation to the original texture. Each pixel stores normal information using colour components. One thing that you will usually see when viewing normal maps is that the dominant colours tend to blue. This is due to the fact that normals point to the positive $$z$$ axis. The $$z$$ component will usually have a much higher value than the $$x$$ and $$y$$ ones for plain surfaces as the normal points out of the surface. Since $$x$$, $$y$$, $$z$$ coordinates are mapped to RGB, the blue component will have also a higher value.
 
 So, to render an object using normal maps we just need an extra texture and use it while rendering fragments to get the appropriate normal value.
+
 Let’s start changing our code in order to support normal maps. We will add a new texture instance to the ```Material``` class so we can attach a normal map texture to our game items. This instance will have its own getters and setters and method to check if the material has a normal map or not.
 
 ```java
@@ -58,7 +59,7 @@ public class Material {
 }
 ```
 
-We will use the normal map texture in the scene fragment shader, but since we are working in view coordinates space we need to pass the model view matrix in order to do the proper transformation. Thus, we need to modify the scene vertex shader.
+We will use the normal map texture in the scene fragment shader. But, since we are working in view coordinates space we need to pass the model view matrix in order to do the proper transformation. Thus, we need to modify the scene vertex shader.
 
 ```glsl
 #version 330
@@ -92,7 +93,7 @@ In the scene fragment shader we need to add another input parameter.
 in mat4 outModelViewMatrix;
 ```
 
-We will also modify the ```Material``` struct definition in the fragment shader. The ```Material``` will have now references to the textures. We will not have them spread as separated uniforms, they are now contained in the Material definition.
+We will also modify the ```Material``` struct definition in the fragment shader. The ```Material``` will have now references to the textures. We will not have them spread as separated uniforms, they are now contained in the ```Material``` definition.
 
 ```glsl
 struct Material
