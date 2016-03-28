@@ -2,18 +2,18 @@
 
 ## Skybox
 
-A skybox will allow us to set a background to give the illusion that our 3D world is bigger. That background is wrapped around the camera position and covers the whole space.  The technique that we are going to use here is to construct a big cube that will be displayed around the 3D scene, that is,  the centre of the camera position will be the centre of the cube. The sides of that cube will be a texture with hills a blue sky and clouds that will be mapped in a way that the image looks a continuous landscape.
+A skybox will allow us to set a background to give the illusion that our 3D world is bigger. That background is wrapped around the camera position and covers the whole space.  The technique that we are going to use here is to construct a big cube that will be displayed around the 3D scene, that is,  the centre of the camera position will be the centre of the cube. The sides of that cube will be wrapped with a texture with hills a blue sky and clouds that will be mapped in a way that the image looks a continuous landscape.
 
 The following picture depicts the skybox concept.
 
 ![Sky Box](skybox.png) 
 
-So the process of creating a sky box is basically as follows:
+The process of creating a sky box can be summarized in the following steps:
 * Create a big cube.
-* Apply a texture to  it that provides the illusion that we are seeing a giant landscape with no edges.
-* Render the cube so its sides are at a far distance and with the origin located at the centre  of the camera.
+* Apply a texture to it that provides the illusion that we are seeing a giant landscape with no edges.
+* Render the cube so its sides are at a far distance and its origin is located at the centre  of the camera.
 
-Then, let’s start with the texture. You will find that there are lots of textures pre-generated for you to use in the internet. The one used in the sample has been downloaded from here: [http://www.custommapmakers.org/skyboxes.php](http://www.custommapmakers.org/skyboxes.php). The concrete sample that we have used is this one: [http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip](http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip) and has been created by Colin Lowndes. 
+Then, let’s start with the texture. You will find that there are lots of pre-generated textures for you to use in the internet. The one used in the sample for this chapter has been downloaded from here: [http://www.custommapmakers.org/skyboxes.php](http://www.custommapmakers.org/skyboxes.php). The concrete sample that we have used is this one: [http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip](http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip) and has been created by Colin Lowndes. 
 
 The textures from that site are composed by separate TGA files, one for each side of the cube.  The texture loader that we have created expects a single file in PNG format so we need to compose a single PNG image with the images of each face. We could apply other techniques, such us cube mapping, in order to apply those texture method but they will be explained in later chapters. The result image is something like this.
 
