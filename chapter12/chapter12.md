@@ -70,11 +70,11 @@ private Mesh buildMesh(Texture texture, int numCols, int numRows) {
     float tileHeight = (float)texture.getHeight() / (float)numRows;
 ```
 
-The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them representing a single character. We need to assign also the appropriate texture coordinates depending on the character code. The following picture shows the different elements that compose the tiles and the quad.
+The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them representing a single character. We need to assign also the appropriate texture coordinates depending on the character code associated to each tile. The following picture shows the different elements that compose the tiles and the quad.
 
 ![Text Quad](text_quad.png)
 
-So, for each character we need to create a tile which is formed by two triangles which can be defined by using four vertices (V1, V2, V3 and V4). The indices will be (0, 1, 2) for the first triangle (the lower one) and (3, 0, 2) for the other one (the upper one).  Texture coordinates are calculated based on the column and the row associated to each character, texture coordinates need to be in the range [0,1] so we just need to divide the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
+So, for each character we need to create a tile which is formed by two triangles which can be defined by using four vertices (V1, V2, V3 and V4). The indices will be (0, 1, 2) for the first triangle (the lower one) and (3, 0, 2) for the other triangle (the upper one).  Texture coordinates are calculated based on the column and the row associated to each character in the texture image. Texture coordinates need to be in the range [0,1] so we just need to divide the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
 
 The following loop creates all the vertex position, texture coordinates and indices associated to the quad that contains the text. 
 
