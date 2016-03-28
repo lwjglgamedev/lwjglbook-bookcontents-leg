@@ -155,27 +155,27 @@ The method above  is quite similar to the other render ones but there’s a diff
 
 Remember  that when we move the camera, what we are actually doing is moving the whole world. So if we just multiply the view matrix as it is, the skybox will be displaced when the camera movees. But we do not want this, we want to stick it at the origin coordinates at (0, 0, 0). This is achieved by setting to 0 the parts of the view matrix that contain the translation increments (the ```m30```, ```m31``` and ```m32``` components). 
 
-You may think that you could avoid using the view matrix at all since the sky box must be fixed at the origin. In that case what you will see is that the skybox will not rotate with the camera, which is not what we want. We need it to rotate but not translate.
+You may think that you could avoid using the view matrix at all since the sky box must be fixed at the origin. In that case what, you will see is that the skybox will not rotate with the camera, which is not what we want. We need it to rotate but not translate.
 
-And that’s all, you can check in the source code for this chapter that in the ```DummyGame``` class that we have created more block instances to simulate a ground and the skybox. You can also check that we now change the ambient light to simulate light and day. What we get is something like this.
+And that’s all, you can check in the source code for this chapter that in the ```DummyGame``` class that we have created more block instances to simulate a ground and the skybox. You can also check that we now change the ambient light to simulate light and day. What you will get is something like this.
 
 ![Sky Box result](skybox_result.png) 
 
-The sky box is a small one so can easily see the effect of moving through the world (in a real game it should be much bigger).  You can see also that the world space objects, the blocks that form the terrain are larger than the skybox, so as you move through it you will see block appearing through the mountains. This is more evident because of the relative small size of the sky box we have set, but anyway we will need to smooth that by adding an effect that hides or blur distant objects (for instance applying a fog effect).
+The sky box is a small one so you can easily see the effect of moving through the world (in a real game it should be much bigger).  You can see also that the world space objects, the blocks that form the terrain are larger than the skybox, so as you move through it you will see blocks appearing through the mountains. This is more evident because of the relative small size of the sky box we have set. But anyway we will need to alleviate that by adding an effect that hides or blur distant objects (for instance applying a fog effect).
 
 Another reason for not creating a bigger sky box is because we need to apply several optimizations in order to be more efficient (they will be explained later on).
 
-You can play with the render method an comment the lines that prevent the skybox from moving. Then you will be able to get out of the box and see something like this.
+You can play with the render method an comment the lines that prevent the skybox from translating. Then you will be able to get out of the box and see something like this.
 
 ![Sky Box displaced](skybox_displaced.png) 
 
-Although it is not what a sky box should do it can help you out to understand the sky box technique. This is a simple example, we will need to add other effects such as a sun moving through the sky or moving clouds. Also, in order to create bigger worlds we will need to split our world into fragments and only load the ones that are contiguous to the fragment where the player is currently in. We will try to introduce all these techniques later on.
+Although it is not what a skybox should do it can help you out to understand the concept behind this tecnique. Remember that this is a simple example, you could improve it by adding other effects such as the sun moving through the sky or moving clouds. Also, in order to create bigger worlds you will need to split the world into fragments and only load the ones that are contiguous to the fragment where the player is currently in.
 
 ## Some optimizations
 
-From the previous example, the fact that the skybox is relative small makes the effect a little bit weird (you can see objects appearing magically from the hills). So, ok, let’s increase the skybox size and thus let’s increase the size of our world. Let’s scale the size of our skybox by a factor of 50 so our world will be composed by 40,000 GameItem instances (cubes).
+From the previous example, the fact that the skybox is relative small makes the effect a little bit weird (you can see objects appearing magically behind the hills). So, ok, let’s increase the skybox size and the size of our world. Let’s scale the size of the skybox by a factor of 50 so the world will be composed by 40,000 GameItem instances (cubes).
 
-If you change the scale factor and rerun the example you will see that performance problem starts to arise and the movement through the 3D world is not smooth. It’s time to focus a little on performance (you may know the old saying that states that “premature optimization is the root of all evil”, but since this chapter 13, I hope nobody will say that this premature).
+If you change the scale factor and rerun the example you will see that performance problem starts to arise and the movement through the 3D world is not smooth. It’s time to put an eye on performance (you may know the old saying that states that “premature optimization is the root of all evil”, but since this chapter 13, I hope nobody will say that this premature).
 
 Let’s start with a concept that will reduce the amount of data that is being rendered, we will explain face culling. In our examples we are rendered thousands of cubes, and a cube is made of six faces. We are rendering the six faces for each cube even if they are not visible. You can check this if you zoom in to a cube, you will see its interior like this.
 
