@@ -10,7 +10,7 @@ Joints do not need to represent a physical bone or articulation, they are artifa
 
 In this chapter we will use MD5 format to load animated models. MD5 format was create by ID Software, the creators of Doom, and it’s basically a text based file format which is well understood.  Another approach would be to use the [Collada](https://en.wikipedia.org/wiki/COLLADA) format, which is a public standard supported by many tools. Collada is an XML based format but as a downside it’s very complex (The specification for the 1.5 version has more than 500 pages). So, we will stick which a much more simple format, MD5, that will allow us to focus in the concepts of the skeletal animation and to create a working sample.
 
-You can also export some models from Blnder to MD5 format via specific addons that you can find on the Internet ([http://www.katsbits.com/tools/#md5]())
+You can also export some models from Blender to MD5 format via specific addons that you can find on the Internet ([http://www.katsbits.com/tools/#md5]())
 
 In this chapter I’ve consulted many different sources, but I  have found two that provide a very good explanation about how t create an animated model using MD5 files. Theses sources can be consulted at:
 * [http://www.3dgep.com/gpu-skinning-of-md5-models-in-opengl-and-cg/](http://www.3dgep.com/gpu-skinning-of-md5-models-in-opengl-and-cg/)
@@ -58,14 +58,16 @@ A Joint is defined by the following attributes:
 * Joint position, defined in  model space coordinate system.
 * Joint orientation, defined also in model space coordinate system. The orientation in fact is a quaternion whose w-component is not included.
 
-Before continuing explaining the rest of the file let’s talk about quaternions. Quaternions are four component elements that are used to represent rotation. Up to now, we have been using Euler angles (yaw, pitch roll) to define rotations, which basically define rotation around the x, y and z angles. Euler angles present some problems when working with rotations, specifically you must be aware of the correct order to apply de rotations and some operations can get very complex.
+Before continuing explaining the rest of the file let’s talk about quaternions. Quaternions are four component elements that are used to represent rotation. Up to now, we have been using Euler angles (yaw, pitch and roll) to define rotations, which basically define rotation around the x, y and z angles. But, Euler angles present some problems when working with rotations, specifically you must be aware of the correct order to apply de rotations and some operations can get very complex.
+
 This where quaternions come to help in order to solve this complexity. As it has been said before a quaternion is defined as a set of 4 numbers (x, y, z, w). Quaternions define a rotation axis and the rotation angle around that axis.
 
 ![Quaternion](quaternion.png)
  
 You can check in the web the mathematical definition of each of the components but the good news is that JOML, the math library we are using, provides support for them. We can construct rotation matrices based on quaternions and perform some transformation to vectors with them.
 
-Let’s get back to the joints definition, the w component is missing but it can be easily calculated with the help of the rest of the values. We will review it when the code that parses MD5 files is explained.
+Let’s get back to the joints definition, the $$w$$ component is missing but it can be easily calculated with the help of the rest of the values. You can check the source code to see how it's done.
+
 After the joints definition you can find the definition of the different meshes that compose a model. Below you can find a fragment of a Mesh definition form one of the samples.
 
 ```text
@@ -106,7 +108,7 @@ Let’s review the structure presented above:
 * * A bias factor, that is uses to modulate the effect of this weight.
 * * A position of this weight.
 
-The following picture tries to depict the relation between the components described above using sample data.
+The following picture depicts the relation between the components described above using sample data.
  
 ![Mesh elements](mesh_elements.png)
 
