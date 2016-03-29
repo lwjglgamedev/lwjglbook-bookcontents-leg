@@ -405,7 +405,7 @@ private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultCo
 }
 ```
 
-The implementation is very straight forward, the only peculiarity is that if a mesh defines a texture named “texture.png” its normal texture map will be defined in a file “texture_normal.png”. We  need to check if that file exists and load it accordingly.
+The implementation is very straight forward. The only peculiarity is that if a mesh defines a texture named “texture.png” its normal texture map will be defined in a file “texture_normal.png”. We  need to check if that file exists and load it accordingly.
 
 We can now load a MD5 file an render it as we render other GameItems, but before doing that we need to disable cull face in order to render it properly since not all the triangles will be drawn in the correct direction. We will add support to the Window class to set these parameters at runtime (you can check it in the source code the changes).
 
@@ -805,7 +805,7 @@ mvVertexNormal = normalize(modelViewMatrix * initNormal).xyz;
 
 The next issue is the shadow problem. If you recall from the shadows chapter, we are using shadow maps to draw shadows. We are rendering the scene from the light perspective in order to create a depth map that tells us if a point is in shadow or not. But, as in the case of the normals, we are just passing the binding pose coordinates and not changing them according to the current frame. This is the reason why the shadow does not corresponds to the current position.
 
-The solution is easy, we just need to modify the depth vertex shader to use the jointsMatrix and the weights and joint indices to transform the position. This is how the depth vertex shader looks like.
+The solution is easy, we just need to modify the depth vertex shader to use the ```jointsMatrix``` and the weights and joint indices to transform the position. This is how the depth vertex shader looks like.
 
 ```glsl
 #version 330
@@ -845,8 +845,8 @@ void main()
 }
 ```
 
-You need to modify the Renderer class to set up the new uniforms for this shader, and the final result will be much better. The light will be applied correctly and the shadow will change for each animation frame as shown in the next figure.
+You need to modify the ```Renderer``` class to set up the new uniforms for this shader, and the final result will be much better. The light will be applied correctly and the shadow will change for each animation frame as shown in the next figure.
 
 ![Animation refined](animation_refined.png)
 
-And that's all, you have now a working example that animates MD5 models. The source code can still be improved and you can modify the matrices that are loaded in each render cycle to interpeolate betweeen frames positions. You can check the sources used for this chapter to see how this can be done.
+And that's all, you have now a working example that animates MD5 models. The source code can still be improved and you can modify the matrices that are loaded in each render cycle to interpolate betweeen frames positions. You can check the sources used for this chapter to see how this can be done.
