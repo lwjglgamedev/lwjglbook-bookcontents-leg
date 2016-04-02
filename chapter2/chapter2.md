@@ -302,3 +302,7 @@ public void start() {
     }
 }
 ```
+
+What we are doing is just ignoring the game loop thread when we are in OSX and execute the game loop code directly in the main Thread. This is not a perfect solution but it will allow you to run the samples in Mac. Other solutions found in the forums (such as executing the JVM with the ```-XstartOnFirstThread```  flag seem to not work).
+
+In the future it may be interesting to explore if LWJGL provides other GUI libraries to check if this restriction applies to them. (Many thanks to Timo Bühlmann for pointing this issue).
