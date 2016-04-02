@@ -276,3 +276,29 @@ public class DummyGame implements IGameLogic {
 In the ```render``` method we need to be ware if the window has been resized and update the view port to locate the center of the coordinates in the center of the window.
 
 The class hierarchy that we have created will help us to separate our game engine code from the code of a specific game. Although it may seem necessary at this moment we need to isolate generic tasks that every game will use from the state logic, artwork and resources of an specific game in order to reuse our game engine. In later chapters we will need to restructure this class hierarchy as our game engine gets more complex.
+
+
+## Threading issues
+
+If you try to run the source code provided above in OSX you will get an error like this:
+
+```
+Exception in thread "GAME_LOOP_THREAD" java.lang.ExceptionInInitializerError
+```
+
+What does this mean? The answer is that some functions of the GLFW library cannot be called in a ```Thread``` which is not the main ```Thread```. We are doing the initializing stuff, including window creation in the ```init``` method if the  ```GameEngine class```. That method gets called in the ```run``` method of the same class, which is invoked by a new ```Thread``` instead the one that's used to launch the program.
+
+This is a constraint of the GLFW library and basically it implies that we should avoid the creation of new Threads for the game loop. We could try to create all the Windows related stuff in the main thread but we will not be able to render anything. The problem is that, OpenGL calls need to be performed in the same ```Thread``` that its context was created. 
+
+In Windows and Linux platforms, although we are not using the main thread to initialize the GLFW stuff the samples will work. The problem is with OSX, so we need to change the source code of the ```run``` method of the ```GameEngine``` class to support that platform like this:
+
+```java
+public void start() {
+    String osName = System.getProperty("os.name");
+    if ( osName.contains("Mac") ) {
+        gameLoopThread.run();
+    } else {
+        gameLoopThread.start();
+    }
+}
+```
