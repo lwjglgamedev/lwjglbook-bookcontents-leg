@@ -227,8 +227,6 @@ $$
 \end{bmatrix}
 $$
 
-![Translation Matrix ](translation_matrix.png)
-
 Translation Matrix Parameters:
 * dx: Displacement along the x axis.
 * dy: Displacement along the y axis.
@@ -236,8 +234,14 @@ Translation Matrix Parameters:
 
 The scale matrix is defined like this:
 
-![Scale Matrix](scale_matrix.png)
-
+$$
+\begin{bmatrix}
+sx & 0 & 0 & 0 \\
+0 & sy & 0 & 0 \\
+0 & 0 & sz & 0 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}
+$$
 Scale Matrix Parameters:
 * sx: Scaling along the x axis.
 * sy: Scaling along the y axis.
