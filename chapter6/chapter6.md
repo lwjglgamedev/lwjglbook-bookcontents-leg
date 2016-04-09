@@ -218,6 +218,15 @@ $$
 
 The translation matrix  is defined like this:
 
+$$
+\begin{bmatrix}
+1 & 0 & 0 & dx \\
+0 & 1 & 0 & dy \\
+0 & 0 & 1 & dz \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}
+$$
+
 ![Translation Matrix ](translation_matrix.png)
 
 Translation Matrix Parameters:
