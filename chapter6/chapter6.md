@@ -451,4 +451,3 @@ But you may now think, that if the world matrix does not change per ```GameItem`
 
 
 Finally we only need to change the ```DummyGame``` class to create a instance of ```GameItem``` with its associated ```Mesh``` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
-
