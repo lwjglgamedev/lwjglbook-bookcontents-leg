@@ -162,7 +162,7 @@ public class GameEngine implements Runnable {
 
 ```
 
-The vSync parameter allows us to select if we want to use v-sync or not. You can see we create a new Thread which will execute the run method of our ```GameEngine``` class which will contain our game loop:
+The ```vSync``` parameter allows us to select if we want to use v-sync or not. You can see we create a new Thread which will execute the run method of our ```GameEngine``` class which will contain our game loop:
 
 ```java
 public void start() {
@@ -306,3 +306,21 @@ public void start() {
 What we are doing is just ignoring the game loop thread when we are in OSX and execute the game loop code directly in the main Thread. This is not a perfect solution but it will allow you to run the samples in Mac. Other solutions found in the forums (such as executing the JVM with the ```-XstartOnFirstThread```  flag seem to not work).
 
 In the future it may be interesting to explore if LWJGL provides other GUI libraries to check if this restriction applies to them. (Many thanks to Timo Bühlmann for pointing this issue).
+
+## Platform Differences (OSX)
+
+You will be able to run the code described above in Windows or Linux, but we still need to do some  modifications for OSX. As it's stated in th GLFW documentation: 
+
+> The only OpenGL 3.x and 4.x contexts currently supported by OS X are forward-compatible, core profile contexts. The supported versions are 3.2 on 10.7 Lion and 3.3 and 4.1 on 10.9 Mavericks. In all cases, your GPU needs to support the specified OpenGL version for context creation to succeed.
+> 
+
+So, in order to support features explained in later chapters we need to add these lines to the ```Window``` class before the window is created:
+
+```java
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+```
+
+This will make the program to use highest OpenGL version possible between 3.2 and 4.1. If those lines are not included, a Legacy version of OpenGL is used.
