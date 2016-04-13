@@ -141,7 +141,7 @@ public class ShaderProgram {
 
         glValidateProgram(programId);
         if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
-            throw new Exception("Error validating Shader code: " + glGetShaderInfoLog(programId, 1024));
+            System.err.println("Warning validating Shader code: " + glGetShaderInfoLog(programId, 1024));
         }
 
     }
@@ -169,7 +169,11 @@ public class ShaderProgram {
 }
 ```
 
-The constructor of the ```ShaderProgram``` creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. ```ShaderProgram``` also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
+The constructor of the ```ShaderProgram``` creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly. 
+
+Regarding verification, this is done through ```glValidateProgram``` call. This method is used mainly for debugging purposes, and it should removed when your game reaches production stage. This method tries to validate if the shader is correct given the **current OpenGL state**.
+
+```ShaderProgram``` also provides methods to activate this program for rendering (bind) and to stop using it (unbind). Finally it provides a cleanup method to free all the resources when they are no longer needed.
 
 Since we have a cleanup method, let us change our ```IGameLogic``` interface class to add a cleanup method:
 
