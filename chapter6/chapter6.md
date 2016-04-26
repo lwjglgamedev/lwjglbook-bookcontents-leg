@@ -50,12 +50,12 @@ And define the version of the library to use.
 ```xml
     <properties>
         [...]
-        <joml.version>1.6.5</joml.version>
+        <joml.version>1.7.1</joml.version>
         [...]
     </properties>
 ```
 
-Now that everithing has been set up let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named ```perspective```. This methods need the following parameters:
+Now that everything has been set up let’s define our projection matrix. We will create a instance of the class ```Matrix4f``` (provided by the JOML library) in our ```Renderer``` class. The ```Matrix4f``` provides a method to set up a projection matrix named ```perspective```. This methods need the following parameters:
 
 * Field of View: The Field of View angle in radians. We will define a constant that holds that value
 * Aspect Ratio.
