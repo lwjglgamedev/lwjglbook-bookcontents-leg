@@ -263,8 +263,7 @@ glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 ```
 
 The parameters are:
-* 
-index: Specifies the location where the shader expects this data.
+* index: Specifies the location where the shader expects this data.
 * size: Specifies then number of components per vertex attribute (from 1 to 4). In this case, we are passing 3D coordinates, so it should be 3.
 * type: Specifies the type of each component in the array, in this case a float.
 * normalized: Specifies if the values should be normalized or not.
@@ -281,7 +280,7 @@ glBindBuffer(GL_ARRAY_BUFFER, 0);
 glBindVertexArray(0);
 ```
 
-That’s all the code that should be in our ```init``` method. Our data is already in the graphical card, ready to be used. We only need to modify our render method to use it each render step during our game loop.
+That’s all the code that should be in our ```init``` method. Our data is already in the graphical card, ready to be used. We only need to modify our ```render``` method to use it each render step during our game loop.
 
 ```java
 public void render(Window window) {
@@ -311,7 +310,7 @@ public void render(Window window) {
 
 As you can see we just clear the window, bind the shader program, bind the VAO, draw the vertices stored in the VBO associated to the VAO and restore the state. That’s it.
 
-We also added a cleanup method to our Renderer class which frees acquired resources.
+We also added a cleanup method to our ```Renderer``` class which frees acquired resources.
 
 ```java
 public void cleanup() {
