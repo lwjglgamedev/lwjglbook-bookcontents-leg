@@ -78,7 +78,7 @@ private void sync(double loopStartTime) {
 ```
 
 So What are we doing in the above method ? In summary we calculate how many seconds our game loop iteration should last (which is stored in the ```loopSlot``` variable) and we wait for that time taking into consideration the time we have spent in our loop. But instead of doing a single wait for the whole available time period we do small waits. This will allow other tasks to run and will avoid the sleep accuracy problems we mentioned before. Then, what we do is: 
-1.	Calculate the time at which we should exit this wait method and start another iteration of our game loop (which is the variable endTi**me).
+1.	Calculate the time at which we should exit this wait method and start another iteration of our game loop (which is the variable ```endTime```).
 2.	Compare current time with that end time and wait just one second if we have not reached that time yet.
 
 Now  it is time to structure our code base in order to start writing our first version of our Game Engine. But before doing that we will talk about another way of controlling the rendering rate. In the code presented above, we are doing micro-sleeps in order to control how much time we need to wait. But we can chose another approach in order to limit the frame rate, we can use vsync (vertical synchronization). The main purpose of v-sync is to avoid screen tearing. What is screen tearing ? It’s a visual effect that is produced when we update the video memory while it’s being rendered. The result will be that part of the image will represent the previous image and the other part will represent the updated one. If we enable v-sync we won’t send an image to the GPU while is being rendered into the screen.
