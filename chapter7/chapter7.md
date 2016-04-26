@@ -104,13 +104,13 @@ Now we are going to apply a texture to our cube. A texture is an image which is 
  
 The texture image does not have to have the same size as the model, it can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture.  You can control how this process is done when a specific texture is created. 
 
-So basically what we must do, in order to apply a textura to a model, is assign texture coordinates to each of our vertices. Texture coordinates system are a bit different than the coordinates system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y. Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is equal to 1.
+So basically what we must do, in order to apply a texture to a model, is assign texture coordinates to each of our vertices. Texture coordinates system are a bit different than the coordinates system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y. Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is equal to 1.
 
 ![Texture coordinates](texture_coordinates.png)
  
 How do we relate texture coordinates with our position coordinates? Easy, the same way as we passed the colour information, we set up a VBO which will have a texture coordinate for each vertex position.
 
-So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this tasks, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow a more verbose approach.  We will use a library called pngdecoder, thus, we need to declare that dependency in our ```pom.xml``` file. 
+So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this tasks, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow a more verbose approach.  We will use a library called ```pngdecoder```, thus, we need to declare that dependency in our ```pom.xml``` file. 
 
 ```xml
 <dependency>
@@ -142,7 +142,7 @@ PNGDecoder decoder = new PNGDecoder(
 Then we need to decode the PNG image and store its content into a buffer by using the ```decode``` method of the ```PNGDecoder``` class. The PNG image will be decoded in RGBA format (RGB for Red, Green, Blue and A for Alpha or transparency) which uses four bytes per pixel. 
 
 The ```decode``` method requires two parameters:
-* ```buffer```: The ByteBuffer that will hold the decoded image (since each pixel uses four bytes its size will be 4 * width * height).
+* ```buffer```: The ```ByteBuffer``` that will hold the decoded image (since each pixel uses four bytes its size will be 4 * width * height).
 * ```stride```:  Specifies the distance in bytes from the start of a line to the start of the next line. In this case it will be the number of bytes per line.
 * ```format```: The target format into which the image should be decoded (RGBA).
 
@@ -178,7 +178,7 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(),
 ```
 
 The ```glTextImage2D``` method has the following parameters:
-* ```target```: Specifies the target texture (its type). In this case: GL_TEXTURE_2D. 
+* ```target```: Specifies the target texture (its type). In this case: ```GL_TEXTURE_2D```. 
 * ```level```: Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image. More on this later.
 * ```internal format```: Specifies the number of colour components in the texture.
 * ```width```: Specifies the width of the texture image.
