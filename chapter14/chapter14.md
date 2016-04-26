@@ -294,7 +294,7 @@ We need to translate the blocks so the vertices will have the following coordina
 
 ![Terrain Construction II](terrain_construction_2.png)
 
-The translation is aschived by calling ```setPosition``` method, but remember that what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adequate coordinates. The vertex drawn in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement, taking into consideration the scale and the block width, is this one:
+The translation is achived by calling ```setPosition``` method, but remember that what we set is a displacement not a position. If you review the figure above you will see that the central block does not require any displacement, it's already positioned in the adequate coordinates. The vertex drawn in green needs a displacement, for the x coordinate, of $$-1$$ and the vertex drawn in blue needs a displacement of $$+1$$. The formula to calculate the x displacement, taking into consideration the scale and the block width, is this one:
 
 $$xDisplacement=(col - (blocksPerRow -1 ) / 2) \times scale \times width$$
 
