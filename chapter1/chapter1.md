@@ -37,7 +37,7 @@ We use a special plugin named ```mavennatives``` which unpacks the native librar
             </plugin>
 ```
 
-Those libraries are placed under ```target/natives``` directory. We have also set up two profiles to set a property for the which will be used in the native dependencies declaration of each project. The profiles will set up the correct values for Windows and Linux OS families.
+Those libraries are placed under ```target/natives``` directory. We have also set up three profiles to set a property for the which will be used in the native dependencies declaration of each project. The profiles will set up the correct values for Windows, Linux and Mac OS families.
 
 ```xml
 	<profiles>
@@ -62,6 +62,17 @@ Those libraries are placed under ```target/natives``` directory. We have also se
 			<properties>
 				<native.target>natives-linux</native.target>
 			</properties>				
+		</profile>
+		<profile>
+			<id>OSX-profile</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<native.target>natives-osx</native.target>
+			</properties>
 		</profile>
 	</profiles>
 ```
