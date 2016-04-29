@@ -93,18 +93,10 @@ In the scene fragment shader we need to add another input parameter.
 in mat4 outModelViewMatrix;
 ```
 
-We will also modify the ```Material``` struct definition in the fragment shader. The ```Material``` will have now references to the textures. We will not have them spread as separated uniforms, they are now contained in the ```Material``` definition.
+In the fragment shader, we will need to pass a new uniform for the normal map texture sampler:
 
 ```glsl
-struct Material
-{
-    vec3 colour;
-    sampler2D texture_sampler;
-    int hasTexture;
-    sampler2D normalMap;
-    int hasNormalMap;
-    float reflectance;
-};
+uniform sampler2D texture_sampler;
 ```
 
 Also, in the fragment shader, we will create a new function that calculates the normal for the current fragment.
@@ -135,28 +127,14 @@ Remember that the colour we get are the normal coordinates, but since they are s
 
 And that’s all, we can use the returned value as the normal for that fragment in all the lightning calculations.
 
-Since we changed the ```Material``` definition and the texture uniforms, the way in which we create them in the ```ShaderProgram``` class has changed.
+In the ```Renderer``` class we need to create the normal map uniform, and in the ```renderScene``` method we need to set it up like this:
 
 ```java
-public void createMaterialUniform(String uniformName) throws Exception {
-    createUniform(uniformName + ".colour");
-    createUniform(uniformName + ".texture_sampler");
-    createUniform(uniformName + ".hasTexture");
-    createUniform(uniformName + ".normalMap");
-    createUniform(uniformName + ".hasNormalMap");
-    createUniform(uniformName + ".reflectance");
-}
-
-// More code here …
-
-public void setUniform(String uniformName, Material material) {
-    setUniform(uniformName + ".colour", material.getColour());
-    setUniform(uniformName + ".texture_sampler", 0);
-    setUniform(uniformName + ".hasTexture", material.isTextured() ? 1 : 0);
-    setUniform(uniformName + ".normalMap", 1);
-    setUniform(uniformName + ".hasNormalMap", material.hasNormalMap() ? 1 : 0);
-    setUniform(uniformName + ".reflectance", material.getReflectance());
-}
+...
+sceneShaderProgram.setUniform("fog", scene.getFog());
+sceneShaderProgram.setUniform("texture_sampler", 0);
+sceneShaderProgram.setUniform("normalMap", 1);
+...
 ```
 
 You may notice some interesting thing in the code above. We are setting $$0$$ for the material texture uniform (```texture_sampler```) and $$1$$ for the normal map texture (```normalMap```). If you recall from the texture chapter. We are using more than one texture, so we must set up the texture unit for each separate texture.
