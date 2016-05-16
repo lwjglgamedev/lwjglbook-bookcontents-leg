@@ -20,5 +20,5 @@
 * [Normal Mapping](chapter17/chapter17.md)
 * [Shadows](chapter18/chapter18.md)
 * [Animations](chapter19/chapter19.md)
-* Particles
+* [Particles](chapter20/chapter20.md)
 
