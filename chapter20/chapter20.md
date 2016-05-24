@@ -318,7 +318,9 @@ void main()
 }
 ```
 
-As you can see  they are very simple, they resemble the pair of shaders used in the first chapters. Now, as in other chapters, we need to setup and use those shaders in the Renderer class. The shaders setup will be done in a method named setupParticlesShader in the Renderer class which is defined like this:
+As you can see  they are very simple, they resemble the pair of shaders used in the first chapters. Now, as in other chapters, we need to setup and use those shaders in the ```Renderer``` class. The shaders setup will be done in a method named ```setupParticlesShader``` which is defined like this:
+
+```java
 private void setupParticlesShader() throws Exception {
     particlesShaderProgram = new ShaderProgram();
     particlesShaderProgram.createVertexShader(Utils.loadResource("/shaders/particles_vertex.vs"));
@@ -329,8 +331,11 @@ private void setupParticlesShader() throws Exception {
     particlesShaderProgram.createUniform("modelViewMatrix");
     particlesShaderProgram.createUniform("texture_sampler");
 }
+```
 
-And now we can create the render method named renderParticles in the Renderer class which is defined like this:
+And now we can create the render method named ```renderParticles``` in the ```Renderer``` class which is defined like this:
+
+```java
 private void renderParticles(Window window, Camera camera, Scene scene) {
     particlesShaderProgram.bind();
 
@@ -354,8 +359,11 @@ private void renderParticles(Window window, Camera camera, Scene scene) {
     }
     particlesShaderProgram.unbind();
 }
+```
 
-The fragment above should be self explanatory if you managed to get to this point, it just renders each particle setting up the required uniforms. We have now created all the methods we need to test the implementation of the particle effect. We just need to modify the DummyGame class we can setup a particle emitter and the characteristics of the base particle.
+The fragment above should be self explanatory if you managed to get to this point, it just renders each particle setting up the required uniforms. We have now created all the methods we need to test the implementation of the particle effect. We just need to modify the ```DummyGame``` class we can setup a particle emitter and the characteristics of the base particle.
+
+```java
 Vector3f particleSpeed = new Vector3f(0, 1, 0);
 particleSpeed.mul(2.5f);
 long ttl = 4000;
@@ -374,6 +382,7 @@ particleEmitter.setActive(true);
 particleEmitter.setPositionRndRange(range);
 particleEmitter.setSpeedRndRange(range);
 this.scene.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
+```
 
 We are using a plain filled circle as the particle’s texture by now, to better understand what’s happening. If you execute it you will see something like this.
 
