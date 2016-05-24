@@ -386,4 +386,41 @@ this.scene.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
 
 We are using a plain filled circle as the particle’s texture by now, to better understand what’s happening. If you execute it you will see something like this.
 
+![Particles I](particles_i.png)
+
+Why some particles seem to be cut off ? Why the transparent background does not solve this ? The reason is depth testing. Some fragments of the particles get discarded because they have a depth buffer value higher than the current value of the depth buffer for that zone. We can solve this by ordering the particle drawings depending in their distance to the camera or we can just disable the depth writing.
+
+Before we draw the particles we just need to insert this line:
+
+```java
+glDepthMask(false);
+```
+
+And when we are done with rendering we restore the previous value:
+
+```java
+glDepthMask(true);
+```
+
+Then we will get something like this.
+
+![Particles II](particles_ii.png)
+
+Ok, problem solved. Nevertheless, we still want another effect to b eapplied, we would want that colours get blended so colours will be added to create better effects. This is achieved with by adding this line before rendering to setup additive blending.
+
+```java
+glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+```
+
+As in the depth case, after we have rendered all the particles we restore the blending function to:
+
+```java
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+```
+
+Now we get something like this.
+
+![Particles III](particles_iii.png)
+
+
 
