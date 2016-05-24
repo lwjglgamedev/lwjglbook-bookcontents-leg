@@ -100,12 +100,16 @@ public interface IParticleEmitter {
 
 The ```IParticleEmitter``` interface has a method to clean up resources, named ```cleanup```, and a method to get the list of Particles, named ```getParticles```. It also as a method named ```getBaseParticle```, but What’s this method for? A particle emitter will create many particles dynamically. Whenever a particle expires, new ones will be created. That particle renewal will use a base particle, like a pattern, to create new instances. This is what this base particle is used for, This is also the reason why the ```Particle``` class defines a copy constructor.
 
-In the game engine code we will refer only to the ```IParticleEmitter``` interface so the base code will not be dependent on the specific implementations. Nevertheless we can create a implementation that simulates a flow of particles that are not affected by gravity. This implementation can be used to simulate rays or fire and is named FlowParticleEmitter.
+In the game engine code we will refer only to the ```IParticleEmitter``` interface so the base code will not be dependent on the specific implementations. Nevertheless we can create a implementation that simulates a flow of particles that are not affected by gravity. This implementation can be used to simulate rays or fire and is named ```FlowParticleEmitter```.
+
 The behaviour of this class can be tuned with the following attributes:
-•	A maximum number of particles that can be alive at a time.
-•	A minimum period to create particles. Particles will be created one be one with a minimum period to avoid creating particles in bursts.
-•	A range to randomize particles speed and starting position. New particles will use  base particle position and speed with can be randomized with values between those ranges to spread the beam.
+* A maximum number of particles that can be alive at a time.
+* A minimum period to create particles. Particles will be created one be one with a minimum period to avoid creating particles in bursts.
+* A range to randomize particles speed and starting position. New particles will use  base particle position and speed with can be randomized with values between those ranges to spread the beam.
+
 The implementation of this class is as follows:
+
+```java
 package org.lwjglb.engine.graph.particles;
 
 import java.util.ArrayList;
@@ -258,8 +262,11 @@ public class FlowParticleEmitter implements IParticleEmitter {
         }
     }
 }
+```
 
-Now we can extend the information that’s contained in the Scene class to include an array of ParticleEmitter instances.
+Now we can extend the information that’s contained in the ```Scene``` class to include an array of ```ParticleEmitter``` instances.
+
+```java
 package org.lwjglb.engine;
 
 // Imports here
@@ -269,9 +276,13 @@ public class Scene {
     // More attributes here
 
     private IParticleEmitter[] particleEmitters;
+```
 
 At this stage we can start rendering the particles. Particles will not be affected by lights and will not cast any shadow. They will not have any skeletal animation, so it makes sense to have specific shaders to render them. The shaders will be very simple, they will just render the vertices using the projection and modelview matrices and use a texture to set the colours.
+
 The vertex shader is defined like this.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -288,8 +299,11 @@ void main()
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     outTexCoord = texCoord;
 }
+```
 
 The fragment shader is defined like this:
+
+```glsl
 #version 330
 
 in vec2 outTexCoord;
@@ -302,6 +316,7 @@ void main()
 {
     fragColor = texture(texture_sampler, outTexCoord);
 }
+```
 
 As you can see  they are very simple, they resemble the pair of shaders used in the first chapters. Now, as in other chapters, we need to setup and use those shaders in the Renderer class. The shaders setup will be done in a method named setupParticlesShader in the Renderer class which is defined like this:
 private void setupParticlesShader() throws Exception {
