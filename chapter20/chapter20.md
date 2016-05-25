@@ -449,6 +449,7 @@ We want to cancel the rotation of the view matrix, to get something like this:
 
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
 
+![Updated transfromation](updated_transformation.png)
 
 And that's all, we just need to change this in the ```renderParticlesMethod``` like this:
 
