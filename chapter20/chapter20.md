@@ -436,23 +436,12 @@ The red elements represent the camera rotation while the blue ones represent the
 
 ![Target Matrix](target_matrix.png)
 
-So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I $$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
+So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I $$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
 
-$$
-\begin{bmatrix}
-r_{00} & r_{10} & r_{20} \\
-r_{01} & r_{11} & r_{21} \\
-r_{02} & r_{12} & r_{22} \\
-\end{bmatrix}^{T} 
-=
-\begin{bmatrix}
-r_{00} & r_{01} & r_{02} \\
-r_{10} & r_{11} & r_{12} \\
-r_{20} & r_{21} & r_{22} \\
-\end{bmatrix}
-$$
-
+![Transposed Matrix](transposed_matrix.png)
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
+
+
 
 
 
