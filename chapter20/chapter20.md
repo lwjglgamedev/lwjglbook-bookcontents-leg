@@ -438,4 +438,12 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
-The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix.
+The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix so it gets to something like this.
+$$
+\begin{bmatrix}
+\color{red}{1} & \color{red}{0} & \color{red}{0} & \color{blue}{dx} \\
+\color{red}{0} & \color{red}{1} & \color{red}{0} & \color{blue}{dy} \\
+\color{red}{0} & \color{red}{0} & \color{red}{1} & \color{blue}{dz} \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
