@@ -470,14 +470,14 @@ $$
 \color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
 \color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
 \color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
-v_{03} & v_{13} & v_{23} & v_{33} \\
+v_{03} & v_{13} & v_{23} & v_{33}
 \end{bmatrix}
 \times
 \begin{bmatrix}
 \color{red}{m_{00}} & \color{red}{m_{10}} & \color{red}{m_{20}} & m_{30} \\
 \color{red}{m_{01}} & \color{red}{m_{11}} & \color{red}{m_{21}} & m_{31} \\
 \color{red}{m_{02}} & \color{red}{m_{12}} & \color{red}{m_{22}} & m_{32} \\
-m_{03} & m_{13} & m_{23} & m_{33} \\
+m_{03} & m_{13} & m_{23} & m_{33}
 \end{bmatrix}
 $$
 We want to cancel the rotation of the view matrix, to get something like this:
@@ -487,7 +487,7 @@ $$
 \color{red}{1} & \color{red}{0} & \color{red}{0} & mv_{30} \\
 \color{red}{0} & \color{red}{1} & \color{red}{0} & mv_{31} \\
 \color{red}{0} & \color{red}{0} & \color{red}{1} & mv_{32} \\
-mv_{03} & mv_{13} & mv_{23} & mv_{33} \\
+mv_{03} & mv_{13} & mv_{23} & mv_{33}
 \end{bmatrix}
 $$
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
@@ -497,14 +497,14 @@ $$
 \color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
 \color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
 \color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
-v_{03} & v_{13} & v_{23} & v_{33} \\
+v_{03} & v_{13} & v_{23} & v_{33}
 \end{bmatrix}
 \times
 \begin{bmatrix}
 \color{red}{v_{00}} & \color{red}{v_{01}} & \color{red}{v_{02}} & m_{30} \\
 \color{red}{v_{10}} & \color{red}{v_{11}} & \color{red}{v_{12}} & m_{31} \\
 \color{red}{v_{20}} & \color{red}{v_{21}} & \color{red}{v_{22}} & m_{32} \\
-m_{03} & m_{13} & m_{23} & m_{33} \\
+m_{03} & m_{13} & m_{23} & m_{33}
 \end{bmatrix}
 $$
 And that's all, we just need to change this in the ```renderParticlesMethod``` like this:
