@@ -432,9 +432,10 @@ Let’s review that view matrix once again. That matrix can be represented like 
 
 $$
 \begin{bmatrix}
-r00 & r10 & r20 & dx \\
-r01 & r11 & r21 & dy \\
-r02 & r12 & r22 & dz \\
+\color{red}{r00} & \color{red}{r10} & \color{red}{r20} & \color{blue}{dx} \\
+\color{red}{r01} & \color{red}{r11} & \color{red}{r21} & \color{blue}{dy} \\
+\color{red}{r02} & \color{red}{r12} & \color{red}{r22} & \color{blue}{dz} \\
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
+The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix.
