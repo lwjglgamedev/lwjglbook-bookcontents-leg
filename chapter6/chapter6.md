@@ -213,7 +213,7 @@ $$
 If we include our projection matrix to the transformation matrix it would be like this:
 
 $$
-Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]=\left[Porj Matrix\right]\left[World Matrix\right]
+Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]=\left[Proj Matrix\right]\left[World Matrix\right]
 $$
 
 The translation matrix  is defined like this:
