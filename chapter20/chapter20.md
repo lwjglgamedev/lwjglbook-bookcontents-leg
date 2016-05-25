@@ -428,7 +428,7 @@ But we have not finished yet. If you have moved the camera  to position it over 
 
 The particles do not look very good, they should look round but thay resemble a sheet of paper. At this points where we should be applying the billboard technique.  The quad that is used to render the particle should always face the camera, totally perpendicular to it as if it there was no rotation at all. The camera effect applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
 
-Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
+Warning: Maths ahead, you can skip it if you wdon't feel comfortable with this. Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
 
 $$
 \begin{bmatrix}
