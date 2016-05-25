@@ -447,3 +447,4 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
+So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I $$. 
