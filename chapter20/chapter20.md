@@ -430,6 +430,15 @@ The particles do not look very good, they should look round but thay resemble a 
 
 Warning: Maths ahead, you can skip it if you don't feel comfortable with this. Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
 
+$$
+\begin{bmatrix}
+\color{red}{r_{00}} & \color{red}{r_{10}} & \color{red}{r_{20}} & \color{blue}{dx} \\
+\color{red}{r_{01}} & \color{red}{r_{11}} & \color{red}{r_{21}} & \color{blue}{dy} \\
+\color{red}{r_{02}} & \color{red}{r_{12}} & \color{red}{r_{22}} & \color{blue}{dz} \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
+
 ![View Matrix](matrix_i.png)
 
 The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix so it gets to something like this.
