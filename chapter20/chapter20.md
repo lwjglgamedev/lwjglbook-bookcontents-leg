@@ -428,7 +428,7 @@ But we have not finished yet. If you have moved the camera  to position it over 
 
 The particles do not look very good, they should look round but thay resemble a sheet of paper. At this points where we should be applying the billboard technique.  The quad that is used to render the particle should always face the camera, totally perpendicular to it as if it there was no rotation at all. The camera effect applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
 
-Let’s review that view matrix once again. That matrix can be represented like this.
+Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
 
 $$
 \begin{bmatrix}
@@ -454,6 +454,23 @@ $$
 r_{00} & r_{10} & r_{20} \\
 r_{01} & r_{11} & r_{21} \\
 r_{02} & r_{12} & r_{22} \\
-\end{bmatrix}^{T}
+\end{bmatrix}^{T} 
+=
+\begin{bmatrix}
+r_{00} & r_{01} & r_{02} \\
+r_{10} & r_{11} & r_{12} \\
+r_{20} & r_{21} & r_{22} \\
+\end{bmatrix}
 $$
 
+Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
+
+$$
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
+\color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
+\color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
+v_{03} & v_{13} & v_{23} & v_{33} \\
+\end{bmatrix}
+$$
+We want to cancel the rotation of the view matrix, 
