@@ -432,9 +432,9 @@ Let’s review that view matrix once again. That matrix can be represented like 
 
 $$
 \begin{bmatrix}
-\color{red}{r00} & \color{red}{r10} & \color{red}{r20} & \color{blue}{dx} \\
-\color{red}{r01} & \color{red}{r11} & \color{red}{r21} & \color{blue}{dy} \\
-\color{red}{r02} & \color{red}{r12} & \color{red}{r22} & \color{blue}{dz} \\
+\color{red}{r_{00}} & \color{red}{r_{10}} & \color{red}{r_{20}} & \color{blue}{dx} \\
+\color{red}{r_{01}} & \color{red}{r_{11}} & \color{red}{r_{21}} & \color{blue}{dy} \\
+\color{red}{r_{02}} & \color{red}{r_{12}} & \color{red}{r_{22}} & \color{blue}{dz} \\
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
