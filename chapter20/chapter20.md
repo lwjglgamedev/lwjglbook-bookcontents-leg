@@ -449,20 +449,70 @@ $$
 \end{bmatrix}
 $$
 
-![Target Matrix](target_matrix.png)
-
 So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
 
+$$
+\begin{bmatrix}
+r_{00} & r_{10} & r_{20} \\
+r_{01} & r_{11} & r_{21} \\
+r_{02} & r_{12} & r_{22} \\
+\end{bmatrix}^{T} 
+=
+\begin{bmatrix}
+r_{00} & r_{01} & r_{02} \\
+r_{10} & r_{11} & r_{12} \\
+r_{20} & r_{21} & r_{22} \\
+\end{bmatrix}
+$$
 ![Transposed Matrix](transposed_matrix.png)
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
 
+$$
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
+\color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
+\color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
+v_{03} & v_{13} & v_{23} & v_{33} \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\color{red}{m_{00}} & \color{red}{m_{10}} & \color{red}{m_{20}} & m_{30} \\
+\color{red}{m_{01}} & \color{red}{m_{11}} & \color{red}{m_{21}} & m_{31} \\
+\color{red}{m_{02}} & \color{red}{m_{12}} & \color{red}{m_{22}} & m_{32} \\
+m_{03} & m_{13} & m_{23} & m_{33} \\
+\end{bmatrix}
+$$
 ![Model View Matrix](model_view_matrix.png)
 
 We want to cancel the rotation of the view matrix, to get something like this:
 
+$$
+\begin{bmatrix}
+\color{red}{1} & \color{red}{0} & \color{red}{0} & mv_{30} \\
+\color{red}{0} & \color{red}{1} & \color{red}{0} & mv_{31} \\
+\color{red}{0} & \color{red}{0} & \color{red}{1} & mv_{32} \\
+mv_{03} & mv_{13} & mv_{23} & mv_{33} \\
+\end{bmatrix}
+$$
 ![Target Model View Matrix](target_model_view_matrix.png)
 
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
+
+$$
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
+\color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
+\color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
+v_{03} & v_{13} & v_{23} & v_{33} \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{01}} & \color{red}{v_{02}} & m_{30} \\
+\color{red}{v_{10}} & \color{red}{v_{11}} & \color{red}{v_{12}} & m_{31} \\
+\color{red}{v_{20}} & \color{red}{v_{21}} & \color{red}{v_{22}} & m_{32} \\
+m_{03} & m_{13} & m_{23} & m_{33} \\
+\end{bmatrix}
+$$
 
 ![Updated transfromation](updated_transformation.png)
 
