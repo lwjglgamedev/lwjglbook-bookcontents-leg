@@ -422,5 +422,12 @@ Now we get something like this.
 
 ![Particles III](particles_iii.png)
 
+But we have not finished yet. If you have moved the camera  to position it over the blue square looking down you may have got something like this.
+
+![Particles IV](particles_iv.png)
+
+The particles do not look very good, they should look round but thay resemble a sheet of paper. At this points where we should be applying the billboard technique.  The quad that is used to render the particle should always face the camera, totally perpendicular to it as if it there was no rotation at all. The camera effect applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
+
+Let’s review that view matrix once again. That matrix can be represented like this.
 
 
