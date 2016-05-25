@@ -557,3 +557,6 @@ With this texture, we will get something like this.
 
 ![Particles VI](particles_vi.png)
 
+Much better ! You may notice that we need to adjust the scale, since particles are now allways facing the cameram the displayed area is allways the maximum.
+
+Finally, another conclusion, to get perfect results which can be used in any scene you will need to implement particle ordering and activate depth buffer. In any case, you have here a sample to include ths effect in your games.
