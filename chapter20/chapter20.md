@@ -441,12 +441,11 @@ So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it
 ![Transposed Matrix](transposed_matrix.png)
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
 
-
-
-
+![Model View Matrix](model_view_matrix.png)
 
 We want to cancel the rotation of the view matrix, to get something like this:
 
+![Target Model View Matrix](target_model_view_matrix.png)
 
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
 
