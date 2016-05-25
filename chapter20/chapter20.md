@@ -454,13 +454,13 @@ $$
 \begin{bmatrix}
 r_{00} & r_{10} & r_{20} \\
 r_{01} & r_{11} & r_{21} \\
-r_{02} & r_{12} & r_{22} \\
+r_{02} & r_{12} & r_{22}
 \end{bmatrix}^{T} 
 =
 \begin{bmatrix}
 r_{00} & r_{01} & r_{02} \\
 r_{10} & r_{11} & r_{12} \\
-r_{20} & r_{21} & r_{22} \\
+r_{20} & r_{21} & r_{22}
 \end{bmatrix}
 $$
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
