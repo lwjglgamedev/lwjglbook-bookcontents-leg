@@ -472,5 +472,13 @@ $$
 \color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
 v_{03} & v_{13} & v_{23} & v_{33} \\
 \end{bmatrix}
+\times
+\begin{bmatrix}
+\color{red}{m_{00}} & \color{red}{m_{10}} & \color{red}{m_{20}} & m_{30} \\
+\color{red}{m_{01}} & \color{red}{m_{11}} & \color{red}{m_{21}} & m_{31} \\
+\color{red}{m_{02}} & \color{red}{m_{12}} & \color{red}{m_{22}} & m_{32} \\
+m_{03} & m_{13} & m_{23} & m_{33} \\
+\end{bmatrix}
 $$
-We want to cancel the rotation of the view matrix, 
+We want to cancel the rotation of the view matrix, to get something like this:
+
