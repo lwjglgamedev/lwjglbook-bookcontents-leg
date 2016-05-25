@@ -482,3 +482,12 @@ m_{03} & m_{13} & m_{23} & m_{33} \\
 $$
 We want to cancel the rotation of the view matrix, to get something like this:
 
+
+$$\begin{bmatrix}
+\color{red}{1} & \color{red}{0} & \color{red}{0} & mv_{30} \\
+\color{red}{0} & \color{red}{1} & \color{red}{0} & mv_{31} \\
+\color{red}{0} & \color{red}{0} & \color{red}{1} & mv_{32} \\
+mv_{03} & mv_{13} & mv_{23} & mv_{33} \\
+\end{bmatrix}
+$$
+
