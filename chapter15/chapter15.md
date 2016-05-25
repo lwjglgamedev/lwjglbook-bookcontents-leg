@@ -154,6 +154,7 @@ $$m=\frac{z1-z2}{x1-x2}$$
 So the equation of the diagonal to get the $$z$$ value given a $$x$$ position is like this:
 
 $$z=m\cdot(xpos-x1)+z1=\frac{z1-z2}{x1-x2}\cdot(zpos-x1)+z1$$$$
+
 Where $$x1$$, $$x2$$, $$z1$$ and $$z2$$ are the $$x$$ and $$z$$ coordinates of the vertices $$V1$$ and V2 respectively.
 
 So the method to get the triangle that the current position is in, named ```getTriangle```, applying all the calculations described above can be implemented like this:
