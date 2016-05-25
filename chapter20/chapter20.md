@@ -508,3 +508,40 @@ v_{03} & v_{13} & v_{23} & v_{33} \\
 m_{03} & m_{13} & m_{23} & m_{33} \\
 \end{bmatrix}
 $$
+And that's all, we just need to change this in the ```renderParticlesMethod``` like this:
+
+```java
+        Matrix3f aux = new Matrix3f();
+        for (int i = 0; i < numEmitters; i++) {
+            IParticleEmitter emitter = emitters[i];
+            Mesh mesh = emitter.getBaseParticle().getMesh();
+
+            mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
+                Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+
+                viewMatrix.get3x3(aux);
+                aux.transpose(aux);
+
+                // set3x3 can be used in JOML 1.8
+                //modelMatrix.set3x3(aux);
+                modelMatrix.m00 = aux.m00;
+                modelMatrix.m01 = aux.m01;
+                modelMatrix.m02 = aux.m02;
+                modelMatrix.m10 = aux.m10;
+                modelMatrix.m11 = aux.m11;
+                modelMatrix.m12 = aux.m12;
+                modelMatrix.m20 = aux.m20;
+                modelMatrix.m21 = aux.m21;
+                modelMatrix.m22 = aux.m22;
+
+                Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+                particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+            }
+            );
+        }
+
+```
+
+NOTE: This code will be simplified when updated to JOML 1.8.
+
+We also have added another method to the ```Transformation``` class to construct a model view matrix using two matrices instead of a ```GameItem``` and the view matrix.*
