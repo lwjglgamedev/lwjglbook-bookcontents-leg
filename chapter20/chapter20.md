@@ -448,7 +448,6 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
-
 So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
 
 $$
@@ -464,7 +463,6 @@ r_{10} & r_{11} & r_{12} \\
 r_{20} & r_{21} & r_{22} \\
 \end{bmatrix}
 $$
-![Transposed Matrix](transposed_matrix.png)
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
 
 $$
@@ -482,8 +480,6 @@ v_{03} & v_{13} & v_{23} & v_{33} \\
 m_{03} & m_{13} & m_{23} & m_{33} \\
 \end{bmatrix}
 $$
-![Model View Matrix](model_view_matrix.png)
-
 We want to cancel the rotation of the view matrix, to get something like this:
 
 $$
@@ -494,8 +490,6 @@ $$
 mv_{03} & mv_{13} & mv_{23} & mv_{33} \\
 \end{bmatrix}
 $$
-![Target Model View Matrix](target_model_view_matrix.png)
-
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
 
 $$
@@ -513,9 +507,6 @@ v_{03} & v_{13} & v_{23} & v_{33} \\
 m_{03} & m_{13} & m_{23} & m_{33} \\
 \end{bmatrix}
 $$
-
-![Updated transfromation](updated_transformation.png)
-
 And that's all, we just need to change this in the ```renderParticlesMethod``` like this:
 
 ```java
