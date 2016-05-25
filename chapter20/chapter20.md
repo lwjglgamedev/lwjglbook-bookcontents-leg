@@ -430,23 +430,12 @@ The particles do not look very good, they should look round but thay resemble a 
 
 Warning: Maths ahead, you can skip it if you don't feel comfortable with this. Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
 
-$$
-\begin{bmatrix}
-\color{red}{r_{00}} & \color{red}{r_{10}} & \color{red}{r_{20}} & \color{blue}{dx} \\
-\color{red}{r_{01}} & \color{red}{r_{11}} & \color{red}{r_{21}} & \color{blue}{dy} \\
-\color{red}{r_{02}} & \color{red}{r_{12}} & \color{red}{r_{22}} & \color{blue}{dz} \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
+![View Matrix](matrix_i.png)
+
 The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix so it gets to something like this.
-$$
-\begin{bmatrix}
-\color{red}{1} & \color{red}{0} & \color{red}{0} & \color{blue}{dx} \\
-\color{red}{0} & \color{red}{1} & \color{red}{0} & \color{blue}{dy} \\
-\color{red}{0} & \color{red}{0} & \color{red}{1} & \color{blue}{dz} \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$
+
+![Target Matrix](target_matrix.png)
+
 So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I $$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
 
 
