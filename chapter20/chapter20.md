@@ -430,4 +430,9 @@ The particles do not look very good, they should look round but thay resemble a 
 
 Let’s review that view matrix once again. That matrix can be represented like this.
 
-
+$$
+    \begin{bmatrix}
+    r00 & r10 & r20 & dx \\
+    c & d
+    \end{bmatrix}
+$$
