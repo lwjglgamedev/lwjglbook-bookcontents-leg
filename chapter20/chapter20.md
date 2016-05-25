@@ -491,3 +491,20 @@ mv_{03} & mv_{13} & mv_{23} & mv_{33} \\
 \end{bmatrix}
 $$
 
+So we just need to set the upper left 3x3 matrix fo the model matrix as the transpose matrix of the view matrix:
+
+$$
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{10}} & \color{red}{v_{20}} & v_{30} \\
+\color{red}{v_{01}} & \color{red}{v_{11}} & \color{red}{v_{21}} & v_{31} \\
+\color{red}{v_{02}} & \color{red}{v_{12}} & \color{red}{v_{22}} & v_{32} \\
+v_{03} & v_{13} & v_{23} & v_{33} \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\color{red}{v_{00}} & \color{red}{v_{01}} & \color{red}{v_{02}} & m_{30} \\
+\color{red}{v_{10}} & \color{red}{v_{11}} & \color{red}{v_{12}} & m_{31} \\
+\color{red}{v_{20}} & \color{red}{v_{21}} & \color{red}{v_{22}} & m_{32} \\
+m_{03} & m_{13} & m_{23} & m_{33} \\
+\end{bmatrix}
+$$
