@@ -545,3 +545,15 @@ And that's all, we just need to change this in the ```renderParticlesMethod``` l
 NOTE: This code will be simplified when updated to JOML 1.8.
 
 We also have added another method to the ```Transformation``` class to construct a model view matrix using two matrices instead of a ```GameItem``` and the view matrix.*
+
+With that change, when we look the particles from above we get something like this.
+
+![Particles V](particles_v.png)
+
+Now we have everithing we need to create a more realistic particle effect so let's change the texture to something more elaborated. We will use this image (it was created with [GIMP](https://www.gimp.org/) with the lights and shadows filters).
+
+![Particle texture](particle_texture.png)
+With this texture, we will get something like this.
+
+![Particles VI](particles_vi.png)
+
