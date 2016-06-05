@@ -520,18 +520,7 @@ And that's all, we just need to change this in the ```renderParticlesMethod``` l
 
                 viewMatrix.get3x3(aux);
                 aux.transpose(aux);
-
-                // set3x3 can be used in JOML 1.8
-                //modelMatrix.set3x3(aux);
-                modelMatrix.m00 = aux.m00;
-                modelMatrix.m01 = aux.m01;
-                modelMatrix.m02 = aux.m02;
-                modelMatrix.m10 = aux.m10;
-                modelMatrix.m11 = aux.m11;
-                modelMatrix.m12 = aux.m12;
-                modelMatrix.m20 = aux.m20;
-                modelMatrix.m21 = aux.m21;
-                modelMatrix.m22 = aux.m22;
+                modelMatrix.set3x3(aux);
 
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
                 particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
@@ -540,8 +529,6 @@ And that's all, we just need to change this in the ```renderParticlesMethod``` l
         }
 
 ```
-
-NOTE: This code will be simplified when updated to JOML 1.8.
 
 We also have added another method to the ```Transformation``` class to construct a model view matrix using two matrices instead of a ```GameItem``` and the view matrix.*
 
