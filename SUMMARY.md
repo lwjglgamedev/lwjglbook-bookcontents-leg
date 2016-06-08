@@ -21,4 +21,5 @@
 * [Shadows](chapter18/chapter18.md)
 * [Animations](chapter19/chapter19.md)
 * [Particles](chapter20/chapter20.md)
+* Instanced Rendering
 
