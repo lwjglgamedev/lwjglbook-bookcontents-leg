@@ -583,7 +583,7 @@ The default case is to have a texture with a number of columns and rows equal to
 
 Then we need to keep track the position in the texture atlas for a ```GameItem```, so we just add another attribute to that class with a default value equal to 0.
 
-
+```java
 package org.lwjglb.engine.items;
 
 import org.joml.Vector3f;
@@ -594,8 +594,11 @@ public class GameItem {
     // More attributes here
 
     private int textPos;
+```
 
-Then we will modify the Particle class to be able to iterate automatically through a texture atlas.
+Then we will modify the ```Particle``` class to be able to iterate automatically through a texture atlas.
+
+```java
 package org.lwjglb.engine.graph.particles;
 
 import org.joml.Vector3f;
@@ -605,11 +608,12 @@ import org.lwjglb.engine.items.GameItem;
 
 public class Particle extends GameItem {
 
-    private long updateTextureMills;
+    private long updateTextureMillis;
     
     private long currentAnimTimeMillis;
+```
  
-The updateTextureMills attribute models the period of time (in milliseconds) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The currentAnimTimeMillis attribute just keeps track of the time that the particle has maintained a texture position.
+The updateTextureMillis attribute models the period of time (in milliseconds) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The currentAnimTimeMillis attribute just keeps track of the time that the particle has maintained a texture position.
 Thus, we need to modify the Particle class constructor to set  up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute animFrames.
 public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMills) {
     super(mesh);
