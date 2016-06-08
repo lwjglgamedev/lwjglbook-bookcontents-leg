@@ -543,6 +543,146 @@ With this texture, we will get something like this.
 
 ![Particles VI](particles_vi.png)
 
-Much better ! You may notice that we need to adjust the scale, since particles are now allways facing the camera the displayed area is allways the maximum.
+Much better ! You may notice that we need to adjust the scale, since particles are now always facing the camera the displayed area is always the maximum.
 
 Finally, another conclusion, to get perfect results which can be used in any scene you will need to implement particle ordering and activate depth buffer. In any case, you have here a sample to include this effect in your games.
+
+## Texture Atlas
+
+Now that we have stet ha basic infrastructure particles we can add some animation effects to it. In order to achieve that we are going to support texture atlas. A texture atlas is a large image that contains all the textures that will be used. With a texture atlas we need only to load a large image and then while drawing the game items we select the portions of that image to be used as our texture. This technique can be applied for instance when we want to represent the same model many times with different textures (think for instance about trees, or rocks). Instead of having many texture instances and switching between them (remember that switching states are always slow) we can use the same texture atlas and just select the appropriate coordinates.
+
+
+In this case, we are going to use texture coordinates to animate particles. We will iterate over different textures to model a particle animation. All those textures will be grouped into a texture atlas which looks like this.
+ 
+![Texture Atlas](texture_atlas.png)
+
+The texture atlas can be divided into quad tiles. We will assign a tile position to a particle and will change it over time to represent animation. So let’s get on it. The first thing that we are going to do is modifying  the ```Texture``` class to specify the number of rows and columns that a texture atlas can have.
+
+```java
+package org.lwjglb.engine.graph;
+
+// .. Imports hera
+
+public class Texture {
+
+    // More attributes here
+    private int numRows = 1;
+    
+    private int numCols = 1;
+
+   // More code here
+
+    public Texture(String fileName, int numCols, int numRows) throws Exception  {
+        this(fileName);
+        this.numCols = numCols;
+        this.numRows = numRows;
+    }
+```
+
+The default case is to have a texture with a number of columns and rows equal to 1, that is, the textures we have dealing with. We also add another constructor to be able to specify the rows and columns.
+
+Then we need to keep track the position in the texture atlas for a ```GameItem```, so we just add another attribute to that class with a default value equal to 0.
+
+
+package org.lwjglb.engine.items;
+
+import org.joml.Vector3f;
+import org.lwjglb.engine.graph.Mesh;
+
+public class GameItem {
+
+    // More attributes here
+
+    private int textPos;
+
+Then we will modify the Particle class to be able to iterate automatically through a texture atlas.
+package org.lwjglb.engine.graph.particles;
+
+import org.joml.Vector3f;
+import org.lwjglb.engine.graph.Mesh;
+import org.lwjglb.engine.graph.Texture;
+import org.lwjglb.engine.items.GameItem;
+
+public class Particle extends GameItem {
+
+    private long updateTextureMills;
+    
+    private long currentAnimTimeMillis;
+ 
+The updateTextureMills attribute models the period of time (in milliseconds) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The currentAnimTimeMillis attribute just keeps track of the time that the particle has maintained a texture position.
+Thus, we need to modify the Particle class constructor to set  up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute animFrames.
+public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMills) {
+    super(mesh);
+    this.speed = new Vector3f(speed);
+    this.ttl = ttl;
+    this.updateTextureMills = updateTextureMills;
+    this.currentAnimTimeMillis = 0;
+    Texture texture = this.getMesh().getMaterial().getTexture();
+    this.animFrames = texture.getNumCols() * texture.getNumRows();
+}
+
+Now, we just need to modify the method that  checks if the particle has expired to check also if we need to update the texture position.
+public long updateTtl(long elapsedTime) {
+    this.ttl -= elapsedTime;
+    this.currentAnimTimeMillis += elapsedTime;
+    if ( this.currentAnimTimeMillis >= this.getUpdateTextureMills() && this.animFrames > 0 ) {
+        this.currentAnimTimeMillis = 0;
+        int pos = this.getTextPos();
+        pos++;
+        if ( pos < this.animFrames ) {
+            this.setTextPos(pos);
+        } else {
+            this.setTextPos(0);
+        }
+    }
+    return this.ttl;
+}
+
+Besides that we also have modified the FlowRangeEmitter class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
+Now we can use that information to set up appropriate texture coordinates. We will do this in the vertex fragment since it outputs those values to be used I the fragment shader. The new version of that shader is defined like this.
+#version 330
+
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoord;
+layout (location=2) in vec3 vertexNormal;
+
+out vec2 outTexCoord;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+uniform float texXOffset;
+uniform float texYOffset;
+uniform int numCols;
+uniform int numRows;
+
+void main()
+{
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    
+    // Support for texture atlas, update texture coordinates
+    float x = (texCoord.x / numCols + texXOffset);
+    float y = (texCoord.y / numRows + texYOffset);
+
+    outTexCoord = vec2(x, y);
+}
+
+As you can see we have now three new uniforms. The uniforms numCols and numRows just contain the number of columns and rows of the texture atlas. 
+In order to correct the texture coordinates, we first must scale down them. Each tile will have a width which is equal to 1 / numCols and a height which is equal to 1 / numRows as shown in the next figure. 
+ 
+Then we just need to apply and offset depending on the row and column, this is what is modelled by the texXOffset and texyOffset uniforms.
+We will calculate these offsets in the Renderer class as shown in the next fragment. We calculate the row and column that each particle is in according to its position and calculate the offset accordingly  as a multiple of tile’s width and height.
+mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
+    int col = gameItem.getTextPos() % text.getNumCols();
+    int row = gameItem.getTextPos() / text.getNumCols();
+    float textXOffset = (float) col / text.getNumCols();
+    float textYOffset = (float) row / text.getNumRows();
+    particlesShaderProgram.setUniform("texXOffset", textXOffset);
+    particlesShaderProgram.setUniform("texYOffset", textYOffset);
+
+Note that if you only need to support perfectly square texture atlas, you will only need two uniforms. The final result looks like this.
+ 
+
+Now we have animated particles working. In the next chapter we will learn how to optimize the rendering process. We are rendering multiple elements that have the same mesh and we are performing a drawing call for each of them. In the next chapter we will learn how to do it in a single call. That technique is useful for particles but also for rendering scenes where multiple elements share the same model but are placed in different locations or have different textures.
+
+
