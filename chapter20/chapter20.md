@@ -613,9 +613,12 @@ public class Particle extends GameItem {
     private long currentAnimTimeMillis;
 ```
  
-The updateTextureMillis attribute models the period of time (in milliseconds) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The currentAnimTimeMillis attribute just keeps track of the time that the particle has maintained a texture position.
-Thus, we need to modify the Particle class constructor to set  up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute animFrames.
-public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMills) {
+The ```updateTextureMillis``` attribute models the period of time (in milliseconds) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The ```currentAnimTimeMillis``` attribute just keeps track of the time that the particle has maintained a texture position.
+
+Thus, we need to modify the ```Particle``` class constructor to set  up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute ```animFrames```.
+
+```java
+public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
     super(mesh);
     this.speed = new Vector3f(speed);
     this.ttl = ttl;
@@ -624,12 +627,15 @@ public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMills) {
     Texture texture = this.getMesh().getMaterial().getTexture();
     this.animFrames = texture.getNumCols() * texture.getNumRows();
 }
+```
 
 Now, we just need to modify the method that  checks if the particle has expired to check also if we need to update the texture position.
+
+```java
 public long updateTtl(long elapsedTime) {
     this.ttl -= elapsedTime;
     this.currentAnimTimeMillis += elapsedTime;
-    if ( this.currentAnimTimeMillis >= this.getUpdateTextureMills() && this.animFrames > 0 ) {
+    if ( this.currentAnimTimeMillis >= this.getUpdateTextureMillis() && this.animFrames > 0 ) {
         this.currentAnimTimeMillis = 0;
         int pos = this.getTextPos();
         pos++;
@@ -641,9 +647,13 @@ public long updateTtl(long elapsedTime) {
     }
     return this.ttl;
 }
+```
 
-Besides that we also have modified the FlowRangeEmitter class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
-Now we can use that information to set up appropriate texture coordinates. We will do this in the vertex fragment since it outputs those values to be used I the fragment shader. The new version of that shader is defined like this.
+Besides that we also have modified the ```FlowRangeEmitter``` class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
+
+Now we can use that information to set up appropriate texture coordinates. We will do this in the vertex fragment since it outputs those values to be used in the fragment shader. The new version of that shader is defined like this.
+
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -670,12 +680,16 @@ void main()
 
     outTexCoord = vec2(x, y);
 }
+```
 
-As you can see we have now three new uniforms. The uniforms numCols and numRows just contain the number of columns and rows of the texture atlas. 
-In order to correct the texture coordinates, we first must scale down them. Each tile will have a width which is equal to 1 / numCols and a height which is equal to 1 / numRows as shown in the next figure. 
- 
-Then we just need to apply and offset depending on the row and column, this is what is modelled by the texXOffset and texyOffset uniforms.
-We will calculate these offsets in the Renderer class as shown in the next fragment. We calculate the row and column that each particle is in according to its position and calculate the offset accordingly  as a multiple of tile’s width and height.
+As you can see we have now three new uniforms. The uniforms ```numCols``` and ```numRows``` just contain the number of columns and rows of the texture atlas.  In order to correct the texture coordinates, we first must scale down them. Each tile will have a width which is equal to $$1 / numCols$$ and a height which is equal to $$1 / numRows$$ as shown in the next figure. 
+
+![Texture coordinates](texture_coordinates.png)
+Then we just need to apply and offset depending on the row and column, this is what is modelled by the ```texXOffset``` and ```texYOffset``` uniforms.
+
+We will calculate these offsets in the ```Renderer``` class as shown in the next fragment. We calculate the row and column that each particle is in according to its position and calculate the offset accordingly  as a multiple of tile’s width and height.
+
+```java
 mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
     int col = gameItem.getTextPos() % text.getNumCols();
     int row = gameItem.getTextPos() / text.getNumCols();
@@ -683,9 +697,11 @@ mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
     float textYOffset = (float) row / text.getNumRows();
     particlesShaderProgram.setUniform("texXOffset", textXOffset);
     particlesShaderProgram.setUniform("texYOffset", textYOffset);
+```
 
 Note that if you only need to support perfectly square texture atlas, you will only need two uniforms. The final result looks like this.
  
+![Animated particles](animated_particles.png)
 
 Now we have animated particles working. In the next chapter we will learn how to optimize the rendering process. We are rendering multiple elements that have the same mesh and we are performing a drawing call for each of them. In the next chapter we will learn how to do it in a single call. That technique is useful for particles but also for rendering scenes where multiple elements share the same model but are placed in different locations or have different textures.
 
