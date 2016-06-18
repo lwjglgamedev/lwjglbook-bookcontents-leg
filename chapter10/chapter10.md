@@ -220,7 +220,7 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
     diffuseColour = vec4(light.colour, 1.0) * light.intensity * diffuseFactor;
 
     // Specular Light
-    vec3 camera_direction = normalize(camera_pos - position);
+    vec3 camera_direction = normalize(-position);
     vec3 from_light_source = -to_light_source;
     vec3 reflected_light = normalize(reflect(from_light_source, normal));
     float specularFactor = max( dot(camera_direction, reflected_light), 0.0);
@@ -235,7 +235,26 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
 }
 ```
 
-The previous code is relatively straight forward, it just calculates a colour for the diffuse component, another one for the specular component and modulates them by the attenuation suffered by the light in its travel to the vertex we are processing. With that function, the main function of the vertex function is very simple.
+The previous code is relatively straight forward, it just calculates a colour for the diffuse component, another one for the specular component and modulates them by the attenuation suffered by the light in its travel to the vertex we are processing. 
+
+Please be aware that vertices coordinates are in view space. When calculating the specular component, we must get the directtion to the point of view, that is the camera. This, could be done like this:
+
+```glsl
+ vec3 camera_direction = normalize(camera_pos - position);
+```
+But, since ```position``` is in view space, the camera position is allways at the origin, that is, $$(0, 0, 0)$$, so we calculate it like this:
+
+```glsl
+ vec3 camera_direction = normalize(vec3(0, 0, 0) - position);
+```
+
+Which can be simplified like this:
+
+```glsl
+ vec3 camera_direction = normalize(-position);
+```
+
+With the previous function, the main function of the vertex function is very simple.
 
 ```glsl
 void main()
