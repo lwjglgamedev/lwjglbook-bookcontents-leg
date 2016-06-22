@@ -23,7 +23,7 @@ After that, we need to create a .obj file which contains a cube with the correct
 
 ![Sky Box cube faces](skybox_cube_faces.png) 
 
-Onca the resoures have been set up, we can start coding. We will start by creating a new class named ```SkyBox``` with a constructor that receives the  path to the OBJ model  that contains the sky box cube and the texture file. This class will inherit from ```GameItem``` as the HUD class from the previous chapter. Why it should inherit from ```GameItem``` ? First of all, for convenience,  we can reuse most of the code that deals with meshes and textures. Secondly, because, although the skybox will not move we will be interested in applying rotations and scaling to it. If you think about it a ```SkyBox``` is indeed a game item. The definition of the ```SkyBox``` class is as follows.
+Once the resoures have been set up, we can start coding. We will start by creating a new class named ```SkyBox``` with a constructor that receives the  path to the OBJ model  that contains the sky box cube and the texture file. This class will inherit from ```GameItem``` as the HUD class from the previous chapter. Why it should inherit from ```GameItem``` ? First of all, for convenience,  we can reuse most of the code that deals with meshes and textures. Secondly, because, although the skybox will not move we will be interested in applying rotations and scaling to it. If you think about it a ```SkyBox``` is indeed a game item. The definition of the ```SkyBox``` class is as follows.
 
 ```java
 package org.lwjglb.engine;
