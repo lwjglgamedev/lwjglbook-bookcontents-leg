@@ -211,7 +211,7 @@ But remember that we are inside the skybox, if we look at the cube form the inte
 
 This is because, the skybox was defined to be looked from the outside. So we need to flip the definition of some of the faces in order to be viewed correctly when face culling is enabled.
 
-But there’s still more room for optimization. Let’s review our rendering process. In the ```render``` method of the ```Renderer``` class what we are doing is iterate over a ```Gametem``` array and render the associated ```Mesh```. For each ```GameItem``` we do the following:
+But there’s still more room for optimization. Let’s review our rendering process. In the ```render``` method of the ```Renderer``` class what we are doing is iterate over a ```GameItem``` array and render the associated ```Mesh```. For each ```GameItem``` we do the following:
 
 1.	Set up the model view matrix (unique per ```GameItem```).
 2.	Get the ```Mesh``` associated to the ```GameItem``` and activate the texture, bind the VAO and enable its attributes.
@@ -261,7 +261,7 @@ public void setGameItems(GameItem[] gameItems) {
 }
 ```
 
-The ```Mesh``` class now has a method to render a list of the associated GamItems and we have split the activating and deactivating code into separate methods.
+The ```Mesh``` class now has a method to render a list of the associated GameItems and we have split the activating and deactivating code into separate methods.
 
 ```java
 private void initRender() {
