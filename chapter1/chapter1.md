@@ -18,26 +18,7 @@ Maven builds projects based on an XML file named ```pom.xml``` (Project Object M
 
 This book does not intend to be a maven tutorial, so please find the information about it in the web in case you need it.  The source code folder defines a parent project which defines the plugins to be used and collects the versions of the libraries employed. 
 
-We use a special plugin named ```mavennatives``` which unpacks the native libraries provided by LWJGL for your platform.
-
-```xml
-            <plugin>
-                <groupId>com.googlecode.mavennatives</groupId>
-                <artifactId>maven-nativedependencies-plugin</artifactId>
-                <version>${natives.version}</version>
-                <executions>
-                    <execution>
-                        <id>unpacknatives</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-```
-
-Those libraries are placed under ```target/natives``` directory. We have also set up three profiles to set a property for the which will be used in the native dependencies declaration of each project. The profiles will set up the correct values for Windows, Linux and Mac OS families.
+LWJGL platform dependency already takes care of unpacking native libraries for your platform, so there's no need to use other plugings (such as ```mavennatives```). We just need to set up three profiles to set a property that will configure LWJGL platform. The profiles will set up the correct values of that property for Windows, Linux and Mac OS families.
 
 ```xml
 	<profiles>
@@ -98,7 +79,7 @@ When you execute the samples from Netbeans you need to specify the directory whe
 
 Chapter 1 source code is taken directly from the getting started sample in the LWJGL site ([http://www.lwjgl.org/guide](http://www.lwjgl.org/guide)). You will see that we are not using Swing or JavaFX as our GUI library. Instead of that we are using [GLFW](www.glfw.org) which is a library to handle GUI components (Windows, etc.) and events (key presses, mouse movements, etc.) with an Open GL Context attached in a straight forward way. Previous versions of LWJGL provided a custom GUI API but, for LWJGL 3, GLFW is the preferred windowing API.
 
-The samples source code is very well documented and straight forward so we won’t repeat the comments here. **NOTE**: If you have been using alpha LWJGL 3 versions, you must be aware that some parts of the API have changed. 
+The samples source code is very well documented and straight forward so we won’t repeat the comments here. 
 
 If you have your environment correctly set up you should be execute it and see a window with red background.
 
