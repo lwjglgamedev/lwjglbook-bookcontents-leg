@@ -107,7 +107,7 @@ public void createFogUniform(String uniformName) throws Exception {
 }
 
 public void setUniform(String uniformName, Fog fog) {
-    setUniform(uniformName + ".active", fog.isActive() ? 1 : 0);
+    setUniform(uniformName + ".activeFog", fog.isActive() ? 1 : 0);
     setUniform(uniformName + ".colour", fog.getColour() );
     setUniform(uniformName + ".density", fog.getDensity());
 }
@@ -146,7 +146,7 @@ $$resultColour = (1 - fogFactor) \cdot fog.colour + fogFactor \cdot colour$$
 At the end of the fragment shader after applying all the light effects we just simply assign the returned value to the fragment colour if the fog is active.
 
 ```glsl
-if ( fog.active == 1 ) 
+if ( fog.activeFog == 1 ) 
 {
     fragColor = calcFog(mvVertexPos, fragColor, fog);
 }
