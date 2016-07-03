@@ -518,9 +518,7 @@ And that's all, we just need to change this in the ```renderParticlesMethod``` l
             mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
                 Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
 
-                viewMatrix.get3x3(aux);
-                aux.transpose(aux);
-                modelMatrix.set3x3(aux);
+                viewMatrix.transpose3x3(modelMatrix);
 
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
                 particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
