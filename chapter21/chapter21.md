@@ -10,13 +10,11 @@ When dealing with lots of similar objects it would be more efficient to render a
 
 This is a sample of how the glDrawElements is used.
 
-`glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0); `
+`glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);`
 
 And this is how the instanced version can be used:
 
 `glDrawElementsInstanced(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0, numInstances);`
-
-
 
 But you may be wondering now how can you set the different transformations for each of those instances. Now, before we draw each instance we pass the different transformations and instance related data using uniforms. Before a render call is made we need to setup the specific data for each data. How can we do this when rendering all of them at once ?
 
@@ -25,4 +23,10 @@ When using instanced rendering, in the vertex shader we can use an input variabl
 The problem with this approach is that it’s still imposes too much overhead. Besides that, the number of uniforms that we can pass is limited. Instead of using lists of uniforms we will use instanced arrays.
 
 If you recall from the first chapters, the data for each Mesh is defined by a set of arrays of data named VBOs. The data store in those VBOs is unique per Mesh instance.
+
+
+
+\*\*\*\*\*\*\* IMAGE VBOs \*\*\*\*\*\*\*\*
+
+With standard VBOs, inside a shader, we can access the data ssociated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
 
