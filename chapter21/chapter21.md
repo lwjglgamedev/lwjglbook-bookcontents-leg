@@ -10,16 +10,16 @@ When dealing with lots of similar objects it would be more efficient to render a
 
 This is a sample of how the glDrawElements is used.
 
-``java
+```java
 glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0)
-``
+```
 
 And this is how the instanced version can be used:
 
 
-``java 
+```java
 glDrawElementsInstanced(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0, numInstances);
-``
+```
 
 But you may be wondering now how can you set the different transformations for each of those instances. Now, before we draw each instance we pass the different transformations and instance related data using uniforms. Before a render call is made we need to setup the specific data for each data. How can we do this when rendering all of them at once ?
 
@@ -45,15 +45,15 @@ In order to define per instance data we need to call the function glVertexAttrib
 So, in order to set data for a instance we need to perform this call after every attribute definition:
 
 
-``
-java glVertexAttribPointer(index, 1);
-``
+```java
+glVertexAttribPointer(index, 1);
+```
 
 Let’s start changing our code base to support instanced rendering. The first step is to create a new class named InstancedMesh that inherits from the Mesh class. The constructor of this class will be similar to the similar to the Mesh one but with an extra parameter, the number of instances.
 
 In the constructor, besides relaying in super’s constructor, we will create two new VBOs, one for the model view matrix and other for the light view matrix. The code for creating the model view matrix is presented below.
 
-``java
+```java
 modelViewVBO = glGenBuffers();
 vboIdList.add(modelViewVBO);
 this.modelViewBuffer = BufferUtils.createFloatBuffer(numInstances * MATRIX_SIZE_FLOATS);
@@ -64,7 +64,7 @@ for (int i = 0; i < 4; i++) {
  glVertexAttribDivisor(start, 1);
  start++;
 }
-``
+```
 
 The first thing that we do is create a new VBO and create a new FloatBuffer to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multipled by the size in floats of a 4x4 matrix, which is equal to 16.
 
@@ -87,7 +87,7 @@ After defining the vertex attribute, we need to call the glVertexAttribDivisor u
 
 The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the InstancedMesh class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
 
-``java
+```java
 @Override
 protected void initRender() {
  super.initRender();
@@ -106,11 +106,11 @@ protected void endRender() {
  }
  super.endRender();
 }
-``
+```
 
 The InstancedMesh class defines a public method, named renderListInstanced, that renders a list of game items, this method slpits the list of game items into chunks of size equal to the number of instances used to create the InstancedMesh. The real rendering method is called renderChunkInstanced and is defined like this.
 
-``java
+```java
 private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
  this.modelViewBuffer.clear();
  this.modelLightViewBuffer.clear();
@@ -132,7 +132,7 @@ private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Tr
  glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, gameItems.size());
  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-``
+```
 
 The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. Thise matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the glDrawElementsInstanced method.
 
