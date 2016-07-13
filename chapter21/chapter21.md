@@ -1,5 +1,3 @@
-
-
 # Instanced Rendering
 
 ## Lots of Instances
@@ -12,11 +10,16 @@ When dealing with lots of similar objects it would be more efficient to render a
 
 This is a sample of how the glDrawElements is used.
 
-`glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);`
+``java
+glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0)
+``
 
 And this is how the instanced version can be used:
 
-`glDrawElementsInstanced(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0, numInstances);`
+
+``java 
+glDrawElementsInstanced(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0, numInstances);
+``
 
 But you may be wondering now how can you set the different transformations for each of those instances. Now, before we draw each instance we pass the different transformations and instance related data using uniforms. Before a render call is made we need to setup the specific data for each data. How can we do this when rendering all of them at once ?
 
