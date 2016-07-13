@@ -44,18 +44,27 @@ In order to define per instance data we need to call the function glVertexAttrib
 
 So, in order to set data for a instance we need to perform this call after every attribute definition:
 
-`glVertexAttribPointer(index, 1); `
+
+``
+java glVertexAttribPointer(index, 1);
+``
 
 Let’s start changing our code base to support instanced rendering. The first step is to create a new class named InstancedMesh that inherits from the Mesh class. The constructor of this class will be similar to the similar to the Mesh one but with an extra parameter, the number of instances.
 
 In the constructor, besides relaying in super’s constructor, we will create two new VBOs, one for the model view matrix and other for the light view matrix. The code for creating the model view matrix is presented below.
 
-| modelViewVBO = glGenBuffers\(\); vboIdList.add\(modelViewVBO\); this.modelViewBuffer = BufferUtils.createFloatBuffer\(numInstances \* MATRIX\_SIZE\_FLOATS\); glBindBuffer\(GL\_ARRAY\_BUFFER, modelViewVBO\); int start = 5; for \(int i = 0; i &lt; 4; i++\) { glVertexAttribPointer\(start, 4, GL\_FLOAT, false, MATRIX\_SIZE\_BYTES, i \* VECTOR4F\_SIZE\_BYTES\); glVertexAttribDivisor\(start, 1\); start++; } |
-| :--- |
-
-
-
- modelViewVBO = glGenBuffers\(\); vboIdList.add\(modelViewVBO\); this.modelViewBuffer = BufferUtils.createFloatBuffer\(numInstances \* MATRIX\_SIZE\_FLOATS\); glBindBuffer\(GL\_ARRAY\_BUFFER, modelViewVBO\); int start = 5; for \(int i = 0; i &lt; 4; i++\) { glVertexAttribPointer\(start, 4, GL\_FLOAT, false, MATRIX\_SIZE\_BYTES, i \* VECTOR4F\_SIZE\_BYTES\); glVertexAttribDivisor\(start, 1\); start++; } 
+``java
+modelViewVBO = glGenBuffers();
+vboIdList.add(modelViewVBO);
+this.modelViewBuffer = BufferUtils.createFloatBuffer(numInstances * MATRIX_SIZE_FLOATS);
+glBindBuffer(GL_ARRAY_BUFFER, modelViewVBO);
+int start = 5;
+for (int i = 0; i < 4; i++) {
+ glVertexAttribPointer(start, 4, GL_FLOAT, false, MATRIX_SIZE_BYTES, i * VECTOR4F_SIZE_BYTES);
+ glVertexAttribDivisor(start, 1);
+ start++;
+}
+``
 
 The first thing that we do is create a new VBO and create a new FloatBuffer to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multipled by the size in floats of a 4x4 matrix, which is equal to 16.
 
@@ -78,19 +87,53 @@ After defining the vertex attribute, we need to call the glVertexAttribDivisor u
 
 The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the InstancedMesh class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
 
-| @Override protected void initRender\(\) { super.initRender\(\); int start = 5; int numElements = 4 \* 2; for \(int i = 0; i &lt; numElements; i++\) { glEnableVertexAttribArray\(start + i\); } } @Override protected void endRender\(\) { int start = 5; int numElements = 4 \* 2; for \(int i = 0; i &lt; numElements; i++\) { glDisableVertexAttribArray\(start + i\); } super.endRender\(\); } |
-| :--- |
-
-
+``java
+@Override
+protected void initRender() {
+ super.initRender();
+ int start = 5;
+ int numElements = 4 * 2;
+ for (int i = 0; i < numElements; i++) {
+ glEnableVertexAttribArray(start + i);
+ }
+}
+@Override
+protected void endRender() {
+ int start = 5;
+ int numElements = 4 * 2;
+ for (int i = 0; i < numElements; i++) {
+ glDisableVertexAttribArray(start + i);
+ }
+ super.endRender();
+}
+``
 
 The InstancedMesh class defines a public method, named renderListInstanced, that renders a list of game items, this method slpits the list of game items into chunks of size equal to the number of instances used to create the InstancedMesh. The real rendering method is called renderChunkInstanced and is defined like this.
 
-| private void renderChunkInstanced\(List&lt;GameItem&gt; gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix\) { this.modelViewBuffer.clear\(\); this.modelLightViewBuffer.clear\(\); int i = 0; for \(GameItem gameItem : gameItems\) { Matrix4f modelMatrix = transformation.buildModelMatrix\(gameItem\); if \(!depthMap\) { Matrix4f modelViewMatrix = transformation.buildModelViewMatrix\(modelMatrix, viewMatrix\); modelViewMatrix.get\(MATRIX\_SIZE\_FLOATS \* i, modelViewBuffer\); } Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix\(modelMatrix, lightViewMatrix\); modelLightViewMatrix.get\(MATRIX\_SIZE\_FLOATS \* i, this.modelLightViewBuffer\); i++; } glBindBuffer\(GL\_ARRAY\_BUFFER, modelViewVBO\); glBufferData\(GL\_ARRAY\_BUFFER, modelViewBuffer, GL\_DYNAMIC\_DRAW\); glBindBuffer\(GL\_ARRAY\_BUFFER, modelLightViewVBO\); glBufferData\(GL\_ARRAY\_BUFFER, modelLightViewBuffer, GL\_DYNAMIC\_DRAW\); glDrawElementsInstanced\(GL\_TRIANGLES, getVertexCount\(\), GL\_UNSIGNED\_INT, 0, gameItems.size\(\)\); glBindBuffer\(GL\_ARRAY\_BUFFER, 0\); } |
-| :--- |
-
-
+``java
+private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
+ this.modelViewBuffer.clear();
+ this.modelLightViewBuffer.clear();
+ int i = 0;
+ for (GameItem gameItem : gameItems) {
+ Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+ if (!depthMap) {
+ Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+ modelViewMatrix.get(MATRIX_SIZE_FLOATS * i, modelViewBuffer);
+ }
+ Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
+ modelLightViewMatrix.get(MATRIX_SIZE_FLOATS * i, this.modelLightViewBuffer);
+ i++;
+ }
+ glBindBuffer(GL_ARRAY_BUFFER, modelViewVBO);
+ glBufferData(GL_ARRAY_BUFFER, modelViewBuffer, GL_DYNAMIC_DRAW);
+ glBindBuffer(GL_ARRAY_BUFFER, modelLightViewVBO);
+ glBufferData(GL_ARRAY_BUFFER, modelLightViewBuffer, GL_DYNAMIC_DRAW);
+ glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, gameItems.size());
+ glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+``
 
 The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. Thise matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the glDrawElementsInstanced method.
 
-
-
+**CHAPTER IN PROGRESS**
