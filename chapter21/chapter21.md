@@ -6,7 +6,7 @@ When drawing a 3D scene is frequent to have many models represented by the same 
 
 We are basically iterating through a loop and performing a call to the function glDrawElements. As it has been said in previous chapters, calls to OpenGL library should be minimized. Each call to the glDrawElements function imposes an overhead that is reperetad again and again for each GameItem instance.
 
-When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technicque is called instanced rendering which allows us to do that, OpenGL provides functions named dlDrawXXXInstanced to render a set of elements at once. They can be arrays or elements. In our case, since we are drawing elements we will use the function named glDrawElementsInstanced. This function receives the same arguments as the glDrawElements plus one additional parameter which sets the number of instances to be drawn.
+When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technicque is called instanced rendering which allows us to do that, OpenGL provides functions named ```glDrawXXXInstanced``` to render a set of elements at once. They can be arrays or elements. In our case, since we are drawing elements we will use the function named glDrawElementsInstanced. This function receives the same arguments as the glDrawElements plus one additional parameter which sets the number of instances to be drawn.
 
 This is a sample of how the glDrawElements is used.
 
@@ -35,7 +35,7 @@ With standard VBOs, inside a shader, we can access the data ssociated to each ve
 
 \*\*\*\*\*\*\* IMAGE INSTANCED ARRAYS \*\*\*\*\*
 
-In order to define per instance data we need to call the function glVertexAttribDivisor after defining vertex attributes. This function receives two parameters:
+In order to define per instance data we need to call the function ```glVertexAttribDivisor``` after defining vertex attributes. This function receives two parameters:
 
 * index: The index of the vertex attribute \(as issued in the glVertexAttribPointer function\).
 
@@ -49,7 +49,7 @@ So, in order to set data for a instance we need to perform this call after every
 glVertexAttribPointer(index, 1);
 ```
 
-Let’s start changing our code base to support instanced rendering. The first step is to create a new class named InstancedMesh that inherits from the Mesh class. The constructor of this class will be similar to the similar to the Mesh one but with an extra parameter, the number of instances.
+Let’s start changing our code base to support instanced rendering. The first step is to create a new class named ```InstancedMesh``` that inherits from the ```Mesh``` class. The constructor of this class will be similar to the similar to the Mesh one but with an extra parameter, the number of instances.
 
 In the constructor, besides relaying in super’s constructor, we will create two new VBOs, one for the model view matrix and other for the light view matrix. The code for creating the model view matrix is presented below.
 
@@ -66,9 +66,9 @@ for (int i = 0; i < 4; i++) {
 }
 ```
 
-The first thing that we do is create a new VBO and create a new FloatBuffer to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multipled by the size in floats of a 4x4 matrix, which is equal to 16.
+The first thing that we do is create a new VBO and create a new ```FloatBuffer``` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multipled by the size in floats of a 4x4 matrix, which is equal to 16.
 
-Once the VBO has been bind. We start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix ? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition. Let’s refresh the parameters of the glVertexAttribPointer:
+Once the VBO has been bind. We start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix ? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition. Let’s refresh the parameters of the ```glVertexAttribPointer```:
 
 * Index: The index of the element to be defined.
 
@@ -85,7 +85,7 @@ Once the VBO has been bind. We start defining the attributes for it. You can see
 
 After defining the vertex attribute, we need to call the glVertexAttribDivisor using the same index.
 
-The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the InstancedMesh class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
+The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the ```InstancedMesh``` class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
 
 ```java
 @Override
@@ -108,7 +108,7 @@ protected void endRender() {
 }
 ```
 
-The InstancedMesh class defines a public method, named renderListInstanced, that renders a list of game items, this method slpits the list of game items into chunks of size equal to the number of instances used to create the InstancedMesh. The real rendering method is called renderChunkInstanced and is defined like this.
+The InstancedMesh class defines a public method, named ```renderListInstanced```, that renders a list of game items, this method slpits the list of game items into chunks of size equal to the number of instances used to create the ```InstancedMesh```. The real rendering method is called ```renderChunkInstanced``` and is defined like this.
 
 ```java
 private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
@@ -134,6 +134,6 @@ private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Tr
 }
 ```
 
-The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. Thise matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the glDrawElementsInstanced method.
+The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. Thise matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the ```glDrawElementsInstanced``` method.
 
 **CHAPTER IN PROGRESS**
