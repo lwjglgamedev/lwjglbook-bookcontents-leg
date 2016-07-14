@@ -146,4 +146,32 @@ layout (location=9) in mat4 modelLightViewInstancedMatrix;
 
 As you can see, the model view matrix starts at location 5. Since a matrix is defined by a set of four attributes (each one containing a vector), the light view matrix starts at location 9. Since we want to use a single shader for both non instanced and instanced rendering, we will maintain the uniforms for model and light view matrices. We only need to change their names. 
 
+
+```glsl
+uniform int isInstanced;
+uniform mat4 modelViewNonInstancedMatrix;
+…
+uniform mat4 modelLightViewNonInstancedMatrix;
+``` 
+
+
+We have created another uniform to specedify if we are using instanced rendering or not. In the case we are using instanced rendering the code is very simple, we just use the matrices from the input parameters.
+
+```glsl
+void main()
+{
+ vec4 initPos = vec4(0, 0, 0, 0);
+ vec4 initNormal = vec4(0, 0, 0, 0);
+ mat4 modelViewMatrix;
+ mat4 lightViewMatrix;
+ if ( isInstanced > 0 )
+ {
+ modelViewMatrix = modelViewInstancedMatrix;
+ lightViewMatrix = modelLightViewInstancedMatrix;
+ initPos = vec4(position, 1.0);
+ initNormal = vec4(vertexNormal, 0.0);
+ }
+```
+
+
 **CHAPTER IN PROGRESS**
