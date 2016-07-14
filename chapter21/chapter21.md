@@ -134,6 +134,16 @@ private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Tr
 }
 ```
 
-The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. Thise matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the ```glDrawElementsInstanced``` method.
+The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. These matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the ```glDrawElementsInstanced``` method.
+
+
+Going back to the shaders, we need to modify the vertex shader to support instanced rendering. We will firs add new input parameters for the model and view matrices that will be passed when using instanced rendering. 
+
+```glsl
+layout (location=5) in mat4 modelViewInstancedMatrix;
+layout (location=9) in mat4 modelLightViewInstancedMatrix;
+```
+
+As you can see, the model view matrix starts at location 5. Since a matrix is defined by a set of four attributes (each one containing a vector), the light view matrix starts at location 9. Since we want to use a single shader for both non instanced and instanced rendering, we will maintain the uniforms for model and light view matrices. We only need to change their names. 
 
 **CHAPTER IN PROGRESS**
