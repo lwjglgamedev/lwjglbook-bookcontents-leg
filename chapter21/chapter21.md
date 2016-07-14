@@ -33,6 +33,11 @@ If you recall from the first chapters, the data for each Mesh is defined by a se
 
 With standard VBOs, inside a shader, we can access the data ssociated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
 
+
+The next figure shows a Mesh composed by three per vetex VBOs definig the positions, texures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the position inside a instance.
+
+The Mesh is also defined by two per instance VBOs. One for the model view matrix and the other one for the light view matrix. When rendering the vertices for the firs instance (the 1X, ones), the model view and light view matrices will be the same (the 1). When vertices of the second instance are to be rendered the second model view and light view matrices will be used.
+ 
 ![VBOs with instance attributes](vao_2.png)
 
 In order to define per instance data we need to call the function ```glVertexAttribDivisor``` after defining vertex attributes. This function receives two parameters:
