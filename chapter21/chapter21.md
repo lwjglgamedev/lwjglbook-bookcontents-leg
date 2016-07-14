@@ -29,11 +29,12 @@ The problem with this approach is that it’s still imposes too much overhead. B
 
 If you recall from the first chapters, the data for each Mesh is defined by a set of arrays of data named VBOs. The data store in those VBOs is unique per Mesh instance.
 
-\*\*\*\*\*\*\* IMAGE VBOs \*\*\*\*\*\*\*\*
+
+![VBOs](vao_1.png)
 
 With standard VBOs, inside a shader, we can access the data ssociated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
 
-\*\*\*\*\*\*\* IMAGE INSTANCED ARRAYS \*\*\*\*\*
+ ![VBOs with instance attributes](vao_2.png) 
 
 In order to define per instance data we need to call the function ```glVertexAttribDivisor``` after defining vertex attributes. This function receives two parameters:
 
