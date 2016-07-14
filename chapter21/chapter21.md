@@ -173,5 +173,26 @@ void main()
  }
 ```
 
+We don’t support animations for instanced rendering to simplify the example, but this technique can be perfectly used for this. 
+Finally, the shader just set up appropriate values as usual.
+
+```glsl
+ vec4 mvPos = modelViewMatrix * initPos;
+ gl_Position = projectionMatrix * mvPos;
+ outTexCoord = texCoord;
+ mvVertexNormal = normalize(modelViewMatrix * initNormal).xyz;
+ mvVertexPos = mvPos.xyz;
+ mlightviewVertexPos = orthoProjectionMatrix * lightViewMatrix * initPos;
+ outModelViewMatrix = modelViewMatrix;
+}
+```
+
+Of course, the Renderer has been modified to support the uniforms changes and to separate the rendering of non instanced meshes from the instanced one. You can check the changes in the source code. 
+
+In addition to that some optimizations have been added to the source code by the JOML author [Kai Burjack](https://github.com/httpdigest). These optimizations have been applied to the Transformation class and is summarized in the following list:
+* Removed redundant calls to set up matrices with identity values.
+* Use quaternions for rotations which are more efficient.
+* Use specific methods for rotating and translating matrices which are optimized for those operations.
+
 
 **CHAPTER IN PROGRESS**
