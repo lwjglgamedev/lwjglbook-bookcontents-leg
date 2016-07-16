@@ -4,9 +4,9 @@
 
 When drawing a 3D scene is frequent to have many models represented by the same mesh but with different transformations. In this case, even they may be simple objects with just a few triangles, performance can suffer. The cause behind this is the way we are rendering them.
 
-We are basically iterating through a loop and performing a call to the function glDrawElements. As it has been said in previous chapters, calls to OpenGL library should be minimized. Each call to the glDrawElements function imposes an overhead that is reperetad again and again for each GameItem instance.
+We are basically iterating through a loop and performing a call to the function ```glDrawElements```. As it has been said in previous chapters, calls to OpenGL library should be minimized. Each call to the ```glDrawElements``` function imposes an overhead that is repeated again and again for each GameItem instance.
 
-When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technicque is called instanced rendering which allows us to do that, OpenGL provides functions named ```glDrawXXXInstanced``` to render a set of elements at once. They can be arrays or elements. In our case, since we are drawing elements we will use the function named glDrawElementsInstanced. This function receives the same arguments as the glDrawElements plus one additional parameter which sets the number of instances to be drawn.
+When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technique is called instanced rendering which allows us to do that, OpenGL provides functions named ```glDrawXXXInstanced``` to render a set of elements at once. They can be arrays or elements. In our case, since we are drawing elements we will use the function named ```glDrawElementsInstanced```. This function receives the same arguments as the ```glDrawElements``` plus one additional parameter which sets the number of instances to be drawn.
 
 This is a sample of how the glDrawElements is used.
 
@@ -31,10 +31,10 @@ If you recall from the first chapters, the data for each Mesh is defined by a se
 ![VBOs](vao_1.png)
 
 
-With standard VBOs, inside a shader, we can access the data ssociated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
+With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
 
 
-The next figure shows a Mesh composed by three per vetex VBOs definig the positions, texures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the position inside a instance.
+The next figure shows a Mesh composed by three per vertex VBOs definig the positions, textures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the position inside a instance.
 
 The Mesh is also defined by two per instance VBOs. One for the model view matrix and the other one for the light view matrix. When rendering the vertices for the firs instance (the 1X, ones), the model view and light view matrices will be the same (the 1). When vertices of the second instance are to be rendered the second model view and light view matrices will be used.
  
@@ -71,7 +71,7 @@ for (int i = 0; i < 4; i++) {
 }
 ```
 
-The first thing that we do is create a new VBO and create a new ```FloatBuffer``` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multipled by the size in floats of a 4x4 matrix, which is equal to 16.
+The first thing that we do is create a new VBO and create a new ```FloatBuffer``` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multiplied by the size in floats of a 4x4 matrix, which is equal to 16.
 
 Once the VBO has been bind. We start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix ? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition. Let’s refresh the parameters of the ```glVertexAttribPointer```:
 
@@ -83,12 +83,12 @@ Once the VBO has been bind. We start defining the attributes for it. You can see
 
 * Normalize: If fixed-point data should be normalized or not.
 
-* Stride: This is important to understand here, this sets the byte offsets between consecutive attributes. In this case, we need to set it to the aholw size of a amatrix in bytes. This acts like a mark that packs the data so it can be changed between vertex or instances.
+* Stride: This is important to understand here, this sets the byte offsets between consecutive attributes. In this case, we need to set it to the whole size of a matrix in bytes. This acts like a mark that packs the data so it can be changed between vertex or instances.
 
 * Pointer: The offset that this attribute definition applies to. In our case, we need to split the matrix definition into four calls. Each vector of the matrix increments the offset.
 
 
-After defining the vertex attribute, we need to call the glVertexAttribDivisor using the same index.
+After defining the vertex attribute, we need to call the ```glVertexAttribDivisor``` using the same index.
 
 The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the ```InstancedMesh``` class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
 
@@ -114,7 +114,7 @@ protected void endRender() {
 }
 ```
 
-The InstancedMesh class defines a public method, named ```renderListInstanced```, that renders a list of game items, this method slpits the list of game items into chunks of size equal to the number of instances used to create the ```InstancedMesh```. The real rendering method is called ```renderChunkInstanced``` and is defined like this.
+The ```InstancedMesh``` class defines a public method, named ```renderListInstanced```, that renders a list of game items, this method splits the list of game items into chunks of size equal to the number of instances used to create the ```InstancedMesh```. The real rendering method is called ```renderChunkInstanced``` and is defined like this.
 
 ```java
 private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
@@ -161,7 +161,7 @@ uniform mat4 modelLightViewNonInstancedMatrix;
 ``` 
 
 
-We have created another uniform to specedify if we are using instanced rendering or not. In the case we are using instanced rendering the code is very simple, we just use the matrices from the input parameters.
+We have created another uniform to specify if we are using instanced rendering or not. In the case we are using instanced rendering the code is very simple, we just use the matrices from the input parameters.
 
 ```glsl
 void main()
@@ -193,7 +193,7 @@ Finally, the shader just set up appropriate values as usual.
 }
 ```
 
-Of course, the Renderer has been modified to support the uniforms changes and to separate the rendering of non instanced meshes from the instanced one. You can check the changes in the source code. 
+Of course, the ```Renderer``` has been modified to support the uniforms changes and to separate the rendering of non instanced meshes from the instanced one. You can check the changes in the source code. 
 
 In addition to that some optimizations have been added to the source code by the JOML author [Kai Burjack](https://github.com/httpdigest). These optimizations have been applied to the Transformation class and is summarized in the following list:
 * Removed redundant calls to set up matrices with identity values.
@@ -202,9 +202,9 @@ In addition to that some optimizations have been added to the source code by the
 
 ## Particles revisited
 
-With the support of instanced renderding we can also improve the performance for the particles rendering. Particles are the best use case for this.
+With the support of instanced rendering we can also improve the performance for the particles rendering. Particles are the best use case for this.
 
-In order to support particles we must prvide support for texture atlas. This can be achived by adding a new VBO with texture offsets for instanced rendering. The texture offsets can be modeled by a single vector of tow floats, so there's no need in spliting the definition as in the matrices case.
+In order to support particles we must provide support for texture atlas. This can be achieved by adding a new VBO with texture offsets for instanced rendering. The texture offsets can be modeled by a single vector of tow floats, so there's no need to split the definition as in the matrices case.
 
 ```java
 // Texture offsets
@@ -213,15 +213,15 @@ glVertexAttribDivisor(start, 1);
 ``` 
 But, instead of adding a new VBO we will set all the instance attributes inside a single VBO. The next figure shows the concept. We are packing up all the attributes inside a single VBO. The values will change per each instance.
 
-*** IMAGE ***
+![Single VBO](single_vbo.png)
 
-The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definiftion of the texture ofsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the otehr one for the light view model), and two floats, which is equal to 136. The strid also needs to be modified properly.
+The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definition of the texture offsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the other one for the light view model), and two floats, which is equal to 136. The stride also needs to be modified properly.
 
 You can check the modifications in the source code.
 
-The Renderer class needs also to be modified to use instanced rendering for particles and support texture atlas in scene rendering. In this case, there's no sense in support both types of renderning (non instance and instanced), so the modifications are simpler.
+The ```Renderer``` class needs also to be modified to use instanced rendering for particles and support texture atlas in scene rendering. In this case, there's no sense in support both types of rendering (non instance and instanced), so the modifications are simpler.
 
-The vertex shader for particles is also straight foward.
+The vertex shader for particles is also straight froward.
 
 ```glsl
 #version 330
@@ -244,10 +244,12 @@ void main()
     outTexCoord = vec2(x, y);}
 ```
 
-The results of this changes, look exactly the same when renderinig particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
+The results of this changes, look exactly the same when rendering particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
 
 ## Extra bonus
 
-With all the infrastucture that we have right now, I've modified the rendrning cubes code to use a height map as a base, suing also texture atlas to use different textures. It also combines particles rendering. It looks like this.
+With all the infrastructure that we have right now, I've modified the rendering cubes code to use a height map as a base, suing also texture atlas to use different textures. It also combines particles rendering. It looks like this.
 
+![Cubes with height map](cubes_height_map.png)
 
+Please keep in mind that there's still much room for optimization, but the aim of the book is guiding you in learning LWJGL and OpenGL concepts and techniques. The goal is not to create a full blown game engine.
