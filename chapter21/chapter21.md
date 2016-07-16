@@ -215,7 +215,8 @@ But, instead of adding a new VBO we will set all the instance attributes inside 
 
 *** IMAGE ***
 
-The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definiftion of the texture ofsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the otehr one for the light view model), and two floats, which is equal to 136.
- 
+The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definiftion of the texture ofsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the otehr one for the light view model), and two floats, which is equal to 136. The strid also needs to be modified properly.
+
+You can check the modifications in the source code.
 
 **CHAPTER IN PROGRESS**
