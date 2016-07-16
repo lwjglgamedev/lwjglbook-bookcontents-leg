@@ -204,10 +204,18 @@ In addition to that some optimizations have been added to the source code by the
 
 With the support of instanced renderding we can also improve the performance for the particles rendering. Particles are the best use case for this.
 
-In order to support particles we must prvide support for texture atlas. This can be achived by adding a new VBO with textre offsets for instanced rendering. But, instead of adding a new VBO we will set all the instance attributes inside a single VBO. The next figure shows the concept. We are packing up all the attributes inside a single VBO. The values will change per each instance.
+In order to support particles we must prvide support for texture atlas. This can be achived by adding a new VBO with texture offsets for instanced rendering. The texture offsets can be modeled by a single vector of tow floats, so there's no need in spliting the definition as in the matrices case.
+
+```java
+// Texture offsets
+glVertexAttribPointer(start, 2, GL_FLOAT, false, INSTANCE_SIZE_BYTES, strideStart);
+glVertexAttribDivisor(start, 1);
+``` 
+But, instead of adding a new VBO we will set all the instance attributes inside a single VBO. The next figure shows the concept. We are packing up all the attributes inside a single VBO. The values will change per each instance.
 
 *** IMAGE ***
 
+The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definiftion of the texture ofsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the otehr one for the light view model), and two floats, which is equal to 136.
  
 
 **CHAPTER IN PROGRESS**
