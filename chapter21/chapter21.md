@@ -219,4 +219,6 @@ The required changes to use a single VBO is to modify the attribute size for all
 
 You can check the modifications in the source code.
 
+The Renderer class needs also to be modified to use instanced rendering for particles. In this case, there's no sense in support both types of renderning (non instance and instanced), so the modifications are simpler.
+
 **CHAPTER IN PROGRESS**
