@@ -200,5 +200,14 @@ In addition to that some optimizations have been added to the source code by the
 * Use quaternions for rotations which are more efficient.
 * Use specific methods for rotating and translating matrices which are optimized for those operations.
 
+ ## Particles revisited
+
+With the support of instanced renderding we can also improve the performance for the particles rendering. Particles are the best use case for this.
+
+In order to support particles we must prvide support for texture atlas. This can be achived by adding a new VBO with textre offsets for instanced rendering. But, instead of adding a new VBO we will set all the instance attributes inside a single VBO. The next figure shows the concept. We are packing up all the attributes inside a single VBO. The values will change per each instance.
+
+*** IMAGE ***
+
+ 
 
 **CHAPTER IN PROGRESS**
