@@ -219,6 +219,31 @@ The required changes to use a single VBO is to modify the attribute size for all
 
 You can check the modifications in the source code.
 
-The Renderer class needs also to be modified to use instanced rendering for particles. In this case, there's no sense in support both types of renderning (non instance and instanced), so the modifications are simpler.
+The Renderer class needs also to be modified to use instanced rendering for particles and support texture atlas in scene rendering. In this case, there's no sense in support both types of renderning (non instance and instanced), so the modifications are simpler.
+
+The vertex shader for particles is also straight foward.
+
+```glsl
+#version 330
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoord;
+layout (location=2) in vec3 vertexNormal;
+layout (location=5) in mat4 modelViewMatrix;
+layout (location=13) in vec2 texOffset;
+out vec2 outTexCoord;
+uniform mat4 projectionMatrix;
+uniform int numCols;
+uniform int numRows;
+void main()
+{
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // Support for texture atlas, update texture coordinates
+    float x = (texCoord.x / numCols + texOffset.x);
+    float y = (texCoord.y / numRows + texOffset.y);
+    outTexCoord = vec2(x, y);}
+```
+
+The results of this changes, look exactly the same when renderinig particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
 
 **CHAPTER IN PROGRESS**
