@@ -22,4 +22,5 @@
 * [Animations](chapter19/chapter19.md)
 * [Particles](chapter20/chapter20.md)
 * [Instanced Rendering](chapter21/chapter21.md)
+* Audio
 
