@@ -200,6 +200,8 @@ In addition to that some optimizations have been added to the source code by the
 * Use quaternions for rotations which are more efficient.
 * Use specific methods for rotating and translating matrices which are optimized for those operations.
 
+![Instanced Rendering](instanced_rendering.png)
+
 ## Particles revisited
 
 With the support of instanced rendering we can also improve the performance for the particles rendering. Particles are the best use case for this.
@@ -245,6 +247,8 @@ void main()
 ```
 
 The results of this changes, look exactly the same when rendering particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
+
+![Particles](particles.png)
 
 ## Extra bonus
 
