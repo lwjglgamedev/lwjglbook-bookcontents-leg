@@ -65,9 +65,9 @@ this.modelViewBuffer = BufferUtils.createFloatBuffer(numInstances * MATRIX_SIZE_
 glBindBuffer(GL_ARRAY_BUFFER, modelViewVBO);
 int start = 5;
 for (int i = 0; i < 4; i++) {
- glVertexAttribPointer(start, 4, GL_FLOAT, false, MATRIX_SIZE_BYTES, i * VECTOR4F_SIZE_BYTES);
- glVertexAttribDivisor(start, 1);
- start++;
+    glVertexAttribPointer(start, 4, GL_FLOAT, false, MATRIX_SIZE_BYTES, i * VECTOR4F_SIZE_BYTES);
+    glVertexAttribDivisor(start, 1);
+    start++;
 }
 ```
 
@@ -95,21 +95,22 @@ The definition of the light view matrix is similar to the previous one, you can 
 ```java
 @Override
 protected void initRender() {
- super.initRender();
- int start = 5;
- int numElements = 4 * 2;
- for (int i = 0; i < numElements; i++) {
- glEnableVertexAttribArray(start + i);
- }
+    super.initRender();
+    int start = 5;
+    int numElements = 4 * 2;
+    for (int i = 0; i < numElements; i++) {
+        glEnableVertexAttribArray(start + i);
+    }
 }
+
 @Override
 protected void endRender() {
- int start = 5;
- int numElements = 4 * 2;
- for (int i = 0; i < numElements; i++) {
- glDisableVertexAttribArray(start + i);
- }
- super.endRender();
+    int start = 5;
+    int numElements = 4 * 2;
+    for (int i = 0; i < numElements; i++) {
+        glDisableVertexAttribArray(start + i);
+    }
+    super.endRender();
 }
 ```
 
@@ -117,25 +118,25 @@ The InstancedMesh class defines a public method, named ```renderListInstanced```
 
 ```java
 private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
- this.modelViewBuffer.clear();
- this.modelLightViewBuffer.clear();
- int i = 0;
- for (GameItem gameItem : gameItems) {
- Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
- if (!depthMap) {
- Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
- modelViewMatrix.get(MATRIX_SIZE_FLOATS * i, modelViewBuffer);
- }
- Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
- modelLightViewMatrix.get(MATRIX_SIZE_FLOATS * i, this.modelLightViewBuffer);
- i++;
- }
- glBindBuffer(GL_ARRAY_BUFFER, modelViewVBO);
- glBufferData(GL_ARRAY_BUFFER, modelViewBuffer, GL_DYNAMIC_DRAW);
- glBindBuffer(GL_ARRAY_BUFFER, modelLightViewVBO);
- glBufferData(GL_ARRAY_BUFFER, modelLightViewBuffer, GL_DYNAMIC_DRAW);
- glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, gameItems.size());
- glBindBuffer(GL_ARRAY_BUFFER, 0);
+    this.modelViewBuffer.clear();
+    this.modelLightViewBuffer.clear();
+    int i = 0;
+    for (GameItem gameItem : gameItems) {
+        Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+        if (!depthMap) {
+            Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+            modelViewMatrix.get(MATRIX_SIZE_FLOATS * i, modelViewBuffer);
+        }
+        Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
+        modelLightViewMatrix.get(MATRIX_SIZE_FLOATS * i, this.modelLightViewBuffer);
+        i++;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, modelViewVBO);
+    glBufferData(GL_ARRAY_BUFFER, modelViewBuffer, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, modelLightViewVBO);
+    glBufferData(GL_ARRAY_BUFFER, modelLightViewBuffer, GL_DYNAMIC_DRAW);
+    glDrawElementsInstanced(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0, gameItems.size());
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 ```
 
@@ -165,30 +166,30 @@ We have created another uniform to specedify if we are using instanced rendering
 ```glsl
 void main()
 {
- vec4 initPos = vec4(0, 0, 0, 0);
- vec4 initNormal = vec4(0, 0, 0, 0);
- mat4 modelViewMatrix;
- mat4 lightViewMatrix;
- if ( isInstanced > 0 )
- {
- modelViewMatrix = modelViewInstancedMatrix;
- lightViewMatrix = modelLightViewInstancedMatrix;
- initPos = vec4(position, 1.0);
- initNormal = vec4(vertexNormal, 0.0);
- }
+    vec4 initPos = vec4(0, 0, 0, 0);
+    vec4 initNormal = vec4(0, 0, 0, 0);
+    mat4 modelViewMatrix;
+    mat4 lightViewMatrix;
+    if ( isInstanced > 0 )
+    {
+        modelViewMatrix = modelViewInstancedMatrix;
+        lightViewMatrix = modelLightViewInstancedMatrix;
+        initPos = vec4(position, 1.0);
+        initNormal = vec4(vertexNormal, 0.0);
+    }
 ```
 
 We don’t support animations for instanced rendering to simplify the example, but this technique can be perfectly used for this. 
 Finally, the shader just set up appropriate values as usual.
 
 ```glsl
- vec4 mvPos = modelViewMatrix * initPos;
- gl_Position = projectionMatrix * mvPos;
- outTexCoord = texCoord;
- mvVertexNormal = normalize(modelViewMatrix * initNormal).xyz;
- mvVertexPos = mvPos.xyz;
- mlightviewVertexPos = orthoProjectionMatrix * lightViewMatrix * initPos;
- outModelViewMatrix = modelViewMatrix;
+    vec4 mvPos = modelViewMatrix * initPos;
+    gl_Position = projectionMatrix * mvPos;
+    outTexCoord = texCoord;
+    mvVertexNormal = normalize(modelViewMatrix * initNormal).xyz;
+    mvVertexPos = mvPos.xyz;
+    mlightviewVertexPos = orthoProjectionMatrix * lightViewMatrix * initPos;
+    outModelViewMatrix = modelViewMatrix;
 }
 ```
 
