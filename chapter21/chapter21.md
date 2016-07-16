@@ -200,7 +200,7 @@ In addition to that some optimizations have been added to the source code by the
 * Use quaternions for rotations which are more efficient.
 * Use specific methods for rotating and translating matrices which are optimized for those operations.
 
- ## Particles revisited
+## Particles revisited
 
 With the support of instanced renderding we can also improve the performance for the particles rendering. Particles are the best use case for this.
 
@@ -246,4 +246,8 @@ void main()
 
 The results of this changes, look exactly the same when renderinig particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
 
-**CHAPTER IN PROGRESS**
+## Extra bonus
+
+With all the infrastucture that we have right now, I've modified the rendrning cubes code to use a height map as a base, suing also texture atlas to use different textures. It also combines particles rendering. It looks like this.
+
+
