@@ -22,6 +22,7 @@ And last, but no least, a listener which is where the generated sounds are suppo
 
 So an audio 3D scene is composed by a set of sound sources which emit sound and a listener that receives sound. The final perceived sound will depend on the distance of the listener to the different sources, their relative speed and the selected propagation models. Sources cn share buffers and play the same data. The following figure depicts a sample 3D scene with the different element types involved.
 
+CHAPTER IN PROGRESS
 
 
 
