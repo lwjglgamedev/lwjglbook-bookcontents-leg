@@ -12,7 +12,7 @@ Buffers store audio data, that is, music or sound effects. They are similar to t
 
 The next elements are sources, which represent a location in a 3D space (a point) that emits sound. A source is associated to a buffer (only one at time) and can be defined the following attributes:
 
-* A position, the location of the source (x, y and z coordinates).
+* A position, the location of the source ($$x$$, $$y$$ and $$z$$ coordinates).
 * A velocity, which specifies how fast the source is moving. This is used to simulate Doppler effect.
 * A gain, which is used to modify the intensity of the sound (it’s like an amplifier factor).
 
