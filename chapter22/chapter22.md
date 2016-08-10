@@ -20,7 +20,9 @@ A source has additional attibutes which will be shown later when describing the 
 
 And last, but no least, a listener which is where the generated sounds are supposed to be heard. The Listener represents were the microphone is set in a 3D audio scene to receive the sounds. There is only one listener. It’s often said that audio rendering is done form the listener’s perspective. A listener shares some the attributes but it has some additional ones such as the orientation. The orientation represents where the listener is facing.
 
-So an audio 3D scene is composed by a set of sound sources which emit sound and a listener that receives sound. The final perceived sound will depend on the distance of the listener to the different sources, their relative speed and the selected propagation models. Sources cn share buffers and play the same data. The following figure depicts a sample 3D scene with the different element types involved.
+So an audio 3D scene is composed by a set of sound sources which emit sound and a listener that receives sound. The final perceived sound will depend on the distance of the listener to the different sources, their relative speed and the selected propagation models. Sources can share buffers and play the same data. The following figure depicts a sample 3D scene with the different element types involved.
+
+![OpenAL concepts](/chapter22/openal_concepts.png)
 
 CHAPTER IN PROGRESS
 
