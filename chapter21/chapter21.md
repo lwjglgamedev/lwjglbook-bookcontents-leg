@@ -256,4 +256,4 @@ With all the infrastructure that we have right now, I've modified the rendering 
 
 ![Cubes with height map](cubes_height_map.png)
 
-Please keep in mind that there's still much room for optimization, but the aim of the book is guiding you in learning LWJGL and OpenGL concepts and techniques. The goal is not to create a full blown game engine.
+Please keep in mind that there's still much room for optimization, but the aim of the book is guiding you in learning LWJGL and OpenGL concepts and techniques. The goal is not to create a full blown game engine (an not a voxel engine, which require more abstractions elements and optimizations).
