@@ -33,10 +33,10 @@ package org.lwjglb.engine.sound;
 
 public class SoundBuffer {
 
-    private final int buffer;
+    private final int bufferId;
 
     public SoundBuffer(String file) throws Exception {
-        this.buffer = alGenBuffers();
+        this.bufferId = alGenBuffers();
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
             ShortBuffer pcm = readVorbis(file, 32 * 1024, info);
 
@@ -46,16 +46,18 @@ public class SoundBuffer {
     }
 
     public int getBufferId() {
-        return this.buffer;
+        return this.bufferId;
     }
 
     public void cleanup() {
-        alDeleteBuffers(this.buffer);
+        alDeleteBuffers(this.bufferId);
     }
 
     // ....
 }
 ```
+
+The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to it. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need it to trasnform it to PCM format. You can check how that's done in te source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
 
 
 CHAPTER IN PROGRESS
