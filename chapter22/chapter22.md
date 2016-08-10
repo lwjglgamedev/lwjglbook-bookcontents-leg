@@ -24,7 +24,39 @@ So an audio 3D scene is composed by a set of sound sources which emit sound and 
 
 ![OpenAL concepts](/chapter22/openal_concepts.png)
 
-So, let's start coding, we will cerate a new package under the name ```org.lwjglb.engine.sound``` that will host all the clases responsible oh handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer.
+So, let's start coding, we will cerate a new package under the name ```org.lwjglb.engine.sound``` that will host all the clases responsible oh handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
+
+```java
+package org.lwjglb.engine.sound;
+
+// ... Some inports here
+
+public class SoundBuffer {
+
+    private final int buffer;
+
+    public SoundBuffer(String file) throws Exception {
+        this.buffer = alGenBuffers();
+        try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
+            ShortBuffer pcm = readVorbis(file, 32 * 1024, info);
+
+            // Copy to buffer
+            alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+        }
+    }
+
+    public int getBufferId() {
+        return this.buffer;
+    }
+
+    public void cleanup() {
+        alDeleteBuffers(this.buffer);
+    }
+
+    // ....
+}
+```
+
 
 CHAPTER IN PROGRESS
 
