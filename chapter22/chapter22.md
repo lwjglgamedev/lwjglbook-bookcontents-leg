@@ -24,7 +24,7 @@ So an audio 3D scene is composed by a set of sound sources which emit sound and 
 
 ![OpenAL concepts](/chapter22/openal_concepts.png)
 
-So, let's start coding, we will cerate a new package under the name ```org.lwjglb.engine.sound``` that will host all the clases responsible oh handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
+So, let's start coding, we will create a new package under the name ```org.lwjglb.engine.sound``` that will host all the classes responsible of handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
 
 ```java
 package org.lwjglb.engine.sound;
@@ -57,8 +57,11 @@ public class SoundBuffer {
 }
 ```
 
-The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to it. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need it to trasnform it to PCM format. You can check how that's done in te source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
+The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to it. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need it to transform it to PCM format. You can check how that's done in te source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
 
+Previous versions of LWJLG had a helper class named ```WaveData```which was used to load audio files in WAV format. This class is no longer present in LWJGL 3. Nevertheless, you may get the source code from that class and use it in your games (maybe without requiring any changes).
+
+The ````SoundBuffer``` class also provides a ```cleanup``` method to free the resources when we are done with it.
 
 CHAPTER IN PROGRESS
 
