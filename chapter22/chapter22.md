@@ -61,8 +61,70 @@ The constructor of the class expects a sound file (which may be in the classpath
 
 Previous versions of LWJLG had a helper class named ```WaveData```which was used to load audio files in WAV format. This class is no longer present in LWJGL 3. Nevertheless, you may get the source code from that class and use it in your games (maybe without requiring any changes).
 
-The ````SoundBuffer``` class also provides a ```cleanup``` method to free the resources when we are done with it.
+The ```SoundBuffer``` class also provides a ```cleanup``` method to free the resources when we are done with it.
 
+Let's continue by modelling an OpenAl, which will be implemented by class named ```SounSource```. The class is defined below.
+
+```java
+package org.lwjglb.engine.sound;
+
+import org.joml.Vector3f;
+
+import static org.lwjgl.openal.AL10.*;
+
+public class SoundSource {
+
+    private final int sourceId;
+
+    public SoundSource(boolean loop, boolean relative) {
+        this.sourceId = alGenSources();
+        if (loop) {
+            alSourcei(sourceId, AL_LOOPING, AL_TRUE);
+        }
+        if (relative) {
+            alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);
+        }
+    }
+
+    public void setBuffer(int bufferId) {
+        stop();
+        alSourcei(sourceId, AL_BUFFER, bufferId);
+    }
+
+    public void setPosition(Vector3f position) {
+        alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public void setSpeed(Vector3f speed) {
+        alSource3f(sourceId, AL_VELOCITY, speed.x, speed.y, speed.z);
+    }
+
+    public void setGain(float gain) {
+        alSourcef(sourceId, AL_GAIN, gain);
+    }
+
+    public void play() {
+        alSourcePlay(sourceId);
+    }
+
+    public boolean isPlaying() {
+        return alGetSourcei(sourceId, AL_SOURCE_STATE) == AL_PLAYING;
+    }
+
+    public void pause() {
+        alSourcePause(sourceId);
+    }
+
+    public void stop() {
+        alSourceStop(sourceId);
+    }
+
+    public void cleanup() {
+        stop();
+        alDeleteSources(sourceId);
+    }
+}
+```
 CHAPTER IN PROGRESS
 
 
