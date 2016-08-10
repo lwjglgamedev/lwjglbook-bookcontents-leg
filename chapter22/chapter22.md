@@ -24,6 +24,8 @@ So an audio 3D scene is composed by a set of sound sources which emit sound and 
 
 ![OpenAL concepts](/chapter22/openal_concepts.png)
 
+So, let's start coding, we will cerate a new package under the name ```aaa`````
+
 CHAPTER IN PROGRESS
 
 
