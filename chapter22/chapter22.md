@@ -177,6 +177,11 @@ A difference you will notice from the previous classes is that there’s no need
 
 ![Listener at and up vectors](/chapter22/listener_at_up.png)
 
+The “at” vector basically points where the listener is facing, by default its coordinates are $$(0, 0, -1)$$. The “up” vector determines which direction is up for the listener and, by default it points to $$(0, 1, 0)$$. So the tree components of each of those two vectors are what are set in the ```alListenerfv``` method call. This method is used to transfer a set of floats (a variable number of floats) to a property, in this case, the orientation.
+
+Before continuing I would like to stress out some concepts in relation to source and listener speeds. The relative speed between sources and listener will cause OpenAL to simulate Doppler effect. In case you don’t know Doppler effect is what causes that a moving object that is getting closer to you seems to emit in a higher frequency that it emits when is walking away. The thing, is that, simply by setting a source or listener velocity, OpenAL will not update their position for you. It will use the velocity and the position to calculate the Doppler effect according to those values, but they won’t be modified. So, if you want to simulate a moving source or listener you must take care of updating their positions and velocities in the game loop.
+
+Now that we have modelled the key elements we can set them up to work, we need to initialize OpenAL library, so we will create a new class named ```SoundManager``` that will handle this. Here’s a fragment of the definition of this class.
 
 
 CHAPTER IN PROGRESS
