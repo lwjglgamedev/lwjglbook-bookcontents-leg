@@ -229,8 +229,32 @@ This class holds references to the ```SoundBuffer``` and ```SoundSource``` insta
 * Create the capabilities for that device.
 * Create a sound context, like the OpenGL one, and set it as the current one.
 
-CHAPTER IN PROGRESS
+The ```SoundManager``` class also has a method to update the listener orientation given a camera position. In our case, the listener will be placed whenever the camera is. So, given camera position and rotation information, how do we calculate the “at” and “up” vectors? The answer is by using the view matrix associated to the camera. We need to transform the “at” $$(0, 0, -1)$$ and “up” $$(0, 1, 0)$$ vectors taking into consideration camera rotation. Let ```cameraMatrix``` be the view matrix associated to the camera. The code to accomplish that would be:
 
+```java
+Matrix4f invCam = new Matrix4f(cameraMatrix).invert();
+Vector3f at = new Vector3f(0, 0, -1);
+invCam.transformDirection(at);
+Vector3f up = new Vector3f(0, 1, 0);
+invCam.transformDirection(up);
+```
+The first thing that we do is invert the camera view matrix. Why we do this ? Think about it this way, the view matrix transforms from world space coordinates to view space. What we want is just the opposite, we want to transform from view space coordinates (the matrix) to space coordinates, which is where the listener should be positioned. With matrices, the opposite usually means the inverse. Once we have that matrix we just transform the “default” “at” and “up” vectors using that matrix to calculate the new directions.
+
+But, if you check the source code you will see that the implementation is slightly different, what we do is this:
+
+```java
+Vector3f at = new Vector3f();
+cameraMatrix.positiveZ(at).negate();
+Vector3f up = new Vector3f();
+cameraMatrix.positiveY(up);
+listener.setOrientation(at, up);
+```
+
+The code above is equivalent to the first approach, it’s just a more efficient approach. It uses a faster method, available in [JOML](https://github.com/JOML-CI/JOML) library, that just does not need to calculate the full inverse matrix but achieves the same results. This method was provided by the [JOML author](https://github.com/httpdigest) in a LWJGL forum, so you can check more details [there](http://forum.lwjgl.org/index.php?topic=6080.0). If you check the source code you will see that the ```SoundManager``` class calculates its own copy of the view matrix. This is already done in the ```Renderer``` class. In order to keep the code simple, and to avoid refactoring, I’ve preferred to keep this that way.
+
+And that’s all. We have all the infrastructure we need in order to play sounds. You can check in the source code how all the pieces are used. You can see how music is played and the different effects sound (These files were obtained from [Freesound](https://www.freesound.org/), proper credits are in a file name CREDITS.txt). If you get some other files, you may notice that sound attenuation with distance or listener orientation will not work. Please check that the files are in mono, not in stereo. OpenAL can only perform those computations with mono sounds.
+
+OpenAL also allows you to change the attenuation model by using the alDistanceModel and passing the model you want ('``AL11.AL_EXPONENT_DISTANCE```, ```AL_EXPONENT_DISTANCE_CLAMP```, etc.). You can play with them and check the results.
 
 
 
