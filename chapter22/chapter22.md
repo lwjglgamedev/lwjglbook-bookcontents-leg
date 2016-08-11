@@ -183,6 +183,46 @@ Before continuing I would like to stress out some concepts in relation to source
 
 Now that we have modelled the key elements we can set them up to work, we need to initialize OpenAL library, so we will create a new class named ```SoundManager``` that will handle this. Here’s a fragment of the definition of this class.
 
+```java
+package org.lwjglb.engine.sound;
+
+// Imports here
+
+public class SoundManager {
+
+    private long device;
+
+    private long context;
+
+    private SoundListener listener;
+
+    private final List<SoundBuffer> soundBufferList;
+
+    private final Map<String, SoundSource> soundSourceMap;
+
+    private final Matrix4f cameraMatrix;
+
+    public SoundManager() {
+        soundBufferList = new ArrayList<>();
+        soundSourceMap = new HashMap<>();
+        cameraMatrix = new Matrix4f();
+    }
+
+    public void init() throws Exception {
+        this.device = alcOpenDevice((ByteBuffer) null);
+        if (device == NULL) {
+            throw new IllegalStateException("Failed to open the default OpenAL device.");
+        }
+        ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+        this.context = alcCreateContext(device, (IntBuffer) null);
+        if (context == NULL) {
+            throw new IllegalStateException("Failed to create OpenAL context.");
+        }
+        alcMakeContextCurrent(context);
+        AL.createCapabilities(deviceCaps);
+    }
+```
+
 
 CHAPTER IN PROGRESS
 
