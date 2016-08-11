@@ -177,6 +177,7 @@ A difference you will notice from the previous classes is that there’s no need
 
 ![Listener at and up vectors](/chapter22/listener_at_up.png)
 
+
 CHAPTER IN PROGRESS
 
 
