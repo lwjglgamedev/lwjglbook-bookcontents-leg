@@ -223,6 +223,11 @@ public class SoundManager {
     }
 ```
 
+This class holds references to the ```SoundBuffer``` and ```SoundSource``` instances to track and later cleanup them properly. SoundBuffers are stored in a List but SoundSources are store din in a ```Map``` so they can be retrieved by a name. The init method initializes the OpenAL subsystem:
+
+* Opens the default device.
+* Create the capabilities for that device.
+* Create a sound context, like the OpenGL one, and set it as the current one.
 
 CHAPTER IN PROGRESS
 
