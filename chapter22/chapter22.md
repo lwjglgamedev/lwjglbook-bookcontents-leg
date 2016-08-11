@@ -125,6 +125,56 @@ public class SoundSource {
     }
 }
 ```
+
+The sound source class provides some methods to setup its position, the gain, and control methods for playing stopping and pausing it. Sound control actions are made over a source (not over the buffer), remember that several sources can share the same buffer. As in the ```SoundBuffer``` class, a ```SoundSource``` is identified by an id, which is used in each operation. This class also provides a ```cleanup``` method to free the served resources. But let’s examine the constructor. The first thing that we do is to create the source with the ```alGenSources``` call. Then, we set up some interesting properties using the constructor parameters.
+
+The first parameter, ```loop```, indicates if the sound to be played should be in loop mode or not. By default, when a play action is invoked over a source the playing stops when the audio data is consumed. This is fine for some sounds, but some others, like background music, need to be played over and over again. Instead of manually controlling when the audio has stopped and re-launch the play process, we just simply set the looping property to true: “```alSourcei(sourceId, AL_LOOPING, AL_TRUE);```”.
+
+The other parameter, ```relative```, controls if the position of the source is relative to the listener or not. In this case, when we set the position for a source, we basically are defining the distance (with a vector) to the listener, not the position in the OpenAL 3D scene, not the world position. This activated by the “```alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);”``` call. But, What can we use this for? This property is interesting for instance for background sounds that should be affected (attenuated) by the distance to the listener. Think, for instance, in background music or sound effects related to player controls. If we set these sources as relative, and set their position to $$(0, 0, 0)$$ they will not be attenuated.
+
+Now it’s turn for the listener which, surprise, is modelled by a class named ```SoundListener```. Here’s the definition for that class.
+
+```java
+package org.lwjglb.engine.sound;
+
+import org.joml.Vector3f;
+
+import static org.lwjgl.openal.AL10.*;
+
+public class SoundListener {
+
+    public SoundListener() {
+        this(new Vector3f(0, 0, 0));
+    }
+
+    public SoundListener(Vector3f position) {
+        alListener3f(AL_POSITION, position.x, position.y, position.z);
+        alListener3f(AL_VELOCITY, 0, 0, 0);
+
+    }
+
+    public void setSpeed(Vector3f speed) {
+        alListener3f(AL_VELOCITY, speed.x, speed.y, speed.z);
+    }
+
+    public void setPosition(Vector3f position) {
+        alListener3f(AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public void setOrientation(Vector3f at, Vector3f up) {
+        float[] data = new float[6];
+        data[0] = at.x;
+        data[1] = at.y;
+        data[2] = at.z;
+        data[3] = up.x;
+        data[4] = up.y;
+        data[5] = up.z;
+        alListenerfv(AL_ORIENTATION, data);
+    }
+}
+```
+A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us, so the constructor just sets a position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review it. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.
+
 CHAPTER IN PROGRESS
 
 
