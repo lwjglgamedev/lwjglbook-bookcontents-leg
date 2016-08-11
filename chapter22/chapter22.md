@@ -173,7 +173,9 @@ public class SoundListener {
     }
 }
 ```
-A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us, so the constructor just sets a position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review it. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.![](/assets/listener_at_up.png)
+A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us, so the constructor just sets a position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review it. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.
+
+![Listener at and up vectors](/chapter22/listener_at_up.png)
 
 CHAPTER IN PROGRESS
 
