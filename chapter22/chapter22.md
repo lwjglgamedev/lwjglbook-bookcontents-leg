@@ -103,6 +103,10 @@ public class SoundSource {
         alSourcef(sourceId, AL_GAIN, gain);
     }
 
+    public void setProperty(int param, float value) {
+        alSourcef(sourceId, param, value);
+    }
+
     public void play() {
         alSourcePlay(sourceId);
     }
