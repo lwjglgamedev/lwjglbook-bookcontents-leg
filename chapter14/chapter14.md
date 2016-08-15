@@ -164,7 +164,7 @@ Let’s graphically explain how a normal can be calculated. Imagine that we have
 
 ![Normals calculation I](normals_calc_i.png) 
 
-Then, we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vectors. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the cross product between $$\vec{P1}$$ and $$\vec{P2}$$, $$\vec{V12} = \vec{P1} \times \vec{P2}$$.
+Then, we calculate the normal for each of the planes that connects the adjacent points. This is done by performing the cross product between the previous calculated vectors. For instance, the normal of the surface that connects $$\vec{P1}$$ and $$\vec{P2}$$ (shaded in blue) is calculated as the cross product between $$\vec{V1}$$ and $$\vec{V2}$$, $$\vec{V12} = \vec{V1} \times \vec{V2}$$.
 
 ![Normals calculation II](normals_calc_ii.png) 
 
