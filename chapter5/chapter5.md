@@ -138,7 +138,7 @@ Then we specify the order into which those vertices should be drawn by referring
 
 | 0 | 1 | 3 | 3 | 1 | 2 |
 | -- | -- | -- | -- | -- | -- |
-| V1 | V2 | V3 | V4 | V3 | V2 |
+| V1 | V2 | V4 | V4 | V2 | V3 |
 
 
 So we need to modify our ```Mesh``` class to. accept another parameter, an array of indices, and now the number of vertices to draw will be the length of that indices array.
