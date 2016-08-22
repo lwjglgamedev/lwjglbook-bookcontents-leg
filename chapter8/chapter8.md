@@ -92,7 +92,7 @@ public class Camera {
     public void moveRotation(float offsetX, float offsetY, float offsetZ) {
         rotation.x += offsetX;
         rotation.y += offsetY;
-        rotation.y += offsetZ;
+        rotation.z += offsetZ;
     }
 }
 ```
