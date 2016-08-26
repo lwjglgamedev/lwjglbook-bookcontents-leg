@@ -31,7 +31,7 @@ So let uss start writing our first shader program. Shaders are written by using 
 ```
 #version 330
 
-layout (location=0) in vec3 pos;
+layout (location=0) in vec3 position;
 
 void main()
 {
