@@ -26,7 +26,7 @@ Those fragments are used during the fragment processing stage by the fragment sh
 
 Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processes in parallel in order to generate the final scene.
 
-So let uss start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “```vertex.vs```” (The extension is for Vertex Shader) under the resources directory with the following content:
+So let's start writing our first shader program. Shaders are written by using the GLSL language (OpenGL Shading Language) which is based on ANSI C. First we will create a file named “```vertex.vs```” (The extension is for Vertex Shader) under the resources directory with the following content:
 
 ```
 #version 330
