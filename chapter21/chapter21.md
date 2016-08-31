@@ -24,7 +24,7 @@ But you may be wondering now how can you set the different transformations for e
 
 When using instanced rendering, in the vertex shader we can use an input variable that holds the index of the instance that is currently being drawn. With that built-in variable we can, for instance, pass an array of uniforms containing the transformations to be applied to each instance and use a single render call.
 
-The problem with this approach is that it’s still imposes too much overhead. Besides that, the number of uniforms that we can pass is limited. Instead of using lists of uniforms we will use instanced arrays.
+The problem with this approach is that it still imposes too much overhead. In addition to that, the number of uniforms that we can pass is limited. Thus, we need to emply another approach, instead of using lists of uniforms we will use instanced arrays.
 
 If you recall from the first chapters, the data for each Mesh is defined by a set of arrays of data named VBOs. The data store in those VBOs is unique per Mesh instance.
 
