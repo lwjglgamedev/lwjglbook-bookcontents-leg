@@ -242,7 +242,7 @@ invCam.transformDirection(at);
 Vector3f up = new Vector3f(0, 1, 0);
 invCam.transformDirection(up);
 ```
-The first thing that we do is invert the camera view matrix. Why we do this ? Think about it this way, the view matrix transforms from world space coordinates to view space. What we want is just the opposite, we want to transform from view space coordinates (the matrix) to space coordinates, which is where the listener should be positioned. With matrices, the opposite usually means the inverse. Once we have that matrix we just transform the “default” “at” and “up” vectors using that matrix to calculate the new directions.
+The first thing that we do is invert the camera view matrix. Why we do this? Think about it this way, the view matrix transforms from world space coordinates to view space. What we want is just the opposite, we want to transform from view space coordinates (the view matrix) to space coordinates, which is where the listener should be positioned. With matrices, the opposite usually means the inverse. Once we have that matrix we just transform the “default” “at” and “up” vectors using that matrix to calculate the new directions.
 
 But, if you check the source code you will see that the implementation is slightly different, what we do is this:
 
@@ -258,7 +258,7 @@ The code above is equivalent to the first approach, it’s just a more efficient
 
 And that’s all. We have all the infrastructure we need in order to play sounds. You can check in the source code how all the pieces are used. You can see how music is played and the different effects sound (These files were obtained from [Freesound](https://www.freesound.org/), proper credits are in a file name CREDITS.txt). If you get some other files, you may notice that sound attenuation with distance or listener orientation will not work. Please check that the files are in mono, not in stereo. OpenAL can only perform those computations with mono sounds.
 
-OpenAL also allows you to change the attenuation model by using the alDistanceModel and passing the model you want ('``AL11.AL_EXPONENT_DISTANCE```, ```AL_EXPONENT_DISTANCE_CLAMP```, etc.). You can play with them and check the results.
+A final note. OpenAL also allows you to change the attenuation model by using the alDistanceModel and passing the model you want ('``AL11.AL_EXPONENT_DISTANCE```, ```AL_EXPONENT_DISTANCE_CLAMP```, etc.). You can play with them and check the results.
 
 
 
