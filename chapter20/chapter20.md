@@ -534,7 +534,7 @@ And that's all, we just need to change this in the ```renderParticlesMethod``` l
 
 ```
 
-We also have added another method to the ```Transformation``` class to construct a model view matrix using two matrices instead of a ```GameItem``` and the view matrix.*
+We also have added another method to the ```Transformation``` class to construct a model view matrix using two matrices instead of a ```GameItem``` and the view matrix.
 
 With that change, when we look the particles from above we get something like this.
 
@@ -553,8 +553,7 @@ Finally, another conclusion, to get perfect results which can be used in any sce
 
 ## Texture Atlas
 
-Now that we have stet ha basic infrastructure particles we can add some animation effects to it. In order to achieve that we are going to support texture atlas. A texture atlas is a large image that contains all the textures that will be used. With a texture atlas we need only to load a large image and then while drawing the game items we select the portions of that image to be used as our texture. This technique can be applied for instance when we want to represent the same model many times with different textures (think for instance about trees, or rocks). Instead of having many texture instances and switching between them (remember that switching states are always slow) we can use the same texture atlas and just select the appropriate coordinates.
-
+Now that we have set the basic infrastructure for particle effect we can add some animation effects to it. In order to achieve that, we are going to support texture atlas. A texture atlas is a large image that contains all the textures that will be used. With a texture atlas we need only to load a large image and then while drawing the game items we select the portions of that image to be used as our texture. This technique can be applied for instance when we want to represent the same model many times with different textures (think for instance about trees, or rocks). Instead of having many texture instances and switching between them (remember that switching states are always slow) we can use the same texture atlas and just select the appropriate coordinates.
 
 In this case, we are going to use texture coordinates to animate particles. We will iterate over different textures to model a particle animation. All those textures will be grouped into a texture atlas which looks like this.
  
@@ -633,7 +632,7 @@ public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
 }
 ```
 
-Now, we just need to modify the method that  checks if the particle has expired to check also if we need to update the texture position.
+Now, we just need to modify the method that checks if the particle has expired to check also if we need to update the texture position.
 
 ```java
 public long updateTtl(long elapsedTime) {
@@ -653,7 +652,7 @@ public long updateTtl(long elapsedTime) {
 }
 ```
 
-Besides that we also have modified the ```FlowRangeEmitter``` class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
+Besides that, we also have modified the ```FlowRangeEmitter``` class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
 
 Now we can use that information to set up appropriate texture coordinates. We will do this in the vertex fragment since it outputs those values to be used in the fragment shader. The new version of that shader is defined like this.
 
@@ -686,7 +685,7 @@ void main()
 }
 ```
 
-As you can see we have now three new uniforms. The uniforms ```numCols``` and ```numRows``` just contain the number of columns and rows of the texture atlas.  In order to correct the texture coordinates, we first must scale down them. Each tile will have a width which is equal to $$1 / numCols$$ and a height which is equal to $$1 / numRows$$ as shown in the next figure. 
+As you can see we have now three new uniforms. The uniforms ```numCols``` and ```numRows``` just contain the number of columns and rows of the texture atlas.  In order to calculate the texture coordinates, we first must scale down these parameters. Each tile will have a width which is equal to $$1 / numCols$$ and a height which is equal to $$1 / numRows$$ as shown in the next figure. 
 
 ![Texture coordinates](texture_coordinates.png)
 Then we just need to apply and offset depending on the row and column, this is what is modelled by the ```texXOffset``` and ```texYOffset``` uniforms.
