@@ -52,9 +52,9 @@ So, in order to set data for a instance we need to perform this call after every
 glVertexAttribPointer(index, 1);
 ```
 
-Let’s start changing our code base to support instanced rendering. The first step is to create a new class named ```InstancedMesh``` that inherits from the ```Mesh``` class. The constructor of this class will be similar to the similar to the Mesh one but with an extra parameter, the number of instances.
+Let’s start changing our code base to support instanced rendering. The first step is to create a new class named ```InstancedMesh``` that inherits from the ```Mesh``` class. The constructor of this class will be similar to the similar to the ```Mesh``` one but with an extra parameter, the number of instances.
 
-In the constructor, besides relaying in super’s constructor, we will create two new VBOs, one for the model view matrix and other for the light view matrix. The code for creating the model view matrix is presented below.
+In the constructor, besides relying in super’s constructor, we will create two new VBOs, one for the model view matrix and another one for the light view matrix. The code for creating the model view matrix is presented below.
 
 ```java
 modelViewVBO = glGenBuffers();
