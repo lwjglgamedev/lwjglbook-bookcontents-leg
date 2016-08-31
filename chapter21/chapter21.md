@@ -78,9 +78,7 @@ Once the VBO has been bond we start defining the attributes for it. You can see 
 * Type: The type of data \(floats in our case\).
 * Normalize: If fixed-point data should be normalized or not.
 * Stride: This is important to understand here, this sets the byte offsets between consecutive attributes. In this case, we need to set it to the whole size of a matrix in bytes. This acts like a mark that packs the data so it can be changed between vertex or instances.
-
 * Pointer: The offset that this attribute definition applies to. In our case, we need to split the matrix definition into four calls. Each vector of the matrix increments the offset.
-
 
 After defining the vertex attribute, we need to call the ```glVertexAttribDivisor``` using the same index.
 
