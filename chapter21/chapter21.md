@@ -30,9 +30,7 @@ If you recall from the first chapters, the data for each Mesh is defined by a se
 
 ![VBOs](vao_1.png)
 
-
 With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
-
 
 The next figure shows a Mesh composed by three per vertex VBOs definig the positions, textures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the position inside a instance.
 
