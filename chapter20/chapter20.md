@@ -2,9 +2,9 @@
 
 ## The basics
 
-In this chapter we will add particle effects to the game engine. With this effect we will be able to simulate rays, fire, dust and clouds.  It’s a simple to implement effect that will improve the graphical aspect of any game.
+In this chapter we will add particle effects to the game engine. With this effect we will be able to simulate rays, fire, dust and clouds.  It’s a simple effect to implement that will improve the graphical aspect of any game.
 
-There are many ways to implement particle effects with different, results. In this case we will use billboard particles. This technique uses moving texture quads to represent a particle with the peculiarity that they are always always facing the observer, in our case, the camera. You can also use billboarding technique to show information panels over game items like a mini HUDs.
+Before we start it's worth to mention that there are many ways to implement particle effects with different, results. In this case we will use billboard particles. This technique uses moving texture quads to represent a particle with the peculiarity that they are always always facing the observer, in our case, the camera. You can also use billboarding technique to show information panels over game items like a mini HUDs.
 
 Let’s start by defining what is a particle. A particle can de defined by the following attributes:
 1. A mesh that represents the quad vertices.
