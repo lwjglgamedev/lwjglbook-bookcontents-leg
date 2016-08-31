@@ -69,18 +69,14 @@ for (int i = 0; i < 4; i++) {
 }
 ```
 
-The first thing that we do is create a new VBO and create a new ```FloatBuffer``` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multiplied by the size in floats of a 4x4 matrix, which is equal to 16.
+The first thing that we do is create a new VBO and a new ```FloatBuffer``` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multiplied by the size in floats of a 4x4 matrix, which is equal to 16.
 
-Once the VBO has been bind. We start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix ? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition. Let’s refresh the parameters of the ```glVertexAttribPointer```:
+Once the VBO has been bond we start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition into four pieces. Let’s refresh the parameters of the ```glVertexAttribPointer```:
 
 * Index: The index of the element to be defined.
-
 * Size: The number of components for this attribute. In this case it’s 4, 4 floats, which is the maximum accepted value.
-
 * Type: The type of data \(floats in our case\).
-
 * Normalize: If fixed-point data should be normalized or not.
-
 * Stride: This is important to understand here, this sets the byte offsets between consecutive attributes. In this case, we need to set it to the whole size of a matrix in bytes. This acts like a mark that packs the data so it can be changed between vertex or instances.
 
 * Pointer: The offset that this attribute definition applies to. In our case, we need to split the matrix definition into four calls. Each vector of the matrix increments the offset.
