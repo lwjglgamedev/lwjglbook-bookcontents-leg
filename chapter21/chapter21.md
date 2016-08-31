@@ -134,8 +134,7 @@ private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Tr
 
 The method is quite simple, we basically iterate over the game items and calculate the model view and light view matrices. These matrices are dumped into their respective buffers. The contents of those buffers are sent to to the GPU and finally we render all of them with a single call to the ```glDrawElementsInstanced``` method.
 
-
-Going back to the shaders, we need to modify the vertex shader to support instanced rendering. We will firs add new input parameters for the model and view matrices that will be passed when using instanced rendering. 
+Going back to the shaders, we need to modify the vertex shader to support instanced rendering. We will first add new input parameters for the model and view matrices that will be passed when using instanced rendering. 
 
 ```glsl
 layout (location=5) in mat4 modelViewInstancedMatrix;
@@ -151,7 +150,6 @@ uniform mat4 modelViewNonInstancedMatrix;
 …
 uniform mat4 modelLightViewNonInstancedMatrix;
 ``` 
-
 
 We have created another uniform to specify if we are using instanced rendering or not. In the case we are using instanced rendering the code is very simple, we just use the matrices from the input parameters.
 
@@ -185,9 +183,9 @@ Finally, the shader just set up appropriate values as usual.
 }
 ```
 
-Of course, the ```Renderer``` has been modified to support the uniforms changes and to separate the rendering of non instanced meshes from the instanced one. You can check the changes in the source code. 
+Of course, the ```Renderer``` has been modified to support the uniforms changes and to separate the rendering of non instanced meshes from the instanced ones. You can check the changes in the source code. 
 
-In addition to that some optimizations have been added to the source code by the JOML author [Kai Burjack](https://github.com/httpdigest). These optimizations have been applied to the Transformation class and is summarized in the following list:
+In addition to that, some optimizations have been added to the source code by the JOML author [Kai Burjack](https://github.com/httpdigest). These optimizations have been applied to the ```Transformation``` class and are summarized in the following list:
 * Removed redundant calls to set up matrices with identity values.
 * Use quaternions for rotations which are more efficient.
 * Use specific methods for rotating and translating matrices which are optimized for those operations.
@@ -198,7 +196,7 @@ In addition to that some optimizations have been added to the source code by the
 
 With the support of instanced rendering we can also improve the performance for the particles rendering. Particles are the best use case for this.
 
-In order to support particles we must provide support for texture atlas. This can be achieved by adding a new VBO with texture offsets for instanced rendering. The texture offsets can be modeled by a single vector of tow floats, so there's no need to split the definition as in the matrices case.
+In order to apply instance rendering to particles we must provide support for texture atlas. This can be achieved by adding a new VBO with texture offsets for instanced rendering. The texture offsets can be modeled by a single vector of tow floats, so there's no need to split the definition as in the matrices case.
 
 ```java
 // Texture offsets
@@ -209,7 +207,7 @@ But, instead of adding a new VBO we will set all the instance attributes inside 
 
 ![Single VBO](single_vbo.png)
 
-The required changes to use a single VBO is to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definition of the texture offsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the other one for the light view model), and two floats, which is equal to 136. The stride also needs to be modified properly.
+In order to use a single VBO we need to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definition of the texture offsets uses a  constant named  ```INSTANCE_SIZE_BYTES ```. This constant is equal to the size in bytes of two matrices (one for the view model and the other one for the light view model) plus two floats (texture offesets), which in total is 136. The stride also needs to be modified properly.
 
 You can check the modifications in the source code.
 
@@ -238,14 +236,14 @@ void main()
     outTexCoord = vec2(x, y);}
 ```
 
-The results of this changes, look exactly the same when rendering particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
+The results of this changes, look exactly the same as when rendering non instanced particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
 
 ![Particles](particles.png)
 
 ## Extra bonus
 
-With all the infrastructure that we have right now, I've modified the rendering cubes code to use a height map as a base, suing also texture atlas to use different textures. It also combines particles rendering. It looks like this.
+With all the infrastructure that we have right now, I've modified the rendering cubes code to use a height map as a base, using also texture atlas to use different textures. It also combines particles rendering. It looks like this.
 
 ![Cubes with height map](cubes_height_map.png)
 
-Please keep in mind that there's still much room for optimization, but the aim of the book is guiding you in learning LWJGL and OpenGL concepts and techniques. The goal is not to create a full blown game engine (an not a voxel engine, which require more abstractions elements and optimizations).
+Please keep in mind that there's still much room for optimization, but the aim of the book is guiding you in learning LWJGL and OpenGL concepts and techniques. The goal is not to create a full blown game engine (an definitely not a voxel engine, which require a different approach and more optimizations).
