@@ -30,13 +30,15 @@ If you recall from the first chapters, the data for each Mesh is defined by a se
 
 ![VBOs](vao_1.png)
 
-With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific vertex data. With instanced arrays we set up data that is changed per instance. With this schema we can still use regular VBOs to store per vertex information and use instanced and can create VBOs that contain per instance data such as model view matrices.
+With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific data associated to each vertex. With instanced arrays we can set up data that is changed per instance instead of per vertex. If we combine both types we can use regular VBOs to store per vertex information (position, texture coordinates) and VBOs that contain per instance data such as model view matrices.
 
-The next figure shows a Mesh composed by three per vertex VBOs definig the positions, textures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the position inside a instance.
+The next figure shows a Mesh composed by three per vertex VBOs definig the positions, textures and normals. The first index of each of those elements is the instance that it belongs to (in blue colour). The second index represents the vertex position inside a instance.
 
 The Mesh is also defined by two per instance VBOs. One for the model view matrix and the other one for the light view matrix. When rendering the vertices for the firs instance (the 1X, ones), the model view and light view matrices will be the same (the 1). When vertices of the second instance are to be rendered the second model view and light view matrices will be used.
  
 ![VBOs with instance attributes](vao_2.png)
+
+Thus, when rendering the first vertex of the first instance, V11, T11 and N11 would be used for position, texture and normal data and MV1 would be used as a model view matrix. When rendering the second vertex of the same first instance, V12, T12 and N12 would be used for position, texture and normal dara and MV1 wouls still be used as a model view matrix. MV2 and LV2 would not be used until second instance is rendered.
 
 In order to define per instance data we need to call the function ```glVertexAttribDivisor``` after defining vertex attributes. This function receives two parameters:
 
@@ -44,9 +46,7 @@ In order to define per instance data we need to call the function ```glVertexAtt
 
 * Divisor: If this vale contains zero, the data is changed for each vertex while rendering. If it is set to one, the data changes once per instance. If it’s set to two it changes every two instances, etc.
 
-
 So, in order to set data for a instance we need to perform this call after every attribute definition:
-
 
 ```java
 glVertexAttribPointer(index, 1);
