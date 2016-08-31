@@ -23,4 +23,5 @@
 * [Particles](chapter20/chapter20.md)
 * [Instanced Rendering](chapter21/chapter21.md)
 * [Audio](chapter22/chapter22.md)
+* [3D Object picking](chapter23/chapter23.md)
 
