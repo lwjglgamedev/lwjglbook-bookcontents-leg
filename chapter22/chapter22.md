@@ -57,7 +57,7 @@ public class SoundBuffer {
 }
 ```
 
-The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to it. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need it to transform it to PCM format. You can check how that's done in te source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
+The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to the data it holds. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need to transform it to PCM format. You can check how that's done in te source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
 
 Previous versions of LWJGL had a helper class named ```WaveData```which was used to load audio files in WAV format. This class is no longer present in LWJGL 3. Nevertheless, you may get the source code from that class and use it in your games (maybe without requiring any changes).
 
@@ -130,7 +130,7 @@ public class SoundSource {
 }
 ```
 
-The sound source class provides some methods to setup its position, the gain, and control methods for playing stopping and pausing it. Sound control actions are made over a source (not over the buffer), remember that several sources can share the same buffer. As in the ```SoundBuffer``` class, a ```SoundSource``` is identified by an id, which is used in each operation. This class also provides a ```cleanup``` method to free the served resources. But let’s examine the constructor. The first thing that we do is to create the source with the ```alGenSources``` call. Then, we set up some interesting properties using the constructor parameters.
+The sound source class provides some methods to setup its position, the gain, and control methods for playing stopping and pausing it. Keep in mind that sound control actions are made over a source (not over the buffer), remember that several sources can share the same buffer. As in the ```SoundBuffer``` class, a ```SoundSource``` is identified by an identifier, which is used in each operation. This class also provides a ```cleanup``` method to free the reserved resources. But let’s examine the constructor. The first thing that we do is to create the source with the ```alGenSources``` call. Then, we set up some interesting properties using the constructor parameters.
 
 The first parameter, ```loop```, indicates if the sound to be played should be in loop mode or not. By default, when a play action is invoked over a source the playing stops when the audio data is consumed. This is fine for some sounds, but some others, like background music, need to be played over and over again. Instead of manually controlling when the audio has stopped and re-launch the play process, we just simply set the looping property to true: “```alSourcei(sourceId, AL_LOOPING, AL_TRUE);```”.
 
@@ -177,13 +177,13 @@ public class SoundListener {
     }
 }
 ```
-A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us, so the constructor just sets a position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review it. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.
+A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us. Thus, in the constructor we just simply set its initial position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review what orientation is all about. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.
 
 ![Listener at and up vectors](/chapter22/listener_at_up.png)
 
 The “at” vector basically points where the listener is facing, by default its coordinates are $$(0, 0, -1)$$. The “up” vector determines which direction is up for the listener and, by default it points to $$(0, 1, 0)$$. So the tree components of each of those two vectors are what are set in the ```alListenerfv``` method call. This method is used to transfer a set of floats (a variable number of floats) to a property, in this case, the orientation.
 
-Before continuing I would like to stress out some concepts in relation to source and listener speeds. The relative speed between sources and listener will cause OpenAL to simulate Doppler effect. In case you don’t know Doppler effect is what causes that a moving object that is getting closer to you seems to emit in a higher frequency that it emits when is walking away. The thing, is that, simply by setting a source or listener velocity, OpenAL will not update their position for you. It will use the velocity and the position to calculate the Doppler effect according to those values, but they won’t be modified. So, if you want to simulate a moving source or listener you must take care of updating their positions and velocities in the game loop.
+Before continuing it's necessary to stress out some concepts in relation to source and listener speeds. The relative speed between sources and listener will cause OpenAL to simulate Doppler effect. In case you don’t know, Doppler effect is what causes that a moving object that is getting closer to you seems to emit in a higher frequency than it seems to emit when is walking away. The thing, is that, simply by setting a source or listener velocity, OpenAL will not update their position for you. It will use the relative velocity to calculate the Doppler effect, but the positions won’t be modified. So, if you want to simulate a moving source or listener you must take care of updating their positions in the game loop.
 
 Now that we have modelled the key elements we can set them up to work, we need to initialize OpenAL library, so we will create a new class named ```SoundManager``` that will handle this. Here’s a fragment of the definition of this class.
 
@@ -227,7 +227,7 @@ public class SoundManager {
     }
 ```
 
-This class holds references to the ```SoundBuffer``` and ```SoundSource``` instances to track and later cleanup them properly. SoundBuffers are stored in a List but SoundSources are store din in a ```Map``` so they can be retrieved by a name. The init method initializes the OpenAL subsystem:
+This class holds references to the ```SoundBuffer``` and ```SoundSource``` instances to track and later cleanup them properly. SoundBuffers are stored in a List but SoundSources are stored in in a ```Map``` so they can be retrieved by a name. The ```init``` method initializes the OpenAL subsystem:
 
 * Opens the default device.
 * Create the capabilities for that device.
