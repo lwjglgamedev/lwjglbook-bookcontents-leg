@@ -15,7 +15,7 @@ Let’s start by defining what is a particle. A particle can de defined by the f
 6. A movement direction.
 7. A life time or time to live. Once this time has expired the particle ceases to exist. 
 
-The first four items are part of the ```GameItem``` class, but the last three are not. Thus, we will create a new class named Particle that extends a ```GameItem``` instance and that is defined like this.
+The first four items are part of the ```GameItem``` class, but the last three are not. Thus, we will create a new class named ```Particle``` that extends a ```GameItem``` instance and that is defined like this.
 
 ```java
 package org.lwjglb.engine.graph.particles;
@@ -78,9 +78,9 @@ public class Particle extends GameItem {
 }
 ```
 
-As you can particle speed and movement direction can be expressed as a vector. The direction of that vector models the movement direction and its module the speed. The Particle Time To Live (TTL) is modelled as milliseconds counter that will be decreased whenever the game state is updated. The class has also a copy constructor, that is, a constructor that takes an instance of another Particle to make a copy.
+As you can see from the code above, particle's speed and movement direction can be expressed as a single vector. The direction of that vector models the movement direction and its module the speed. The Particle Time To Live (TTL) is modelled as milliseconds counter that will be decreased whenever the game state is updated. The class has also a copy constructor, that is, a constructor that takes an instance of another Particle to make a copy.
 
-Now, we need to create a particle generator or particle emitter, that is, a class that generates the particles dynamically, controls their life cycle and updates their position according to a specific model.  We can create many implementations that vary in how particles and created and how their positions are updated (for instance, taking in consideration the gravity or not). So, in order to keep our game engine generic, we will create an interface that all the Particle emitters must implement. This interface, named ```IParticleEmitter```, is defined like this:
+Now, we need to create a particle generator or particle emitter, that is, a class that generates the particles dynamically, controls their life cycle and updates their position according to a specific model.  We can create many implementations that vary in how particles and created and how their positions are updated (for instance, taking into consideration the gravity or not). So, in order to keep our game engine generic, we will create an interface that all the Particle emitters must implement. This interface, named ```IParticleEmitter```, is defined like this:
 
 ```java
 package org.lwjglb.engine.graph.particles;
@@ -98,7 +98,7 @@ public interface IParticleEmitter {
 }
 ```
 
-The ```IParticleEmitter``` interface has a method to clean up resources, named ```cleanup```, and a method to get the list of Particles, named ```getParticles```. It also as a method named ```getBaseParticle```, but What’s this method for? A particle emitter will create many particles dynamically. Whenever a particle expires, new ones will be created. That particle renewal will use a base particle, like a pattern, to create new instances. This is what this base particle is used for, This is also the reason why the ```Particle``` class defines a copy constructor.
+The ```IParticleEmitter``` interface has a method to clean up resources, named ```cleanup```, and a method to get the list of Particles, named ```getParticles```. It also as a method named ```getBaseParticle```, but What’s this method for? A particle emitter will create many particles dynamically. Whenever a particle expires, new ones will be created. That particle renewal cycle will use a base particle, like a pattern, to create new instances. This is what this base particle is used for, This is also the reason why the ```Particle``` class defines a copy constructor.
 
 In the game engine code we will refer only to the ```IParticleEmitter``` interface so the base code will not be dependent on the specific implementations. Nevertheless we can create a implementation that simulates a flow of particles that are not affected by gravity. This implementation can be used to simulate rays or fire and is named ```FlowParticleEmitter```.
 
