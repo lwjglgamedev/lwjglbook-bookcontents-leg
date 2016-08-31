@@ -6,7 +6,7 @@ When drawing a 3D scene is frequent to have many models represented by the same 
 
 We are basically iterating through all the game items inside a loop and performing a call to the function ```glDrawElements```. As it has been said in previous chapters, calls to OpenGL library should be minimized. Each call to the ```glDrawElements``` function imposes an overhead that is repeated again and again for each ```GameItem``` instance.
 
-When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technique is called instanced rendering which allows us to do that, OpenGL provides functions named ```glDrawXXXInstanced``` to render a set of elements at once. They can be arrays or elements. In our case, since we are drawing elements we will use the function named ```glDrawElementsInstanced```. This function receives the same arguments as the ```glDrawElements``` plus one additional parameter which sets the number of instances to be drawn.
+When dealing with lots of similar objects it would be more efficient to render all of them using a single call. This technique is called instanced rendering. In order to acomplish that OpenGL provides a set of functions named ```glDrawXXXInstanced``` to render a set of elements at once. In our case, since we are drawing elements we will use the function named ```glDrawElementsInstanced```. This function receives the same arguments as the ```glDrawElements``` plus one additional parameter which sets the number of instances to be drawn.
 
 This is a sample of how the glDrawElements is used.
 
