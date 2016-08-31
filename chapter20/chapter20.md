@@ -104,8 +104,8 @@ In the game engine code we will refer only to the ```IParticleEmitter``` interfa
 
 The behaviour of this class can be tuned with the following attributes:
 * A maximum number of particles that can be alive at a time.
-* A minimum period to create particles. Particles will be created one be one with a minimum period to avoid creating particles in bursts.
-* A range to randomize particles speed and starting position. New particles will use  base particle position and speed with can be randomized with values between those ranges to spread the beam.
+* A minimum period to create particles. Particles will be created one by one with a minimum period to avoid creating particles in bursts.
+* A set of ranges to randomize particles speed and starting position. New particles will use  base particle position and speed which can be randomized with values between those ranges to spread the beam.
 
 The implementation of this class is as follows:
 
@@ -388,7 +388,7 @@ We are using a plain filled circle as the particle’s texture by now, to better
 
 ![Particles I](particles_i.png)
 
-Why some particles seem to be cut off ? Why the transparent background does not solve this ? The reason is depth testing. Some fragments of the particles get discarded because they have a depth buffer value higher than the current value of the depth buffer for that zone. We can solve this by ordering the particle drawings depending in their distance to the camera or we can just disable the depth writing.
+Why some particles seem to be cut off? Why the transparent background does not solve this? The reason for that is depth testing. Some fragments of the particles get discarded because they have a depth buffer value higher than the current value of the depth buffer for that zone. We can solve this by ordering the particle drawings depending in their distance to the camera or we can just disable the depth writing.
 
 Before we draw the particles we just need to insert this line:
 
@@ -406,7 +406,7 @@ Then we will get something like this.
 
 ![Particles II](particles_ii.png)
 
-Ok, problem solved. Nevertheless, we still want another effect to b eapplied, we would want that colours get blended so colours will be added to create better effects. This is achieved with by adding this line before rendering to setup additive blending.
+Ok, problem solved. Nevertheless, we still want another effect to be applied, we would want that colours get blended so colours will be added to create better effects. This is achieved with by adding this line before rendering to setup additive blending.
 
 ```java
 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -422,11 +422,11 @@ Now we get something like this.
 
 ![Particles III](particles_iii.png)
 
-But we have not finished yet. If you have moved the camera  to position it over the blue square looking down you may have got something like this.
+But we have not finished yet. If you have moved the camera over the blue square looking down you may have got something like this.
 
 ![Particles IV](particles_iv.png)
 
-The particles do not look very good, they should look round but thay resemble a sheet of paper. At this points where we should be applying the billboard technique.  The quad that is used to render the particle should always face the camera, totally perpendicular to it as if it there was no rotation at all. The camera effect applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
+The particles do not look very good, they should look round but they resemble a sheet of paper. At this points is where we should be applying the billboard technique. The quad that is used to render the particle should always be facing the camera, totally perpendicular to it as if it there was no rotation at all. The camera matrix applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
 
 Warning: Maths ahead, you can skip it if you don't feel comfortable with this. Let’s review that view matrix once again. That matrix can be represented like this (without any scale applied to it).
 
@@ -438,6 +438,7 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
+
 The red elements represent the camera rotation while the blue ones represent the translation. We need to cancel the effect of the upper left 3x3 matrix contained in the view matrix so it gets to something like this.
 
 $$
@@ -448,7 +449,8 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
-So, we have a 3x3 matrix, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the 3x3 matrix form the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
+
+So, we have a 3x3 matrix, the upper left red fragment, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the upper left 3x3 matrix from the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
 
 $$
 \begin{bmatrix}
@@ -463,6 +465,7 @@ r_{10} & r_{11} & r_{12} \\
 r_{20} & r_{21} & r_{22}
 \end{bmatrix}
 $$
+
 Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
 
 $$
@@ -480,6 +483,7 @@ v_{03} & v_{13} & v_{23} & v_{33}
 m_{03} & m_{13} & m_{23} & m_{33}
 \end{bmatrix}
 $$
+
 We want to cancel the rotation of the view matrix, to get something like this:
 
 $$
@@ -490,6 +494,7 @@ $$
 mv_{03} & mv_{13} & mv_{23} & mv_{33}
 \end{bmatrix}
 $$
+
 So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
 
 $$
@@ -507,6 +512,7 @@ v_{03} & v_{13} & v_{23} & v_{33}
 m_{03} & m_{13} & m_{23} & m_{33}
 \end{bmatrix}
 $$
+
 And that's all, we just need to change this in the ```renderParticlesMethod``` like this:
 
 ```java
