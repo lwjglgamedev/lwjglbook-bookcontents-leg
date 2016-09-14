@@ -1,3 +1,3 @@
 # 3D Object Picking
 
-Next to come
+Chapter in progress. Uploaded source code for picking objects that are pointed by the camera.
