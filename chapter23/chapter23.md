@@ -83,7 +83,7 @@ The method, iterates over the game items trying to get the ones that interesect 
 
 Before entering into the loop, we need to get the direction vector that points where the camera is facing. This is easy, just use the view matrix to get the z direction taking into consideration camera’s rotation. Remember that positive z points out of the screen, so we need the opposite direction vector, this is why we negate it.
 
-TODO: Figure.
+![Camera](/chapter23/camera.png)
 
 In the game loop intersection calculations are done per each GameItem. But, how do we do ths? This is where the glorious JOML library comes to the rescue. We are using JOML’s Intersectionf class, which provides several methods to calculate intersection sin 2D and 3D. Specifically, we are using the intersectRayAab method.
 
