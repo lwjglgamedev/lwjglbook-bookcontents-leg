@@ -41,7 +41,7 @@ uniform float selectedNonInstanced;
 ...
 ```
 
-Now that the infrastructure has been set-up we just need to define how objects will be selected. Before we continue you may notice, if you look at the source code, that the View matrix is now stored in the Camera class. This is due to the fact that we are reusing the view matrices sin several classes in the source code. Previously it was stored in the Transformation class,, but sharing this class around the code base would introduce too much coupling. The best place for this information to be is the Camera itself. This change also, requires that the view matrix is updated in our main game loop.
+Now that the infrastructure has been set-up we just need to define how objects will be selected. Before we continue you may notice, if you look at the source code, that the View matrix is now stored in the ```Camera``` class. This is due to the fact that we werrecalculating the view matrix sin several classes in the source code. Previously, it was stored in the ```Transformation``` and in the ```SoundManager``` classes. In order to calculate intersections we would need to cerate another replica. Instead of that, we centralize that in the ```Camera``` class. This change also, requires that the view matrix is updated in our main game loop.
 
 Let’s continue with the picking discussion. In this sample, we will follow a simple approach, selection will be done automatically using the camera. The closes object to where the camera is facing will be selected. Let’s discuss how this can be done.
 
@@ -51,7 +51,7 @@ The following picture depicts the situation we need to solve.
 
 We have the camera, placed in some coordinates in world-space, facing a specific direction. Any object that intersects with a ray cast from camera’s position following camera’s forward direction will be a candidate. Between all the candidates we just need to chose the closest one.
 
-In our sample, GameItems are cubes, so we need to calculate the intersection of the camera’s forward vector with cubes. It may seem to be a very specific case, but indeed is very frequent. In many games, the game items have associated what’s called a bounding box. A bounding box is a rectangle box, that contains all the vertices for that object. This bounding box is used also, for instance, for collision detection. In fact, in the animation chapter, you saw that each animation frame defined a bounding box, that helps to set the boundaries at any given time.
+In our sample, game items are cubes, so we need to calculate the intersection of the camera’s forward vector with cubes. It may seem to be a very specific case, but indeed is very frequent. In many games, the game items have associated what’s called a bounding box. A bounding box is a rectangle box, that contains all the vertices for that object. This bounding box is used also, for instance, for collision detection. In fact, in the animation chapter, you saw that each animation frame defined a bounding box, that helps to set the boundaries at any given time.
 
 So, let’s start coding. We will create a new class named BoxSelectionDetector, which will have a method named selectGameItem which will receive a list of game items and a reference to the camera. The method is defined like this.
 
