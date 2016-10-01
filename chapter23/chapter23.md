@@ -101,29 +101,22 @@ The method will return true if there is an intersection. If true, we check the c
 
 ![Intersection](/chapter23/intersection.png)
 
-Once the loop have finished, the candidate GameItem is marked as selected.
+Once the loop have finished, the candidate ```GameItem``` is marked as selected.
 
-And that’s, all. The selectGameItem will be invoked in the update method of the DummyGame class, along with the view matrix update.
+And that’s, all. The ```selectGameItem``` will be invoked in the update method of the DummyGame class, along with the view matrix update.
 
- // Update view matrix
+```java
+// Update view matrix
+camera.updateViewMatrix();
 
- camera.updateViewMatrix();
+// Update sound listener position;
+soundMgr.updateListenerPosition(camera);
 
+this.selectDetector.selectGameItem(gameItems, camera);
+```
  
-
- // Update sound listener position;
-
- soundMgr.updateListenerPosition(camera);
-
- 
-
- this.selectDetector.selectGameItem(gameItems, camera);
-
- 
-
 Besides that, a cross-hair has been added to the rendering process to check that everytihn is working properly. The result is shown in the next figure.
 
- 
+![Object Picking result](/assets/object_picking_result.png)
 
 Obviously, the method presented here is far form optimal but it will give you the basis to develop more sophisticated methods by your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
-
