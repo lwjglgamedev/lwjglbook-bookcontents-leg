@@ -117,6 +117,6 @@ this.selectDetector.selectGameItem(gameItems, camera);
  
 Besides that, a cross-hair has been added to the rendering process to check that everytihn is working properly. The result is shown in the next figure.
 
-![Object Picking result](/assets/object_picking_result.png)
+![Object Picking result](/chapter23/object_picking_result.png)
 
 Obviously, the method presented here is far form optimal but it will give you the basis to develop more sophisticated methods by your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
