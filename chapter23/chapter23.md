@@ -25,3 +25,21 @@ Then, we need to be able to set that value for each GameItem. If you recall from
 
 In the first case, the data for each GameItem is passed through uniforms, so we just need to add a new uniform for that in the vertex shader. In the second case, we need to create a new instanced attribute. You can see bellow the additions that need to be integrated into the vertex shader for both cases.
 
+```glsl
+layout (location=14) in float selectedInstanced;
+...
+uniform float selectedNonInstanced;
+...
+    if ( isInstanced > 0 )
+    {
+        outSelected = selectedInstanced;
+...
+    }
+    else
+    {
+    outSelected = selectedNonInstanced;
+...
+```
+
+
+
