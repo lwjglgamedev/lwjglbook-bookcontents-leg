@@ -10,7 +10,7 @@ Then, we need to be able to use that value in the scene shaders. Let’s start w
 
 ```in float outSelected;``` 
 
-Then, at the end of the fragment shader, we will modify the final fragment colour, byt setting the Blue component to 1 if it’s selected.
+Then, at the end of the fragment shader, we will modify the final fragment colour, byt setting the blue component to $$1$$ if it’s selected.
 
 ```glsl
 if ( outSelected > 0 ) {
@@ -18,12 +18,12 @@ if ( outSelected > 0 ) {
 }
 ```
 
-Then, we need to be able to set that value for each GameItem. If you recall from previous chapters we have two scenarios:
+Then, we need to be able to set that value for each . If you recall from previous chapters we have two scenarios:
 
 * Rendering of non instanced meshes.
 * Rendering of instanced meshes.
 
-In the first case, the data for each GameItem is passed through uniforms, so we just need to add a new uniform for that in the vertex shader. In the second case, we need to create a new instanced attribute. You can see bellow the additions that need to be integrated into the vertex shader for both cases.
+In the first case, the data for each ```GameItem``` is passed through uniforms, so we just need to add a new uniform for that in the vertex shader. In the second case, we need to create a new instanced attribute. You can see bellow the additions that need to be integrated into the vertex shader for both cases.
 
 ```glsl
 layout (location=14) in float selectedInstanced;
