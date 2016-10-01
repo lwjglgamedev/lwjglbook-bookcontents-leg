@@ -53,15 +53,13 @@ We have the camera, placed in some coordinates in world-space, facing a specific
 
 In our sample, game items are cubes, so we need to calculate the intersection of the camera’s forward vector with cubes. It may seem to be a very specific case, but indeed is very frequent. In many games, the game items have associated what’s called a bounding box. A bounding box is a rectangle box, that contains all the vertices for that object. This bounding box is used also, for instance, for collision detection. In fact, in the animation chapter, you saw that each animation frame defined a bounding box, that helps to set the boundaries at any given time.
 
-So, let’s start coding. We will create a new class named BoxSelectionDetector, which will have a method named selectGameItem which will receive a list of game items and a reference to the camera. The method is defined like this.
+So, let’s start coding. We will create a new class named `` `BoxSelectionDetector```, which will have a method named ```selectGameItem``` which will receive a list of game items and a reference to the camera. The method is defined like this.
 
- public void selectGameItem(GameItem[] gameItems, Camera camera) {
+```java
+public void selectGameItem(GameItem[] gameItems, Camera camera) {
+    GameItem selectedGameItem = null;
+    float closestDistance = Float.POSITIVE_INFINITY;
 
- GameItem selectedGameItem = null;
-
- float closestDistance = Float.POSITIVE_INFINITY;
-
- 
 
  dir = camera.getViewMatrix().positiveZ(dir).negate();
 
