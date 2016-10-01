@@ -60,46 +60,24 @@ public void selectGameItem(GameItem[] gameItems, Camera camera) {
     GameItem selectedGameItem = null;
     float closestDistance = Float.POSITIVE_INFINITY;
 
+    dir = camera.getViewMatrix().positiveZ(dir).negate();
+    for (GameItem gameItem : gameItems) {
+        gameItem.setSelected(false);
+        min.set(gameItem.getPosition());
+        max.set(gameItem.getPosition());
+        min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
+        max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
+        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+            closestDistance = nearFar.x;
+            selectedGameItem = gameItem;
+        }
+    }
 
- dir = camera.getViewMatrix().positiveZ(dir).negate();
-
- for (GameItem gameItem : gameItems) {
-
- gameItem.setSelected(false);
-
- min.set(gameItem.getPosition());
-
- max.set(gameItem.getPosition());
-
- min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
-
- max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
-
- if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar)) {
-
- if (nearFar.x < closestDistance) {
-
- closestDistance = nearFar.x;
-
- selectedGameItem = gameItem;
-
- }
-
- }
-
- }
-
- 
-
- if (selectedGameItem != null) {
-
- selectedGameItem.setSelected(true);
-
- }
-
- }
-
- 
+    if (selectedGameItem != null) {
+        selectedGameItem.setSelected(true);
+    }
+}
+```
 
 The method, iterates over the GameItems trying to get the ones that interesect with the ray cast form the camera. It first defines a vafiable named closestDistance. This vaioabkle will hold the closest distance. For GameItems that intersect, the distance from the camera to the intersection point will be calculated, If it’s lower than the value stored in closestDistance, then this item will be the new candidate.
 
