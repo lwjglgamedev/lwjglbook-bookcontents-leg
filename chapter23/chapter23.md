@@ -79,7 +79,7 @@ public void selectGameItem(GameItem[] gameItems, Camera camera) {
 }
 ```
 
-The method, iterates over the GameItems trying to get the ones that interesect with the ray cast form the camera. It first defines a vafiable named closestDistance. This vaioabkle will hold the closest distance. For GameItems that intersect, the distance from the camera to the intersection point will be calculated, If it’s lower than the value stored in closestDistance, then this item will be the new candidate.
+The method, iterates over the game items trying to get the ones that interesect with the ray cast form the camera. It first defines a vafiable named ```closestDistance```. This vaioabkle will hold the closest distance. For game items that intersect, the distance from the camera to the intersection point will be calculated, If it’s lower than the value stored in ```closestDistance```, then this item will be the new candidate.
 
 Before entering into the loop, we need to get the direction vector that points where the camera is facing. This is easy, just use the view matrix to get the z direction taking into consideration camera’s rotation. Remember that positive z points out of the screen, so we need the opposite direction vector, this is why we negate it.
 
