@@ -85,9 +85,9 @@ Before entering into the loop, we need to get the direction vector that points w
 
 ![Camera](/chapter23/camera.png)
 
-In the game loop intersection calculations are done per each GameItem. But, how do we do ths? This is where the glorious JOML library comes to the rescue. We are using JOML’s Intersectionf class, which provides several methods to calculate intersection sin 2D and 3D. Specifically, we are using the intersectRayAab method.
+In the game loop intersection calculations are done per each GameItem. But, how do we do this? This is where the glorious [JOML](https://github.com/JOML-CI/JOML "JOML") library comes to the rescue. We are using [JOML](https://github.com/JOML-CI/JOML "JOML")’s ```Intersectionf``` class, which provides several methods to calculate intersection sin 2D and 3D. Specifically, we are using the ```intersectRayAab``` method.
 
-This method implements the algorithm that test intersection for Axis Aligned Boxes. You can check the details, as pointed out in the JOML documentation, here http://people.csail.mit.edu/amy/papers/box-jgt.pdf.
+This method implements the algorithm that test intersection for Axis Aligned Boxes. You can check the details, as pointed out in the JOML documentation, [here](http://people.csail.mit.edu/amy/papers/box-jgt.pdf "here").
 
 The method tests if a ray, defined by an origin and a direction, intersects a box, defines by minimum and maximum corner. This algorithm is valid, because our cubes, are aligned with the axis, if they were rotated, this method would not work. Thus, the method receives the following parameters:
 
