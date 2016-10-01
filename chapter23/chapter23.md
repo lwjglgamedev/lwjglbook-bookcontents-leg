@@ -91,19 +91,15 @@ This method implements the algorithm that test intersection for Axis Aligned Box
 
 The method tests if a ray, defined by an origin and a direction, intersects a box, defines by minimum and maximum corner. This algorithm is valid, because our cubes, are aligned with the axis, if they were rotated, this method would not work. Thus, the method receives the following parameters:
 
- An origin: In our case, this will be our camera position.
+* An origin: In our case, this will be our camera position.
+* A direction: This is where the camera is facing, the forward vector.
+* The minimum corner of the box. In our case, the cubes are centered around the GameItem position, the minimum corner will be those coordinates minus the scale. (In its original size, cubes have a length of 2 and a sacle of 1).
+* The maximum corner. Self explanatory.
+* A result vector. This will contain the near and far distances of the intersection points.
 
- A directorio: This is where the camera is facing, the forward vector.
+The method will return true if there is an intersection. If true, we check the closes distance and update it if needed, and store a reference of the candidate selected ```GameItem```. The next figure shows all the elements involved in this method.
 
- The minimum corner of the box. In our case, the cubes are centered around the GameItem position, the minimum corner will be those coordinates minus the scale. (In its original size, cubes have a length of 2 and a sacle of 1).
-
- The maximum corner. Self explanatory.
-
- A result vector. This will contain the near and far distances of the intersection points.
-
-The method will return true if there is an intersection. If true, we check the closes distance and update it if needed, and store a reference of the candidate selected GameItem. The next figure shows all the elements involved in this method.
-
-TODO: Figure.
+![Intersection](/chapter23/intersection.png)
 
 Once the loop have finished, the candidate GameItem is marked as selected.
 
