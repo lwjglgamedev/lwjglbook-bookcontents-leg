@@ -17,3 +17,11 @@ if ( outSelected > 0 ) {
     fragColor = vec4(fragColor.x, fragColor.y, 1, 1);
 }
 ```
+
+Then, we need to be able to set that value for each GameItem. If you recall from previous chapters we have two scenarios:
+
+* Rendering of non instanced meshes.
+* Rendering of instanced meshes.
+
+In the first case, the data for each GameItem is passed through uniforms, so we just need to add a new uniform for that in the vertex shader. In the second case, we need to create a new instanced attribute. You can see bellow the additions that need to be integrated into the vertex shader for both cases.
+
