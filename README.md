@@ -11,7 +11,9 @@ I started to collect some materials, develop some examples and decided to organi
 
 ## Source Code
 
-The source code of this book will be published in [GitHub](https://github.com/lwjglgamedev/lwjglbook).
+The source code of the samples of this book are in [GitHub](https://github.com/lwjglgamedev/lwjglbook).
+
+The source code for the book itself is also publishd int [GitHub](https://github.com/lwjglgamedev/lwjglbook-bookcontents).
 
 ## License
 
