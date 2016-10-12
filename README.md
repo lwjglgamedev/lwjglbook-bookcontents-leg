@@ -23,5 +23,5 @@ If you like the book please rate it with a start and share it. If you want to co
 
 ## Comments are welcome
 
-Suggestions and corrections are more than welcome (and if you do like it please rate it with a star). [Please send them](https://www.gitbook.com/book/lwjglgamedev/3d-game-development-with-lwjgl/contact) and make the corrections you consider in order to improve the book.
+Suggestions and corrections are more than welcome (and if you do like it please rate it with a star). Please send them using the discussion forum and make the corrections you consider in order to improve the book.
 
