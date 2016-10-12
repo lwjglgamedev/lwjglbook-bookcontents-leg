@@ -539,7 +539,7 @@ We are generating an image which contains all the characters in a single row (we
 ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
 ```
 
-The image will be written to a temporary file. That file woll contain a long strip with all the available characters, drawn in white over transparent background using anti aliasing.
+The image will be written to a temporary file. That file will contain a long strip with all the available characters, drawn in white over transparent background using anti aliasing.
 
 ![Font texture](texture_font.png)
  
