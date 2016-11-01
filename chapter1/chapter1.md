@@ -18,6 +18,8 @@ Maven builds projects based on an XML file named ```pom.xml``` (Project Object M
 
 This book does not intend to be a maven tutorial, so please find the information about it in the web in case you need it.  The source code folder defines a parent project which defines the plugins to be used and collects the versions of the libraries employed. 
 
+LWJGL 3.1 introduced some changes in the way that the project is built. Now the base code is much more modular, and we can be more selective in the packages that we want to use insetad of using a giant monolithic jar file. This comes at a cost, you now need to carefully specif the dependencies one by one, but the [download](https://www.lwjgl.org/download) page includes a fancy script that generates the pom file for you. In our case, we will just be using GLFW and OpenGL bindings. You can check what the pom file looks like in the source code.
+
 LWJGL platform dependency already takes care of unpacking native libraries for your platform, so there's no need to use other plugings (such as ```mavennatives```). We just need to set up three profiles to set a property that will configure LWJGL platform. The profiles will set up the correct values of that property for Windows, Linux and Mac OS families.
 
 ```xml
