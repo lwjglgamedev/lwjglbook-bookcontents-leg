@@ -1,5 +1,7 @@
 # 3D Object Picking
 
+## Camera Selection
+
 One of the key aspects of every game is the ability to interact with the environment. This capability requires to be able to select objects in the 3D scene. In this chapter we will explore how this can be achieved.
 
 But, before we start talking about the steps to be performed to select objects, we need a way to represent selected objects. Thus, the first thing that we must do, is add another attribute to the GameItem class, which will allow us to tag selected objects:
@@ -53,7 +55,7 @@ We have the camera, placed in some coordinates in world-space, facing a specific
 
 In our sample, game items are cubes, so we need to calculate the intersection of the camera’s forward vector with cubes. It may seem to be a very specific case, but indeed is very frequent. In many games, the game items have associated what’s called a bounding box. A bounding box is a rectangle box, that contains all the vertices for that object. This bounding box is used also, for instance, for collision detection. In fact, in the animation chapter, you saw that each animation frame defined a bounding box, that helps to set the boundaries at any given time.
 
-So, let’s start coding. We will create a new class named `` `BoxSelectionDetector```, which will have a method named ```selectGameItem``` which will receive a list of game items and a reference to the camera. The method is defined like this.
+So, let’s start coding. We will create a new class named `` `CameraBoxSelectionDetector```, which will have a method named ```selectGameItem``` which will receive a list of game items and a reference to the camera. The method is defined like this.
 
 ```java
 public void selectGameItem(GameItem[] gameItems, Camera camera) {
@@ -120,3 +122,44 @@ Besides that, a cross-hair has been added to the rendering process to check that
 ![Object Picking result](/chapter23/object_picking_result.png)
 
 Obviously, the method presented here is far form optimal but it will give you the basis to develop more sophisticated methods by your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
+
+## Mouse Selection
+
+Object picking with the camera is great, but what if we want to be able to freely select objects with the mouse? In this case, we want that, whenever the user click on the screen, the closest object is automatically selected.
+
+The way to achieve this is similar to the method described above. In the previous method we had the camera position and generated rays from it using the “forward” direction according to camera’s current orientation. In this case, we still need to cast rays, but the direction points to a point far away from the camera, where the click has been made. In this case, we need to calculate that direction vector using the click coordinates.
+
+But, how do we pass from a $$(x,y)$$ coordinates in viewport space to world space? Let’s review how we pass from model space coordinates to view space. The  different coordinate transformations that are applied in order to achieve that are:
+
+* We pass from model coordinates to world coordinates using the model matrix.
+* We pass from world coordinates to view space coordinates using the view matrix (that provides the camera effect)-
+* We pass from view coordinates to homogeneous clip space by applying the perspective projection matrix.
+* Final screen coordinates are calculate automatically by OpenGL for us. Before doint that, it passes to normalized device space (by dividing the $$x, y,z$$ coordinates by the $$w$$ component) and then to $$x,y$$ screen coordinates.
+
+So we need just to perform the traverse the inevrse path to get from screen coordinates $$(x,y)$$, to world coordinates.
+
+The first step is to transform from screen coordinates to normalized device space. The $$(x, y)$$ coordinates in the view port space are in the range $$[0, screen with]$$ $$[0, screen height]$$. The upper left corner of the screen has a value of $$[0, 0]$$. We need to transform that into coordinates in the range $$[-1, 1]$$.
+
+*** FIGURE ***
+
+The maths are simple:
+
+$$x = 2 \cdot screen_x / screenwidth – 1$$
+
+$$y = 1 - 2 * screen_y / screenheight$$
+
+But, how do we calculate the $$z$$ coordinate? The answer is simple, we simply assign it the $$-1$$ value, so that the ray points to the farthest visible distance (Remember that in OpenGL, $$-1$$ points to the screen). Now we have the coordinates in normalised device space.
+
+In order to continue with the transformations we need to convert them to the homogeneous clip space. We need to have the w component, that is use homogeneous coordinates. Although this concept was presented in the previous chapters, let’s get back to it. In order to represent a 3D point w just need the x,y and z coordinates, but we are continuously working with an additional coordinate, the w component. We need this extra component in order to use matrices to perform the different transformations. Some transformations do not need that extra component but other do. For instance, the translation matrix does not work if we only have x,y and z components. Thus, we have added the w component and assigned them a value of 1 so we can work with 4x4 matrices.
+
+Besides that, most of transformations, or to be more precise, most of the transformation matrices do not alter the w component. An exception to this is the projection matrix. This matrix changes the w value to be proportional to the z-component.
+
+Transforming from homogeneous clip space to normalized device coordinates is achieved by dividing the x , y and z coordinates by w. As this component is proportional to the z component, this implies that distant objects are drawn smaller. In our case we need to do the reverse, we need to unproject, but since what we are calculating it’s a ray we just simply can ignore that step, we just set the w component to 1 and leave the rest of the components with their original value.
+
+Now we need to go back yo view space. This is easy, we just need to calculate the inverse of the projection matrix and multiply it by our 4 components vector. Once we have done that, we need to transform them to world space. Again, we just need to use the view matrix, calculate it’s inverse and multiply it by our vector.
+
+Remember that we are only interested in directions, so, in this case we set the w component to 0. Also we can set the z component again to -1, since we want it to point towards the screen. Once we have done that and applied the inverse view matrix we have our vector in world space. We have our ray calculated and can apply the same algorithm as in the case of the camera picking.
+
+We have created a new class named MouseBoxSelectionDetector that implements the setps decsribed above. Besides that, we have moved the projection matrix to the Window class so we can use them in several places of the source code and refactroed a little bit the CameraBoxSelectionDetector so the MouseBoxSelectionDetector can inheit from it and use the collision detection method. You can check the source code directly, since the implemenattion it’s very simple.
+
+The result now looks like this.
