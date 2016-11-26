@@ -144,7 +144,7 @@ The first step is to transform from screen coordinates to normalized device spac
 
 The maths are simple:
 
-$$x = 2 \cdot screen_x / screenwidth – 1$$
+$$x = 2 \cdot screen_x / screenwidth - 1$$
 
 $$y = 1 - 2 * screen_y / screenheight$$
 
