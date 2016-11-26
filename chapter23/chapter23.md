@@ -140,7 +140,7 @@ So we need just to perform the traverse the inevrse path to get from screen coor
 
 The first step is to transform from screen coordinates to normalized device space. The $$(x, y)$$ coordinates in the view port space are in the range $$[0, screen with]$$ $$[0, screen height]$$. The upper left corner of the screen has a value of $$[0, 0]$$. We need to transform that into coordinates in the range $$[-1, 1]$$.
 
-*** FIGURE ***
+![Screen coordinates to normalized device space](/chapter23/screen_coordinates.png)
 
 The maths are simple:
 
@@ -163,3 +163,9 @@ Remember that we are only interested in directions, so, in this case we set the 
 We have created a new class named `MouseBoxSelectionDetector `that implements the setps described above. Besides that, we have moved the projection matrix to the `Window `class so we can use them in several places of the source code and refactroed a little bit the `CameraBoxSelectionDetector `so the `MouseBoxSelectionDetector `can inheit from it and use the collision detection method. You can check the source code directly, since the implemenattion it’s very simple.
 
 The result now looks like this.
+
+![Mouse selection](/chapter23/mouse_selection.png)
+
+You just need to click over the block with the mouse left button to perform the selection.
+
+In any case, if you can consult the details behind the steps explained here in an [excellent article](https://capnramses.github.io//opengl/raycasting.html "excelent article") with very detailed sketechs of the different steps involved.
