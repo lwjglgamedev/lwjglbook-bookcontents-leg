@@ -27,3 +27,7 @@ If you like the book please rate it with a start and share it. If you want to co
 
 Suggestions and corrections are more than welcome (and if you do like it please rate it with a star). Please send them using the discussion forum and make the corrections you consider in order to improve the book.
 
+## Author
+
+Antonio Hernández Bejarano
+
