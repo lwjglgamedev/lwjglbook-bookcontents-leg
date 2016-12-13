@@ -604,7 +604,7 @@ We have set up all the infrastructure needed in order to create a HUD for our ga
 
 ## OSX
 
-If you try to run the samples in this chapter, and the next ones that render text, you may find that the application blocks and nothing is shown in the screen. This is due to the fact that AWT and GLFW do get along very well under OSX. But, what does it have to do with AWT ? We are using the ```Font`` class, which belongs to AWT, and just by instantiating it, AWT gets initialized also. In OSX AWT tries to run under the main thread, which is also required by GLFW. This is what causes this mess.
+If you try to run the samples in this chapter, and the next ones that render text, you may find that the application blocks and nothing is shown in the screen. This is due to the fact that AWT and GLFW do get along very well under OSX. But, what does it have to do with AWT ? We are using the ```Font``` class, which belongs to AWT, and just by instantiating it, AWT gets initialized also. In OSX AWT tries to run under the main thread, which is also required by GLFW. This is what causes this mess.
 
 In order to be able to use the ```Font``` class, GLFW must be initialized before AWT and the samples need to be run in headless mode. You need to setup this property before anything gets intialized:
 
