@@ -30,7 +30,7 @@ private Box2D getBoundingBox(GameItem terrainBlock) {
 }
 ```
 
-The ```Box2D``` class is a ssimplied version of the ```java.awt.Rectangle2D.Float``` class; created to avoid using AWT.
+The ```Box2D``` class is a simplified version of the ```java.awt.Rectangle2D.Float``` class; created to avoid using AWT.
 
 Now we need to calculate the world coordinates of the terrain blocks. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to ```[STARTX, STARTZ]```. Thus,we need to transform those coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
 
@@ -86,7 +86,7 @@ public float getHeight(Vector3f position) {
     float result = Float.MIN_VALUE;
     // For each terrain block we get the bounding box, translate it to view coodinates
     // and check if the position is contained in that bounding box
-    Rectangle2D.Float boundingBox = null;
+    Box2D boundingBox = null;
     boolean found = false;
     GameItem terrainBlock = null;
     for (int row = 0; row < terrainSize && !found; row++) {
@@ -109,7 +109,7 @@ public float getHeight(Vector3f position) {
 ```
 
 The first thing that to we do in that method is to determine the terrain block that we are in. Since we already have the bounding box for each terrain block, the algorithm is simple. We just simply need to iterate over the array of bounding boxes and check if the current position is inside (the class 
-```Rectangle2D``` already provides a method for this).
+```Box2D``` provides a method for this).
 
 Once we have found the terrain block, we need to calculate the triangle which we are in. This is done in the ```getTriangle``` method that will be described later on. After that, we have the coordinates of the triangle that we are in, including its height. But, we need the height of a point that is not located at any of those vertices but in a place in between. This is done in the $$interpolateHeight$$ method. We will also explain how this is done later on.
 
@@ -169,7 +169,7 @@ Where $$x1$$$$, $$$$x2$$$$, $$$$z1$$ and $$z2$$ are the $$x$$ and $$z$$ coordina
 So the method to get the triangle that the current position is in, named ```getTriangle```, applying all the calculations described above can be implemented like this:
 
 ```java
-protected Vector3f[] getTriangle(Vector3f position, Rectangle2D.Float boundingBox, GameItem terrainBlock) {
+protected Vector3f[] getTriangle(Vector3f position, Box2D boundingBox, GameItem terrainBlock) {
     // Get the column and row of the heightmap associated to the current position
     float cellWidth = boundingBox.width / (float) verticesPerCol;
     float cellHeight = boundingBox.height / (float) verticesPerRow;
