@@ -17,7 +17,7 @@ So, what we need to do first is determine in which terrain block the current pos
 We will create a new method that calculates the bounding box of a terrain block, named ```getBoundingBox```.
 
 ```java
-private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
+private Box2D getBoundingBox(GameItem terrainBlock) {
     float scale = terrainBlock.getScale();
     Vector3f position = terrainBlock.getPosition();
 
@@ -25,10 +25,12 @@ private Rectangle2D.Float getBoundingBox(GameItem terrainBlock) {
     float topLeftZ = HeightMapMesh.STARTZ * scale + position.z;
     float width = Math.abs(HeightMapMesh.STARTX * 2) * scale;
     float height = Math.abs(HeightMapMesh.STARTZ * 2) * scale;
-    Rectangle2D.Float boundingBox = new Rectangle2D.Float(topLeftX, topLeftZ, width, height);
+    Box2D boundingBox = new Box2D(topLeftX, topLeftZ, width, height);
     return boundingBox;
 }
 ```
+
+The ```Box2D``` class is a ssimplied version of the ```java.awt.Rectangle2D.Float``` class; created to avoid using AWT.
 
 Now we need to calculate the world coordinates of the terrain blocks. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to ```[STARTX, STARTZ]```. Thus,we need to transform those coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
 
@@ -37,7 +39,7 @@ Now we need to calculate the world coordinates of the terrain blocks. In the pre
 As it’s been said above, this can be done in the Terrain class constructor since it won't change at run time. So we need to add a new attribute which will hold the bounding boxes:
 
 ```java
-private final Rectangle2D.Float[][] boundingBoxes;
+private final Box2D[][] boundingBoxes;
 ```
 
 In the ```Terrain``` constructor, while we are creating the terrain blocks, we just need to invoke the method that calculates the bounding box.
@@ -47,12 +49,19 @@ public Terrain(int terrainSize, float scale, float minY, float maxY, String heig
     this.terrainSize = terrainSize;
     gameItems = new GameItem[terrainSize * terrainSize];
 
-    BufferedImage heightMapImage = ImageIO.read(getClass().getResourceAsStream(heightMapFile));
+    PNGDecoder decoder = new PNGDecoder(getClass().getResourceAsStream(heightMapFile));
+    int height = decoder.getHeight();
+    int width = decoder.getWidth();
+    ByteBuffer buf = ByteBuffer.allocateDirect(
+            4 * decoder.getWidth() * decoder.getHeight());
+    decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+    buf.flip();
+
     // The number of vertices per column and row
     verticesPerCol = heightMapImage.getWidth();
     verticesPerRow = heightMapImage.getHeight();
 
-    heightMapMesh = new HeightMapMesh(minY, maxY, heightMapImage, textureFile, textInc);
+    heightMapMesh = new HeightMapMesh(minY, maxY, buf, width, textureFile, textInc);
     boundingBoxes = new Rectangle2D.Float[terrainSize][terrainSize];
     for (int row = 0; row < terrainSize; row++) {
         for (int col = 0; col < terrainSize; col++) {
