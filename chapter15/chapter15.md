@@ -62,7 +62,7 @@ public Terrain(int terrainSize, float scale, float minY, float maxY, String heig
     verticesPerRow = heightMapImage.getHeight();
 
     heightMapMesh = new HeightMapMesh(minY, maxY, buf, width, textureFile, textInc);
-    boundingBoxes = new Rectangle2D.Float[terrainSize][terrainSize];
+    boundingBoxes = new Box2D[terrainSize][terrainSize];
     for (int row = 0; row < terrainSize; row++) {
         for (int col = 0; col < terrainSize; col++) {
             float xDisplacement = (col - ((float) terrainSize - 1) / (float) 2) * scale * HeightMapMesh.getXLength();
