@@ -107,7 +107,7 @@ vec3 calcNormal(Material material, vec3 normal, vec2 text_coord, mat4 modelViewM
     vec3 newNormal = normal;
     if ( material.hasNormalMap == 1 )
     {
-        newNormal = texture(material.normalMap, text_coord).rgb;
+        newNormal = texture(normalMap, text_coord).rgb;
         newNormal = normalize(newNormal * 2 - 1);
         newNormal = normalize(modelViewMatrix * vec4(newNormal, 0.0)).xyz;
     }
