@@ -24,4 +24,5 @@
 * [Instanced Rendering](chapter21/chapter21.md)
 * [Audio](chapter22/chapter22.md)
 * [3D Object picking](chapter23/chapter23.md)
+* [Hud revisited - NanoVG](chapter24/chapter24.md)
 
