@@ -23,8 +23,28 @@ The first step in order to start using [NanoVG](https://github.com/memononen/nan
 </dependency>
 ```
 
-Before we start using [NanoVG](https://github.com/memononen/nanovg) we must set up some things in the OpenGL side so the samples can work correctly. We need to enable support for stencil buffer test. Until now we have talked about colour and depth buffers, but we have not mentioned the stencil buffer. This buffer stores a value (an integer) for every pixel which is used to control which pixels should be drawn. This buffer is used to mask or discard drawing areas according to the values it stores. It can be used, for instance, to cut out some parts of the scene in an easy way. We enable stencil buffer test by adding this line to the Window class (after we enable depth testing):
+Before we start using [NanoVG](https://github.com/memononen/nanovg) we must set up some things in the OpenGL side so the samples can work correctly. We need to enable support for stencil buffer test. Until now we have talked about colour and depth buffers, but we have not mentioned the stencil buffer. This buffer stores a value (an integer) for every pixel which is used to control which pixels should be drawn. This buffer is used to mask or discard drawing areas according to the values it stores. It can be used, for instance, to cut out some parts of the scene in an easy way. We enable stencil buffer test by adding this line to the ```Window``` class (after we enable depth testing):
 
 ```java
 glEnable(GL_STENCIL_TEST);
 ```
+
+Since we are using another buffer we must take care also of removing its values before each render call. Thus, we need to modify the clear method of the ```Renderer``` class:
+
+```java
+public void clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+```
+
+We will also add a new window option for activating antialiasing. Thus, in the Window class we will enable it by this way:
+
+```java
+if (opts.antialiasing) {
+    glfwWindowHint(GLFW_SAMPLES, 4);
+}
+```
+
+Now we are ready to use the [NanoVG](https://github.com/memononen/nanovg) library. The firs thing that we will do is get rid off the HUD artefacts we have created, that is the shaders the ```IHud``` interface, the hud rendering methods in the ```Renderer``` class, etc. Yo can check this out in the source code. 
+
+In this case, the new ```Hud``` class will take care of its rendering, so we do not need to delegate it to the Renderer class. Let’s tart by defining that class, It will have an ```init``` method that sets up the library and the resources needed to build the HUD. The method is defined like this:
