@@ -1,4 +1,4 @@
-# Hud revisited - NanoVG
+![](/assets/hud.png)# Hud revisited - NanoVG
 
 In previous chapters we explained how a HUD can be created renderings shapes and textures over the top of the scene using an orthographic projection.  In this chapter we will learn how to use the [NanoVG](https://github.com/memononen/nanovg) library to be able to render antialiased vector graphics to construct more complex HUDs in an easy way.
 
@@ -130,5 +130,6 @@ glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 And that’s all (besides some additional methods to clear things up), the code is completed. When syou execute the sample you will get something like this:
 
+![Hud](/chapter24/hud.png)
 
 
