@@ -1,4 +1,4 @@
-\# Hud revisited - NanoVG
+# HUD Revisited - NanoVG
 
 In previous chapters we explained how a HUD can be created renderings shapes and textures over the top of the scene using an orthographic projection.  In this chapter we will learn how to use the [NanoVG](https://github.com/memononen/nanovg) library to be able to render antialiased vector graphics to construct more complex HUDs in an easy way.
 
