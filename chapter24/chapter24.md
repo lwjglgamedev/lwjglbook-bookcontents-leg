@@ -48,3 +48,7 @@ if (opts.antialiasing) {
 Now we are ready to use the [NanoVG](https://github.com/memononen/nanovg) library. The firs thing that we will do is get rid off the HUD artefacts we have created, that is the shaders the ```IHud``` interface, the hud rendering methods in the ```Renderer``` class, etc. Yo can check this out in the source code. 
 
 In this case, the new ```Hud``` class will take care of its rendering, so we do not need to delegate it to the Renderer class. Let’s tart by defining that class, It will have an ```init``` method that sets up the library and the resources needed to build the HUD. The method is defined like this:
+
+```java
+
+```
