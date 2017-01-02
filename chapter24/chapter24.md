@@ -106,21 +106,29 @@ The first thing that we must do is call the ```nvgBeginFrame``  method.  All the
 * The pixel ratio. If you need to support Hi-DPI  you can change this value. For this sample we just set it to 1.
 
 Then we create several ribbons that occupy the whole screen with. The first one is drawn like this:
-        // Upper ribbon
-        nvgBeginPath(vg);
-        nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
-        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
-        nvgFill(vg);
 
-While rendering a shape, the first method that shall be invoked is  nvgBeginPath, that instructs NanoVG to start drawing anew shape. Then we define what to draw, a rect, the fill colour and by invoking the nvgFill we draw it.
+```java
+// Upper ribbon
+nvgBeginPath(vg);
+nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
+nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
+nvgFill(vg);
+```
+
+While rendering a shape, the first method that shall be invoked is  ```nvgBeginPath```, that instructs NanoVG to start drawing a new shape. Then we define what to draw, a rect, the fill colour and by invoking the ```nvgFill``` we draw it.
+
 You can check the rest of the source code to see how the rest of the shapes are drawn. When rednering text is not necessary to call  nvgBeginPath before rendering it.
 
-After we have finished drawing all the shapes, we just call the nvgEndFrame to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in ordre to perform their operations, if the state is not correctly respoted you  may see that the sceen is not correctlt rendered or ievent that is¡0s been wiped out. Thus, we set up the relevant OpenGL status that we need for our rendering:
+After we have finished drawing all the shapes, we just call the ```nvgEndFrame``` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in ordre to perform their operations, if the state is not correctly respoted you  may see that the sceen is not correctly rendered or ievent that it's been wiped out. Thus, we set up the relevant OpenGL status that we need for our rendering:
 
-        // Restore state
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+```java
+// Restore state
+glEnable(GL_DEPTH_TEST);
+glEnable(GL_STENCIL_TEST);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+```
 
 And that’s all (besides some additional methods to clear things up), the code is completed. When syou execute the sample you will get something like this:
+
+
 
