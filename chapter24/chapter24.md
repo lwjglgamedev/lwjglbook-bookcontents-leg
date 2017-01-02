@@ -117,9 +117,9 @@ nvgFill(vg);
 
 While rendering a shape, the first method that shall be invoked is  ```nvgBeginPath```, that instructs NanoVG to start drawing a new shape. Then we define what to draw, a rect, the fill colour and by invoking the ```nvgFill``` we draw it.
 
-You can check the rest of the source code to see how the rest of the shapes are drawn. When rednering text is not necessary to call  nvgBeginPath before rendering it.
+You can check the rest of the source code to see how the rest of the shapes are drawn. When rendering text is not necessary to call  nvgBeginPath before rendering it.
 
-After we have finished drawing all the shapes, we just call the ```nvgEndFrame``` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in ordre to perform their operations, if the state is not correctly respoted you  may see that the sceen is not correctly rendered or ievent that it's been wiped out. Thus, we set up the relevant OpenGL status that we need for our rendering:
+After we have finished drawing all the shapes, we just call the ```nvgEndFrame``` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in order to perform their operations, if the state is not correctly restored you  may see that the scene is not correctly rendered or even that it's been wiped out. Thus, we need to restore the relevant OpenGL status that we need for our rendering:
 
 ```java
 // Restore state
