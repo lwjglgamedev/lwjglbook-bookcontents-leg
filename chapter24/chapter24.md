@@ -69,3 +69,58 @@ public void init(Window window) throws Exception {
     counter = 0;
 }
 ```
+The first thing we do is create a NanoVG context. In this case we are using an OpenGL 3.0 backend since we are referring to the ```org.lwjgl.nanovg.NanoVGGL3``` namespace. If antialiasing is activated we set up the flag ```NVG_ANTIALIAS```.
+ 
+Next, we create a font by using a True Type font previously loaded into a ```ByteBuffer```. We assign it a name so we can later on use it while rendering text. One important thing about this is that the ```ByteBuffer``` used to load the font must be kept in memory while the font is used. That is, it cannot be garbage collected, otherwise you will get a nice core dump. This is why it is stored as a class attribute.
+
+Then, we create a colour instance and some helpful variables that will be used while rendering. That  method is called in the game init method, just before the rendered is initialized:
+
+```java
+@Override
+public void init(Window window) throws Exception {
+    hud.init(window);
+    renderer.init(window);
+    ...
+```
+
+The ```Hud``` class also defines a render method, which should be called after the scene has been rendered so the HUD is drawn on top of it.
+
+```java
+@Override
+public void render(Window window) {
+    renderer.render(window, camera, scene);
+    hud.render(window);
+}
+```
+
+The ```render``` method of the Hud class starts like this:
+
+```java
+public void render(Window window) {
+    nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
+```
+
+The first thing that we must do is call the ```nvgBeginFrame``  method.  All the NanoVG rendering operations must be enclosed between a ```nvgBeginFrame``` and ```nvgEndFrame``` calls. The ```nvgBeginFrame``` accepts the following parameters:
+* The NanoVG context.
+* The size of the window to render (width an height).
+* The pixel ratio. If you need to support Hi-DPI  you can change this value. For this sample we just set it to 1.
+
+Then we create several ribbons that occupy the whole screen with. The first one is drawn like this:
+        // Upper ribbon
+        nvgBeginPath(vg);
+        nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
+        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
+        nvgFill(vg);
+
+While rendering a shape, the first method that shall be invoked is  nvgBeginPath, that instructs NanoVG to start drawing anew shape. Then we define what to draw, a rect, the fill colour and by invoking the nvgFill we draw it.
+You can check the rest of the source code to see how the rest of the shapes are drawn. When rednering text is not necessary to call  nvgBeginPath before rendering it.
+
+After we have finished drawing all the shapes, we just call the nvgEndFrame to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in ordre to perform their operations, if the state is not correctly respoted you  may see that the sceen is not correctlt rendered or ievent that is¡0s been wiped out. Thus, we set up the relevant OpenGL status that we need for our rendering:
+
+        // Restore state
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+And that’s all (besides some additional methods to clear things up), the code is completed. When syou execute the sample you will get something like this:
+
