@@ -157,7 +157,7 @@ IntBuffer indicesBuffer = memAllocInt(indices.length);
 indicesBuffer.put(indices).flip();
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
-memFree(indiciesBuffer);
+memFree(indicesBuffer);
 ```
 
 Since we are dealing with integers we need to create an ```IntBuffer``` instead of a ```FloatBuffer```.
