@@ -21,21 +21,28 @@ public class Mesh {
     private final int vertexCount;
 
     public Mesh(float[] positions) {
-        vertexCount = positions.length / 3;
-        FloatBuffer verticesBuffer = memAllocFloat(positions.length);
-        verticesBuffer.put(positions).flip();
+        FloatBuffer verticesBuffer = null;
+        try {
+            verticesBuffer = MemoryUtil.memAllocFloat(positions.length);
+            vertexCount = positions.length / 3;
+            FloatBuffer verticesBuffer = memAllocFloat(positions.length);
+            verticesBuffer.put(positions).flip();
 
-        vaoId = glGenVertexArrays();
-        glBindVertexArray(vaoId);
+            vaoId = glGenVertexArrays();
+            glBindVertexArray(vaoId);
 
-        vboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-        memFree(verticiesBuffer);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+            vboId = glGenBuffers();
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);            
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        glBindVertexArray(0);
+            glBindVertexArray(0);         
+        } finally {
+            if (verticesBuffer  != null) {
+                MemoryUtil.memFree(verticesBuffer);
+            }
+        }
     }
 
     public int getVaoId() {
