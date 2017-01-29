@@ -63,8 +63,8 @@ public void init(Window window) throws Exception {
     }
     colour = NVGColor.create();
 
-    posx = BufferUtils.createDoubleBuffer(1);
-    posy = BufferUtils.createDoubleBuffer(1);
+    posx = MemoryUtil.memAllocDouble(1);
+    posy = MemoryUtil.memAllocDouble(1);
 
     counter = 0;
 }
