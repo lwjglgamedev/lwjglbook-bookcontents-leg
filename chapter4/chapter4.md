@@ -247,7 +247,7 @@ If you come from previous versions of LWJGL it's important to stress out a few t
 
 You can consult the details here:  [https://blog.lwjgl.org/memory-management-in-lwjgl-3/](https://blog.lwjgl.org/memory-management-in-lwjgl-3/ "here").
 
-In this case, our data is sent to the GPU so we could use auto managed buffers, but since, later on, we will use them to hold potentially large volumes of data we will need to manually manage them. This is the reason why we are usin the `MemoryUtil `class and thus, why we are freeing the buffer in a finally block. In next chapters we will learn how to use auto managed buffers.
+In this case, our data is sent to the GPU so we could use auto managed buffers, but since, later on, we will use them to hold potentially large volumes of data we will need to manually manage them. This is the reason why we are usin the `MemoryUtil`class and thus, why we are freeing the buffer in a finally block. In next chapters we will learn how to use auto managed buffers.
 
 Now we need to create the VAO and bind to it.
 
@@ -256,7 +256,7 @@ vaoId = glGenVertexArrays();
 glBindVertexArray(vaoId);
 ```
 
-Then we need to create the VBO, bind to it and put the data into it. Once this has been completed we **must** free the off-heap memory that was allocated to the FloatBuffer. This is done by manually calling memFree, as Java garbage collection will not clean up off-heap allocations.
+Then we need to create the VBO, bind to it and put the data into it.
 
 ```java
 vboId = glGenBuffers();
@@ -290,7 +290,7 @@ glBindBuffer(GL_ARRAY_BUFFER, 0);
 glBindVertexArray(0);
 ```
 
-And last, we need to free the buffer in a finally block:
+Once this has been completed we **must** free the off-heap memory that was allocated to the FloatBuffer. This is done by manually calling memFree, as Java garbage collection will not clean up off-heap allocations.
 
 ```
 if (verticesBuffer != null) {
