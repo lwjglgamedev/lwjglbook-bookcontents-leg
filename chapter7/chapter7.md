@@ -219,7 +219,7 @@ The texture coordinates VBO is created in the same way as the colour one, the on
 ```java
 vboId = glGenBuffers();
 vboIdList.add(vboId);
-FloatBuffer textCoordsBuffer = BufferUtils.createFloatBuffer(textCoords.length);
+textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
 textCoordsBuffer.put(textCoords).flip();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
