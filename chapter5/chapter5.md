@@ -6,11 +6,11 @@ In this Chapter we will continue talking about how OpenGL renders things. In ord
 package org.lwjglb.engine.graph;
 
 import java.nio.FloatBuffer;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
+import org.lwjgl.system.MemoryUtil;
 
 public class Mesh {
 
