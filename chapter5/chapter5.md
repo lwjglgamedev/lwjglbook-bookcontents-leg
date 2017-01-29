@@ -7,7 +7,7 @@ In this Chapter we will continue talking about how OpenGL renders things. In ord
 package org.lwjglb.engine.graph;
 
 import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
+import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -23,7 +23,7 @@ public class Mesh {
     
     public Mesh(float[] positions) {
         vertexCount = positions.length / 3;
-        FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(positions.length);
+        FloatBuffer verticesBuffer = memAllocFloat(positions.length);
         verticesBuffer.put(positions).flip();
 
         vaoId = glGenVertexArrays();
@@ -32,6 +32,7 @@ public class Mesh {
         vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+        memFree(verticiesBuffer);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -152,10 +153,11 @@ After we have created our VBO that stores the positions, we need to create anoth
 
 ```java
 idxVboId = glGenBuffers();
-IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indices.length);
+IntBuffer indicesBuffer = memAllocInt(indices.length);
 indicesBuffer.put(indices).flip();
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+memFree(indicesBuffer);
 ```
 
 Since we are dealing with integers we need to create an ```IntBuffer``` instead of a ```FloatBuffer```.
@@ -224,10 +226,11 @@ With that array, we will create another VBO which will be associated to our VAO.
 ```java
 // Colour VBO
 colourVboId = glGenBuffers();
-FloatBuffer colourBuffer = BufferUtils.createFloatBuffer(colours.length);
+FloatBuffer colourBuffer = memAllocFloat(colours.length);
 colourBuffer.put(colours).flip();
 glBindBuffer(GL_ARRAY_BUFFER, colourVboId);
 glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
+memFree(colourBuffer);
 glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 ```
 

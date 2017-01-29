@@ -234,29 +234,29 @@ A Vertex Array Objects (VAOs). A VAO is an object that contains one or more VBOs
  
 A VAO is like a wrapper that groups a set of definitions for the data is going to be stored in the graphics card. When we create a VAO we  get an identifier, we use that identifier to render it and the elements it contains using the definitions we specified during its creation.
 
-So let us continue coding our example. The first thing that we must do with is to store our array of floats into a ```FloatBuffer```. This is mainly due to the fact that we must interface with OpenGL library, which is C-bases, so we must transform our array of floats into something that can be managed by the library.
+So let us continue coding our example. The first thing that we must do is to store our array of floats into a ```FloatBuffer```. This is mainly due to the fact that we must interface with the OpenGL library, which is C-based, so we must transform our array of floats into something that can be managed by the library. 
 
 ```java
-FloatBuffer verticesBuffer =
-	BufferUtils.createFloatBuffer(vertices.length);
+FloatBuffer verticesBuffer = memAllocFloat(vertices.length);
 verticesBuffer.put(vertices).flip();
 ```
 
-We use a utility class to create the buffer and after we have stored the data (with the put method) we need to reset the position of the buffer to the 0 position with the flip method (that is, we say that we’ve finishing writing on it).
+We use a utility class to create the buffer in off-heap memory so that it's accessible by the OpenGL library. After we have stored the data (with the put method) we need to reset the position of the buffer to the 0 position with the flip method (that is, we say that we’ve finishing writing on it).
 
-Now  we need to create the VAO and bind to it.
+Now we need to create the VAO and bind to it.
 
 ```java
 vaoId = glGenVertexArrays();
 glBindVertexArray(vaoId);
 ```
 
-Then, we need to create or VBO, bind to it and put the data into it.
+Then we need to create the VBO, bind to it and put the data into it. Once this has been completed we **must** free the off-heap memory that was allocated to the FloatBuffer. This is done by manually calling memFree, as Java garbage collection will not clean up off-heap allocations.
 
 ```java
 vboId = glGenBuffers();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+memFree(verticiesBuffer);
 ```
 
 Now it comes the most important part, we need to define the structure of our data and store in one of the attribute lists of the VAO, this is done with the following line.
