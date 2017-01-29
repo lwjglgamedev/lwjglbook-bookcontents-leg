@@ -158,7 +158,7 @@ After we have created our VBO that stores the positions, we need to create anoth
 
 ```java
 idxVboId = glGenBuffers();
-IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
+indicesBuffer = MemoryUtil.memAllocInt(indices.length);
 indicesBuffer.put(indices).flip();
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxVboId);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
