@@ -22,7 +22,7 @@ The source code for the book itself is also publishd in [GitHub](https://github.
 ## Support
 
 If you like the book please rate it with a start and share it. If you want to contribute with a donation you can do a donation:
-[Paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5MH9AA9TPQQBN)
+[![Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5MH9AA9TPQQBN)
 Or if you prefer Bitcoin: 1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb.
 
 ## Comments are welcome
