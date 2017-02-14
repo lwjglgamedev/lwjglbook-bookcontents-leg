@@ -95,7 +95,7 @@ With that line we are specifying that we must wait, at least, one screen update 
 glfwSwapBuffers(windowHandle);
 ```
  
-So, if we enable v-sync we achieve a constant frame rate without performing the micro-sleeps to check the available time. Besides that, , the frame rate will match the refresh rate of our graphics card, that is, if it’s set to 60Hz (60 times per second), we will have 60 Frames Per Second. We can scale down that rate by setting a number higher than one in the ```glfwSwapInterval``` method (if we set it to 2, we would get 30 FPS).
+So, if we enable v-sync we achieve a constant frame rate without performing the micro-sleeps to check the available time. Besides that, the frame rate will match the refresh rate of our graphics card, that is, if it’s set to 60Hz (60 times per second), we will have 60 Frames Per Second. We can scale down that rate by setting a number higher than one in the ```glfwSwapInterval``` method (if we set it to 2, we would get 30 FPS).
 
 Let’s get back to reorganize the source code. First of all we will encapsulate all the GLFW Window initialization code in a class named ```Window``` allowing some basic parameterization of its characteristics (such as title and size). That ```Window``` class will also provide a method to detect key presses which will be used in our game loop:
 
