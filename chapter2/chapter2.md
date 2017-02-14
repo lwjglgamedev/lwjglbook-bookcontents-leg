@@ -286,7 +286,7 @@ If you try to run the source code provided above in OSX you will get an error li
 Exception in thread "GAME_LOOP_THREAD" java.lang.ExceptionInInitializerError
 ```
 
-What does this mean? The answer is that some functions of the GLFW library cannot be called in a ```Thread``` which is not the main ```Thread```. We are doing the initializing stuff, including window creation in the ```init``` method if the  ```GameEngine class```. That method gets called in the ```run``` method of the same class, which is invoked by a new ```Thread``` instead the one that's used to launch the program.
+What does this mean? The answer is that some functions of the GLFW library cannot be called in a ```Thread``` which is not the main ```Thread```. We are doing the initializing stuff, including window creation in the ```init``` method of the  ```GameEngine class```. That method gets called in the ```run``` method of the same class, which is invoked by a new ```Thread``` instead the one that's used to launch the program.
 
 This is a constraint of the GLFW library and basically it implies that we should avoid the creation of new Threads for the game loop. We could try to create all the Windows related stuff in the main thread but we will not be able to render anything. The problem is that, OpenGL calls need to be performed in the same ```Thread``` that its context was created. 
 
