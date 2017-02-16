@@ -130,7 +130,7 @@ glEnable(GL_STENCIL_TEST);
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ```
 
-And that’s all \(besides some additional methods to clear things up\), the code is completed. When syou execute the sample you will get something like this:
+And that’s all \(besides some additional methods to clear things up\), the code is completed. When you execute the sample you will get something like this:
 
 ![Hud](/chapter24/hud.png)
 
