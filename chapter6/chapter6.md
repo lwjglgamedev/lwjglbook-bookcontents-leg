@@ -194,7 +194,7 @@ If we continue pushing backwards the quad we will see it smaller. Notice also th
 
 ## Applying Transformations
 
-Let’s recall what we’ve done so far. We have learned how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation.
+Let’s recall what we’ve done so far. We have learned how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model and present it in our 3D space in a specific position,  with the appropriate size and the required rotation.
 
 So right now, in order to that representation we need to provide some basic operations to act upon any model:
 
