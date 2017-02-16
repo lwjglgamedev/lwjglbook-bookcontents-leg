@@ -16,7 +16,7 @@ But, the problem is more serious than that. Modify the z cords of our quad from 
 
 But, wait. Should not be this handled by the z-coord? The answer is yes an no, The z coordinate tells OpenGL that an object is closer or far away, but OpenGL does not know nothing about the size of your object you could have two objects of different sizes, one closer and smaller and one bigger and further that could be projected, correctly into the screen with the same size \(those would have same x and y coordinates and different z\). OpenGL just uses the coordinates we are passing, so we must take care of this, we need to correctly project our coordinates.
 
-Now that we have diagnosed the problem, how do we do this ? The answer is by using a projection matrix or frustrum. The projection matrix will take care of the aspect ratio \(the relation between size and height\) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and how far is the maximum distance that should be displayed.
+Now that we have diagnosed the problem, how do we do this ? The answer is by using a projection matrix or frustum. The projection matrix will take care of the aspect ratio \(the relation between size and height\) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and how far is the maximum distance that should be displayed.
 
 For those not familiar with matrices, a matrix is a bi-dimensional array of numbers arranged in columns and rows, each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix \(2 rows and 2 columns\).
 
@@ -194,7 +194,7 @@ If we continue pushing backwards the quad we will see it smaller. Notice also th
 
 ## Applying Transformations
 
-Let’s recall what we’ve done so far. We have learned how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model an represent it in our 3D space in a specific position,  with the appropriate size and the required rotation.
+Let’s recall what we’ve done so far. We have learned how to pass data in an efficient format to our graphic card. How to project that data and assign them colours using vertex and fragments shaders. Now we should start drawing more complex models in our 3D space. But in order to do that we must be able to load an arbitrary model and represent it in our 3D space in a specific position,  with the appropriate size and the required rotation.
 
 So right now, in order to that representation we need to provide some basic operations to act upon any model:
 
@@ -462,7 +462,7 @@ As you can see the code is exactly the same, we are using the uniform to correct
 
 Another important thing to think about is, why don’t we pass the translation, rotation and scale matrices instead of  combining them into a world matrix ? The reason is that we should try to limit the matrices we use in our shaders. Also keep in mind that the matrix multiplication that we do in our shader is done once per each vertex. The projection matrix does not change between render calls and the world matrix does not change per `GameItem` instance. If we passed the translation, rotation and scale matrices independently we will be doing many more matrices multiplication. Think about a model with tons of vertices and that’s a lot of extra operations.
 
-But you may now think, that if the world matrix does not change per `GameItem` instance, why we don’t do the matrix multiplication in our Java class. We would be by multiplying the projection matrix and the world matrix just once per GameItem and we would send it as single uniform. In this case we would be saving many more operations. The answer is that this a valid point right now but when we add more features to our game engine we will need to operate with world coordinates in the shaders so it’s better to handlen in and independet way those two matrices.
+But you may now think, that if the world matrix does not change per `GameItem` instance, why we don’t do the matrix multiplication in our Java class. We would be by multiplying the projection matrix and the world matrix just once per GameItem and we would send it as single uniform. In this case we would be saving many more operations. The answer is that this is a valid point right now but when we add more features to our game engine we will need to operate with world coordinates in the shaders anyway, so it’s better to handlen in and independet way those two matrices.
 
 Finally we only need to change the `DummyGame` class to create a instance of `GameItem` with its associated `Mesh` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
 

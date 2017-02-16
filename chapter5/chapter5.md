@@ -167,7 +167,7 @@ memFree(indicesBuffer);
 
 Since we are dealing with integers we need to create an `IntBuffer` instead of a `FloatBuffer`.
 
-And that’s, the VAO will contain now two VBOs, one for positions and another one that will hold the indices and that will be used for rendering. Our cleanup method in our `Mesh` class must take into consideration that there is another VBO to free.
+And that’s it; the VAO will contain now two VBOs, one for positions and another one that will hold the indices and that will be used for rendering. Our cleanup method in our `Mesh` class must take into consideration that there is another VBO to free.
 
 ```java
 public void cleanUp() {

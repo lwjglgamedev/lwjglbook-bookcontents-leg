@@ -95,7 +95,7 @@ With that line we are specifying that we must wait, at least, one screen update 
 glfwSwapBuffers(windowHandle);
 ```
  
-So, if we enable v-sync we achieve a constant frame rate without performing the micro-sleeps to check the available time. Besides that, , the frame rate will match the refresh rate of our graphics card, that is, if it’s set to 60Hz (60 times per second), we will have 60 Frames Per Second. We can scale down that rate by setting a number higher than one in the ```glfwSwapInterval``` method (if we set it to 2, we would get 30 FPS).
+So, if we enable v-sync we achieve a constant frame rate without performing the micro-sleeps to check the available time. Besides that, the frame rate will match the refresh rate of our graphics card, that is, if it’s set to 60Hz (60 times per second), we will have 60 Frames Per Second. We can scale down that rate by setting a number higher than one in the ```glfwSwapInterval``` method (if we set it to 2, we would get 30 FPS).
 
 Let’s get back to reorganize the source code. First of all we will encapsulate all the GLFW Window initialization code in a class named ```Window``` allowing some basic parameterization of its characteristics (such as title and size). That ```Window``` class will also provide a method to detect key presses which will be used in our game loop:
 
@@ -286,7 +286,7 @@ If you try to run the source code provided above in OSX you will get an error li
 Exception in thread "GAME_LOOP_THREAD" java.lang.ExceptionInInitializerError
 ```
 
-What does this mean? The answer is that some functions of the GLFW library cannot be called in a ```Thread``` which is not the main ```Thread```. We are doing the initializing stuff, including window creation in the ```init``` method if the  ```GameEngine class```. That method gets called in the ```run``` method of the same class, which is invoked by a new ```Thread``` instead the one that's used to launch the program.
+What does this mean? The answer is that some functions of the GLFW library cannot be called in a ```Thread``` which is not the main ```Thread```. We are doing the initializing stuff, including window creation in the ```init``` method of the  ```GameEngine class```. That method gets called in the ```run``` method of the same class, which is invoked by a new ```Thread``` instead the one that's used to launch the program.
 
 This is a constraint of the GLFW library and basically it implies that we should avoid the creation of new Threads for the game loop. We could try to create all the Windows related stuff in the main thread but we will not be able to render anything. The problem is that, OpenGL calls need to be performed in the same ```Thread``` that its context was created. 
 

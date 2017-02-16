@@ -314,7 +314,7 @@ Then we need to calculate the vertices position based on the information contain
     }
 ```
 
-Let’s examine what we are doing here. We iterate over the vertices information and store the texture coordinates in a list, no need to apply any transformation here. The we get the starting and total number of weights to consider to calculate the vertex position.
+Let’s examine what we are doing here. We iterate over the vertices information and store the texture coordinates in a list, no need to apply any transformation here. Then we get the starting and total number of weights to consider to calculate the vertex position.
 
 The vertex position is calculated by using all the weights that is related to. Each weights has a position and a bias. The sum of all bias of the weights associated to each vertex must be equal to 1.0. Each weight also has a position which is defined in  joint’s local space, so we need to transform it to model space coordinates using the joint’s orientation and position (like if it were a transformation matrix) to which it refers to.
 
