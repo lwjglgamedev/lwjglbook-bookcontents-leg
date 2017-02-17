@@ -54,19 +54,19 @@ $$dist=Ax0+By0+Cz0+D$$, where x0, y0 and z0 are the coordinates of the point.
 
 So, a point is behind the plane if Ax0+By0+Cz0+D &lt;= 0
 
-But, we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem `and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
+But, we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem`and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
 
-We need to enclsoe evey `GameItem `into a simple volume that is easy to check. Here we have basically two options:
+We need to enclsoe evey `GameItem`into a simple volume that is easy to check. Here we have basically two options:
 
 * Bounding boxes.
 
 * Bounding Spheres.
 
-In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems `into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: dist=Ax0+By0+Cz0+D &lt;= -radius .
+In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: dist=Ax0+By0+Cz0+D &lt;= -radius .
 
 \*\*\*\* FIGURE \*\*
 
-So, we will add a new method to the `FrustumCullingFilter `class to check if a spphere is inside the frustum or not. The method is defined like this.
+So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
 
 | public boolean insideFrustum\(float x0, float y0, float z0, float boundingRadious\) { boolean result = true; for \(int i = 0; i &lt; NUM\_PLANES; i++\) { Vector4f plane = frustumPlanes\[i\]; if \(plane.x \* x0 + plane.y \* y0 + plane.z \* x0 + plane.w &lt;= -boundingRadious\) { result = false; return result; } } return result; } |
 | :--- |
@@ -78,9 +78,9 @@ Then, we will add method that filters the GameItems that outside the view frustu
 | :--- |
 
 
-We have added a new attribute, insideFrustum, to the `GameItem `class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the Mesh, it’s not a property of the GameItem. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the gameITem, We are assumig also that the position of the GameItem is the centre of the spehere \(in world space coordinates\).
+We have added a new attribute, insideFrustum, to the `GameItem`class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem `is the centre of the spehere \(in world space coordinates\).
 
-The last method, is just a utility one, that accepts the map of meshes and filters all the GameItem instances contained in it.
+The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem `instances contained in it.
 
 | public void filter\(Map&lt;? extends Mesh, List&lt;GameItem&gt;&gt; mapMesh\) { for \(Map.Entry&lt;? extends Mesh, List&lt;GameItem&gt;&gt; entry : mapMesh.entrySet\(\)\) { List&lt;GameItem&gt; gameItems = entry.getValue\(\); filter\(gameItems, entry.getKey\(\).getBoundingRadius\(\)\); } } |
 | :--- |
