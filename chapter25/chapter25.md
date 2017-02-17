@@ -150,7 +150,7 @@ You can play with activating and deactivating the filtering and can check the in
 
 # Optimizations - Frustum Culling \(II\)
 
-
+Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML ](https://github.com/JOML-CI/JOML "JOML")library provides. In particular, it provdies a class named `FrustumIntersection `which extracts the planes of the veiw frustum in a more efficient way as described in this paper.
 
 
 
