@@ -92,7 +92,7 @@ We need to enclsoe evey `GameItem`into a simple volume that is easy to check. He
 
 * Bounding Spheres.
 
-In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: dist=Ax0+By0+Cz0+D &lt;= -radius .
+In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
 
 \*\*\*\* FIGURE \*\*
 
@@ -113,9 +113,17 @@ public boolean insideFrustum(float x0, float y0, float z0, float boundingRadious
 
 Then, we will add method that filters the GameItems that outside the view frustum:
 
-| public void filter\(List&lt;GameItem&gt; gameItems, float meshBoundingRadious\) { float boundingRadious; Vector3f pos; for \(GameItem gameItem : gameItems\) { boundingRadious = gameItem.getScale\(\) \* meshBoundingRadious; pos = gameItem.getPosition\(\); gameItem.setInsideFrustum\(insideFrustum\(pos.x, pos.y, pos.z, boundingRadious\)\); } } |
-| :--- |
-
+```
+public void filter(List<GameItem> gameItems, float meshBoundingRadious) {
+    float boundingRadious;
+    Vector3f pos;
+    for (GameItem gameItem : gameItems) {
+        boundingRadious = gameItem.getScale() * meshBoundingRadious;
+        pos = gameItem.getPosition();
+        gameItem.setInsideFrustum(insideFrustum(pos.x, pos.y, pos.z, boundingRadious));
+    }
+}
+```
 
 We have added a new attribute, insideFrustum, to the `GameItem`class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem`is the centre of the spehere \(in world space coordinates\).
 
