@@ -154,7 +154,7 @@ Once the basis of frustum culling has been explained, we can get advatange of mo
 
 So, let's change the `FrustumCullingFilter` class. The attributes and constructor are simplified like this:
 
-```
+```java
 public class FrustumCullingFilter {
 
     private final Matrix4f prjViewMatrix;
@@ -169,7 +169,7 @@ public class FrustumCullingFilter {
 
 The updateFrustum method just delegates the plane extraction to the `FrustumIntersection`instance.
 
-```
+```java
 public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
     // Calculate projection view matrix
     prjViewMatrix.set(projMatrix);
@@ -177,12 +177,11 @@ public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
     // Update frustum intersection class
     frustumInt.set(prjViewMatrix);
 }
-
 ```
 
 And the method that `insideFrustum `method is vene more simple:
 
-```
+```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
     return frustumInt.testSphere(x0, y0, z0, boundingRadius);
 }
