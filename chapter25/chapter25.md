@@ -30,11 +30,39 @@ Hence, we need to calculate the six plane equations for the six sides of our vie
 
 So let’s start coding. We will create a new class named `FrustumCullingFilter` which will perform, as its name states, filtering operations according to the view frustum.
 
-| public class FrustumCullingFilter { private static final int NUM\_PLANES = 6; private final Matrix4f prjViewMatrix; private final Vector4f\[\] frustumPlanes; public FrustumCullingFilter\(\) { prjViewMatrix = new Matrix4f\(\); frustumPlanes = new Vector4f\[NUM\_PLANES\]; for \(int i = 0; i &lt; NUM\_PLANES; i++\) { frustumPlanes\[i\] = new Vector4f\(\); } } |
+```
+public class FrustumCullingFilter {
+
+    private static final int NUM_PLANES = 6;
+
+    private final Matrix4f prjViewMatrix;
+
+    private final Vector4f[] frustumPlanes;
+
+    public FrustumCullingFilter() {
+        prjViewMatrix = new Matrix4f();
+        frustumPlanes = new Vector4f[NUM_PLANES];
+        for (int i = 0; i < NUM_PLANES; i++) {
+            frustumPlanes[i] = new Vector4f();
+        }
+    }
+
+    public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
+        // Calculate projection view matrix
+        prjViewMatrix.set(projMatrix);
+        prjViewMatrix.mul(viewMatrix);
+        // Get frustum planes
+        for (int i = 0; i < NUM_PLANES; i++) {
+            prjViewMatrix.frustumPlane(i, frustumPlanes[i]);
+        }
+    }
+
+
+```
+
+| The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes`array will hold the values for the plane equations of the six frustum view planes. |
 | :--- |
 
-
-The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes`array will hold the values for the plane equations of the six frustum view planes.
 
 The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
 
@@ -78,9 +106,9 @@ Then, we will add method that filters the GameItems that outside the view frustu
 | :--- |
 
 
-We have added a new attribute, insideFrustum, to the `GameItem`class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem `is the centre of the spehere \(in world space coordinates\).
+We have added a new attribute, insideFrustum, to the `GameItem`class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem`is the centre of the spehere \(in world space coordinates\).
 
-The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem `instances contained in it.
+The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem`instances contained in it.
 
 | public void filter\(Map&lt;? extends Mesh, List&lt;GameItem&gt;&gt; mapMesh\) { for \(Map.Entry&lt;? extends Mesh, List&lt;GameItem&gt;&gt; entry : mapMesh.entrySet\(\)\) { List&lt;GameItem&gt; gameItems = entry.getValue\(\); filter\(gameItems, entry.getKey\(\).getBoundingRadius\(\)\); } } |
 | :--- |
