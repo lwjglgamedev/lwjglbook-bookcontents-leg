@@ -115,10 +115,10 @@ Then, we will add method that filters the GameItems that outside the view frustu
 
 ```
 public void filter(List<GameItem> gameItems, float meshBoundingRadius) {
-    float boundingRadious;
+    float boundingRadius;
     Vector3f pos;
     for (GameItem gameItem : gameItems) {
-        boundingRadious = gameItem.getScale() * meshBoundingRadious;
+        boundingRadius = gameItem.getScale() * meshBoundingRadius;
         pos = gameItem.getPosition();
         gameItem.setInsideFrustum(insideFrustum(pos.x, pos.y, pos.z, boundingRadius));
     }
