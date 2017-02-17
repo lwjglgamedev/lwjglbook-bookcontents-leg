@@ -6,11 +6,9 @@ You may have wondered why are we drawing the whole list of GameItems every frame
 
 But, first let’s review what is the view frustum. The view frustum is a volume that contains every object that may be visible taking into consideration the camera position and rotation and the projection that we are using. Typically, the view frustum is a rectangular pyramid like shown in the next figure.
 
-\*\*\* FIGURE \*\*\*
+![](/chapter25/view_frustum_i.png)
 
 As you can see, the view frustum is defined by six planes, anything that lies outside the view frustum will not be rendering. So, frustum culling is the process of removing objects that are outside the view frustum.
-
-\*\*\* FIGURE \*\*\*
 
 Thus, in order to perform frustum culling we need to:
 
@@ -18,9 +16,11 @@ Thus, in order to perform frustum culling we need to:
 
 * For every GameItem, check if its contained inside that view frustum, that is, comatined between the size frustum planes, and eliminate the ones that lie outside from the rendering process.
 
-So let’s start by calculating the frustum planes. A plane, is defined by a point contained in t and a vector orthogonal to that plane, as shown in the next figure:
+![](/chapter25/view_frustum_ii.png)
 
-\*\*\* FIGURE \*\*\*
+So let’s start by calculating the frustum planes. A plane, is defined by a point contained in it and a vector orthogonal to that plane, as shown in the next figure:
+
+![](/chapter25/plane.png)
 
 The equation of a plane is defined like this:
 
@@ -76,7 +76,7 @@ First, we store a copy of the projection matrix and multiply it by the view matr
 
 Now that we have all the planes calculated we just need to check if the `GameItem`instances are inside the frustum or not. How can we do this ? Let’s first examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
 
-\*\*\*\* FIGURE \*\*\*
+![](/chapter25/distance_to_plane.png)
 
 Therefore, a point will be inside the view frustum if the distance to all the planes of the frustum is positive. The distance of a point to the plane is defined like this:
 
@@ -94,7 +94,7 @@ We need to enclsoe evey `GameItem`into a simple volume that is easy to check. He
 
 In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
 
-\*\*\*\* FIGURE \*\*
+![](/chapter25/bounding_sphere.png)
 
 So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
 
