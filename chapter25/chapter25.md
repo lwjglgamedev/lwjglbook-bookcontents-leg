@@ -98,9 +98,18 @@ In this case, we will use spheres, since is the most simple approach. We will en
 
 So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
 
-| public boolean insideFrustum\(float x0, float y0, float z0, float boundingRadious\) { boolean result = true; for \(int i = 0; i &lt; NUM\_PLANES; i++\) { Vector4f plane = frustumPlanes\[i\]; if \(plane.x \* x0 + plane.y \* y0 + plane.z \* x0 + plane.w &lt;= -boundingRadious\) { result = false; return result; } } return result; } |
-| :--- |
-
+```
+public boolean insideFrustum(float x0, float y0, float z0, float boundingRadious) {
+    boolean result = true;
+    for (int i = 0; i < NUM_PLANES; i++) {
+        Vector4f plane = frustumPlanes[i];
+        if (plane.x * x0 + plane.y * y0 + plane.z * x0 + plane.w <= -boundingRadious) {
+            result = false; return result;
+        }
+    }
+    return result;
+}
+```
 
 Then, we will add method that filters the GameItems that outside the view frustum:
 
