@@ -24,21 +24,19 @@ So let’s start by calculating the frustum planes. A plane, is defined by a poi
 
 The equation of a plane is defined like this:
 
-A$$x = y$$
+$$Ax+By+Cz+D=0$$
 
-AX+By+Cz+D=0
+Hence, we need to calculate the six plane equations for the six sides of our view frustum. In order to to that you basically have two options. You can perform tedious calculations that will get you the six plane equations, that this, the four constants \(A, B, C and D\) from the previous equation. The other option is to let [JOML ](https://github.com/JOML-CI/JOML "JOML")library to calculate this for you. In this case, we will chose the last option.
 
-Hence, we need to calculate the six plane equations for the six sides of our view frustum. In order to to that you basically have two options. You can perform tedious calculations that will get you the six plane equations, that this, the four constants \(A, B, C and D\) from the previous equation. The other option is to let JOML library to calculate this for you. In this case, we will chose the last option.
-
-So let’s start coding. We will create a new class named FrustumCullingFilter which will perform, as its name states, filtering operations according to the view frustum.
+So let’s start coding. We will create a new class named `FrustumCullingFilter` which will perform, as its name states, filtering operations according to the view frustum.
 
 | public class FrustumCullingFilter { private static final int NUM\_PLANES = 6; private final Matrix4f prjViewMatrix; private final Vector4f\[\] frustumPlanes; public FrustumCullingFilter\(\) { prjViewMatrix = new Matrix4f\(\); frustumPlanes = new Vector4f\[NUM\_PLANES\]; for \(int i = 0; i &lt; NUM\_PLANES; i++\) { frustumPlanes\[i\] = new Vector4f\(\); } } |
 | :--- |
 
 
-The class define a few of attributes to avoid creating new instances every time. The prjViewMatrix attribute will hold the projection view matrix and the frustumPlanes array will hold the values for the plane equations of the six frustum view planes.
+The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes `array will hold the values for the plane equations of the six frustum view planes.
 
-The FrustumCullingFilter class will also have a method to calculate the plane equations called updateFrustum which will be called before rendering. The method is defined like this:
+The `FrustumCullingFilter `class will also have a method to calculate the plane equations called `updateFrustum `which will be called before rendering. The method is defined like this:
 
 | public void updateFrustum\(Matrix4f projMatrix, Matrix4f viewMatrix\) { // Calculate projection view matrix prjViewMatrix.set\(projMatrix\); prjViewMatrix.mul\(viewMatrix\); // Get frustum planes for \(int i = 0; i &lt; NUM\_PLANES; i++\) { prjViewMatrix.frustumPlane\(i, frustumPlanes\[i\]\); } } |
 | :--- |
