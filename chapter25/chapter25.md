@@ -6,7 +6,7 @@ You may have wondered why are we drawing the whole list of GameItems every frame
 
 But, first let’s review what is the view frustum. The view frustum is a volume that contains every object that may be visible taking into consideration the camera position and rotation and the projection that we are using. Typically, the view frustum is a rectangular pyramid like shown in the next figure.
 
-![](/chapter25/view_frustum_i.png)
+![View Frustum I](/chapter25/view_frustum_i.png)
 
 As you can see, the view frustum is defined by six planes, anything that lies outside the view frustum will not be rendering. So, frustum culling is the process of removing objects that are outside the view frustum.
 
