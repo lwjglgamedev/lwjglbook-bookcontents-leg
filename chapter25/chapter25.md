@@ -140,9 +140,11 @@ public void filter(Map<? extends Mesh, List<GameItem>> mapMesh) {
 
 And that’s it. We can use that class inside the rendering process. We just need to update the frustum planes, calculate which GameItems are visible and filter them out when drawing instanced and non instanced meshes.
 
-| frustumFilter.updateFrustum\(window.getProjectionMatrix\(\), camera.getViewMatrix\(\)\); frustumFilter.filter\(scene.getGameMeshes\(\)\); frustumFilter.filter\(scene.getGameInstancedMeshes\(\)\); |
-| :--- |
-
+```
+frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
+frustumFilter.filter(scene.getGameMeshes());
+frustumFilter.filter(scene.getGameInstancedMeshes());
+```
 
 You can play with activating and deactivating the filtering and can check the increase and decrease in the FPS that you can achieve. Particles are not considered in the filtering, but its trivial to add it. In any case, for particles, it may be better to just check the position of the emitter instead of checking every particle.
 
