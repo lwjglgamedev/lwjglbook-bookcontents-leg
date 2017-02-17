@@ -8,11 +8,11 @@ This where skeletal animation comes to play. In skeletal animation the way a mod
 
 Joints do not need to represent a physical bone or articulation, they are artifacts that allows the creatives to model an animation. In addition to joints we still have vertices, the points that define the triangles that compose a 3D model. But, in skeletal animation, vertices are drawn based on the position of the joints it is related to.
 
-In this chapter we will use MD5 format to load animated models. MD5 format was create by ID Software, the creators of Doom, and it’s basically a text based file format which is well understood.  Another approach would be to use the [Collada](https://en.wikipedia.org/wiki/COLLADA) format, which is a public standard supported by many tools. Collada is an XML based format but as a downside it’s very complex (The specification for the 1.5 version has more than 500 pages). So, we will stick which a much more simple format, MD5, that will allow us to focus in the concepts of the skeletal animation and to create a working sample.
+In this chapter we will use MD5 format to load animated models. MD5 format was create by ID Software, the creators of Doom, and it’s basically a text based file format which is well understood.  Another approach would be to use the [Collada](https://en.wikipedia.org/wiki/COLLADA) format, which is a public standard supported by many tools. Collada is an XML based format but as a downside it’s very complex (The specification for the 1.5 version has more than 500 pages). So, we will stick to a much more simple format, MD5, that will allow us to focus in the concepts of the skeletal animation and to create a working sample.
 
 You can also export some models from Blender to MD5 format via specific addons that you can find on the Internet ([http://www.katsbits.com/tools/#md5]())
 
-In this chapter I’ve consulted many different sources, but I  have found two that provide a very good explanation about how t create an animated model using MD5 files. Theses sources can be consulted at:
+In this chapter I’ve consulted many different sources, but I  have found two that provide a very good explanation about how to create an animated model using MD5 files. Theses sources can be consulted at:
 * [http://www.3dgep.com/gpu-skinning-of-md5-models-in-opengl-and-cg/](http://www.3dgep.com/gpu-skinning-of-md5-models-in-opengl-and-cg/)
 * [http://ogldev.atspace.co.uk/www/tutorial38/tutorial38.html](http://ogldev.atspace.co.uk/www/tutorial38/tutorial38.html)
 
@@ -20,7 +20,7 @@ So let’s start by writing the code that parses MD5 files. The MD5 format defin
 * The mesh definition file: which defines the joints and the vertices and textures that compose the set of meshes that form the 3D model. This file usually has a extension named “.md5mesh”. 
 * The animation definition file: which defines the animations that can be applied to the model. This file usually has a extension named “.md5anim”. 
 
-A MD5 file is composed by a header an different sections contained between braces. Let’s start examining the mesh definition file. In the resources folder you will find several models in MD5 format. If you open one of them you can see a structure similar like this.
+An MD5 file is composed by a header an different sections contained between braces. Let’s start examining the mesh definition file. In the resources folder you will find several models in MD5 format. If you open one of them you can see a structure similar like this.
 
 ![MD5 Structure](md5_model_structure.png) 
 
@@ -68,7 +68,7 @@ You can check in the web the mathematical definition of each of the components b
 
 Let’s get back to the joints definition, the $$w$$ component is missing but it can be easily calculated with the help of the rest of the values. You can check the source code to see how it's done.
 
-After the joints definition you can find the definition of the different meshes that compose a model. Below you can find a fragment of a Mesh definition form one of the samples.
+After the joints definition you can find the definition of the different meshes that compose a model. Below you can find a fragment of a Mesh definition from one of the samples.
 
 ```text
 mesh {
@@ -95,7 +95,7 @@ mesh {
 ```
 
 Let’s review the structure presented above:
-* A Mesh starts by defining a texture file. Keep in mind that the path that you will find here is the one used by the tool that created that model. That path may not match the one that is used to load those files. You have two approaches here, either you change the base path dynamically or either you change that path by hand. I’ve chosen the last one, the simplest one.
+* A Mesh starts by defining a texture file. Keep in mind that the path that you will find here is the one used by the tool that created that model. That path may not match the one that is used to load those files. You have two approaches here, either you change the base path dynamically or either you change that path by hand. I’ve chosen the latter one, the simpler one.
 * Next you can find the vertices definition. A vertex is defined by the following attributes:
 * * Vertex index.
 * * Texture coordinates.
@@ -104,8 +104,8 @@ Let’s review the structure presented above:
 * After the vertices, the triangles that form this mesh are defined. The triangles define the way that vertices are organized using their indices.
 * Finally, the weights are defined. A Weight definition is composed by:
 * * A Weight index.
-* * A Joint index, that points to the joint related to this weight.
-* * A bias factor, that is uses to modulate the effect of this weight.
+* * A Joint index, which points to the joint related to this weight.
+* * A bias factor, which is used to modulate the effect of this weight.
 * * A position of this weight.
 
 The following picture depicts the relation between the components described above using sample data.
@@ -209,7 +209,7 @@ public class GameItem {
 }
 ```
 
-With the modification above we can now define the contents for the ```MD5Loader``` class. This class will have a method named ```process``` that will receive a ```MD5Model``` instance an a default colour (for the meshes that do not define a texture) and will return a ```GameItem``` instance. The body of that method is shown below.
+With the modification above we can now define the contents for the ```MD5Loader``` class. This class will have a method named ```process``` that will receive a ```MD5Model``` instance and a default colour (for the meshes that do not define a texture) and will return a ```GameItem``` instance. The body of that method is shown below.
 
 ```java
 public static GameItem process(MD5Model md5Model, Vector3f defaultColour) throws Exception {
@@ -365,7 +365,7 @@ For each vertex we compute its normal by the normalized sum of all the normals o
      }
 ```
 
-The we just need to transform the Lists to arrays and process the texture information.
+Then we just need to transform the Lists to arrays and process the texture information.
 
 ```java
      float[] positionsArr = VertexInfo.toPositionsArr(vertexInfoList);
@@ -407,7 +407,7 @@ private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultCo
 
 The implementation is very straight forward. The only peculiarity is that if a mesh defines a texture named “texture.png” its normal texture map will be defined in a file “texture_normal.png”. We  need to check if that file exists and load it accordingly.
 
-We can now load a MD5 file an render it as we render other GameItems, but before doing that we need to disable cull face in order to render it properly since not all the triangles will be drawn in the correct direction. We will add support to the Window class to set these parameters at runtime (you can check it in the source code the changes).
+We can now load a MD5 file and render it as we render other GameItems, but before doing that we need to disable cull face in order to render it properly since not all the triangles will be drawn in the correct direction. We will add support to the Window class to set these parameters at runtime (you can check it in the source code the changes).
 
 If you load some of the sample models you will get something like this.
 
@@ -454,7 +454,7 @@ hierarchy {
 A joint. In the hierarchy section, is defined by the following attributes: 
 * Joint name, a textual attribute between quotes.
 * Joint parent, using an index which points to the  parent joint using its position in the joints list. The root joint has a parent equals to -1.
-* Joint flags, which set how this joint position an orientation will be changed according to the data define in each animation frame.
+* Joint flags, which set how this joint's position and orientation will be changed according to the data defined in each animation frame.
 * The start index, inside the animation data of each frame that is used when applying the flags.
 
 The next section is the bounds one. This section defines a bounding box which contains the model for each animation frame. It will contain a line for each of the animation frames and it look like this:
@@ -521,7 +521,7 @@ public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Ve
 }
 ```
 
-There are some changes here, the most obvious is that the method now receives a ```MD5AnimModel``` instance. The next one is that we do not return a ```GameItem``` instance but and ```AnimGameItem``` one. This class inherits from the ```GameItem``` class but adds support for animations. We will see why this done this way later one.
+There are some changes here, the most obvious is that the method now receives a ```MD5AnimModel``` instance. The next one is that we do not return a ```GameItem``` instance but and ```AnimGameItem``` one. This class inherits from the ```GameItem``` class but adds support for animations. We will see why this was done this way later.
 
 If we continue with the process method, the first thing we do is call the ```calcInJointMatrices``` method, which is defined like this:
 
@@ -635,7 +635,7 @@ Now we have all information needed to calculate the transformation matrices to g
 }
 ```
 
-You can see that we create an instance of the AnimatedFrame class that holds the information that will be use during animation. This class also uses the inverse matrices, we will see later on why this done this way. An important thing to note is the setMatrix method if the AnimatedFrame which is defined like this.
+You can see that we create an instance of the AnimatedFrame class that holds the information that will be use during animation. This class also uses the inverse matrices, we will see later on why this done this way. An important thing to note is that the setMatrix method of the AnimatedFrame is defined like this.
 
 ```java
 public void setMatrix(int pos, Matrix4f localJointMatrix, Matrix4f invJointMatrix) {
@@ -646,7 +646,7 @@ public void setMatrix(int pos, Matrix4f localJointMatrix, Matrix4f invJointMatri
 }
 ```
 
-The variable ```localJointMatrix``` stores the transformation matrix for a the joint that occupies the position “i” for the current frame. The ```invJointMatrix``` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the ```localJointMatrix``` by the  invJointMatrix. This result will be used later to compute the final positions. We store also the original joint transformation matrix, the variable ```localJointMatrix```, so we can use it to calculate this joint childs transformation matrices.
+The variable ```localJointMatrix``` stores the transformation matrix for the joint that occupies the position “i” for the current frame. The ```invJointMatrix``` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the ```localJointMatrix``` by the  invJointMatrix. This result will be used later to compute the final positions. We store also the original joint transformation matrix, the variable ```localJointMatrix```, so we can use it to calculate this joint childs transformation matrices.
 
 Let's get back to the MD5Loader class. The ```generateMesh``` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
 * An array that holds the weight bias associated to this vertex.
@@ -655,7 +655,7 @@ Let's get back to the MD5Loader class. The ```generateMesh``` method also has ch
 We limit the size of those arrays to a value of 4. The ```Mesh``` class has also been modified to receive those parameters and include it in the VAO information processed by the shaders. You can check the details in the source code, but So let’s recap what we have done:
 
 * We are still loading the binding pose with their final positions calculated as the sum of the joints positions and orientations through the weights information.
-* That information is loaded in the shaders as VBOs but it’s complemented by the bias of the weights associated to each vertex and the indices if the joints that affect it. This information is common to all the animation frames, since it’s defined in the MD5 definition file. This is the reason why we limit the size of the bias and joint indices arrays, the y will be loaded as VBOs once when the model is sent to the GPU.
+* That information is loaded in the shaders as VBOs but it’s complemented by the bias of the weights associated to each vertex and the indices of the joints that affect it. This information is common to all the animation frames, since it’s defined in the MD5 definition file. This is the reason why we limit the size of the bias and joint indices arrays, they will be loaded as VBOs once when the model is sent to the GPU.
 * For each animation frame we store the transformation matrices to be applied to each joint according to the positions and orientations defined in the base frame. 
 * We also have calculated the inverse matrices of the transformation matrices associated to the joints that define the binding pose. That is, we know how to undo the transformations done in the binding pose. We will see how this will be applied later.
 
@@ -698,7 +698,7 @@ uniform mat4 orthoProjectionMatrix;
 
 You can see that we have a new uniform named ```jointsMatrix``` which is an array of matrices (with a maximum length set by the ```MAX_JOINTS``` constant). That array of matrices holds the joint matrices calculated for all the joints in the present frame, and was calculated in the ```MD5Loader``` class when processing a frame. Thus, that array holds the transformations that need to be applied to a joint in the present animation frame and will serve as the basis for calculating the vertex final position.
 
-With the new data in the VBOS and this uniform we will transform the binding pose position.  This is done in the following block.
+With the new data in the VBOs and this uniform we will transform the binding pose position.  This is done in the following block.
 
 ```glsl
     vec4 initPos = vec4(0, 0, 0, 0);
