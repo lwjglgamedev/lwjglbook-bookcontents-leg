@@ -16,11 +16,11 @@ Thus, in order to perform frustum culling we need to:
 
 * For every GameItem, check if its contained inside that view frustum, that is, comatined between the size frustum planes, and eliminate the ones that lie outside from the rendering process.
 
-![](/chapter25/view_frustum_ii.png)
+![View Frustum II](/chapter25/view_frustum_ii.png)
 
 So let’s start by calculating the frustum planes. A plane, is defined by a point contained in it and a vector orthogonal to that plane, as shown in the next figure:
 
-![](/chapter25/plane.png)
+![Plane](/chapter25/plane.png)
 
 The equation of a plane is defined like this:
 
@@ -30,7 +30,7 @@ Hence, we need to calculate the six plane equations for the six sides of our vie
 
 So let’s start coding. We will create a new class named `FrustumCullingFilter` which will perform, as its name states, filtering operations according to the view frustum.
 
-```
+```java
 public class FrustumCullingFilter {
 
     private static final int NUM_PLANES = 6;
@@ -60,7 +60,7 @@ public class FrustumCullingFilter {
 
 The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
 
-```
+```java
 public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
     // Calculate projection view matrix
     prjViewMatrix.set(projMatrix);
@@ -76,13 +76,13 @@ First, we store a copy of the projection matrix and multiply it by the view matr
 
 Now that we have all the planes calculated we just need to check if the `GameItem`instances are inside the frustum or not. How can we do this ? Let’s first examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
 
-![](/chapter25/distance_to_plane.png)
+![Distance to a plane](/chapter25/distance_to_plane.png)
 
 Therefore, a point will be inside the view frustum if the distance to all the planes of the frustum is positive. The distance of a point to the plane is defined like this:
 
-$$dist=Ax0+By0+Cz0+D$$, where $$x0$$, $$y0$$ and $$z0$$ are the coordinates of the point.
+$$dist=Ax_{0}+By_{0}+Cz_{0}+D$$, where $$x_{0}$$, $$y_{0}$$ and $$z_{0}$$ are the coordinates of the point.
 
-So, a point is behind the plane if $$Ax0+By0+Cz0+D <= 0$$.
+So, a point is behind the plane if $$Ax_{0}+By_{0}+Cz_{0}+D <= 0$$.
 
 But, we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem`and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
 
@@ -94,11 +94,11 @@ We need to enclsoe evey `GameItem`into a simple volume that is easy to check. He
 
 In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
 
-![](/chapter25/bounding_sphere.png)
+![Bounding sphere](/chapter25/bounding_sphere.png)
 
 So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
 
-```
+```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
     boolean result = true;
     for (int i = 0; i < NUM_PLANES; i++) {
@@ -113,7 +113,7 @@ public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius)
 
 Then, we will add method that filters the GameItems that outside the view frustum:
 
-```
+```java
 public void filter(List<GameItem> gameItems, float meshBoundingRadius) {
     float boundingRadius;
     Vector3f pos;
@@ -129,7 +129,7 @@ We have added a new attribute, insideFrustum, to the `GameItem`class, to track t
 
 The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem`instances contained in it.
 
-```
+```java
 public void filter(Map<? extends Mesh, List<GameItem>> mapMesh) {
     for (Map.Entry<? extends Mesh, List<GameItem>> entry : mapMesh.entrySet()) {
         List<GameItem> gameItems = entry.getValue();
