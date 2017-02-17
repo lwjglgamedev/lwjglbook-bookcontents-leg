@@ -1,4 +1,4 @@
-# Optimizations - Frustum Culling
+# Optimizations - Frustum Culling \(I\)
 
 At this moment we are using many different graphic effects, such as lights, particles, etc. In addition to that, we have learned how to instanced rendering to reduce the overhead of drawing many similar objects. However, we still have plenty of room for applying simple optimization techniques that will increase the Frames Per Second \(FPS\) that we can achieve.
 
@@ -147,4 +147,10 @@ frustumFilter.filter(scene.getGameInstancedMeshes());
 ```
 
 You can play with activating and deactivating the filtering and can check the increase and decrease in the FPS that you can achieve. Particles are not considered in the filtering, but its trivial to add it. In any case, for particles, it may be better to just check the position of the emitter instead of checking every particle.
+
+# Optimizations - Frustum Culling \(II\)
+
+
+
+
 
