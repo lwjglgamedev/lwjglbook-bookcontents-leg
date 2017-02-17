@@ -99,11 +99,11 @@ In this case, we will use spheres, since is the most simple approach. We will en
 So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
 
 ```
-public boolean insideFrustum(float x0, float y0, float z0, float boundingRadious) {
+public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
     boolean result = true;
     for (int i = 0; i < NUM_PLANES; i++) {
         Vector4f plane = frustumPlanes[i];
-        if (plane.x * x0 + plane.y * y0 + plane.z * x0 + plane.w <= -boundingRadious) {
+        if (plane.x * x0 + plane.y * y0 + plane.z * x0 + plane.w <= -boundingRadius) {
             result = false; return result;
         }
     }
