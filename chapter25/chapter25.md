@@ -34,23 +34,23 @@ So let’s start coding. We will create a new class named `FrustumCullingFilter`
 | :--- |
 
 
-The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes `array will hold the values for the plane equations of the six frustum view planes.
+The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes`array will hold the values for the plane equations of the six frustum view planes.
 
-The `FrustumCullingFilter `class will also have a method to calculate the plane equations called `updateFrustum `which will be called before rendering. The method is defined like this:
+The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
 
 | public void updateFrustum\(Matrix4f projMatrix, Matrix4f viewMatrix\) { // Calculate projection view matrix prjViewMatrix.set\(projMatrix\); prjViewMatrix.mul\(viewMatrix\); // Get frustum planes for \(int i = 0; i &lt; NUM\_PLANES; i++\) { prjViewMatrix.frustumPlane\(i, frustumPlanes\[i\]\); } } |
 | :--- |
 
 
-First, we store a copy of the projection matrix and multiply it by the view matrix to get the projection view matrix. Then, with that transformation matrix we just simply need to invoke the frustumPlane method for each of the frustum planes. It’s important to note that these plane equations are expressed in world coordinates, so all the calculations need to be done in that space.
+First, we store a copy of the projection matrix and multiply it by the view matrix to get the projection view matrix. Then, with that transformation matrix we just simply need to invoke the `frustumPlane `method for each of the frustum planes. It’s important to note that these plane equations are expressed in world coordinates, so all the calculations need to be done in that space.
 
-Now that we have all the planes calculated we just need to check if the GameItem instances are inside the frustum or not. How can we do this ? Let’s firs examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
+Now that we have all the planes calculated we just need to check if the `GameItem `instances are inside the frustum or not. How can we do this ? Let’s first examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
 
 \*\*\*\* FIGURE \*\*\*
 
 Therefore, a point will be inside the view frustum if the distance to all the planes of the frustum is positive. The distance of a point to the plane is defined like this:
 
-dist=Ax0+By0+Cz0+D, where x0, y0 and z0 are the coordinates of the point.
+$$dist=Ax0+By0+Cz0+D$$, where x0, y0 and z0 are the coordinates of the point.
 
 So, a point is behind the plane if Ax0+By0+Cz0+D &lt;= 0
 
