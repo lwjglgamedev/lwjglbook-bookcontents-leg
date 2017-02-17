@@ -56,13 +56,7 @@ public class FrustumCullingFilter {
             prjViewMatrix.frustumPlane(i, frustumPlanes[i]);
         }
     }
-
-
 ```
-
-| The class define a few of attributes to avoid creating new instances every time. The `prjViewMatrix` attribute will hold the projection view matrix and the `frustumPlanes`array will hold the values for the plane equations of the six frustum view planes. |
-| :--- |
-
 
 The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
 
