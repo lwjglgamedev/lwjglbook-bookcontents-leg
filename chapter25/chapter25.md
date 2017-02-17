@@ -60,9 +60,17 @@ public class FrustumCullingFilter {
 
 The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
 
-| public void updateFrustum\(Matrix4f projMatrix, Matrix4f viewMatrix\) { // Calculate projection view matrix prjViewMatrix.set\(projMatrix\); prjViewMatrix.mul\(viewMatrix\); // Get frustum planes for \(int i = 0; i &lt; NUM\_PLANES; i++\) { prjViewMatrix.frustumPlane\(i, frustumPlanes\[i\]\); } } |
-| :--- |
-
+```
+public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
+    // Calculate projection view matrix
+    prjViewMatrix.set(projMatrix);
+    prjViewMatrix.mul(viewMatrix);
+    // Get frustum planes
+    for (int i = 0; i < NUM_PLANES; i++) {
+        prjViewMatrix.frustumPlane(i, frustumPlanes[i]);
+    }
+}
+```
 
 First, we store a copy of the projection matrix and multiply it by the view matrix to get the projection view matrix. Then, with that transformation matrix we just simply need to invoke the `frustumPlane`method for each of the frustum planes. It’s important to note that these plane equations are expressed in world coordinates, so all the calculations need to be done in that space.
 
@@ -72,9 +80,9 @@ Now that we have all the planes calculated we just need to check if the `GameIte
 
 Therefore, a point will be inside the view frustum if the distance to all the planes of the frustum is positive. The distance of a point to the plane is defined like this:
 
-$$dist=Ax0+By0+Cz0+D$$, where x0, y0 and z0 are the coordinates of the point.
+$$dist=Ax0+By0+Cz0+D$$, where $$x0$$, $$y0$$ and $$z0$$ are the coordinates of the point.
 
-So, a point is behind the plane if Ax0+By0+Cz0+D &lt;= 0
+So, a point is behind the plane if $$Ax0+By0+Cz0+D <= 0$$.
 
 But, we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem`and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
 
