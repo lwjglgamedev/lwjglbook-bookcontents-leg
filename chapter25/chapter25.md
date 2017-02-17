@@ -150,7 +150,43 @@ You can play with activating and deactivating the filtering and can check the in
 
 # Optimizations - Frustum Culling \(II\)
 
-Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML")library provides. In particular, it provdies a class named `FrustumIntersection `which extracts the planes of the veiw frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper").
+Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML")library provides. In particular, it provdies a class named `FrustumIntersection`which extracts the planes of the veiw frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
 
+So, let's change the `FrustumCullingFilter` class. The attributes and constructor are simplified like this:
 
+```
+public class FrustumCullingFilter {
+
+    private final Matrix4f prjViewMatrix;
+
+    private FrustumIntersection frustumInt;
+    
+    public FrustumCullingFilter() {
+        prjViewMatrix = new Matrix4f();
+        frustumInt = new FrustumIntersection();
+    }
+```
+
+The updateFrustum method just delegates the plane extraction to the `FrustumIntersection`instance.
+
+```
+public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
+    // Calculate projection view matrix
+    prjViewMatrix.set(projMatrix);
+    prjViewMatrix.mul(viewMatrix);
+    // Update frustum intersection class
+    frustumInt.set(prjViewMatrix);
+}
+
+```
+
+And the method that `insideFrustum `method is vene more simple:
+
+```
+public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
+    return frustumInt.testSphere(x0, y0, z0, boundingRadius);
+}
+```
+
+With this approach you will be able to vene get a few more FPS.
 
