@@ -129,9 +129,14 @@ We have added a new attribute, insideFrustum, to the `GameItem`class, to track t
 
 The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem`instances contained in it.
 
-| public void filter\(Map&lt;? extends Mesh, List&lt;GameItem&gt;&gt; mapMesh\) { for \(Map.Entry&lt;? extends Mesh, List&lt;GameItem&gt;&gt; entry : mapMesh.entrySet\(\)\) { List&lt;GameItem&gt; gameItems = entry.getValue\(\); filter\(gameItems, entry.getKey\(\).getBoundingRadius\(\)\); } } |
-| :--- |
-
+```
+public void filter(Map<? extends Mesh, List<GameItem>> mapMesh) {
+    for (Map.Entry<? extends Mesh, List<GameItem>> entry : mapMesh.entrySet()) {
+        List<GameItem> gameItems = entry.getValue();
+        filter(gameItems, entry.getKey().getBoundingRadius());
+    }
+}
+```
 
 And that’s it. We can use that class inside the rendering process. We just need to update the frustum planes, calculate which GameItems are visible and filter them out when drawing instanced and non instanced meshes.
 
