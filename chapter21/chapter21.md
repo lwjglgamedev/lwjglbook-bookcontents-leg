@@ -49,7 +49,7 @@ In order to define per instance data we need to call the function `glVertexAttri
 So, in order to set data for a instance we need to perform this call after every attribute definition:
 
 ```java
-glVertexAttribPointer(index, 1);
+glVertexAttribDivisor(index, 1);
 ```
 
 Let’s start changing our code base to support instanced rendering. The first step is to create a new class named `InstancedMesh` that inherits from the `Mesh` class. The constructor of this class will be similar to the similar to the `Mesh` one but with an extra parameter, the number of instances.
