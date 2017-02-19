@@ -20,7 +20,7 @@ This book does not intend to be a maven tutorial, so please find the information
 
 LWJGL 3.1 introduced some changes in the way that the project is built. Now the base code is much more modular, and we can be more selective in the packages that we want to use instead of using a giant monolithic jar file. This comes at a cost: You now need to carefully specify the dependencies one by one. But the [download](https://www.lwjgl.org/download) page includes a fancy script that generates the pom file for you. In our case, we will just be using GLFW and OpenGL bindings. You can check what the pom file looks like in the source code.
 
-The LWJGL platform dependency already takes care of unpacking native libraries for your platform, so there's no need to use other plugings (such as ```mavennatives```). We just need to set up three profiles to set a property that will configure the LWJGL platform. The profiles will set up the correct values of that property for Windows, Linux and Mac OS families.
+The LWJGL platform dependency already takes care of unpacking native libraries for your platform, so there's no need to use other plugins (such as ```mavennatives```). We just need to set up three profiles to set a property that will configure the LWJGL platform. The profiles will set up the correct values of that property for Windows, Linux and Mac OS families.
 
 ```xml
 	<profiles>
