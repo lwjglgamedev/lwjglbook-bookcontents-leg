@@ -109,7 +109,7 @@ Our `Mesh` counts the number of vertices by dividing the position array by 3 \(s
 
 ![Quad coordinates](quad_coordinates.png)
 
-As you can see each of the two triangles is composed of three vertices. Fhe first one formed by the vertices V1, V2 and V4 \(the orange one\) and the second one formed by the vertices V4, V2 and V3 \(the green one\). Vertices are specified in a counter-clockwise order, so the float array to be passed will be \[V1, V2, V4, V4, V2, V3\]. Thus, the init method in our `DummyGame` class will be:
+As you can see each of the two triangles is composed of three vertices. The first one formed by the vertices V1, V2 and V4 \(the orange one\) and the second one formed by the vertices V4, V2 and V3 \(the green one\). Vertices are specified in a counter-clockwise order, so the float array to be passed will be \[V1, V2, V4, V4, V2, V3\]. Thus, the init method in our `DummyGame` class will be:
 
 ```java
 @Override
