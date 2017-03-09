@@ -26,4 +26,5 @@
 * [3D Object picking](chapter23/chapter23.md)
 * [Hud revisited - NanoVG](chapter24/chapter24.md)
 * [Optimizations](chapter25/chapter25.md)
+* [Cascaded Shadow Maps](chapter26/chapter26.md)
 
