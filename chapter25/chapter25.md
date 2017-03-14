@@ -103,7 +103,7 @@ public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius)
     boolean result = true;
     for (int i = 0; i < NUM_PLANES; i++) {
         Vector4f plane = frustumPlanes[i];
-        if (plane.x * x0 + plane.y * y0 + plane.z * x0 + plane.w <= -boundingRadius) {
+        if (plane.x * x0 + plane.y * y0 + plane.z * z0 + plane.w <= -boundingRadius) {
             result = false; return result;
         }
     }
@@ -160,7 +160,7 @@ public class FrustumCullingFilter {
     private final Matrix4f prjViewMatrix;
 
     private FrustumIntersection frustumInt;
-    
+
     public FrustumCullingFilter() {
         prjViewMatrix = new Matrix4f();
         frustumInt = new FrustumIntersection();
@@ -179,7 +179,7 @@ public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
 }
 ```
 
-And the method that `insideFrustum `method is vene more simple:
+And the method that `insideFrustum`method is vene more simple:
 
 ```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
