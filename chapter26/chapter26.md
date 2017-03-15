@@ -10,3 +10,19 @@ We want all the visible objects to fit into the light view projection matrix. He
 
 How can we construct that? The first step is to calculate the frustum corners of the view projection matrix. We get the coordinates in world space. Then we calculate the centre of that frustum. This can be calculating by adding the coordinates for all the corners and dividing the result by the number of corners.
 
+![](/chapter26/frustum_center.png)
+
+
+
+With that information we can set the position of the light. That position and its direction will be used to construct the light view matrix. In order to calculate the position, we start form the centre of the view frustum obtained before. We then go back to the direction of light an amount equal to the distance between the near and far z planes of the view frustum.
+
+![](/chapter26/light_position.png)
+
+	
+
+Once we have constructed the light view matrix, we need to setup the orthographic projection matrix. In order to calculate them we transform the frustum corners to light view space, just by multiplying them by the light view matrix we have just constructed. The dimensions of that projection matrix will be minimum and maximum x and y values. The near z plane can be set up to the same value used by our standard projection matrices and the far value will be the distance between the maximum and minimum z values of the frustum corners in light view space.
+
+
+
+However, if you implement the algorithm described above over the shadows sample, you may be disappointed by the shadows quality
+
