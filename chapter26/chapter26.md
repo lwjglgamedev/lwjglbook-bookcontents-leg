@@ -8,7 +8,6 @@ We want all the visible objects to fit into the light view projection matrix. He
 
 ![](/chapter26/view_frustum.png)
 
-
-
-
+  
+How can we construct that? The first step is to calculate the frustum corners of the view projection matrix. We get the coordinates in world space. Then we calculate the centre of that frustum. This can be calculating by adding the coordinates for all the corners and dividing the result by the number of corners
 
