@@ -6,5 +6,9 @@ Let’s first start by examining how we can automate the construction of the lig
 
 We want all the visible objects to fit into the light view projection matrix. Hence, we need to fit the view frustum into the light frustum. The following picture depicts what we want to achieve.
 
+![](/chapter26/view_frustum.png)
+
+
+
 
 
