@@ -187,5 +187,5 @@ public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius)
 }
 ```
 
-With this approach you will be able to vene get a few more FPS.
+With this approach you will be able to vene get a few more FPS. Besides that, a global flag has been added to the `Window `class to enable / disbale frustum culling. The `GameItem `class also has a flag for enabling / disabling the filtering, because there may be some items for which frustum culling filtering does not make sense.
 
