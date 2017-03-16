@@ -67,7 +67,7 @@ The first one is the number of cascades or splits. The second one defines where 
 
 The class also stores the reference to the shader program used to render the depth map, a list with the information associated to each split, modelled by the `ShadowCascade`class, and a reference to the object that whill host the depth mapth information \(tetxures\), modelled by the `ShadowBuffer`class.
 
-The `ShadowRenderer`class has methods for setting up the shaders and the required attributes and a render method . The render method is defined like this.
+The `ShadowRenderer`class has methods for setting up the shaders and the required attributes and a render method . The `render `method is defined like this.
 
 ```java
 public void render(Window window, Scene scene, Camera camera, Transformation transformation, Renderer renderer) {
@@ -101,15 +101,15 @@ public void render(Window window, Scene scene, Camera camera, Transformation tra
 }
 ```
 
-As you can see, I similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split.  In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated ShadowCascade instande.
+As you can see, I similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split.  In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated `ShadowCascade `instande.
 
-Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the ShadowBuffer class, and is setup to be used by the FBO with this line:
+Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the `ShadowBuffer `class, and is setup to be used by the FBO with this line:
 
 ```java
 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
 ```
 
-As it’s just have been mentioned, the ShadowBuffer class stores the information related to the textures used to store depth information. The code its very similar to the code used in the shadows chapter, excep t that we are using texture arrays. Thus, we have created a new class, ArrTexture, that creates an  array of textures with the same attributes. This class also provides a bind method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
+As it’s just have been mentioned, the `ShadowBuffer `class stores the information related to the textures used to store depth information. The code its very similar to the code used in the shadows chapter, excep t that we are using texture arrays. Thus, we have created a new class, `ArrTexture`, that creates an  array of textures with the same attributes. This class also provides a `bind `method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
 
 ```java
 public void bindTextures(int start) {
@@ -120,7 +120,7 @@ public void bindTextures(int start) {
 }
 ```
 
-ShadowCascade class, stores the light view and orthographic projection matrices associated to one split. Each split is defined by a near and a z far plan distance, and with that information the matrices are calculated accordingly.
+`ShadowCascade `class, stores the light view and orthographic projection matrices associated to one split. Each split is defined by a near and a z far plan distance, and with that information the matrices are calculated accordingly.
 
 The class provided and update method which, taking as an input the view natrix and the light direction.  The method calculates the view frustum corners in world space and then calculates the light position. That position is calculated going back, suing the light direction, from the frustum centre to a distance equal to the distance between the far and near z planes.
 
@@ -159,7 +159,7 @@ public void update(Window window, Matrix4f viewMatrix, DirectionalLight light) {
 }
 ```
 
-With the light position and the light direction. we can construct the light view matrix. This is done in the updateLightViewMatrix:
+With the light position and the light direction. we can construct the light view matrix. This is done in the `updateLightViewMatrix`:
 
 ```java
 private void updateLightViewMatrix(Vector3f lightDirection, Vector3f lightPosition) {
@@ -170,7 +170,7 @@ private void updateLightViewMatrix(Vector3f lightDirection, Vector3f lightPositi
 }
 ```
 
-Finally, we need to construct the orthographic projection matrix.  This is done in the updateLightProjectionMatrix method. The method is to transform the view frustum coordinates into light space. We then get the minimum and maximum values for the x, y coordinates to construct the bounding box that encloses the view frustum. Near z plane can be set to 0 and the far z plane to the distance between the maximum and minimum value of the  coordinates.
+Finally, we need to construct the orthographic projection matrix.  This is done in the `updateLightProjectionMatrix `method. The method is to transform the view frustum coordinates into light space. We then get the minimum and maximum values for the x, y coordinates to construct the bounding box that encloses the view frustum. Near z plane can be set to 0 and the far z plane to the distance between the maximum and minimum value of the  coordinates.
 
 ```java
 private void updateLightProjectionMatrix() {
@@ -198,9 +198,9 @@ private void updateLightProjectionMatrix() {
 }
 ```
 
-Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculate the minimum bounding box, axis aligned with the light position , hat encloses the view frustum. 
+Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculate the minimum bounding box, axis aligned with the light position , hat encloses the view frustum.
 
-The Renderer class has been modified  to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal view the model, the model view, and the model light matrices. In previous chapters we used the model –view / light –view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders.
+The `Renderer `class has been modified  to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal view the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders.
 
 In the scene vertex shader, we calculate model light view matrix for each split, and pass it as an output to the fragment shader.
 
@@ -219,7 +219,7 @@ Also, in the fragment shader we must decide which split we are into. In order to
 uniform float cascadeFarPlanes[NUM_CASCADES];
 ```
 
-We calculate de split like this. The variable idx will have the split to be used:
+We calculate de split like this. The variable `idx `will have the split to be used:
 
 ```glsl
 int idx;
@@ -233,7 +233,7 @@ for (int i=0; i<NUM_CASCADES; i++)
 }
 ```
 
-Also, in the scene shaders we need to pass an array of textures, an array of sampler2Ds, to use the depth map, the texture, associated to t he split we are into. The source code, instead of using an array uses a list of uniforms that will hold the texture unit that is used to refer to the depth map associated to each split.
+Also, in the scene shaders we need to pass an array of textures, an array of `sampler2D's`, to use the depth map, the texture, associated to the split we are into. The source code, instead of using an array uses a list of uniforms that will hold the texture unit that is used to refer to the depth map associated to each split.
 
 ```glsl
 uniform sampler2D normalMap;
@@ -243,5 +243,10 @@ uniform sampler2D shadowMap_2;
 ```
 
 Changing it to an array of uniforms causes problems with other textures that are difficult to track for this sample. In any case, you can try changing it in your code.
+
+  
 The rest of the changes in the source code, and the shaders are just adaptations required by the changes described above. You can check it directly over the source code.
+
+  
 Finally, when introducing these changes you may see that performance has dropped. This is due to the fact that we are rendering three times the depth map. We can mitigate this effect by avoiding rendering at all when the scene has not changed. If the camera has not been moved or the scene items have not changed we do not need to render again and again the depth map. The depth maps are stored in textures, so they are not wiped out for each render call.  Thus, we have added a new variable to the render method that indicates if this has changed, avoiding updating the depth maps it remains the same. This increases the FPS dramatically. At the end, you will get something like this:
+
