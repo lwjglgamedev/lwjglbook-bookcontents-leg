@@ -100,6 +100,7 @@ public void render(Window window, Scene scene, Camera camera, Transformation tra
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 ```
+
 As you can see, I similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split.  In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated ShadowCascade instande.
 
 Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the ShadowBuffer class, and is setup to be used by the FBO with this line:
@@ -108,6 +109,5 @@ Also, in each pass, we need to change the texture we are using. Each pass will r
 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
 ```
 
- 
 
 
