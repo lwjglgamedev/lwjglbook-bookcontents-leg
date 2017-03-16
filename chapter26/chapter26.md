@@ -62,11 +62,11 @@ The class defines the following constants:
 
 `public static final float[] CASCADE_SPLITS = new float[]{Window.Z_FAR / 20.0f, Window.Z_FAR / 10.0f, Window.Z_FAR};`
 
-
-
 The first one is the number of cascades or splits. The second one defines where the far z plane is located for each of these splits. As you can see they are not equally spaced. The split that is closer to the camera has the shortest distance in the z plane.
 
-The class also stores the reference to the shader program used to render the depth map, a list with the information associated to each split, modelled by the `ShadowCascade `class, and a reference to the object that whill host the depth mapth information \(tetxures\), modelled by the `ShadowBuffer `class.
+The class also stores the reference to the shader program used to render the depth map, a list with the information associated to each split, modelled by the `ShadowCascade`class, and a reference to the object that whill host the depth mapth information \(tetxures\), modelled by the `ShadowBuffer`class.
 
-The `ShadowRenderer `class has methods for setting up the shaders and the required attributes and a render method . The render method is defined like this.
+The `ShadowRenderer`class has methods for setting up the shaders and the required attributes and a render method . The render method is defined like this.
+
+
 
