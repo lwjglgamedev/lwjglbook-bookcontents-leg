@@ -58,9 +58,10 @@ The code that renders shadows, that is, the scene from light’s perspective has
 
 The class defines the following constants:
 
-`public static final int NUM_CASCADES = 3;`
-
-`public static final float[] CASCADE_SPLITS = new float[]{Window.Z_FAR / 20.0f, Window.Z_FAR / 10.0f, Window.Z_FAR};`
+```java
+public static final int NUM_CASCADES = 3;
+public static final float[] CASCADE_SPLITS = new float[]{Window.Z_FAR / 20.0f, Window.Z_FAR / 10.0f, Window.Z_FAR};
+```
 
 The first one is the number of cascades or splits. The second one defines where the far z plane is located for each of these splits. As you can see they are not equally spaced. The split that is closer to the camera has the shortest distance in the z plane.
 
@@ -68,5 +69,45 @@ The class also stores the reference to the shader program used to render the dep
 
 The `ShadowRenderer`class has methods for setting up the shaders and the required attributes and a render method . The render method is defined like this.
 
+```java
+public void render(Window window, Scene scene, Camera camera, Transformation transformation, Renderer renderer) {
+    update(window, camera.getViewMatrix(), scene);
+
+    // Setup view port to match the texture size
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowBuffer.getDepthMapFBO());
+    glViewport(0, 0, ShadowBuffer.SHADOW_MAP_WIDTH, ShadowBuffer.SHADOW_MAP_HEIGHT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    depthShaderProgram.bind();
+
+    // Render scene for each cascade map
+    for (int i = 0; i < NUM_CASCADES; i++) {
+        ShadowCascade shadowCascade = shadowCascades.get(i);
+
+        depthShaderProgram.setUniform("orthoProjectionMatrix", shadowCascade.getOrthoProjMatrix());
+        depthShaderProgram.setUniform("lightViewMatrix", shadowCascade.getLightViewMatrix());
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        renderNonInstancedMeshes(scene, transformation);
+
+        renderInstancedMeshes(scene, transformation);
+    }
+
+    // Unbind
+    depthShaderProgram.unbind();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+```
+As you can see, I similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split.  In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated ShadowCascade instande.
+
+Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the ShadowBuffer class, and is setup to be used by the FBO with this line:
+
+```java
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
+```
+
+ 
 
 
