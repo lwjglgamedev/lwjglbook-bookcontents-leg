@@ -57,11 +57,11 @@ int[] indices = new int[] {
     // Right face
     3, 2, 7, 5, 3, 7,
     // Left face
-    0, 1, 6, 4, 0, 6,
+    6, 1, 0, 6, 0, 4,
     // Bottom face
-    6, 1, 2, 7, 6, 2,
+    2, 1, 6, 2, 6, 7,
     // Back face
-    4, 6, 7, 5, 4, 7,
+    7, 6, 4, 7, 4, 5,
 };
 ```
 
@@ -73,7 +73,7 @@ float rotation = gameItem.getRotation().x + 1.5f;
 if ( rotation > 360 ) {
     rotation = 0;
 }
-gameItem.setRotation(rotation, rotation, rotation);  
+gameItem.setRotation(rotation, rotation, rotation);
 ```
 
 An that’s all. We are now able to display a spinning 3D cube. You can now compile and run your example and you will obtain something like this.
@@ -152,7 +152,7 @@ decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
 buf.flip();
 ```
 
-One important thing to remember is that OpenGL, for historical reasons, requires that texture images have a size (number of texels in each dimension) of a power of two \(2, 4, 8, 16, ....\). Some drivers remove that constraint but it’s better to stick to it to avoid problems.
+One important thing to remember is that OpenGL, for historical reasons, requires that texture images have a size \(number of texels in each dimension\) of a power of two \(2, 4, 8, 16, ....\). Some drivers remove that constraint but it’s better to stick to it to avoid problems.
 
 The next step is to upload the texture into the graphics card memory. First of all we need to create a new texture identifier. Each operation related to that texture will use that identifier so we need to bind it.
 
@@ -243,7 +243,7 @@ void main()
 {
     gl_Position = projectionMatrix * worldMatrix * vec4(position, 1.0);
     outTexCoord = texCoord;
-} 
+}
 ```
 
 In the fragment shader we must use those texture coordinates in order to set the pixel colours:
