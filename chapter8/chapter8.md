@@ -28,8 +28,6 @@ The view matrix should be applied before multiplying by the projection matrix, s
 
 $$Transf = [Proj  Matrix] * [ViewMatrix] * [TranslationMatrix] * [RotationMatrix] * [ScaleMatrix] = [ProjMatrix] * [ViewMatrix] * [WorldMatrix]$$
 
-![New Transformation equation](new_transf_eq.png)
-
 Now we have three matrices, let's think a little bit about the life cycles of those matrices. The projection matrix should not change very much while our game is running, in the worst case it may change once per render call. The view matrix may change once per render call if the camera moves. The world matrix changes once per `GameItem` instance, so it will change several times per render call.
 
 So, how many matrices should we push to or vertex shader ? You may see some code that uses three uniforms for each of those matrices, but in principle the most efficient approach would be to combine the projection and the view matrices, let’s call it `pv` matrix, and push the `world` and the `pv` matrices to our shader. With this approach we would have the possibility to work with world coordinates and would be avoiding some extra multiplications.
