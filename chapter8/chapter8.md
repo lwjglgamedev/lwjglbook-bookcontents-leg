@@ -26,6 +26,8 @@ $$Transf = [Proj  Matrix] * [TranslationMatrix] * [RotationMatrix] * [ScaleMatri
 
 The view matrix should be applied before multiplying by the projection matrix, so our equation should be now like this:
 
+$$Transf = [Proj  Matrix] * [ViewMatrix] * [TranslationMatrix] * [RotationMatrix] * [ScaleMatrix] = [ProjMatrix] * [ViewMatrix] * [WorldMatrix]$$
+
 ![New Transformation equation](new_transf_eq.png)
 
 Now we have three matrices, let's think a little bit about the life cycles of those matrices. The projection matrix should not change very much while our game is running, in the worst case it may change once per render call. The view matrix may change once per render call if the camera moves. The world matrix changes once per `GameItem` instance, so it will change several times per render call.
@@ -318,7 +320,7 @@ public void input(Window window, MouseInput mouseInput) {
 }
 ```
 
-It just updates a `Vector3f` variable named `cameraInc` which holds the camera displacement that should be applied.   
+It just updates a `Vector3f` variable named `cameraInc` which holds the camera displacement that should be applied.  
 The update method of the `DummyGame` class modifies the camera position and rotation according to the processes key and mouse events.
 
 ```java
