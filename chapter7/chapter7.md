@@ -46,7 +46,7 @@ float[] colours = new float[]{
 };
 ```
 
-Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order.
+Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order. If you do this by hand, is easy to make mistakes. Allways put the face that you want to define indices for in front of you. Then, idenifie the vertices and draw the triangles in counter-clock wise order.
 
 ```java
 int[] indices = new int[] {
