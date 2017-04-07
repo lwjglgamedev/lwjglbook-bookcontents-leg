@@ -22,11 +22,11 @@ So basically what we must do is to be able to move and rotate all of the objects
 
 Let's see how we can construct that matrix. If you remember from the transformations chapter our transformation equation was like this:
 
-$$Transf = [Proj  Matrix] * [TranslationMatrix] * [RotationMatrix] * [ScaleMatrix] = [ProjMatrix] * [WorldMatrix]$$
+$$Transf = [ProjMatrix] \cdot [TranslationMatrix] \cdot [RotationMatrix] \cdot [ScaleMatrix] = [ProjMatrix] \cdot [WorldMatrix]$$
 
 The view matrix should be applied before multiplying by the projection matrix, so our equation should be now like this:
 
-$$Transf = [Proj  Matrix] * [ViewMatrix] * [TranslationMatrix] * [RotationMatrix] * [ScaleMatrix] = [ProjMatrix] * [ViewMatrix] * [WorldMatrix]$$
+$$Transf = [ProjMatrix] \cdot [ViewMatrix] \cdot [TranslationMatrix] \cdot [RotationMatrix] \cdot [ScaleMatrix] = [ProjMatrix] \cdot [ViewMatrix] \cdot [WorldMatrix]$$
 
 Now we have three matrices, let's think a little bit about the life cycles of those matrices. The projection matrix should not change very much while our game is running, in the worst case it may change once per render call. The view matrix may change once per render call if the camera moves. The world matrix changes once per `GameItem` instance, so it will change several times per render call.
 
