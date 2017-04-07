@@ -22,7 +22,7 @@ So basically what we must do is to be able to move and rotate all of the objects
 
 Let's see how we can construct that matrix. If you remember from the transformations chapter our transformation equation was like this:
 
-$$Transf = [ProjMatrix] \cdot [TranslationMatrix] \cdot [RotationMatrix] \cdot [ScaleMatrix] = [ProjMatrix] \cdot [WorldMatrix]$$
+$$Transf = \lbrack ProjMatrix \rbrack \cdot \lbrack TranslationMatrix \rbrack \cdot \lbrack  RotationMatrix \rbrack \cdot \lbrack  ScaleMatrix \rbrack = \lbrack   ProjMatrix \rbrack  \cdot \lbrack  WorldMatrix \rbrack$$
 
 The view matrix should be applied before multiplying by the projection matrix, so our equation should be now like this:
 
