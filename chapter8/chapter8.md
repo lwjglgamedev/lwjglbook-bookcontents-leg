@@ -266,7 +266,7 @@ public class MouseInput {
 The `MouseInput` class provides an `init` method which should be called during the initialization phase and registers a set of callbacks to process mouse events:
 
 * `glfwSetCursorPosCallback`: Registers a callback that will be invoked when the mouse is moved.
-* `glfwSetCursorEnterCallback`: Registers a callback that will be invoked when the mouse enters our window. We will be received mouse evevents even if the mouse is not in our window. We use this callback to track when the mouse is in our window.
+* `glfwSetCursorEnterCallback`: Registers a callback that will be invoked when the mouse enters our window. We will be receiving mouse events even if the mouse is not in our window. We use this callback to track when the mouse is in our window.
 * `glfwSetMouseButtonCallback`: Registers a callback that will be invoked when a mouse button is pressed.
 
 One important thing related to callbacks and GLFW is that we need to keep a reference to the callback implementation into our Java class. You see that we have one attribute per callback. This is because callbacks are implemented in native code and the Java part of GLFW des not hold any reference to them. If we don't hold a reference they will be garbage collected and you will see an exception like this:
