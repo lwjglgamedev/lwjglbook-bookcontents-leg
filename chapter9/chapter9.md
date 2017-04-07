@@ -381,7 +381,7 @@ And we will get our familiar textured cube.
 
 ![Textured cube](textured_cube.png)
 
-We can now try with other models. We can use the famous Standford Bunny \(it can be freely downloaded\) model, which is included in the resources. This model is not textured so we can us it this way.
+We can now try with other models. We can use the famous Standford Bunny \(it can be freely downloaded\) model, which is included in the resources. This model is not textured so we can use it this way:
 
 ```java
 Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
