@@ -25,7 +25,6 @@ public class Mesh {
         try {
             verticesBuffer = MemoryUtil.memAllocFloat(positions.length);
             vertexCount = positions.length / 3;
-            FloatBuffer verticesBuffer = memAllocFloat(positions.length);
             verticesBuffer.put(positions).flip();
 
             vaoId = glGenVertexArrays();
