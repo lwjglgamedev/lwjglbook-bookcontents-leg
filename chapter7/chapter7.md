@@ -139,7 +139,7 @@ PNGDecoder decoder = new PNGDecoder(
 
 Then we need to decode the PNG image and store its content into a buffer by using the `decode` method of the `PNGDecoder` class. The PNG image will be decoded in RGBA format \(RGB for Red, Green, Blue and A for Alpha or transparency\) which uses four bytes per pixel.
 
-The `decode` method requires two parameters:
+The `decode` method requires three parameters:
 
 * `buffer`: The `ByteBuffer` that will hold the decoded image \(since each pixel uses four bytes its size will be 4 _ width _ height\).
 * `stride`:  Specifies the distance in bytes from the start of a line to the start of the next line. In this case it will be the number of bytes per line.
