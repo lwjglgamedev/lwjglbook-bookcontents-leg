@@ -366,7 +366,7 @@ As you can see this class groups the projection and world matrices. Given a set 
 
 An important thing to notice is that the `mul` method of the `Matrix4f` class modifies the matrix instance which the method is being applied to. So if we directly multiply the projection matrix with the transformation matrix we will modify the projection matrix itself. This is why we are always initializing each matrix to the identity matrix upon each call.
 
-In the `Renderer` class, in the constructor method, we just instantiate the `Transformation` with no arguments and in the `init` method we just create the uniform. The uniform has been renamed to transformation to better match its purpose.
+In the `Renderer` class, in the constructor method, we just instantiate the `Transformation` with no arguments and in the `init` method we just create the uniform.
 
 ```java
 public Renderer() {
