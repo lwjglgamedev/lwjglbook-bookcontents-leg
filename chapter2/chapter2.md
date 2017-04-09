@@ -76,7 +76,7 @@ private void sync(double loopStartTime) {
 }
 ```
 
-So what are we doing in the above method? In summary we calculate how many seconds our game loop iteration should last \(which is stored in the `loopSlot` variable\) and we wait for that amount of time taking into consideration the time we spent in our loop. But instead of doing a single wait for the whole available time period we do small waits. This will allow other tasks to run and will avoid the sleep accuracy problems we mentioned before. Then, what we do is:   
+So what are we doing in the above method? In summary we calculate how many seconds our game loop iteration should last \(which is stored in the `loopSlot` variable\) and we wait for that amount of time taking into consideration the time we spent in our loop. But instead of doing a single wait for the whole available time period we do small waits. This will allow other tasks to run and will avoid the sleep accuracy problems we mentioned before. Then, what we do is:  
 1.    Calculate the time at which we should exit this wait method and start another iteration of our game loop \(which is the variable `endTime`\).  
 2.    Compare the current time with that end time and wait just one millisecond if we have not reached that time yet.
 
@@ -108,13 +108,10 @@ The `Window` class besides providing the initialization code also needs to be aw
 
 ```java
 // Setup resize callback
-glfwSetWindowSizeCallback(windowHandle, windowSizeCallback = new GLFWWindowSizeCallback() {
-    @Override
-    public void invoke(long window, int width, int height) {
-        Window.this.width = width;
-        Window.this.height = height;
-        Window.this.setResized(true);
-    }
+glfwSetWindowSizeCallback(windowHandle, (window, width, height) -> {
+    Window.this.width = width;
+    Window.this.height = height;
+    Window.this.setResized(true);
 });
 ```
 
