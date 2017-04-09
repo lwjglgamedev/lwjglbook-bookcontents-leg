@@ -177,9 +177,6 @@ package org.lwjglb.engine;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWCursorEnterCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 public class MouseInput {
 
@@ -195,12 +192,6 @@ public class MouseInput {
 
     private boolean rightButtonPressed = false;
 
-    private GLFWCursorPosCallback cursorPosCallback;
-
-    private GLFWCursorEnterCallback cursorEnterCallback;
-
-    private GLFWMouseButtonCallback mouseButtonCallback;
-
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
         currentPos = new Vector2d(0, 0);
@@ -208,25 +199,16 @@ public class MouseInput {
     }
 
     public void init(Window window) {
-        glfwSetCursorPosCallback(window.getWindowHandle(), cursorPosCallback = new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                currentPos.x = xpos;
-                currentPos.y = ypos;
-            }
+        glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
+            currentPos.x = xpos;
+            currentPos.y = ypos;
         });
-        glfwSetCursorEnterCallback(window.getWindowHandle(), cursorEnterCallback = new GLFWCursorEnterCallback() {
-            @Override
-            public void invoke(long window, boolean entered) {
-                inWindow = entered;
-            }
+        glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
+            inWindow = entered;
         });
-        glfwSetMouseButtonCallback(window.getWindowHandle(), mouseButtonCallback = new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-                rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
-            }
+        glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
+            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
+            rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
         });
     }
 
@@ -268,12 +250,6 @@ The `MouseInput` class provides an `init` method which should be called during t
 * `glfwSetCursorPosCallback`: Registers a callback that will be invoked when the mouse is moved.
 * `glfwSetCursorEnterCallback`: Registers a callback that will be invoked when the mouse enters our window. We will be receiving mouse events even if the mouse is not in our window. We use this callback to track when the mouse is in our window.
 * `glfwSetMouseButtonCallback`: Registers a callback that will be invoked when a mouse button is pressed.
-
-One important thing related to callbacks and GLFW is that we need to keep a reference to the callback implementation into our Java class. You see that we have one attribute per callback. This is because callbacks are implemented in native code and the Java part of GLFW des not hold any reference to them. If we don't hold a reference they will be garbage collected and you will see an exception like this:
-
-```
-Exception in thread "GAME_LOOP_THREAD" org.lwjgl.system.libffi.ClosureError: Callback failed because the closure instance has been garbage collected
-```
 
 The `MouseInput` class provides an input method which should be called when game input is processed. This method calculates the mouse displacement from the previous position and stores it into `Vector2f` `displVec` variable so it can be used by our game.
 
