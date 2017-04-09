@@ -132,8 +132,8 @@ public void update(Window window, Matrix4f viewMatrix, DirectionalLight light) {
     projViewMatrix.mul(viewMatrix);
 
     // Calculate frustum corners in world space
-    float maxZ = Float.MIN_VALUE;
-    float minZ = Float.MAX_VALUE;
+    float maxZ = -Float.MAX_VALUE;
+    float minZ =  Float.MAX_VALUE;
     for (int i = 0; i < FRUSTUM_CORNERS; i++) {
         Vector3f corner = frustumCorners[i];
         corner.set(0, 0, 0);
@@ -175,12 +175,12 @@ Finally, we need to construct the orthographic projection matrix.  This is done 
 ```java
 private void updateLightProjectionMatrix() {
     // Now calculate frustum dimensions in light space
-    float minX = Float.MAX_VALUE;
-    float maxX = Float.MIN_VALUE;
-    float minY = Float.MAX_VALUE;
-    float maxY = Float.MIN_VALUE;
-    float minZ = Float.MAX_VALUE;
-    float maxZ = Float.MIN_VALUE;
+    float minX =  Float.MAX_VALUE;
+    float maxX = -Float.MAX_VALUE;
+    float minY =  Float.MAX_VALUE;
+    float maxY = -Float.MAX_VALUE;
+    float minZ =  Float.MAX_VALUE;
+    float maxZ = -Float.MAX_VALUE;
     for (int i = 0; i < FRUSTUM_CORNERS; i++) {
         Vector3f corner = frustumCorners[i];
         tmpVec.set(corner, 1);
