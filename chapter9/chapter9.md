@@ -409,7 +409,7 @@ With this OBJ loader class you can now use Blender to create your models. Blende
 
 ![OBJ Export options](obj_export_options.png)
 
-Also if you are applying textures please remember to split edges since we cannot assign several texture coordinates to the same vertex,
+Also remeber to sply edges when exporting, since  we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not asigned to vertices. If you find light problems \(next chapters\), with some models, you should verify the normals. You can visualize them inside blender.
 
 ![Edge split](edge_split.png)
 
