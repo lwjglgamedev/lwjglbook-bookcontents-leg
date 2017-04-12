@@ -121,13 +121,25 @@ While rendering a shape, the first method that shall be invoked is  `nvgBeginPat
 
 You can check the rest of the source code to see how the rest of the shapes are drawn. When rendering text is not necessary to call  nvgBeginPath before rendering it.
 
-After we have finished drawing all the shapes, we just call the `nvgEndFrame` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in order to perform their operations, if the state is not correctly restored you  may see that the scene is not correctly rendered or even that it's been wiped out. Thus, we need to restore the relevant OpenGL status that we need for our rendering:
+After we have finished drawing all the shapes, we just call the `nvgEndFrame` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in order to perform their operations, if the state is not correctly restored you  may see that the scene is not correctly rendered or even that it's been wiped out. Thus, we need to restore the relevant OpenGL status that we need for our rendering. This is delegated in the `Window `class:
 
 ```java
 // Restore state
-glEnable(GL_DEPTH_TEST);
-glEnable(GL_STENCIL_TEST);
-glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+window.restoreState();
+```
+
+The method is defined like this:
+
+```java
+public void restoreState() {
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if (opts.cullFace) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+}
 ```
 
 And that’s all \(besides some additional methods to clear things up\), the code is completed. When you execute the sample you will get something like this:
