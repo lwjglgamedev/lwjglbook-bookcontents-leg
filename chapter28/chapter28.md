@@ -1,6 +1,4 @@
-# ASSIMP
+# Assimp
 
 Next to come.
-
-
 
