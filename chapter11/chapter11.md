@@ -200,7 +200,7 @@ void main()
 
     vec4 diffuseSpecularComp = calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
     diffuseSpecularComp += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
-    
+
     fragColor = ambientC * vec4(ambientLight, 1) + diffuseSpecularComp;
 }
 ```
@@ -262,7 +262,7 @@ for (int i=0; i<MAX_POINT_LIGHTS; i++)
 {
     if ( pointLights[i].intensity > 0 )
     {
-        totalLight += calcPointLight(pointLights[i], mvVertexPos, mvVertexNormal); 
+        diffuseSpecularComp += calcPointLight(pointLights[i], mvVertexPos, mvVertexNormal); 
     }
 }
 
@@ -270,7 +270,7 @@ for (int i=0; i<MAX_SPOT_LIGHTS; i++)
 {
     if ( spotLights[i].pl.intensity > 0 )
     {
-        totalLight += calcSpotLight(spotLights[i], mvVertexPos, mvVertexNormal);
+        diffuseSpecularComp += calcSpotLight(spotLights[i], mvVertexPos, mvVertexNormal);
     }
 }
 ```
