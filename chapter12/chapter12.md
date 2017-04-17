@@ -376,18 +376,18 @@ in vec3 mvPos;
 out vec4 fragColor;
 
 uniform sampler2D texture_sampler;
-uniform vec3 colour;
+uniform vec4 colour;
 uniform int hasTexture;
 
 void main()
 {
     if ( hasTexture == 1 )
     {
-        fragColor = vec4(colour, 1) * texture(texture_sampler, outTexCoord);
+        fragColor = colour * texture(texture_sampler, outTexCoord);
     }
     else
     {
-        fragColor = vec4(colour, 1);
+        fragColor = colour;
     }
 }
 ```
@@ -398,7 +398,7 @@ To add the compass the the HUD we just need to create a new `GameItem` instance,
 // Create compass
 Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
 Material material = new Material();
-material.setColour(new Vector3f(1, 0, 0));
+material.setColour(new Vector4f(1, 0, 0, 1));
 mesh.setMaterial(material);
 compassItem = new GameItem(mesh);
 compassItem.setScale(40.0f);
