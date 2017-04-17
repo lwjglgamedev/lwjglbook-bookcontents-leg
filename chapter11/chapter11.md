@@ -196,20 +196,12 @@ Finally, our main method just aggregates the colour components of the ambient po
 ```glsl
 void main()
 {
-    vec4 baseColour; 
-    if ( material.useColour == 1 )
-    {
-        baseColour = vec4(material.colour, 1);
-    }
-    else
-    {
-        baseColour = texture(texture_sampler, outTexCoord);
-    }
-    vec4 totalLight = vec4(ambientLight, 1.0);
-    totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
-    totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
+    setupColours(material, outTexCoord);
 
-    fragColor = baseColour * totalLight;
+    vec4 diffuseSpecularComp = calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
+    diffuseSpecularComp += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
+    
+    fragColor = ambientC * vec4(ambientLight, 1) + diffuseSpecularComp;
 }
 ```
 
