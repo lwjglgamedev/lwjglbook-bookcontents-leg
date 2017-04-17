@@ -398,7 +398,7 @@ To add the compass the the HUD we just need to create a new `GameItem` instance,
 // Create compass
 Mesh mesh = OBJLoader.loadMesh("/models/compass.obj");
 Material material = new Material();
-material.setColour(new Vector4f(1, 0, 0, 1));
+material.setAmbientColour(new Vector4f(1, 0, 0, 1));
 mesh.setMaterial(material);
 compassItem = new GameItem(mesh);
 compassItem.setScale(40.0f);
