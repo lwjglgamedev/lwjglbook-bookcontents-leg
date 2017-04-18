@@ -224,6 +224,34 @@ We are creating new uniforms to set the following variables:
 * The material characteristics.
 * The camera position in view space coordinates.
 
+We will also define some global variables that will hold the material colour components to be used in the ambient, diffuse and specular components. We use these variables since, if the component has a texture, we will use the same colour for all the components and we do not want to perform redundant texture lookups. The variables are defined like this:
+
+```glsl
+vec4 ambientC;
+vec4 diffuseC;
+vec4 speculrC;
+```
+
+We now can define a function that will setup these variables accodring to the material characteristics:
+
+```glsl
+void setupColours(Material material, vec2 textCoord)
+{
+    if (material.hasTexture == 1)
+    {
+        ambientC = texture(texture_sampler, textCoord);
+        diffuseC = ambientC;
+        speculrC = ambientC;
+    }
+    else
+    {
+        ambientC = material.ambient;
+        diffuseC = material.diffuse;
+        speculrC = material.specular;
+    }
+}
+```
+
 Now we are going to define a function that, taking as its input a point light, the vertex position and its normal returns the colour contribution calculated for the diffuse and specular light components described previously.
 
 ```glsl
@@ -236,7 +264,7 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
     vec3 light_direction = light.position - position;
     vec3 to_light_source  = normalize(light_direction);
     float diffuseFactor = max(dot(normal, to_light_source ), 0.0);
-    diffuseColour = vec4(light.colour, 1.0) * light.intensity * diffuseFactor;
+    diffuseColour = diffuseC * vec4(light.colour, 1.0) * light.intensity * diffuseFactor;
 
     // Specular Light
     vec3 camera_direction = normalize(-position);
@@ -244,7 +272,7 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
     vec3 reflected_light = normalize(reflect(from_light_source, normal));
     float specularFactor = max( dot(camera_direction, reflected_light), 0.0);
     specularFactor = pow(specularFactor, specularPower);
-    specColour = specularFactor * material.reflectance * vec4(light.colour, 1.0);
+    specColour = speculrC * specularFactor * material.reflectance * vec4(light.colour, 1.0);
 
     // Attenuation
     float distance = length(light_direction);
@@ -279,27 +307,17 @@ With the previous function, the main function of the vertex function is very sim
 ```glsl
 void main()
 {
-    vec4 baseColour; 
-    if ( material.useColour == 1 )
-    {
-        baseColour = vec4(material.colour, 1);
-    }
-    else
-    {
-        baseColour = texture(texture_sampler, outTexCoord);
-    }
-    vec4 lightColour = calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
+    setupColours(material, outTexCoord);
 
-    vec4 totalLight = vec4(ambientLight, 1.0);
-    totalLight += lightColour;
-
-    fragColor = baseColour * totalLight;
+    vec4 diffuseSpecularComp = calcPointLight(pointLight, mvVertexPos, mvVertexNormal);
+    
+    fragColor = ambientC * vec4(ambientLight, 1) + diffuseSpecularComp;
 }
 ```
 
-The first part of the function is the same as the one used in previous chapter, we calculate the fragment colour either by using a fixed colour or by calculating it from texture coordinates. Final colour is calculated by multiplying that colour and the summation of the ambient light, diffuse and colour components. As you can see ambient light is not affected by attenuation.
+The call to the `setupColours `function will set up the `ambientC`, `diffuseC `and `speculrC `variables with the appropriate colours. Then, we calculate the diffuse and specular components, taking into consideration the attennuation. We do this using a single function call for convenience, as it has been explained above. Final colour is calculated by adding the ambient component \(multiplying `ambientC `by the ambient light\). As you can see ambient light is not affected by attenuation.
 
-We have introduced some new concepts into our shader, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, `PointLight` and `Material`. They are just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the `ShaderProgram` class, first to be able to create the uniforms for the point light and material structures.
+We have introduced some new concepts into our shader that require further explanation, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, `PointLight` and `Material`. They are just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the `ShaderProgram` class, first to be able to create the uniforms for the point light and material structures.
 
 ```java
 public void createPointLightUniform(String uniformName) throws Exception {
@@ -332,8 +350,10 @@ public void setUniform(String uniformName, PointLight pointLight) {
 }
 
 public void setUniform(String uniformName, Material material) {
-    setUniform(uniformName + ".colour", material.getColour() );
-    setUniform(uniformName + ".useColour", material.isTextured() ? 0 : 1);
+    setUniform(uniformName + ".ambient", material.getAmbientColour());
+    setUniform(uniformName + ".diffuse", material.getDiffuseColour());
+    setUniform(uniformName + ".specular", material.getSpecularColour());
+    setUniform(uniformName + ".hasTexture", material.isTextured() ? 1 : 0);
     setUniform(uniformName + ".reflectance", material.getReflectance());
 }
 ```
