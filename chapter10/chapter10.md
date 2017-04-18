@@ -162,7 +162,7 @@ void main()
 }
 ```
 
-Before we continue with the fragment shader there’s a very important concept that must be highlighted. From the code above you can see that `mvVertexNormal`,the variable contains the vertex normal, is transformed into model view space coordinates. This is done by multiplying the `vertexNormal` by the `modelViewMatrix` as with the vertex position. But there’s a subtle difference, the w component of that vertex normal is set to 0 before multiplying it by the matrix: `vec4(vertexNormal, 0.0)`. Why are we doing this ? Because we do want the normal to be rotated and scaled but we do not want it to be translated, we are only interested into its direction but not in its position. This is achieved by setting is w component to 0 and is one of the advantages of using homogeneous coordinates, by  setting the w component we can control what transformations are applied. You can do the matrix multiplication by hand and see why this happens.
+Before we continue with the fragment shader there’s a very important concept that must be highlighted. From the code above you can see that `mvVertexNormal`, the variable contains the vertex normal, is transformed into model view space coordinates. This is done by multiplying the `vertexNormal` by the `modelViewMatrix` as with the vertex position. But there’s a subtle difference, the w component of that vertex normal is set to 0 before multiplying it by the matrix: `vec4(vertexNormal, 0.0)`. Why are we doing this ? Because we do want the normal to be rotated and scaled but we do not want it to be translated, we are only interested into its direction but not in its position. This is achieved by setting is w component to 0 and is one of the advantages of using homogeneous coordinates, by  setting the w component we can control what transformations are applied. You can do the matrix multiplication by hand and see why this happens.
 
 Now we can start to do the real work in our fragment shader, besides declaring as input parameters the values that come from the vertex shader we are going to define some useful structures to model light and material characteristic. First of all, we will define the structures that model the light.
 
@@ -191,13 +191,21 @@ The structure that models a material characteristics is:
 ```glsl
 struct Material
 {
-    vec3 colour;
-    int useColour;
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+    int hasTexture;
     float reflectance;
 };
 ```
 
-A material is defined by a base colour \(if we don’t use texture to colour the fragments\), a flag that controls that behaviour and a reflectance index. We will use the following uniforms in our fragment shader.
+A material is defined by a a set of colours \(if we don’t use texture to colour the fragments\):
+
+* The colout used for the ambient component.
+* The colour used for the diffuse component.
+* The colour used for the specular component.
+
+A material also is defined by a flag that controls if it has an associated texture or not and a reflectance index. We will use the following uniforms in our fragment shader.
 
 ```glsl
 uniform sampler2D texture_sampler;
