@@ -218,7 +218,7 @@ public class GameItem {
 With the modification above we can now define the contents for the `MD5Loader` class. This class will have a method named `process` that will receive a `MD5Model` instance and a default colour \(for the meshes that do not define a texture\) and will return a `GameItem` instance. The body of that method is shown below.
 
 ```java
-public static GameItem process(MD5Model md5Model, Vector3f defaultColour) throws Exception {
+public static GameItem process(MD5Model md5Model, Vector4f defaultColour) throws Exception {
     List<MD5Mesh> md5MeshList = md5Model.getMeshes();
 
     List<Mesh> list = new ArrayList<>();
@@ -285,7 +285,7 @@ private static class VertexInfo {
 Let’s get back to the `generateMesh` method, the first we do is get the mesh vertices information, the weights and the structure of the joints.
 
 ```java
-private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
+private static Mesh generateMesh(MD5Model md5Model, MD5Mesh md5Mesh, Vector4f defaultColour) throws Exception {
     List<VertexInfo> vertexInfoList = new ArrayList<>();
     List<Float> textCoords = new ArrayList<>();
     List<Integer> indices = new ArrayList<>();
@@ -369,7 +369,7 @@ For each vertex we compute its normal by the normalized sum of all the normals o
         v1.normal.add(normal);
         v2.normal.add(normal);
      }
-     
+
      // Once the contributions have been added, normalize the result
      for(VertexInfo v : vertexInfoList) {
         v.normal.normalize();
@@ -392,7 +392,7 @@ Then we just need to transform the Lists to arrays and process the texture infor
 Going back to the `process` method you can see that there's a method named `handleTexture`, which is responsible for loading textures. This is the definition of that method:
 
 ```java
-private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector3f defaultColour) throws Exception {
+private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector4f defaultColour) throws Exception {
     String texturePath = md5Mesh.getTexture();
     if (texturePath != null && texturePath.length() > 0) {
         Texture texture = new Texture(texturePath);
@@ -513,11 +513,11 @@ frame 1 {
 
 The base class that parses a MD5 animation file is named `MD5AnimModel`. This class creates all the objects hierarchy that maps the contents of that file and you can check the source code for the details. The structure is similar to the MD5 model definition file.  Now that we are able to load that information we will use it to generate an animation.
 
-We will generate the animation in the shader, so instead of pre-calculating all the positions for each frame we need to prepare the data we need so in the vertex shader we can compute the final positions.   
+We will generate the animation in the shader, so instead of pre-calculating all the positions for each frame we need to prepare the data we need so in the vertex shader we can compute the final positions.  
 Let’s get back to the process method in the `MD5Loader` class, we need to modify it to take into consideration the animation information. The new definition for that method is shown below:
 
 ```java
-public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Vector3f defaultColour) throws Exception {
+public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Vector4f defaultColour) throws Exception {
     List<Matrix4f> invJointMatrices = calcInJointMatrices(md5Model);
     List<AnimatedFrame> animatedFrames = processAnimationFrames(md5Model, animModel, invJointMatrices);
 
@@ -778,7 +778,9 @@ if ( gameItem instanceof AnimGameItem ) {
 }
 ```
 
-Of course, yo will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar \(each time the key is pressed a new frame is set and the jointsMatrix uniform changes\).  
+Of course, yo will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar \(each time the key is pressed a new frame is set and the jointsMatrix uniform changes\).
+
+  
 You will see something like this.
 
 ![First animation](Animation.png)
