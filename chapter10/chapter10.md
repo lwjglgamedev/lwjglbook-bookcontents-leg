@@ -310,12 +310,12 @@ void main()
     setupColours(material, outTexCoord);
 
     vec4 diffuseSpecularComp = calcPointLight(pointLight, mvVertexPos, mvVertexNormal);
-    
+
     fragColor = ambientC * vec4(ambientLight, 1) + diffuseSpecularComp;
 }
 ```
 
-The call to the `setupColours `function will set up the `ambientC`, `diffuseC `and `speculrC `variables with the appropriate colours. Then, we calculate the diffuse and specular components, taking into consideration the attennuation. We do this using a single function call for convenience, as it has been explained above. Final colour is calculated by adding the ambient component \(multiplying `ambientC `by the ambient light\). As you can see ambient light is not affected by attenuation.
+The call to the `setupColours`function will set up the `ambientC`, `diffuseC`and `speculrC`variables with the appropriate colours. Then, we calculate the diffuse and specular components, taking into consideration the attennuation. We do this using a single function call for convenience, as it has been explained above. Final colour is calculated by adding the ambient component \(multiplying `ambientC`by the ambient light\). As you can see ambient light is not affected by attenuation.
 
 We have introduced some new concepts into our shader that require further explanation, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, `PointLight` and `Material`. They are just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the `ShaderProgram` class, first to be able to create the uniforms for the point light and material structures.
 
@@ -330,8 +330,10 @@ public void createPointLightUniform(String uniformName) throws Exception {
 }
 
 public void createMaterialUniform(String uniformName) throws Exception {
-    createUniform(uniformName + ".colour");
-    createUniform(uniformName + ".useColour");
+    createUniform(uniformName + ".ambient");
+    createUniform(uniformName + ".diffuse");
+    createUniform(uniformName + ".specular");
+    createUniform(uniformName + ".hasTexture");
     createUniform(uniformName + ".reflectance");
 }
 ```
