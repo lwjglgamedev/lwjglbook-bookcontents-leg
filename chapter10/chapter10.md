@@ -25,11 +25,15 @@ At the end what we want to obtain is a factor that, multiplied by colour assigne
 
 $$L = A + D + S$$
 
-In fact, those components are indeed colours, that is the colour components that each light component contributes to. This is due to the fact that light components will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour \(obtained from a texture or a base colour\). 
+In fact, those components are indeed colours, that is the colour components that each light component contributes to. This is due to the fact that light components will not only provide a degree of intensity but it can modifiy the colour of model.  In our fragment shader we just need to multiply that light colour by the original fragment colour \(obtained from a texture or a base colour\).
 
 We can assign also different colours, for the same materials, that will be used in the ambient, diffuse and specular components. Hence, these components will be modulated by the colours associated to the material. If the material has a texture, we will simply use a single texture for each of the components.
 
-So the final colour will be, for a non textured material: $$L = A * ambientColour + D * diffuseColour + S * specular Colour$$.
+So the final colour for a non textured material will be: $$L = A * ambientColour + D * diffuseColour + S * specular Colour$$.
+
+And the final colour for a textured material will be:
+
+$$L = A*textureColour + D* textureColour + S * textureColour$$
 
 ## Ambient Light component
 
@@ -82,7 +86,7 @@ Then we need to calculate the diffuse factor \(an scalar\): $$diffuseFactor = no
 
 Finally we just need to modulate the light colour by the diffuse factor and the light intensity:
 
-$$colour = lColour * diffuseFactor * intensity$$
+$$colour = diffuseColour *lColour * diffuseFactor * intensity$$
 
 ## Specular component
 
@@ -116,7 +120,7 @@ We also need to take into consideration that this light must be more intense if 
 
 $$specularFactor = specularFactor^{specularPower}$$.
 
-Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$lColour * reflectance * specularFactor * intensity$$.
+Finally we need to model the reflectivity of the material, which will also modulate the intensity if the light reflected, this will be done with another parameter named reflectance. So the colour component of the specular component will be: $$specularColour * lColour * reflectance * specularFactor * intensity$$.
 
 ## Attenuation
 
