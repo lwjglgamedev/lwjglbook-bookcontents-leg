@@ -243,7 +243,7 @@ We use the `MemoryUtil` class to create the buffer in off-heap memory so that it
 If you come from previous versions of LWJGL it's important to stress out a few topics. You may have noticed that we do not use the utility class `BufferUtils` to create the buffers. Instead we use the `MemoryUtil` class. This is due to the fact that `BufferUtils` was not very efficient, and has been mantained only for backwards compatibility. Instead, LWJGL 3 proposes two methods for buffer management:
 
 * Auto-managed buffers, that is, buffers that are automatically collected by the Garbage Collector. These buffers are mainly used for short lived operations, or for data that is transferred to the GPU and does not need to be present in the process memory. This is achived by using the `org.lwjgl.system.MemoryStack` class.
-* Manually managed buffers. In this case we need to carefulley free them once we are finished. These buffers are intended for long time operations or for large amounts of data. This is achived by suing the `MemoryUtil` class.
+* Manually managed buffers. In this case we need to carefulley free them once we are finished. These buffers are intended for long time operations or for large amounts of data. This is achived by using the `MemoryUtil` class.
 
 You can consult the details here:  [https://blog.lwjgl.org/memory-management-in-lwjgl-3/](https://blog.lwjgl.org/memory-management-in-lwjgl-3/ "here").
 
