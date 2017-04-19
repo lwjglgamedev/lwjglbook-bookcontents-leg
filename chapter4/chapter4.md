@@ -73,13 +73,13 @@ void main()
 }
 ```
 
-The structure is quite similar to our vertex shader. In this case we will set a fixed colour for each fragment. The output variable is defined in the second line and set as a vec4 fragColor.
+The structure is quite similar to our vertex shader. In this case we will set a fixed colour for each fragment. The output variable is defined in the second line and set as a vec4 fragColor.  
 Now that we have our shaders created, how do we use them? This is the sequence of steps we need to follow:  
-1.    Create a OpenGL Program
-2.    Load the vertex and shader code files.
-3.    For each shader, create a new shader program and specify its type \(vertex, fragment\).
-4.    Compile the shader.
-5.    Attach the shader to the program.
+1.    Create a OpenGL Program  
+2.    Load the vertex and shader code files.  
+3.    For each shader, create a new shader program and specify its type \(vertex, fragment\).  
+4.    Compile the shader.  
+5.    Attach the shader to the program.  
 6.    Link the program.
 
 At the end the shader will be loaded in the graphics card and we can use it by referencing an identifier, the program identifier.
@@ -226,7 +226,7 @@ The following picture depicts the triangle in our coordinates system.
 
 Now that we have our coordinates, we need to store them into our graphics card and tell OpenGL about the structure. We will introduce now two important concepts, Vertex Array Objects \(VAOs\) and Vertex Buffer Object \(VBOs\). If you get lost in the next code fragments remember that at the end what we are doing is sending the data that models the objects we want to draw to the graphics card memory. When we store it we get an identifier that serves us later to refer to it while drawing.
 
-Let us first start with Vertex Buffer Object \(VBOs\). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we said before, OpenGL does not know anything about our data structure. In fact it can hold not just coordinates but other information, such as textures, colour, etc.
+Let us first start with Vertex Buffer Object \(VBOs\). A VBO is just a memory buffer stored in the graphics card memory that stores vertices. This is where we will transfer our array of floats that model a triangle. As we said before, OpenGL does not know anything about our data structure. In fact it can hold not just coordinates but other information, such as textures, colour, etc.  
 A Vertex Array Objects \(VAOs\) is an object that contains one or more VBOs which are usually called attribute lists. Each attribute list can hold one type of data: position, colour, texture, etc. You are free to store whichever you want in each slot.
 
 A VAO is like a wrapper that groups a set of definitions for the data that is going to be stored in the graphics card. When we create a VAO we get an identifier. We use that identifier to render it and the elements it contains using the definitions we specified during its creation.
@@ -242,8 +242,8 @@ We use the `MemoryUtil` class to create the buffer in off-heap memory so that it
 
 If you come from previous versions of LWJGL it's important to stress out a few topics. You may have noticed that we do not use the utility class `BufferUtils` to create the buffers. Instead we use the `MemoryUtil` class. This is due to the fact that `BufferUtils` was not very efficient, and has been mantained only for backwards compatibility. Instead, LWJGL 3 proposes two methods for buffer management:
 
-* Auto-managed buffers, that is, buffers that are automatically collected by the Garbage Collector. These buffers are mainly used for short lived operations, or for data that is transferred to the GPU and does not need to be present in the process memory.
-* Manually managed buffers. In this case we need to carefulley free them once we are finished. These buffers are intended for long time operations or for large amounts of data.
+* Auto-managed buffers, that is, buffers that are automatically collected by the Garbage Collector. These buffers are mainly used for short lived operations, or for data that is transferred to the GPU and does not need to be present in the process memory. This is achived by using the `org.lwjgl.system.MemoryStack` class.
+* Manually managed buffers. In this case we need to carefulley free them once we are finished. These buffers are intended for long time operations or for large amounts of data. This is achived by suing the `MemoryUtil` class.
 
 You can consult the details here:  [https://blog.lwjgl.org/memory-management-in-lwjgl-3/](https://blog.lwjgl.org/memory-management-in-lwjgl-3/ "here").
 
