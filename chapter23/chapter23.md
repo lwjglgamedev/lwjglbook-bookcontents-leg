@@ -12,7 +12,7 @@ Then, we need to be able to use that value in the scene shaders. Let’s start w
 
 ```in float outSelected;``` 
 
-Then, at the end of the fragment shader, we will modify the final fragment colour, byt setting the blue component to $$1$$ if it’s selected.
+Then, at the end of the fragment shader, we will modify the final fragment colour, by setting the blue component to $$1$$ if it’s selected.
 
 ```glsl
 if ( outSelected > 0 ) {
@@ -45,7 +45,7 @@ uniform float selectedNonInstanced;
 
 Now that the infrastructure has been set-up we just need to define how objects will be selected. Before we continue you may notice, if you look at the source code, that the View matrix is now stored in the ```Camera``` class. This is due to the fact that we werrecalculating the view matrix sin several classes in the source code. Previously, it was stored in the ```Transformation``` and in the ```SoundManager``` classes. In order to calculate intersections we would need to cerate another replica. Instead of that, we centralize that in the ```Camera``` class. This change also, requires that the view matrix is updated in our main game loop.
 
-Let’s continue with the picking discussion. In this sample, we will follow a simple approach, selection will be done automatically using the camera. The closes object to where the camera is facing will be selected. Let’s discuss how this can be done.
+Let’s continue with the picking discussion. In this sample, we will follow a simple approach, selection will be done automatically using the camera. The closest object to where the camera is facing will be selected. Let’s discuss how this can be done.
 
 The following picture depicts the situation we need to solve.
 
@@ -81,17 +81,17 @@ public void selectGameItem(GameItem[] gameItems, Camera camera) {
 }
 ```
 
-The method, iterates over the game items trying to get the ones that interesect with the ray cast form the camera. It first defines a vafiable named ```closestDistance```. This vaioabkle will hold the closest distance. For game items that intersect, the distance from the camera to the intersection point will be calculated, If it’s lower than the value stored in ```closestDistance```, then this item will be the new candidate.
+The method, iterates over the game items trying to get the ones that interesect with the ray cast form the camera. It first defines a variable named ```closestDistance```. This variable will hold the closest distance. For game items that intersect, the distance from the camera to the intersection point will be calculated, If it’s lower than the value stored in ```closestDistance```, then this item will be the new candidate.
 
 Before entering into the loop, we need to get the direction vector that points where the camera is facing. This is easy, just use the view matrix to get the z direction taking into consideration camera’s rotation. Remember that positive z points out of the screen, so we need the opposite direction vector, this is why we negate it.
 
 ![Camera](/chapter23/camera.png)
 
-In the game loop intersection calculations are done per each GameItem. But, how do we do this? This is where the glorious [JOML](https://github.com/JOML-CI/JOML "JOML") library comes to the rescue. We are using [JOML](https://github.com/JOML-CI/JOML "JOML")’s ```Intersectionf``` class, which provides several methods to calculate intersection sin 2D and 3D. Specifically, we are using the ```intersectRayAab``` method.
+In the game loop intersection calculations are done per each ```GameItem```. But, how do we do this? This is where the glorious [JOML](https://github.com/JOML-CI/JOML "JOML") library comes to the rescue. We are using [JOML](https://github.com/JOML-CI/JOML "JOML")’s ```Intersectionf``` class, which provides several methods to calculate intersections in 2D and 3D. Specifically, we are using the ```intersectRayAab``` method.
 
 This method implements the algorithm that test intersection for Axis Aligned Boxes. You can check the details, as pointed out in the JOML documentation, [here](http://people.csail.mit.edu/amy/papers/box-jgt.pdf "here").
 
-The method tests if a ray, defined by an origin and a direction, intersects a box, defines by minimum and maximum corner. This algorithm is valid, because our cubes, are aligned with the axis, if they were rotated, this method would not work. Thus, the method receives the following parameters:
+The method tests if a ray, defined by an origin and a direction, intersects a box, defined by minimum and maximum corner. This algorithm is valid, because our cubes, are aligned with the axis, if they were rotated, this method would not work. Thus, the method receives the following parameters:
 
 * An origin: In our case, this will be our camera position.
 * A direction: This is where the camera is facing, the forward vector.
@@ -103,7 +103,7 @@ The method will return true if there is an intersection. If true, we check the c
 
 ![Intersection](/chapter23/intersection.png)
 
-Once the loop have finished, the candidate ```GameItem``` is marked as selected.
+Once the loop has finished, the candidate ```GameItem``` is marked as selected.
 
 And that’s, all. The ```selectGameItem``` will be invoked in the update method of the DummyGame class, along with the view matrix update.
 
@@ -117,19 +117,19 @@ soundMgr.updateListenerPosition(camera);
 this.selectDetector.selectGameItem(gameItems, camera);
 ```
  
-Besides that, a cross-hair has been added to the rendering process to check that everytihn is working properly. The result is shown in the next figure.
+Besides that, a cross-hair has been added to the rendering process to check that everything is working properly. The result is shown in the next figure.
 
 ![Object Picking result](/chapter23/object_picking_result.png)
 
-Obviously, the method presented here is far form optimal but it will give you the basis to develop more sophisticated methods by your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
+Obviously, the method presented here is far from optimal but it will give you the basics to develop more sophisticated methods on your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
 
 ## Mouse Selection
 
-Object picking with the camera is great, but what if we want to be able to freely select objects with the mouse? In this case, we want that, whenever the user click on the screen, the closest object is automatically selected.
+Object picking with the camera is great, but what if we want to be able to freely select objects with the mouse? In this case, we want that, whenever the user clicks on the screen, the closest object is automatically selected.
 
 The way to achieve this is similar to the method described above. In the previous method we had the camera position and generated rays from it using the “forward” direction according to camera’s current orientation. In this case, we still need to cast rays, but the direction points to a point far away from the camera, where the click has been made. In this case, we need to calculate that direction vector using the click coordinates.
 
-But, how do we pass from a $$(x,y)$$ coordinates in viewport space to world space? Let’s review how we pass from model space coordinates to view space. The  different coordinate transformations that are applied in order to achieve that are:
+But, how do we pass from a $$(x,y)$$ coordinates in viewport space to world space? Let’s review how we pass from model space coordinates to view space. The different coordinate transformations that are applied in order to achieve that are:
 
 * We pass from model coordinates to world coordinates using the model matrix.
 * We pass from world coordinates to view space coordinates using the view matrix (that provides the camera effect)-
