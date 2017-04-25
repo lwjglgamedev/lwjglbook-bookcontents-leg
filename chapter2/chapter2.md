@@ -104,11 +104,11 @@ public boolean isKeyPressed(int keyCode) {
 }
 ```
 
-The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized.
+The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized. The callback will receive the width and height, in pixels, of the framebuffer \(the rendering area, in this sample, the display area\).
 
 ```java
 // Setup resize callback
-glfwSetWindowSizeCallback(windowHandle, (window, width, height) -> {
+glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> {
     Window.this.width = width;
     Window.this.height = height;
     Window.this.setResized(true);
