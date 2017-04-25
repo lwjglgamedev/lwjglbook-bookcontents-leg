@@ -238,7 +238,7 @@ FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(vertices.length);
 verticesBuffer.put(vertices).flip();
 ```
 
-We use the `MemoryUtil` class to create the buffer in off-heap memory so that it's accessible by the OpenGL library. After we have stored the data \(with the put method\) we need to reset the position of the buffer to the 0 position with the flip method \(that is, we say that we’ve finishing writing to it\).
+We use the `MemoryUtil` class to create the buffer in off-heap memory so that it's accessible by the OpenGL library. After we have stored the data \(with the put method\) we need to reset the position of the buffer to the 0 position with the flip method \(that is, we say that we’ve finishing writing to it\). Remember, that Java objects, are allocated in a space called the heap. The heap is a large bunch of memory reserved in the JVM's process memory. Memory stored in the heap cannot be accessed by native code \(JNI, the mechanism that allows calling native code from Java does not allow that\).  The only way of sharing memory data between Java and native code is by directly allocating memory in Java. This will reserve a contigous space that can be used by shared code. 
 
 If you come from previous versions of LWJGL it's important to stress out a few topics. You may have noticed that we do not use the utility class `BufferUtils` to create the buffers. Instead we use the `MemoryUtil` class. This is due to the fact that `BufferUtils` was not very efficient, and has been mantained only for backwards compatibility. Instead, LWJGL 3 proposes two methods for buffer management:
 
