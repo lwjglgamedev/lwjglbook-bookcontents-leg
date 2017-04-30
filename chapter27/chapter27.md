@@ -181,3 +181,5 @@ If you want a sample of the much more efficient approach, that is, directly pass
 
 The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been removed form the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
 
+![](/chapter27/model.png)
+
