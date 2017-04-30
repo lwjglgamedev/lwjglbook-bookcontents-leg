@@ -1,4 +1,4 @@
-# Assimp
+# ![](/assets/model.png)Assimp
 
 The capability of loading complex 3d models in different formats is crucial in order to write a game. The task of writing parsers for some of them would require lots of work. Even just supporting a single format can be time consuming. For instance, the wavefront loader described in chapter 9, only parses a small subset of the specification \(materials are not handled at all\).
 
@@ -84,7 +84,7 @@ We process the materials contained in the model. Materials define colour and tex
 
 If you examine the code above you may see that many of the calls to the Assimp library return `PointerBuffer`instances. You can think about them like C pointers, they just point to a memory region which contain data. You need to know in advance the type of data that they hold in order to process them. In the case of materials, we iterate over that buffer creating instances of theAIMaterialclass. In the second case, we iterate over the buffer that holds mesh data creating instance of the `AIMesh`class.
 
-Let’s examine the `processMaterial `method.
+Let’s examine the `processMaterial`method.
 
 ```java
 private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String texturesDir) throws Exception {
@@ -116,18 +116,18 @@ private static void processMaterial(AIMaterial aiMaterial, List<Material> materi
     if (result == 0) {
         specular = new Vector4f(colour.r(), colour.g(), colour.b(), colour.a());
     }
-        
+
     Material material = new Material(ambient, diffuse, specular, 1.0f);
     material.setTexture(texture);
     materials.add(material);
 }
 ```
 
-We check if the material defines a texture or not. If so, we load the texture. We have created a new class named `TextureCache `which caches textures. This is due to the fact that several meshes may share the same texture and we do not want to waste space loading again and again the same data. Then we try to get the colours of the material for the ambient, diffuse and specular components. Fortunately, the definition that we had for a material already contained that information.
+We check if the material defines a texture or not. If so, we load the texture. We have created a new class named `TextureCache`which caches textures. This is due to the fact that several meshes may share the same texture and we do not want to waste space loading again and again the same data. Then we try to get the colours of the material for the ambient, diffuse and specular components. Fortunately, the definition that we had for a material already contained that information.
 
-The `TextureCache `definition is very simple is just a map that indexes the different textures by the path to the texture file \(You can check directly in the source code\). Due to the fact, that now textures may use different image formats \(PNG, JPEG, etc.\), we have modified the way that textures are loaded. Instead of using the PNG library, we now use the STB library to be able to load more formats.
+The `TextureCache`definition is very simple is just a map that indexes the different textures by the path to the texture file \(You can check directly in the source code\). Due to the fact, that now textures may use different image formats \(PNG, JPEG, etc.\), we have modified the way that textures are loaded. Instead of using the PNG library, we now use the STB library to be able to load more formats.
 
-Let’s go back to the `StaticMeshesLoader `class. The `processMesh `is defined like this.
+Let’s go back to the `StaticMeshesLoader`class. The `processMesh`is defined like this.
 
 ```java
 private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
@@ -159,9 +159,9 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
 }
 ```
 
-A `Mesh `is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords `and `processIndices `method. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
+A `Mesh`is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords`and `processIndices`method. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
 
-The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh `instance that returns the desired data. For instance, the process processVertices is defined like this:
+The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh`instance that returns the desired data. For instance, the process processVertices is defined like this:
 
 ```java
 private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
@@ -175,9 +175,9 @@ private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
 }
 ```
 
-You can see that get get a buffer to the vertices by invoking the `mVertices `method. We just simply process them to create a `List `of floats that contain the vertices positions. Since, the method retyrns jusst a buffer you could pass that information directly to the OpenGL methods that create vertices. We do not do it that way for two reasons. The first one is try to reduce as much as possible the modifications over the code base. Second one is that by loading into an intermediate structure you may be able to perform some pros-processing tasks and even debug the loading process.
+You can see that get get a buffer to the vertices by invoking the `mVertices`method. We just simply process them to create a `List`of floats that contain the vertices positions. Since, the method retyrns jusst a buffer you could pass that information directly to the OpenGL methods that create vertices. We do not do it that way for two reasons. The first one is try to reduce as much as possible the modifications over the code base. Second one is that by loading into an intermediate structure you may be able to perform some pros-processing tasks and even debug the loading process.
 
 If you want a sample of the much more efficient approach, that is, directly passing the buffers to OpenGL, you can check this [sample](https://github.com/LWJGL/lwjgl3-demos/blob/master/src/org/lwjgl/demo/opengl/assimp/WavefrontObjDemo.java).
 
-The `StaticMeshesLoader `makes the `OBJLoader `class obsolete, so it has been removed form the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
+The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been removed form the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
 
