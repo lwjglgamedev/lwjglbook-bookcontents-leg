@@ -1,4 +1,6 @@
-# ![](/assets/model.png)Assimp
+# Assimp
+
+## Static Meshes
 
 The capability of loading complex 3d models in different formats is crucial in order to write a game. The task of writing parsers for some of them would require lots of work. Even just supporting a single format can be time consuming. For instance, the wavefront loader described in chapter 9, only parses a small subset of the specification \(materials are not handled at all\).
 
@@ -182,4 +184,8 @@ If you want a sample of the much more efficient approach, that is, directly pass
 The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been removed form the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
 
 ![](/chapter27/model.png)
+
+## Animations
+
+TODO: Source code uploaed.
 
