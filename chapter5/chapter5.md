@@ -241,7 +241,7 @@ glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 
 Please notice that in the `glVertexAttribPointer` call, the first parameter is now a `“1”`. This is the location where our shader will be expecting that data. \(Of course, since we have another VBO we need to free it in the `cleanup` method\).
 
-The next step is to modify the shaders. The vertex shader is now expecting two parameters, the coordinates \(in location 0\) and the colour \(in location 1\). The vertex shader will just output the received colour so it can be processes by the fragment shader.
+The next step is to modify the shaders. The vertex shader is now expecting two parameters, the coordinates \(in location 0\) and the colour \(in location 1\). The vertex shader will just output the received colour so it can be processed by the fragment shader.
 
 ```glsl
 #version 330
