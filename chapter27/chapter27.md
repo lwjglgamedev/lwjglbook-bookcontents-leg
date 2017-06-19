@@ -209,7 +209,7 @@ Bones also point to a list of weights, each weights. Each weights is defined by 
 
 The following picture shows the relationships between all these elements.
 
-#### ---- FIGURE ---
+#### ![](/chapter27/mesh_bones_weights_vertices.png)
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
