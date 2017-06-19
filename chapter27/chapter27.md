@@ -339,5 +339,15 @@ private static void processBones(AIMesh aiMesh, List<Bone> boneList, List<Intege
 }
 ```
 
+This method traverses the bone definition for a specific mesh, getting their weights and generating filling up three lists:
+
+* `boneList`: It contains a list of nodes, with their offset matrices. It will uses later on to calculate nodes transformations. A new class named `Bone` has been created to hold that information. This list will contain the bones for all the meshes.
+* `boneIds`: It contains just the identifiers of the bones for each vertex of the `Mesh`. Bones are identified by its position when rendering. This list only contains the bones for a specific Mesh.
+* `weights`: It contains the weights for each vertex of the `Mesh` to be applied for the associated bones.
+
+The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the boneList will be used later when calculating animation data.
+
+Let’s go back to the `loadAnimGameItem` method. Once we have created the animations we can calculate the animation data. First, we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+
 
 
