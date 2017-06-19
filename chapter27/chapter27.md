@@ -366,5 +366,7 @@ private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
 }
 ```
 
+We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the  `loadAnimGameItem` method, we also get the transformation which is applied to the  root node which will be used also to calculate the final transformation:
+
 
 
