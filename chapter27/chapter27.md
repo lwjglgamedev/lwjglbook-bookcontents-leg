@@ -225,5 +225,13 @@ The following figure shows the relationships between all the elements described 
 
 #### ---- FIGURE ---
 
+For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node.  Hence, we need to reorder the information stored in the scene, the process is as follows:
+
+* Construct the node hierarchy.
+* For each animation, iterate overeach animation channel \(for each animation node\):   Construct the transformation matrices for all the frames. The transformation m matrix is the composition of the translation, rotation and scale matrix .
+* Reorder that information for each frame:   Construct the final transformations to be applied for each bone in the Mesh. This is achieved by multiplying the transformation matrix of the bone \(of the associated node\) by the transformation matrices of all the parent nodes up to the root node.
+
+So let’s start coding. We will create firs a class named  `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of Meshes, it returns an `AnimGameItem` instance. It defines to public methods for that:
+
 
 
