@@ -347,7 +347,7 @@ This method traverses the bone definition for a specific mesh, getting their wei
 
 The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the boneList will be used later when calculating animation data.
 
-Let’s go back to the `loadAnimGameItem` method. Once we have created the animations we can calculate the animation data. First, we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes,  we also get the transformation which is applied to the  root node which will be used also to calculate the final transformatio. After that , we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
 
 ```java
 private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
@@ -366,7 +366,38 @@ private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
 }
 ```
 
-We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the  `loadAnimGameItem` method, we also get the transformation which is applied to the  root node which will be used also to calculate the final transformation:
+We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the  `loadAnimGameItem` method, we just use that information to calculate the animations in the `processAnimations` method. This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. With that information we can finally construct an `AnimAgameItem` instance.
+
+The `processAnimations` method is defined like this
+
+```java
+private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bone> boneList,
+        Node rootNode, Matrix4f rootTransformation) {
+    Map<String, Animation> animations = new HashMap<>();
+
+    // Process all animations
+    int numAnimations = aiScene.mNumAnimations();
+    PointerBuffer aiAnimations = aiScene.mAnimations();
+    for (int i = 0; i < numAnimations; i++) {
+        AIAnimation aiAnimation = AIAnimation.create(aiAnimations.get(i));
+
+        // Calculate transformation matrices for each node
+        int numChanels = aiAnimation.mNumChannels();
+        PointerBuffer aiChannels = aiAnimation.mChannels();
+        for (int j = 0; j < numChanels; j++) {
+            AINodeAnim aiNodeAnim = AINodeAnim.create(aiChannels.get(j));
+            String nodeName = aiNodeAnim.mNodeName().dataString();
+            Node node = rootNode.findByName(nodeName);
+            buildTransFormationMatrices(aiNodeAnim, node);
+        }
+
+        List<AnimatedFrame> frames = buildAnimationFrames(boneList, rootNode, rootTransformation);
+        Animation animation = new Animation(aiAnimation.mName().dataString(), frames, aiAnimation.mDuration());
+        animations.put(animation.getName(), animation);
+    }
+    return animations;
+}
+```
 
 
 
