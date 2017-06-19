@@ -189,7 +189,7 @@ The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been remo
 
 Now that we have used assimp for loading static meshes we can proceed with animations. If you recall form the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
 
-#### ---- FIGURE ---
+#### ![](/chapter27/vao_animation.png)
 
 Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated.
 
