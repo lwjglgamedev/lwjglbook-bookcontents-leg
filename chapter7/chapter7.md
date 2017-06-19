@@ -76,7 +76,7 @@ if ( rotation > 360 ) {
 gameItem.setRotation(rotation, rotation, rotation);
 ```
 
-An that’s all. We are now able to display a spinning 3D cube. You can now compile and run your example and you will obtain something like this.
+And that’s all. We are now able to display a spinning 3D cube. You can now compile and run your example and you will obtain something like this.
 
 ![Cube with no depth tests](cube_no_depth_test.png)
 
