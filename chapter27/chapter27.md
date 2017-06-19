@@ -187,5 +187,31 @@ The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been remo
 
 ## Animations
 
-TODO: Source code uploaed.
+Now that we have used assimp for loading static meshes we can proceed with animations. If you recall form the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
+
+#### ---- FIGURE ---
+
+Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated. 
+
+In the animation chapter, we developed a MD5 parser to load animated meshes. In this chapter we will use assimp library. This will allow us to load many more formats besides MD5, such as [COLLADA](https://en.wikipedia.org/wiki/COLLADA "COLLADA"), [FBX](https://en.wikipedia.org/wiki/FBX "FBX"), etc.
+
+Before we start coding let’s clarify some terminology. In this chapter we will refer to bones and joints indistinguishably. A joint / bone is are just elements that affect vertices, and that have a parent  forming a hierarchy. MD5 format uses the term joint, but assimp uses the term bone. 
+
+Let’s review first the structures handled by assimp that contain animation information. We will start first with the bones and weights information.  For each Mesh, we can access the vertices positions, texture coordinates and indices.  Meshes store also a list of bones. Each bone is defined by the following attributes:
+
+* A name.
+* An offset matrix: This will used later to compute the final transformations that should be used by each bone.
+
+
+
+Bones also point to a list of weights, each weights. Each weights is defined by the following attributes:
+
+* A weight factor, that is, the number that will be used to modulate the influence of the bone’s transformation associated to each vertex.
+* A vertex identifier, that is, the vertex associated to the current bone.
+
+The following picture shows the relationships between all these elements.
+
+#### ---- FIGURE ---
+
+
 
