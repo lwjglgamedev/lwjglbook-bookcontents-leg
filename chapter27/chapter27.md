@@ -399,5 +399,81 @@ private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bo
 }
 ```
 
+For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatricesmethod`. These matrices are store for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
+
+Let’s first review the  `buildTransFormationMatrices` method:
+
+```java
+private static void buildTransFormationMatrices(AINodeAnim aiNodeAnim, Node node) {
+    int numFrames = aiNodeAnim.mNumPositionKeys();
+    AIVectorKey.Buffer positionKeys = aiNodeAnim.mPositionKeys();
+    AIVectorKey.Buffer scalingKeys = aiNodeAnim.mScalingKeys();
+    AIQuatKey.Buffer rotationKeys = aiNodeAnim.mRotationKeys();
+
+    for (int i = 0; i < numFrames; i++) {
+        AIVectorKey aiVecKey = positionKeys.get(i);
+        AIVector3D vec = aiVecKey.mValue();
+
+        Matrix4f transfMat = new Matrix4f().translate(vec.x(), vec.y(), vec.z());
+
+        AIQuatKey quatKey = rotationKeys.get(i);
+        AIQuaternion aiQuat = quatKey.mValue();
+        Quaternionf quat = new Quaternionf(aiQuat.x(), aiQuat.y(), aiQuat.z(), aiQuat.w());
+        transfMat.rotate(quat);
+
+        if (i < aiNodeAnim.mNumScalingKeys()) {
+            aiVecKey = scalingKeys.get(i);
+            vec = aiVecKey.mValue();
+            transfMat.scale(vec.x(), vec.y(), vec.z());
+        }
+
+        node.addTransformation(transfMat);
+    }
+}
+```
+
+As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames `method:
+
+```java
+private static List<AnimatedFrame> buildAnimationFrames(List<Bone> boneList, Node rootNode,
+        Matrix4f rootTransformation) {
+
+    int numFrames = rootNode.getAnimationFrames();
+    List<AnimatedFrame> frameList = new ArrayList<>();
+    for (int i = 0; i < numFrames; i++) {
+        AnimatedFrame frame = new AnimatedFrame();
+        frameList.add(frame);
+
+        int numBones = boneList.size();
+        for (int j = 0; j < numBones; j++) {
+            Bone bone = boneList.get(j);
+            Node node = rootNode.findByName(bone.getBoneName());
+            Matrix4f boneMatrix = Node.getParentTransforms(node, i);
+            boneMatrix.mul(bone.getOffsetMatrix());
+            boneMatrix = new Matrix4f(rootTransformation).mul(boneMatrix);
+            frame.setMatrix(j, boneMatrix);
+        }
+    }
+
+    return frameList;
+}
+```
+
+This method returns a list of AnimatedFrame instances. Each AnimatedFrame instance will contain the list of transformations to be applied for each bone for a specific frame. This method just iterates over the list that contains all the bones. For each bone:
+
+Gets the associated node.
+
+Builds a transformation matrix by multiplying the transformation of the associated Node with all the transformations of their parents up to the root node. This is done in the Node.getParentTransforms method.
+
+It multiplies that matrix with the bone’s offset matrix.
+
+The final transformation is calculated by multiplying the root’s node transformation with the matrix calculated in the step above.
+
+The rest of the changes in the source code are minor changes to adapt some structures. At the end you will be able to load animations like this one \(you need yo press space par to change the frame\).
+
+\#\#\#\# IMAGE \#\#\#\#
+
+The complexity of this sample resides more in the adaptations of the assimp structures to adapt it to the engine used in the book and to pre-calculate the data for each frame. Beyond that, the concepts are similar to the ones presented in the animations chapter. You may try also to modify the source code to interpolate between frames to get smoother animations.
+
 
 
