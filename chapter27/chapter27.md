@@ -278,5 +278,66 @@ public static AnimGameItem loadAnimGameItem(String resourcePath, String textures
 }
 ```
 
+The methods are quite similar to the ones defined in the  `StaticMeshesLoader` with the following differences:
+
+* The method that passes a default set of loading flags, uses this new parameter: `aiProcess_LimitBoneWeights`. This will limit the maximum number of weights that affect a vertex to four \(This is also the maximum value that we are currently supporting from the animations chapter\).
+* The method that actually loads the model just loads the different meshes but it first calculates the node hierarchy and then calls to the `processAnimations` at the end to build an `AnimGameItem` instance.
+
+The `processMesh` method is quite similar to the one in the  `StaticMeshesLoader` with the exception that it creates Meshes passing joint indices and weights as a parameter:
+
+```java
+processBones(aiMesh, boneList, boneIds, weights);
+
+Mesh mesh = new Mesh(Utils.listToArray(vertices), Utils.listToArray(textures),
+    Utils.listToArray(normals), Utils.listIntToArray(indices),
+    Utils.listIntToArray(boneIds), Utils.listToArray(weights));
+```
+
+The joint indices and weights are calculated in the `processBones` method:
+
+```java
+private static void processBones(AIMesh aiMesh, List<Bone> boneList, List<Integer> boneIds,
+        List<Float> weights) {
+    Map<Integer, List<VertexWeight>> weightSet = new HashMap<>();
+    int numBones = aiMesh.mNumBones();
+    PointerBuffer aiBones = aiMesh.mBones();
+    for (int i = 0; i < numBones; i++) {
+        AIBone aiBone = AIBone.create(aiBones.get(i));
+        int id = boneList.size();
+        Bone bone = new Bone(id, aiBone.mName().dataString(), toMatrix(aiBone.mOffsetMatrix()));
+        boneList.add(bone);
+        int numWeights = aiBone.mNumWeights();
+        AIVertexWeight.Buffer aiWeights = aiBone.mWeights();
+        for (int j = 0; j < numWeights; j++) {
+            AIVertexWeight aiWeight = aiWeights.get(j);
+            VertexWeight vw = new VertexWeight(bone.getBoneId(), aiWeight.mVertexId(),
+                    aiWeight.mWeight());
+            List<VertexWeight> vertexWeightList = weightSet.get(vw.getVertexId());
+            if (vertexWeightList == null) {
+                vertexWeightList = new ArrayList<>();
+                weightSet.put(vw.getVertexId(), vertexWeightList);
+            }
+            vertexWeightList.add(vw);
+        }
+    }
+
+    int numVertices = aiMesh.mNumVertices();
+    for (int i = 0; i < numVertices; i++) {
+        List<VertexWeight> vertexWeightList = weightSet.get(i);
+        int size = vertexWeightList != null ? vertexWeightList.size() : 0;
+        for (int j = 0; j < Mesh.MAX_WEIGHTS; j++) {
+            if (j < size) {
+                VertexWeight vw = vertexWeightList.get(j);
+                weights.add(vw.getWeight());
+                boneIds.add(vw.getBoneId());
+            } else {
+                weights.add(0.0f);
+                boneIds.add(0);
+            }
+        }
+    }
+}
+```
+
 
 
