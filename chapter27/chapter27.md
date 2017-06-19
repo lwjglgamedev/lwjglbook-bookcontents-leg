@@ -223,7 +223,7 @@ A scene also defines a set of animations. A single model can have more than one 
 
 The following figure shows the relationships between all the elements described above.
 
-#### ---- FIGURE ---
+#### ![](/chapter27/node_animations.png)
 
 For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node.  Hence, we need to reorder the information stored in the scene, the process is as follows:
 
