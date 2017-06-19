@@ -432,7 +432,7 @@ private static void buildTransFormationMatrices(AINodeAnim aiNodeAnim, Node node
 }
 ```
 
-As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames `method:
+As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames`method:
 
 ```java
 private static List<AnimatedFrame> buildAnimationFrames(List<Bone> boneList, Node rootNode,
@@ -459,21 +459,16 @@ private static List<AnimatedFrame> buildAnimationFrames(List<Bone> boneList, Nod
 }
 ```
 
-This method returns a list of AnimatedFrame instances. Each AnimatedFrame instance will contain the list of transformations to be applied for each bone for a specific frame. This method just iterates over the list that contains all the bones. For each bone:
+This method returns a list of `AnimatedFrame` instances. Each `AnimatedFrame` instance will contain the list of transformations to be applied for each bone for a specific frame. This method just iterates over the list that contains all the bones. For each bone:
 
-Gets the associated node.
-
-Builds a transformation matrix by multiplying the transformation of the associated Node with all the transformations of their parents up to the root node. This is done in the Node.getParentTransforms method.
-
-It multiplies that matrix with the bone’s offset matrix.
-
-The final transformation is calculated by multiplying the root’s node transformation with the matrix calculated in the step above.
+* Gets the associated node.
+* Builds a transformation matrix by multiplying the transformation of the associated `Node` with all the transformations of their parents up to the root node. This is done in the `Node.getParentTransforms` method.
+* It multiplies that matrix with the bone’s offset matrix.
+* The final transformation is calculated by multiplying the root’s node transformation with the matrix calculated in the step above.
 
 The rest of the changes in the source code are minor changes to adapt some structures. At the end you will be able to load animations like this one \(you need yo press space par to change the frame\).
 
 \#\#\#\# IMAGE \#\#\#\#
 
 The complexity of this sample resides more in the adaptations of the assimp structures to adapt it to the engine used in the book and to pre-calculate the data for each frame. Beyond that, the concepts are similar to the ones presented in the animations chapter. You may try also to modify the source code to interpolate between frames to get smoother animations.
-
-
 
