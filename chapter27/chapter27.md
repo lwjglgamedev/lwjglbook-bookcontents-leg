@@ -468,7 +468,7 @@ This method returns a list of `AnimatedFrame` instances. Each `AnimatedFrame` in
 
 The rest of the changes in the source code are minor changes to adapt some structures. At the end you will be able to load animations like this one \(you need yo press space par to change the frame\).
 
-\#\#\#\# IMAGE \#\#\#\#
+![](/chapter27/animation_result.png)
 
 The complexity of this sample resides more in the adaptations of the assimp structures to adapt it to the engine used in the book and to pre-calculate the data for each frame. Beyond that, the concepts are similar to the ones presented in the animations chapter. You may try also to modify the source code to interpolate between frames to get smoother animations.
 
