@@ -349,5 +349,22 @@ The information contained in the `weights` and `boneIds` is used to construct th
 
 Let’s go back to the `loadAnimGameItem` method. Once we have created the animations we can calculate the animation data. First, we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
 
+```java
+private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
+    String nodeName = aiNode.mName().dataString();
+    Node node = new Node(nodeName, parentNode);
+
+    int numChildren = aiNode.mNumChildren();
+    PointerBuffer aiChildren = aiNode.mChildren();
+    for (int i = 0; i < numChildren; i++) {
+        AINode aiChildNode = AINode.create(aiChildren.get(i));
+        Node childNode = processNodesHierarchy(aiChildNode, node);
+        node.addChild(childNode);
+    }
+
+    return node;
+}
+```
+
 
 
