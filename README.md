@@ -16,7 +16,9 @@ The source code for the book itself is also published in [GitHub](https://github
 
 ## License
 
-[Attribution-ShareAlike 4.0 International \(CC BY-SA 4.0\)](http://creativecommons.org/licenses/by-sa/4.0/)
+The book is licensed under [Attribution-ShareAlike 4.0 International \(CC BY-SA 4.0\)](http://creativecommons.org/licenses/by-sa/4.0/)
+
+The source code for the book is licensed under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0 "Apache v2.0")
 
 ## Support
 
