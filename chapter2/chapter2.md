@@ -17,7 +17,7 @@ So, is that all? Are we finished with game loops? Well, not yet. The above snipp
 Thus, we need the game loop to try running at a constant rate independently of the machine it runs on. Let us suppose that we want our game to run at a constant rate of 50 Frames Per Second \(FPS\). Our game loop could be something like this:
 
 ```java
-double secsPerFrame = 1 / 50;
+double secsPerFrame = 1.0d / 50.0d;
 
 while (keepOnRunning) {
     double now = getTime();
@@ -41,7 +41,7 @@ First of all we may want to control separately the period at which the game stat
 Let us have a look at how our game loop looks like:
 
 ```java
-double secsPerUpdate = 1 / 30;
+double secsPerUpdate = 1.0d / 30.0d;
 double previous = getTime();
 double steps = 0.0;
 while (true) {
