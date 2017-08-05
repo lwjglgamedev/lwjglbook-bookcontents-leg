@@ -535,14 +535,11 @@ $$\begin{bmatrix}
 mv_{03} & mv_{13} & mv_{23} & mv_{33}
 \end{bmatrix}$$
 
-
-
 Where sx, sy and sz are the scaling factor. Thus, after we have set set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix, we need to apply scaling again.
 
 And that's all, we just need to change this in the `renderParticlesMethod` like this:
 
 ```java
-        Matrix3f aux = new Matrix3f();
         for (int i = 0; i < numEmitters; i++) {
             IParticleEmitter emitter = emitters[i];
             Mesh mesh = emitter.getBaseParticle().getMesh();
@@ -553,6 +550,7 @@ And that's all, we just need to change this in the `renderParticlesMethod` like 
                 viewMatrix.transpose3x3(modelMatrix);
 
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+                modelViewMatrix.scale(gameItem.getScale());
                 particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             }
             );
