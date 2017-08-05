@@ -506,7 +506,7 @@ mv_{03} & mv_{13} & mv_{23} & mv_{33}
 $$
 
 
-So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix:
+So we just need to set the upper left 3x3 matrix for the model matrix as the transpose matrix of the 3x3 upper part of the view matrix:
 
 
 $$
