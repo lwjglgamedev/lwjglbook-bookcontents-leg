@@ -200,7 +200,7 @@ private void updateLightProjectionMatrix() {
 
 Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculate the minimum bounding box, axis aligned with the light position , hat encloses the view frustum.
 
-The `Renderer`class has been modified  to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal view the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders.
+The `Renderer`class has been modified  to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal with the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders.
 
 In the scene vertex shader, we calculate model light view matrix for each split, and pass it as an output to the fragment shader.
 
@@ -247,8 +247,6 @@ Changing it to an array of uniforms causes problems with other textures that are
 The rest of the changes in the source code, and the shaders are just adaptations required by the changes described above. You can check it directly over the source code.
 
 Finally, when introducing these changes you may see that performance has dropped. This is due to the fact that we are rendering three times the depth map. We can mitigate this effect by avoiding rendering at all when the scene has not changed. If the camera has not been moved or the scene items have not changed we do not need to render again and again the depth map. The depth maps are stored in textures, so they are not wiped out for each render call.  Thus, we have added a new variable to the render method that indicates if this has changed, avoiding updating the depth maps it remains the same. This increases the FPS dramatically. At the end, you will get something like this:
-
-
 
 ![](/chapter26/csmpng.png)
 
