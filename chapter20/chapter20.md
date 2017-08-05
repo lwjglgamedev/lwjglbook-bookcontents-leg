@@ -537,7 +537,7 @@ mv_{03} & mv_{13} & mv_{23} & mv_{33}
 
 
 
-Thus, after we have set set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix, we need to apply scaling again.
+Where sx, sy and sz are the scaling factor. Thus, after we have set set the upper left 3x3 matrix for the model matrix as the transpose matrix of the view matrix, we need to apply scaling again.
 
 And that's all, we just need to change this in the `renderParticlesMethod` like this:
 
@@ -550,10 +550,7 @@ And that's all, we just need to change this in the `renderParticlesMethod` like 
             mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
                 Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
 
-                viewMatrix.get3x3(aux);
-                aux.transpose(aux);
-                modelMatrix.set3x3(aux);
-                modelMatrix.scale(gameItem.getScale());
+                viewMatrix.transpose3x3(modelMatrix);
 
                 Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
                 particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
