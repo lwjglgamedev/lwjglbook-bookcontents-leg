@@ -211,7 +211,7 @@ And that’s it, we can now simulate the movement of the, artificial, sun across
 
 ## Spot Light
 
-Now we will implement a spot light which are very similar to a point light but the emitted light is restricted to a 3D cone. It models the light that comes out from focuses or any other light source that does not emit in all directions. A spot light has the same attributes as a point light but adds two new parameters, the cone angle and the cone direction.
+Now we will implement spot lights which are very similar to point lights but the emitted light is restricted to a 3D cone. It models the light that comes out from focuses or any other light source that does not emit in all directions. A spot light has the same attributes as a point light but adds two new parameters, the cone angle and the cone direction.
 
 ![Spot Light](spot_light.png)
 
@@ -223,7 +223,7 @@ How do we calculate if it’s inside the light cone or not ? We need to do a dot
 
 ![Spot Light calculation](spot_light_calc.png)
 
-The dot product between L and C vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will now that it is inside the light cone \(recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine\).
+The dot product between L and C vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will know that it is inside the light cone \(recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine\).
 
 The second difference is that the points that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculate this, we will chose a simple approach by multiplying the attenuation by the following factor:
 
