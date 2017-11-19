@@ -4,7 +4,7 @@ In this chapter we will learn the processes that takes place while rendering a s
 
 The sequence of steps that ends up drawing a 3D representation into your 2D screen is called the graphics pipeline. First versions of OpenGL employed a model which was called fixed-function pipeline. This model employed a set of steps in the rendering process which defined a fixed set of operations. The programmer was constrained to the set of functions available for each step. Thus, the effects and operations that could be applied were limited by the API itself \(for instance, “set fog” or “add light”, but the implementation of those functions were fixed and could not be changed\).
 
-The graphics pipeline was composed of these steps:
+The graphics pipeline is composed of these steps:
 
 ![Graphics Pipeline](rendering_pipeline.png)
 
