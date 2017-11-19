@@ -36,7 +36,7 @@ public static Mesh[] load(String resourcePath, String texturesDir, int flags) th
 
 Both methods have the following arguments:
 
-* `resourcePath`: The path to the file where the model file is located. This is an absolute path, because Assimp may need to load additional files and may use the same base path as the resource path \(For instance, material files for wavefront, OBJ, files\).
+* `resourcePath`: The path to the file where the model file is located. This is an absolute path, because Assimp may need to load additional files and may use the same base path as the resource path \(For instance, material files for wavefront, OBJ, files\). If you embed your resources inside a JAR file, Assimp will not be able to import it, so uts must be a file system path.
 
 * `texturesDir`: The path to the directory that will hold the textures for this model. This a CLASSPATH relative path. For instance, a wavefront material file may define several texture files. The code, expect this files to be located in the `texturesDir`directory. If you find texture loading errors you may need to manually tweak these paths in the model file.
 
