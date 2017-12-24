@@ -76,7 +76,7 @@ void main()
 The structure is quite similar to our vertex shader. In this case we will set a fixed colour for each fragment. The output variable is defined in the second line and set as a vec4 fragColor.  
 Now that we have our shaders created, how do we use them? This is the sequence of steps we need to follow:  
 1.    Create a OpenGL Program  
-2.    Load the vertex and shader code files.  
+2.    Load the vertex and fragment shader code files.  
 3.    For each shader, create a new shader program and specify its type \(vertex, fragment\).  
 4.    Compile the shader.  
 5.    Attach the shader to the program.  
@@ -197,7 +197,7 @@ public void run() {
 }
 ```
 
-Now we can use or shaders in order to display a triangle. We will do this in the `init` method of our `Renderer` class. First of all, we create the shader program:
+Now we can use our shaders in order to display a triangle. We will do this in the `init` method of our `Renderer` class. First of all, we create the shader program:
 
 ```java
 public void init() throws Exception {
