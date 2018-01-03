@@ -29,4 +29,5 @@
 * [Cascaded Shadow Maps](chapter26/chapter26.md)
 * [Assimp](chapter27/chapter27.md)
 * [Deferred Shading](chapter28/chapter28.md)
+* [Appendix A - OpenGL Debugging](appendixa/appendixa.md)
 
