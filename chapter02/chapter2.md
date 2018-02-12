@@ -41,14 +41,14 @@ First of all we may want to control separately the period at which the game stat
 Let us have a look at how our game loop looks like:
 
 ```java
-double secsPerUpdate = 1.0d / 30.0d;
+double secsPerUpdate = 1.0 / 50;
 double previous = getTime();
 double steps = 0.0;
 while (true) {
-  double loopStartTime = getTime();
-  double elapsed = loopStartTime - previous;
+  double current = getTime();
+  double elapsed = current - previous;
   previous = current;
-  steps += elapsed;
+  steps += elapsed / 1000;
 
   handleInput();
 
@@ -66,8 +66,8 @@ With this game loop we update our game state at fixed steps. But how do we contr
 
 ```java
 private void sync(double loopStartTime) {
-   float loopSlot = 1f / 50;
-   double endTime = loopStartTime + loopSlot; 
+   double loopSlot = 1.0 / 50;
+   double endTime = loopStartTime + loopSlot * 1000;
    while(getTime() < endTime) {
        try {
            Thread.sleep(1);
@@ -320,4 +320,3 @@ So, in order to support features explained in later chapters we need to add thes
 ```
 
 This will make the program use the highest OpenGL version possible between 3.2 and 4.1. If those lines are not included, a Legacy version of OpenGL is used.
-
