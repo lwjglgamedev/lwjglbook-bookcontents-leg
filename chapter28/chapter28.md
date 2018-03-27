@@ -589,7 +589,7 @@ The texture that holds the values for the normals will look like this:
 Now it’s the turn of the ligh pass. We first need to set up a few things before rendering, this is don in the `initLightRendering` method:
 
 ```java
-private void initLightRendering() {
+private void initLightRendering() {
     // Bind scene buffer
     glBindFramebuffer(GL_FRAMEBUFFER, sceneBuffer.getBufferId());
 
@@ -615,7 +615,7 @@ Before analyzing the render methods for the different types of light, let’s th
 So, how the vertex shader for the light pass looks like?
 
 ```
-#version 330
+#version 330
 
 layout (location=0) in vec3 position;
 uniform mat4 projectionMatrix;
@@ -632,7 +632,7 @@ The code above is the vertex shader used when rendering point lights and directi
 The fragment shader for point lights \(`point_light_fragment.fs`\) is defined like this:
 
 ```
-#version 330
+#version 330
 
 out vec4 fragColor;
 
@@ -710,28 +710,28 @@ void main()
     vec4 diffuseC = texture(diffuseText, textCoord);
     vec4 speculrC = texture(specularText, textCoord);
     vec3 normal  = texture(normalsText, textCoord).xyz;
-	float shadowFactor = texture(shadowText, textCoord).r;
-	float reflectance = texture(shadowText, textCoord).g;
+    float shadowFactor = texture(shadowText, textCoord).r;
+    float reflectance = texture(shadowText, textCoord).g;
 
-	fragColor = calcPointLight(diffuseC, speculrC, reflectance, pointLight, worldPos.xyz, normal.xyz) * shadowFactor;
+    fragColor = calcPointLight(diffuseC, speculrC, reflectance, pointLight, worldPos.xyz, normal.xyz) * shadowFactor;
 }
 ```
 
 As you can see it contains functions that sound familiar to you. They were used in previous chapters in the scene fragment shader. The important things here to note are the following lines:
 
 ```
-uniform sampler2D positionsText;
+uniform sampler2D positionsText;
 uniform sampler2D diffuseText;
 uniform sampler2D specularText;
 uniform sampler2D normalsText;
 uniform sampler2D shadowText;
-uniform sampler2D depthText;
+uniform sampler2D depthText;
 ```
 
-These uniforms model the different textures that compose the G-Buffer. We will use them to access the data. You may be asking now, how do we know which pixel to peek from those textures when we are rendering a fragment? The answer is by using the `gl_FragCoord `input variable. This variable contains the windows relative coordinates for the current fragment. To transform from that coordinates system to the textures one we use this function:
+These uniforms model the different textures that compose the G-Buffer. We will use them to access the data. You may be asking now, how do we know which pixel to peek from those textures when we are rendering a fragment? The answer is by using the `gl_FragCoord`input variable. This variable contains the windows relative coordinates for the current fragment. To transform from that coordinates system to the textures one we use this function:
 
 ```
-vec2 getTextCoord()
+vec2 getTextCoord()
 {
     return gl_FragCoord.xy / screenSize;
 }
@@ -739,45 +739,25 @@ These uniforms model the different textures that compose the G-Buffer. We will u
 
 The fragment shader for the directional light is also quite similar, you can check the source code. Now that the shaders have been presented, let’s go back to the `Renderer` class. For point lights we will do as many passes as lights are, we just bind the shaders used for this type of lights and draw the quad for each of them.
 
-
-
 --- METHOD ---
-
-
 
 The approach is quite similar for directional light. In this case, we just use do one pass:
 
-
-
 --- METHOD ---
-
-
 
 The endLightRendering simply retsores the state.
 
 --- METHOD---
 
-
-
 If you execute the sample you will see something like this:
-
-
 
 – IMAGE ---
 
-
-
 The chapter got longer that expected but there are a few key points that need to be clarified:
 
-    • Spot lights have been removed in order to simplify this chapter. 
+* Spot lights have been removed in order to simplify this chapter.
+* A common technique used in deferred shading, for point lights, is just to calculate the area of the scene affected by that light. In this case, instead of rendering a quad that fills up the screen, you can use a smaller quad, a sphere, etc. Keep in mind that the best is enemy of the good. Performing complex calculus to determine the smallest shape required may be slower than using other coarse approaches.
+* If you do not have many lights, this method will be slower than forward shading.
 
-    • A common technique used in deferred shading, for point lights, is just to calculate the area of the scene affected by that light. In this case, instead of rendering a quad that fills up the screen, you can use a smaller quad, a sphere, etc. Keep in mind that the best is enemy of the good. Performing complex calculus to determine the smallest shape required may be slower than using other coarse approaches.
-
-    • If you do not have many lights, this method will be slower than forward shading.
-
-
-
-As a final note, if you want to see how these techniques are used in real world games, you can check this superb explanation about how a GTA V frame gets rendered.
-
-
+As a final note, if you want to see how these techniques are used in real world games, you can check [this superb explanation](http://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/ "GTA V - Graphics Study") about how a GTA V frame gets rendered.
 
