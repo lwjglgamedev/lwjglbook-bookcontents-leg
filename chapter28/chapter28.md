@@ -149,7 +149,65 @@ public void cleanUp() {
 }
 ```
 
-Once the `Gbuffer`class is defined we can start using it. In the Renderer class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
+We will create a new class named `SceneBuffer `which is just another frame buffer. We will use it when performing the light pass. Instead of rendering directly to the screen we will render to this frame buffer. By doing it this way, we can apply the rest of the effects \(such us fog, skybox, etc.\). The class is defined like this.
+
+```java
+package org.lwjglb.engine.graph;
+
+import org.lwjglb.engine.Window;
+
+import java.nio.ByteBuffer;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
+
+public class SceneBuffer {
+
+    private int bufferId;
+
+    private int textureId;
+
+    public SceneBuffer(Window window) throws Exception {
+        // Create the buffer
+        bufferId = glGenFramebuffers();
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, bufferId);
+
+        // Create texture
+        int[] textureIds = new int[1];
+        glGenTextures(textureIds);
+        textureId = textureIds[0];
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, window.getWidth(), window.getHeight(), 0, GL_RGB, GL_FLOAT, (ByteBuffer) null);
+
+        // For sampling
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Attach the the texture to the G-Buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+
+        // Unbind
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    public int getBufferId() {
+        return bufferId;
+    }
+
+    public int getTextureId() {
+        return textureId;
+    }
+
+    public void cleanup() {
+        glDeleteFramebuffers(bufferId);
+
+        glDeleteTextures(textureId);
+    }
+}
+
+```
+
+As you can see, is similar to the `GBuffer `class, but here we will only use a single texture to store the resulting colours. Now that we have created these new classes, we can start using them. In the `Renderer `class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
 
 In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the init method. This will be used in the light pass. More on this will be explained later.
 
