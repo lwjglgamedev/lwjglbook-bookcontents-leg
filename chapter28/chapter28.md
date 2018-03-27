@@ -586,7 +586,198 @@ The texture that holds the values for the normals will look like this:
 
 ![](/chapter28/text_normals.png)
 
+Now it’s the turn of the ligh pass. We first need to set up a few things before rendering, this is don in the `initLightRendering` method:
 
+```java
+private void initLightRendering() {
+    // Bind scene buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, sceneBuffer.getBufferId());
+
+    // Clear G-Buffer
+    clear();
+
+    // Disable depth testing to allow the drawing of multiple layers with the same depth
+    glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_FUNC_ADD);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Bind GBuffer for reading
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer.getGBufferId());
+}
+```
+
+Since we won’t be rendering to the screen ,we need to first bind to the texture that will hold the results of the lightning pass. Then we clear that buffer and disable depth testing. This is not required any more, depth testing has been already done in the geometry pass. Another important step is to enable blending. The last action is to enable the G-Buffer for reading, it will be used during the light pass.
+
+Before analyzing the render methods for the different types of light, let’s think a little bit about how we will render the lights. We need to use the contents of the G-Buffer, but in order to use them, we need to first render something. But, we have already drawn the scene, what are we going to render. now? The answer is simple, we just need to render a quad that fills all the screen. For each fragment of that quad, we will use the data contained in the G-Buffer and generate the correct output colour. Do you remember the `Mesh` that we loaded in the init method of the `Renderer` class? It was named `bufferPassMesh`, and it just contains that, a quad that fills up the whole screen.
+
+So, how the vertex shader for the light pass looks like?
+
+```
+#version 330
+
+layout (location=0) in vec3 position;
+uniform mat4 projectionMatrix;
+uniform mat4 modelMatrix;
+
+void main()
+{
+    gl_Position = projectionMatrix * modelMatrix * vec4(position, 1.0);
+}
+```
+
+The code above is the vertex shader used when rendering point lights and directional light \(`light_vertex.vs`\). It just dumps the vertices using the model matrix and a projection matrix. There’s no need to use a view matrix, we don’t need a camera here.
+
+The fragment shader for point lights \(`point_light_fragment.fs`\) is defined like this:
+
+```
+#version 330
+
+out vec4 fragColor;
+
+struct Attenuation
+{
+    float constant;
+    float linear;
+    float exponent;
+};
+
+struct PointLight
+{
+    vec3 colour;
+    // Light position is assumed to be in view coordinates
+    vec3 position;
+    float intensity;
+    Attenuation att;
+};
+
+uniform sampler2D positionsText;
+uniform sampler2D diffuseText;
+uniform sampler2D specularText;
+uniform sampler2D normalsText;
+uniform sampler2D shadowText;
+uniform sampler2D depthText;
+
+uniform vec2 screenSize;
+
+uniform float specularPower;
+uniform PointLight pointLight;
+
+vec2 getTextCoord()
+{
+    return gl_FragCoord.xy / screenSize;
+}
+
+vec4 calcLightColour(vec4 diffuseC, vec4 speculrC, float reflectance, vec3 light_colour, float light_intensity, vec3 position, vec3 to_light_dir, vec3 normal)
+{
+    vec4 diffuseColour = vec4(0, 0, 0, 1);
+    vec4 specColour = vec4(0, 0, 0, 1);
+
+    // Diffuse Light
+    float diffuseFactor = max(dot(normal, to_light_dir), 0.0);
+    diffuseColour = diffuseC * vec4(light_colour, 1.0) * light_intensity * diffuseFactor;
+
+    // Specular Light
+    vec3 camera_direction = normalize(-position);
+    vec3 from_light_dir = -to_light_dir;
+    vec3 reflected_light = normalize(reflect(from_light_dir , normal));
+    float specularFactor = max( dot(camera_direction, reflected_light), 0.0);
+    specularFactor = pow(specularFactor, specularPower);
+    specColour = speculrC * light_intensity  * specularFactor * reflectance * vec4(light_colour, 1.0);
+
+    return (diffuseColour + specColour);
+}
+
+vec4 calcPointLight(vec4 diffuseC, vec4 speculrC, float reflectance, PointLight light, vec3 position, vec3 normal)
+{
+    vec3 light_direction = light.position - position;
+    vec3 to_light_dir  = normalize(light_direction);
+    vec4 light_colour = calcLightColour(diffuseC, speculrC, reflectance, light.colour, light.intensity, position, to_light_dir, normal);
+
+    // Apply Attenuation
+    float distance = length(light_direction);
+    float attenuationInv = light.att.constant + light.att.linear * distance +
+        light.att.exponent * distance * distance;
+    return light_colour / attenuationInv;
+}
+
+void main()
+{
+    vec2 textCoord = getTextCoord();
+    float depth = texture(depthText, textCoord).r;
+    vec3 worldPos = texture(positionsText, textCoord).xyz;
+    vec4 diffuseC = texture(diffuseText, textCoord);
+    vec4 speculrC = texture(specularText, textCoord);
+    vec3 normal  = texture(normalsText, textCoord).xyz;
+	float shadowFactor = texture(shadowText, textCoord).r;
+	float reflectance = texture(shadowText, textCoord).g;
+
+	fragColor = calcPointLight(diffuseC, speculrC, reflectance, pointLight, worldPos.xyz, normal.xyz) * shadowFactor;
+}
+```
+
+As you can see it contains functions that sound familiar to you. They were used in previous chapters in the scene fragment shader. The important things here to note are the following lines:
+
+```
+uniform sampler2D positionsText;
+uniform sampler2D diffuseText;
+uniform sampler2D specularText;
+uniform sampler2D normalsText;
+uniform sampler2D shadowText;
+uniform sampler2D depthText;
+```
+
+These uniforms model the different textures that compose the G-Buffer. We will use them to access the data. You may be asking now, how do we know which pixel to peek from those textures when we are rendering a fragment? The answer is by using the `gl_FragCoord `input variable. This variable contains the windows relative coordinates for the current fragment. To transform from that coordinates system to the textures one we use this function:
+
+```
+vec2 getTextCoord()
+{
+    return gl_FragCoord.xy / screenSize;
+}
+```
+
+The fragment shader for the directional light is also quite similar, you can check the source code. Now that the shaders have been presented, let’s go back to the `Renderer` class. For point lights we will do as many passes as lights are, we just bind the shaders used for this type of lights and draw the quad for each of them.
+
+
+
+--- METHOD ---
+
+
+
+The approach is quite similar for directional light. In this case, we just use do one pass:
+
+
+
+--- METHOD ---
+
+
+
+The endLightRendering simply retsores the state.
+
+--- METHOD---
+
+
+
+If you execute the sample you will see something like this:
+
+
+
+– IMAGE ---
+
+
+
+The chapter got longer that expected but there are a few key points that need to be clarified:
+
+    • Spot lights have been removed in order to simplify this chapter. 
+
+    • A common technique used in deferred shading, for point lights, is just to calculate the area of the scene affected by that light. In this case, instead of rendering a quad that fills up the screen, you can use a smaller quad, a sphere, etc. Keep in mind that the best is enemy of the good. Performing complex calculus to determine the smallest shape required may be slower than using other coarse approaches.
+
+    • If you do not have many lights, this method will be slower than forward shading.
+
+
+
+As a final note, if you want to see how these techniques are used in real world games, you can check this superb explanation about how a GTA V frame gets rendered.
 
 
 
