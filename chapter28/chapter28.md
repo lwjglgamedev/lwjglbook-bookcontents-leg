@@ -107,13 +107,68 @@ After that, we use a foor loop to initialize the textures. We have the following
 * “Regular textures”, that will store positions, normals, the diffuse component, etc.
 * A texture for storing the depth buffer. This will be our last texture.
 
-Once the texture has been initialized, we enable sampling for them and attach them to the frame buffer. Each texture is attached using and identifier which starts at `GL_COLOR_ATTACHMENT0`. Each texture increments by one that id, so the positions are attached using  `GL_COLOR_ATTACHMENT0`, the normals use  `GL_COLOR_ATTACHMENT1` \(which is  `GL_COLOR_ATTACHMENT0 + 1`\), and so on.
+Once the texture has been initialized, we enable sampling for them and attach them to the frame buffer. Each texture is attached using and identifier which starts at `GL_COLOR_ATTACHMENT0`. Each texture increments by one that id, so the positions are attached using  `GL_COLOR_ATTACHMENT0`, the normals use  `GL_COLOR_ATTACHMENT1` \(which is  `GL_COLOR_ATTACHMENT0 + 1`\), and so on.
 
-After all the textures have been created, we need to enable them to be used by the fargment shader for rendering. This is done with the  `glDrawBuffers `call. We just pass the array with the idefintifiers of the colour attachments used \(`GL_COLOR_ ATTACHMENT0` to  `GL_COLOR_ATTACHMENT5`\).
+After all the textures have been created, we need to enable them to be used by the fargment shader for rendering. This is done with the  `glDrawBuffers`call. We just pass the array with the idefintifiers of the colour attachments used \(`GL_COLOR_ ATTACHMENT0` to  `GL_COLOR_ATTACHMENT5`\).
 
 The rest of the class are just getter methods and the cleanup one.
 
+```java
+public int getWidth() {
+    return width;
+}
 
+public int getHeight() {
+    return height;
+}
+
+public int getGBufferId() {
+    return gBufferId;
+}
+
+public int[] getTextureIds() {
+    return textureIds;
+}
+
+public int getPositionTexture() {
+    return textureIds[0];
+}
+
+public int getDepthTexture() {
+    return textureIds[TOTAL_TEXTURES-1];
+}
+
+public void cleanUp() {
+    glDeleteFramebuffers(gBufferId);
+
+    if (textureIds != null) {
+        for (int i=0; i<TOTAL_TEXTURES; i++) {
+            glDeleteTextures(textureIds[i]);
+        }
+    }
+}
+```
+
+Once the `Gbuffer `class is defined we can start using it. In the Renderer class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
+
+In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the init method. This will be used in the light pass. More on this will be explained later.
+
+```java
+public void init(Window window) throws Exception {
+    shadowRenderer.init(window);
+    gBuffer = new GBuffer(window);
+    sceneBuffer = new SceneBuffer(window);
+    setupSkyBoxShader();
+    setupParticlesShader();
+    setupGeometryShader();
+    setupDirLightShader();
+    setupPointLightShader();
+    setupFogShader();
+
+    bufferPassModelMatrix =  new Matrix4f();
+    bufferPassMesh = StaticMeshesLoader.load("src/main/resources/models/buffer_pass_mess.obj", "src/main/resources/models")[0];
+}
+```
 
 
 
