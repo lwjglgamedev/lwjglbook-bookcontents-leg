@@ -149,7 +149,7 @@ public void cleanUp() {
 }
 ```
 
-Once the `Gbuffer `class is defined we can start using it. In the Renderer class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
+Once the `Gbuffer`class is defined we can start using it. In the Renderer class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
 
 In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the init method. This will be used in the light pass. More on this will be explained later.
 
@@ -170,5 +170,5 @@ public void init(Window window) throws Exception {
 }
 ```
 
-
+The shaders used in the geometry and light passes are defined like usual \(you can check the source code directly\). Let’s focus in their content instead.
 
