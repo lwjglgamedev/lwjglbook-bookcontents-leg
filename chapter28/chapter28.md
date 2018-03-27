@@ -790,15 +790,66 @@ private void renderPointLights(Window window, Camera camera, Scene scene) {
 
 The approach is quite similar for directional light. In this case, we just use do one pass:
 
---- METHOD ---
+```java
+private void renderDirectionalLight(Window window, Camera camera, Scene scene) {
+    dirLightShaderProgram.bind();
 
-The endLightRendering simply retsores the state.
+    Matrix4f viewMatrix = camera.getViewMatrix();
+    Matrix4f projectionMatrix = window.getProjectionMatrix();
+    dirLightShaderProgram.setUniform("modelMatrix", bufferPassModelMatrix);
+    dirLightShaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
---- METHOD---
+    // Specular factor
+    dirLightShaderProgram.setUniform("specularPower", specularPower);
+
+    // Bind the G-Buffer textures
+    int[] textureIds = this.gBuffer.getTextureIds();
+    int numTextures = textureIds != null ? textureIds.length : 0;
+    for (int i=0; i<numTextures; i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, textureIds[i]);
+    }
+
+    dirLightShaderProgram.setUniform("positionsText", 0);
+    dirLightShaderProgram.setUniform("diffuseText", 1);
+    dirLightShaderProgram.setUniform("specularText", 2);
+    dirLightShaderProgram.setUniform("normalsText", 3);
+    dirLightShaderProgram.setUniform("shadowText", 4);
+
+    dirLightShaderProgram.setUniform("screenSize", (float) gBuffer.getWidth(), (float)gBuffer.getHeight());
+
+    // Ambient light
+    SceneLight sceneLight = scene.getSceneLight();
+    dirLightShaderProgram.setUniform("ambientLight", sceneLight.getAmbientLight());
+
+    // Directional light
+    // Get a copy of the directional light object and transform its position to view coordinates
+    DirectionalLight currDirLight = new DirectionalLight(sceneLight.getDirectionalLight());
+    tmpVec.set(currDirLight.getDirection(), 0);
+    tmpVec.mul(viewMatrix);
+    currDirLight.setDirection(new Vector3f(tmpVec.x, tmpVec.y, tmpVec.z));
+    dirLightShaderProgram.setUniform("directionalLight", currDirLight);
+
+    bufferPassMesh.render();
+
+    dirLightShaderProgram.unbind();
+}
+```
+
+The `endLightRendering` simply retsores the state.
+
+```java
+private void endLightRendering() {
+    // Bind screen for writing
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+}
+```
 
 If you execute the sample you will see something like this:
 
-– IMAGE ---
+![](/chapter28/result.png)
 
 The chapter got longer that expected but there are a few key points that need to be clarified:
 
