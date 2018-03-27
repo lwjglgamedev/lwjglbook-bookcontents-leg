@@ -100,5 +100,20 @@ public GBuffer(Window window) throws Exception {
 }
 ```
 
+The first thing that we do is create a frame buffer. Remember that a frame buffer is just an OpenGL objects that can be used to render operations instead of rendering to the screen. Then we generate a set of textures \(6 textures\), that will be associated to the frame buffer.
+
+After that, we use a foor loop to initialize the textures. We have the following types:
+
+* “Regular textures”, that will store positions, normals, the diffuse component, etc.
+* A texture for storing the depth buffer. This will be our last texture.
+
+Once the texture has been initialized, we enable sampling for them and attach them to the frame buffer. Each texture is attached using and identifier which starts at `GL_COLOR_ATTACHMENT0`. Each texture increments by one that id, so the positions are attached using  `GL_COLOR_ATTACHMENT0`, the normals use  `GL_COLOR_ATTACHMENT1` \(which is  `GL_COLOR_ATTACHMENT0 + 1`\), and so on.
+
+After all the textures have been created, we need to enable them to be used by the fargment shader for rendering. This is done with the  `glDrawBuffers `call. We just pass the array with the idefintifiers of the colour attachments used \(`GL_COLOR_ ATTACHMENT0` to  `GL_COLOR_ATTACHMENT5`\).
+
+The rest of the class are just getter methods and the cleanup one.
+
+
+
 
 
