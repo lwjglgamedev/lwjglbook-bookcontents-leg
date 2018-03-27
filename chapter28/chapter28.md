@@ -485,7 +485,7 @@ layout (location = 4) out vec2 fs_shadow;
 
 This is where we are referring to the textures that this fragment shader will write to. As you can see we just dump the position \(in light view coordinates\), the diffuse colour \(which can be the colour of the associated texture of a component of the material\), the specular component, the normal, and the depth values for the shadow map.
 
-SIDE NOTE: We have simplified the `Material `class definition removing the ambient colour component.
+SIDE NOTE: We have simplified the `Material`class definition removing the ambient colour component.
 
 Going back to the `Renderer` class, the render method is defined like this:
 
@@ -521,6 +521,60 @@ public void render(Window window, Camera camera, Scene scene, boolean sceneChang
     renderParticles(window, camera, scene);
 }
 ```
+
+The geometry pass is done in the `renderGeometry` method \(you can see that we no longer have a `renderScene`\). The lightning pass is done in several steps, first we setup the buffer and other parameters to be used \(`initLightRendering`\), then we render point lights \(`renderPointLights`\) and the directional light \(`renderDirectionalLight`\)and finally the state is restored \(`endLightRendering`\).
+
+Let’s start with the gemeotry pass. The  `renderGeometry` method is almost equivalent to the `renderScene` method used in previous chapters:
+
+```java
+private void renderGeometry(Window window, Camera camera, Scene scene) {
+    // Render G-Buffer for writing
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gBuffer.getGBufferId());
+
+    clear();
+
+    glDisable(GL_BLEND);
+
+    gBufferShaderProgram.bind();
+
+    Matrix4f viewMatrix = camera.getViewMatrix();
+    Matrix4f projectionMatrix = window.getProjectionMatrix();
+    gBufferShaderProgram.setUniform("viewMatrix", viewMatrix);
+    gBufferShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+    gBufferShaderProgram.setUniform("texture_sampler", 0);
+    gBufferShaderProgram.setUniform("normalMap", 1);
+
+    List<ShadowCascade> shadowCascades = shadowRenderer.getShadowCascades();
+    for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
+        ShadowCascade shadowCascade = shadowCascades.get(i);
+        gBufferShaderProgram.setUniform("orthoProjectionMatrix", shadowCascade.getOrthoProjMatrix(), i);
+        gBufferShaderProgram.setUniform("cascadeFarPlanes", ShadowRenderer.CASCADE_SPLITS[i], i);
+        gBufferShaderProgram.setUniform("lightViewMatrix", shadowCascade.getLightViewMatrix(), i);
+    }
+    shadowRenderer.bindTextures(GL_TEXTURE2);
+    int start = 2;
+    for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
+        gBufferShaderProgram.setUniform("shadowMap_" + i, start + i);
+    }
+    gBufferShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
+
+    renderNonInstancedMeshes(scene);
+
+    renderInstancedMeshes(scene, viewMatrix);
+
+    gBufferShaderProgram.unbind();
+
+    glEnable(GL_BLEND);
+}
+```
+
+The only differences are:
+
+* We bind to the G-Buffer instead of the screen.
+* We disable blending. Since we just want to work with the values that are closest to the camera \(the lowest depth values\), we do not need blending.
+
+If you debug the sample execution with an OpenGL debugger \(such as RenderDoc\), you can view the textures generated during the geometry pass. The positions texture will look like this:
 
 
 
