@@ -6,7 +6,7 @@ LWJGL is a low level API that acts like a wrapper around OpenGL. If your idea is
 
 As said in the previous paragraphs we will be using Java for this book. We will be using Java 10, so you need to download the Java SDK from Oracle’s pages. Just choose the installer that suits your Operating System and install it. This book assumes that you have a moderate understanding of the Java language.
 
-You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 9. Since Java 9 is only available, by now, for 64 bits platforms, remeber to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
+You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 10. Since Java 10 is only available, by now, for 64 bits platforms, remeber to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
 
 ![](/chapter01/intellij.png)
 
