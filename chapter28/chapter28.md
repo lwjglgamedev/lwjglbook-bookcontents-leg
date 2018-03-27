@@ -320,7 +320,7 @@ void main()
 }
 ```
 
-This shader is very similar to the vertex shader used in previous chapters to render a scene. There are some changes in the name of the output variables but in essence is the same shader.  Indeed, it should be almost the same, the way we render the vertices should not change, the major changes are done in the fragment shader, which is defined like this:
+This shader is very similar to the vertex shader used in previous chapters to render a scene. There are some changes in the name of the output variables but in essence is the same shader.  Indeed, it should be almost the same, the way we render the vertices should not change, the major changes are done in the fragment shader, which is defined like this \(`gbuffer_fragment.fs`\):
 
 ```
 #version 330
@@ -465,11 +465,60 @@ void main()
             break;
         }
     }
-	fs_shadow  = vec2(calcShadow(vs_mlightviewVertexPos[idx], idx), material.reflectance);
+    fs_shadow  = vec2(calcShadow(vs_mlightviewVertexPos[idx], idx), material.reflectance);
 
     if ( vs_selected > 0 ) {
         fs_diffuse = vec3(fs_diffuse.x, fs_diffuse.y, 1);
     }
+}
+```
+
+The most relevant lines areThe most relevant lines are:
+
+```
+layout (location = 0) out vec3 fs_worldpos;
+layout (location = 1) out vec3 fs_diffuse;
+layout (location = 2) out vec3 fs_specular;
+layout (location = 3) out vec3 fs_normal;
+layout (location = 4) out vec2 fs_shadow;
+```
+
+This is where we are referring to the textures that this fragment shader will write to. As you can see we just dump the position \(in light view coordinates\), the diffuse colour \(which can be the colour of the associated texture of a component of the material\), the specular component, the normal, and the depth values for the shadow map.
+
+SIDE NOTE: We have simplified the `Material `class definition removing the ambient colour component.
+
+Going back to the `Renderer` class, the render method is defined like this:
+
+```java
+public void render(Window window, Camera camera, Scene scene, boolean sceneChanged) {
+    clear();
+
+    if (window.getOptions().frustumCulling) {
+        frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
+        frustumFilter.filter(scene.getGameMeshes());
+        frustumFilter.filter(scene.getGameInstancedMeshes());
+    }
+
+    // Render depth map before view ports has been set up
+    if (scene.isRenderShadows() && sceneChanged) {
+        shadowRenderer.render(window, scene, camera, transformation, this);
+    }
+
+    glViewport(0, 0, window.getWidth(), window.getHeight());
+
+    // Update projection matrix once per render cycle
+    window.updateProjectionMatrix();
+
+    renderGeometry(window, camera, scene);
+
+    initLightRendering();
+    renderPointLights(window, camera, scene);
+    renderDirectionalLight(window, camera, scene);
+    endLightRendering();
+
+    renderFog(window, camera, scene);
+    renderSkyBox(window, camera, scene);
+    renderParticles(window, camera, scene);
 }
 ```
 
