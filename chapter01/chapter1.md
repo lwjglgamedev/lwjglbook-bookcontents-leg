@@ -8,11 +8,11 @@ As said in the previous paragraphs we will be using Java for this book. We will 
 
 You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 9. Since Java 9 is only available, by now, for 64 bits platforms, remeber to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
 
-![](/chapter1/intellij.png)
+![](/chapter01/intellij.png)
 
 For building our samples we will be using [Maven](https://maven.apache.org/). Maven is already integrated in most IDEs and you can directly open the different samples inside them. Just open the folder that contains the chapter sample and IntelliJ will detect that it is a maven project.
 
-![](/chapter1/maven_project.png)
+![](/chapter01/maven_project.png)
 
 Maven builds projects based on an XML file named `pom.xml` \(Project Object Model\) which manages project dependencies \(the libraries you need to use\) and the steps to be performed during the build process. Maven follows the principle of convention over configuration, that is, if you stick to the standard project structure and naming conventions the configuration file does not need to explicitly say where source files are or where compiled classes should be located.
 
