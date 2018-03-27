@@ -1,4 +1,4 @@
-# ![](/assets/text_positions.png)Deferred Shading
+# Deferred Shading
 
 Up to now the way that we are rendering a 3D scene is called forward rendering. We first render the  3D objects and apply the texture and lightning effects in a fragment shader.    This method is not very efficient if we have a complex fragment shader pass with many lights and complex effects. In addition to that we may end up applying these effects to fragments that may be later on discarded due to depth testing \(although this is not exactly true if we enable [early fragment testing](https://www.khronos.org/opengl/wiki/Early_Fragment_Test)\).
 
@@ -575,4 +575,18 @@ The only differences are:
 * We disable blending. Since we just want to work with the values that are closest to the camera \(the lowest depth values\), we do not need blending.
 
 If you debug the sample execution with an OpenGL debugger \(such as RenderDoc\), you can view the textures generated during the geometry pass. The positions texture will look like this:
+
+![](/chapter28/text_positions.png)
+
+The texture that holds the values for the diffuse component will look like this:
+
+![](/chapter28/text_diffuse.png)
+
+The texture that holds the values for the normals will look like this:
+
+![](/chapter28/text_normals.png)
+
+
+
+
 
