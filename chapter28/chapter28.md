@@ -18,7 +18,7 @@ The second pass, is called, the lightning pass. This pass takes a quad that fill
 
 You may be asking if performing additional rendering passes will result in an increase of performance or not. The answer is that it depends. Deferred shading is usually used when you have many different light passes. In this case, the additional rendering steps are compensated by the reduction of operations that will be done in the fragment shader.
 
-So let’s start coding. The first task that we will be doing is create a new class for the G-Buffer. The class, named GBuffer, is defined like this:
+So let’s start coding. The first task that we will be doing is create a new class for the G-Buffer. The class, named `GBuffer`, is defined like this:
 
 ```java
 package org.lwjglb.engine.graph;
@@ -32,16 +32,72 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class GBuffer {
-    
-	private static final int TOTAL_TEXTURES = 6;
-    
-	private int gBufferId;
-    
-	private int[] textureIds;
-    
-	private int width;
-    
-	private int height;
+
+    private static final int TOTAL_TEXTURES = 6;
+
+    private int gBufferId;
+
+    private int[] textureIds;
+
+    private int width;
+
+    private int height;
+```
+
+The class defines a constant that models the maximum number of buffers to be used. The identifier associated to the G-Buffer itself and an array for the individual buffers. The size of the screen is also stored.
+
+Let’s review the constructor:
+
+```java
+public GBuffer(Window window) throws Exception {
+    // Create G-Buffer
+    gBufferId = glGenFramebuffers();
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gBufferId);
+
+    textureIds = new int[TOTAL_TEXTURES];
+    glGenTextures(textureIds);
+
+    this.width = window.getWidth();
+    this.height = window.getHeight();
+
+    // Create textures for position, diffuse color, specular color, normal, shadow factor and depth
+    // All coordinates are in world coordinates system
+    for(int i=0; i<TOTAL_TEXTURES; i++) {
+        glBindTexture(GL_TEXTURE_2D, textureIds[i]);
+        int attachmentType;
+        switch(i) {
+            case TOTAL_TEXTURES - 1:
+                // Depth component
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                        (ByteBuffer) null);
+                attachmentType = GL_DEPTH_ATTACHMENT;
+                break;
+            default:
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, (ByteBuffer) null);
+                attachmentType = GL_COLOR_ATTACHMENT0 + i;
+                break;
+        }
+        // For sampling
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Attach the the texture to the G-Buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, textureIds[i], 0);
+    }
+
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+        IntBuffer intBuff = stack.mallocInt(TOTAL_TEXTURES);
+        int values[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5};
+        for(int i = 0; i < values.length; i++) {
+            intBuff.put(values[i]);
+        }
+        intBuff.flip();
+        glDrawBuffers(intBuff);
+    }
+
+    // Unbind
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 ```
 
 
