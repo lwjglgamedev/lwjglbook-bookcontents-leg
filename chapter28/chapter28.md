@@ -739,7 +739,54 @@ vec2 getTextCoord()
 
 The fragment shader for the directional light is also quite similar, you can check the source code. Now that the shaders have been presented, let’s go back to the `Renderer` class. For point lights we will do as many passes as lights are, we just bind the shaders used for this type of lights and draw the quad for each of them.
 
---- METHOD ---
+```java
+private void renderPointLights(Window window, Camera camera, Scene scene) {
+    pointLightShaderProgram.bind();
+
+    Matrix4f viewMatrix = camera.getViewMatrix();
+    Matrix4f projectionMatrix = window.getProjectionMatrix();
+    pointLightShaderProgram.setUniform("modelMatrix", bufferPassModelMatrix);
+    pointLightShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+    // Specular factor
+    pointLightShaderProgram.setUniform("specularPower", specularPower);
+
+    // Bind the G-Buffer textures
+    int[] textureIds = this.gBuffer.getTextureIds();
+    int numTextures = textureIds != null ? textureIds.length : 0;
+    for (int i=0; i<numTextures; i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, textureIds[i]);
+    }
+
+    pointLightShaderProgram.setUniform("positionsText", 0);
+    pointLightShaderProgram.setUniform("diffuseText", 1);
+    pointLightShaderProgram.setUniform("specularText", 2);
+    pointLightShaderProgram.setUniform("normalsText", 3);
+    pointLightShaderProgram.setUniform("shadowText", 4);
+
+    pointLightShaderProgram.setUniform("screenSize", (float) gBuffer.getWidth(), (float)gBuffer.getHeight());
+
+    SceneLight sceneLight = scene.getSceneLight();
+    PointLight[] pointLights = sceneLight.getPointLightList();
+    int numPointLights = pointLights != null ? pointLights.length : 0;
+    for(int i=0; i<numPointLights; i++) {
+        // Get a copy of the point light object and transform its position to view coordinates
+        PointLight currPointLight = new PointLight(pointLights[i]);
+        Vector3f lightPos = currPointLight.getPosition();
+        tmpVec.set(lightPos, 1);
+        tmpVec.mul(viewMatrix);
+        lightPos.x = tmpVec.x;
+        lightPos.y = tmpVec.y;
+        lightPos.z = tmpVec.z;
+        pointLightShaderProgram.setUniform("pointLight", currPointLight);
+
+        bufferPassMesh.render();
+    }
+
+    pointLightShaderProgram.unbind();
+}
+```
 
 The approach is quite similar for directional light. In this case, we just use do one pass:
 
