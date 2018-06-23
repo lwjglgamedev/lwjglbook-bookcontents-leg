@@ -187,7 +187,7 @@ struct PointLight
 
 A point light is defined by a colour, a position, a number between $$0$$ and $$1$$ which models its intensity  and a set of parameters which will model the attenuation equation.
 
-The structure that models a material characteristics is:
+The structure that models the material characteristics is:
 
 ```glsl
 struct Material
@@ -283,9 +283,9 @@ vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
 }
 ```
 
-The previous code is relatively straight forward, it just calculates a colour for the diffuse component, another one for the specular component and modulates them by the attenuation suffered by the light in its travel to the vertex we are processing.
+The previous code is relatively straightforward, it just calculates a colour for the diffuse component, another one for the specular component and modulates them by the attenuation suffered by the light in its travel to the vertex we are processing.
 
-Please be aware that vertices coordinates are in view space. When calculating the specular component, we must get the directtion to the point of view, that is the camera. This, could be done like this:
+Please be aware that vertices coordinates are in view space. When calculating the specular component, we must get the direction to the point of view, that is the camera. This could be done like this:
 
 ```glsl
  vec3 camera_direction = normalize(camera_pos - position);
@@ -303,7 +303,7 @@ Which can be simplified like this:
  vec3 camera_direction = normalize(-position);
 ```
 
-With the previous function, the main function of the vertex function is very simple.
+With the previous function, the main function of the vertex shader is very simple.
 
 ```glsl
 void main()
@@ -316,7 +316,7 @@ void main()
 }
 ```
 
-The call to the `setupColours`function will set up the `ambientC`, `diffuseC`and `speculrC`variables with the appropriate colours. Then, we calculate the diffuse and specular components, taking into consideration the attennuation. We do this using a single function call for convenience, as it has been explained above. Final colour is calculated by adding the ambient component \(multiplying `ambientC`by the ambient light\). As you can see ambient light is not affected by attenuation.
+The call to the `setupColours`function will set up the `ambientC`, `diffuseC` and `speculrC`variables with the appropriate colours. Then, we calculate the diffuse and specular components, taking into consideration the attenuation. We do this using a single function call for convenience, as it has been explained above. The final colour is calculated by adding the ambient component \(multiplying `ambientC` by the ambient light\). As you can see the ambient light is not affected by attenuation.
 
 We have introduced some new concepts into our shader that require further explanation, we are defining structures and using them as uniforms. How do we pass those structures ? First of all we will define two new classes  that model the properties of a point light and a material, named oh surprise, `PointLight` and `Material`. They are just plain POJOs so you can check them in the source code that accompanies this book. Then, we need to create new methods in the `ShaderProgram` class, first to be able to create the uniforms for the point light and material structures.
 
