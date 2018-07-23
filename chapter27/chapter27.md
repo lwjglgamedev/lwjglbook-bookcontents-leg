@@ -191,7 +191,7 @@ Now that we have used assimp for loading static meshes we can proceed with anima
 
 #### ![](/chapter27/vao_animation.png)
 
-Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated.
+Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame, a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated.
 
 In the animation chapter, we developed a MD5 parser to load animated meshes. In this chapter we will use assimp library. This will allow us to load many more formats besides MD5, such as [COLLADA](https://en.wikipedia.org/wiki/COLLADA "COLLADA"), [FBX](https://en.wikipedia.org/wiki/FBX "FBX"), etc.
 
@@ -213,7 +213,7 @@ The following picture shows the relationships between all these elements.
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
-Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied  to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that these Node’s hierarchy is defined fro the whole model, we do not have separate hierarchies for each mesh.
+Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied  to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that these Node’s hierarchy is defined from the whole model, we do not have separate hierarchies for each mesh.
 
 A scene also defines a set of animations. A single model can have more than one animation. You can have animations for a model to walk, run etc. Each of these animations define different transformations. An animation has the following attributes:
 
@@ -347,7 +347,7 @@ This method traverses the bone definition for a specific mesh, getting their wei
 
 The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the boneList will be used later when calculating animation data.
 
-Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes,  we also get the transformation which is applied to the  root node which will be used also to calculate the final transformatio. After that , we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes,  we also get the transformation which is applied to the  root node which will be used also to calculate the final transformation. After that , we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
 
 ```java
 private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
@@ -399,7 +399,7 @@ private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bo
 }
 ```
 
-For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatricesmethod`. These matrices are store for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
+For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatricesmethod`. These matrices are stored for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
 
 Let’s first review the  `buildTransFormationMatrices` method:
 
