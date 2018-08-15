@@ -1,4 +1,4 @@
-# 3D Game Development with LWJGL 3
+# Introduction
 
 This online book will introduce the main concepts required to write a 3D game using the LWJGL 3 library.
 
@@ -18,12 +18,14 @@ The source code for the book itself is also published in [GitHub](https://github
 
 The book is licensed under [Attribution-ShareAlike 4.0 International \(CC BY-SA 4.0\)](http://creativecommons.org/licenses/by-sa/4.0/)
 
-The source code for the book is licensed under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0 "Apache v2.0")
+The source code for the book is licensed under [Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Support
 
 If you like the book please rate it with a start and share it. If you want to contribute with a donation you can do a donation:  
-[![Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5MH9AA9TPQQBN)
+
+
+![Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)
 
 Or if you prefer Bitcoin: 1Kwe78faWarzGTsWXtdGvjjbS9RmW1j3nb.
 
