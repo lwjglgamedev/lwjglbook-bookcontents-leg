@@ -262,7 +262,6 @@ Then we need to create the VBO, bind it and put the data into it.
 vboId = glGenBuffers();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-memFree(verticesBuffer);
 ```
 
 Now comes the most important part. We need to define the structure of our data and store it in one of the attribute lists of the VAO. This is done with the following line.
