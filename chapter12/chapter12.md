@@ -8,7 +8,7 @@ When you examine the source code for this chpater, you will see also that some l
 
 The first thing that we will do to create a HUD is render text. In order to do that, we are going to map a texture that contains alphabet characters into a quad. That quad will be divided by a set of tiles which will represent a single letter. later on, we will use that texture to draw the text in the screen. So the first step is to create the texture that contains the alphabet. You can use many programs out there that can do this task, such as,  [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc. In this case, We will use Codehead’s Bitmap Font Generator \(CBFG\).
 
-CBG lets you configure many options such as the texture size, the font type, the anti-aliasing to be applied, etc. The following figure depicts the configuration that we will use to generate a texture file. In this chapter we will assume that we will be rendering text encoded in ISO-8859-1 format, if you need to deal with different character sets you will need to tweak a little bit the code.
+CBG lets you configure many options such as the texture size, the font type, the anti-aliasing to be applied, etc. The following figure depicts the configuration that we will use to generate a texture file. In this chapter we will assume that we will be rendering text encoded in ISO-8859-1 format, if you need to deal with different character sets you will need to tweak a little bit of the code.
 
 ![CBG Configuration](CBG.png)
 
@@ -16,7 +16,7 @@ When you have finished configuring all the settings in CBG you can export the re
 
 ![Font Texture](font_texture.png)
 
-As you can see, the image has all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column can be calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operator. The row can be calculated as follows: $$row = code / numberOfCols$$, in this case we will do a integer by integer operation so we can ignore the decimal part.
+As you can see, the image has all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column can be calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operator. The row can be calculated as follows: $$row = code / numberOfCols$$, in this case we will do an integer by integer operation so we can ignore the decimal part.
 
 We will create a new class named `TextItem` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc. but it will allow us to present textual information in the HUD.  Here you can see the first lines and the constructor of this class.
 
@@ -151,11 +151,11 @@ public void setText(String text) {
 }
 ```
 
-Now that we have set up the infrastucture needed to darw  text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. In order to render the HUD we will use an orthographic projection \(also named orthogonal projection\). An Orthographic projection is a 2D representation of a 3D object. You may already have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+Now that we have set up the infrastucture needed to draw text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. In order to render the HUD we will use an orthographic projection \(also named orthogonal projection\). An Orthographic projection is a 2D representation of a 3D object. You may already have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
 ![Orthopgraphic Projections](orthographic_projections.png)
 
-This projection is very convenient in order to draw 2D objects because it "ignores" the values of the z coordinates, that is, the distance to the view. With this projection the objects sizes do not decrease with the distance \(as in the perspective projection\). In order to project an object using an ortographic projection we will need to use another matrix, the orthographic matrix which formula is shown below.
+This projection is very convenient in order to draw 2D objects because it "ignores" the values of the z coordinates, that is, the distance to the view. With this projection the objects sizes do not decrease with the distance \(as in the perspective projection\). In order to project an object using an orthographic projection we will need to use another matrix, the orthographic matrix which formula is shown below.
 
 ![Orthopgraphic Projection Matrix](orthographic_matrix.png)
 
@@ -165,7 +165,7 @@ This matrix also corrects the distortions that otherwise will be generated due t
 
 The properties of this matrix, will allow us to use screen coordinates.
 
-We can now continue with thee implementation of the HUD. The next thing that we should do is create another set of shaders, a vertex and a fragment shaders, in order to draw the objects of the HUD. The vertex shader is actually very simple.
+We can now continue with the implementation of the HUD. The next thing that we should do is create another set of shaders, a vertex and a fragment shaders, in order to draw the objects of the HUD. The vertex shader is actually very simple.
 
 ```glsl
 #version 330
@@ -185,7 +185,7 @@ void main()
 }
 ```
 
-It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix. That matrix is the multiplication of the ortographic projection matrix and the model matrix, $$projModelMatrix  =  ortographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in java code than in the shadere. By doing so we will be doing that multipliaztion once per item insted of doing it for each vertex. Remember that our vertices should be expressed in screen coordinates.
+It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix. That matrix is the multiplication of the orthographic projection matrix and the model matrix, $$projModelMatrix  =  orthographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in java code than in the shader. By doing so we will be doing that multiplication once per item insted of doing it for each vertex. Remember that our vertices should be expressed in screen coordinates.
 
 The fragment shader is also very simple.
 
@@ -232,7 +232,7 @@ private void setupHudShader() throws Exception {
     hudShaderProgram.createFragmentShader(Utils.loadResource("/shaders/hud_fragment.fs"));
     hudShaderProgram.link();
 
-    // Create uniforms for Ortographic-model projection matrix and base colour
+    // Create uniforms for Orthographic-model projection matrix and base colour
     hudShaderProgram.createUniform("projModelMatrix");
     hudShaderProgram.createUniform("colour");
 }
@@ -344,7 +344,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 ```
 
-But the sample is not fnished yet. If you play with the zoom so the text overlaps with the cube you will see this effect.
+But the sample is not finished yet. If you play with the zoom so the text overlaps with the cube you will see this effect.
 
 ![Text with opaque background](text_opaque.png)
 
@@ -392,7 +392,7 @@ void main()
 }
 ```
 
-To add the compass the the HUD we just need to create a new `GameItem` instance, tn the `Hud` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so usually you will need to increase its size.
+To add the compass the the HUD we just need to create a new `GameItem` instance, to the `Hud` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so usually you will need to increase its size.
 
 ```java
 // Create compass
@@ -532,7 +532,7 @@ Then we will create an image that will contain all the available characters. In 
     g2D.dispose();
 ```
 
-We are generating an image which contains all the characters in a single row \(we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any caseyou could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
+We are generating an image which contains all the characters in a single row \(we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any case you could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
 
 ```java
 ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
