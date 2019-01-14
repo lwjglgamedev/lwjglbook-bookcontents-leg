@@ -218,7 +218,7 @@ public class Main {
 }
 ```
 
-At the end we only need to create or game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear color of the window whenever the user presses the up / down key. The render method will just clear the window with that color.
+At the end we only need to create our game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear color of the window whenever the user presses the up / down key. The render method will just clear the window with that color.
 
 ```java
 public class DummyGame implements IGameLogic {
