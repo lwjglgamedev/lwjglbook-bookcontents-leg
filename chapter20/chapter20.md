@@ -587,7 +587,7 @@ The texture atlas can be divided into quad tiles. We will assign a tile position
 ```java
 package org.lwjglb.engine.graph;
 
-// .. Imports hera
+// .. Imports here ..
 
 public class Texture {
 

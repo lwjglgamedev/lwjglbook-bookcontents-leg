@@ -108,49 +108,62 @@ So basically what we must do, in order to apply a texture to a model, is assigni
 
 How do we relate texture coordinates with our position coordinates? Easy, in the same way we passed the colour information. We set up a VBO which will have a texture coordinate for each vertex position.
 
-So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow a more verbose approach. We will use a library called `pngdecoder`, thus, we need to declare that dependency in our `pom.xml` file.
+So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow another approach. We will use LWJGL wrapper for [stb](https://github.com/nothings/stb) library. In order to do that,  we need first to declare that dependency, includeing the natives in our `pom.xml` file.
 
 ```xml
 <dependency>
-    <groupId>org.l33tlabs.twl</groupId>
-    <artifactId>pngdecoder</artifactId>
-    <version>${pngdecoder.version}</version>
+    <groupId>org.lwjgl</groupId>
+    <artifactId>lwjgl-stb</artifactId>
+    <version>${lwjgl.version}</version>
 </dependency>
-```
-
-And define the version of the library to use.
-
-```xml
-<properties>
-    [...]
-    <pngdecoder.version>1.0</pngdecoder.version>
-    [...]
-</properties>
+[...]
+<dependency>
+    <groupId>org.lwjgl</groupId>
+    <artifactId>lwjgl-stb</artifactId>
+    <version>${lwjgl.version}</version>
+    <classifier>${native.target}</classifier>
+    <scope>runtime</scope>
+</dependency>
 ```
 
 One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling `glEnable(GL_TEXTURE_2D)`. This is true if you are using the fixed-function pipepline. Since we are using GLSL shaders it is not required anymore.
 
-Now we will create a new `Texture` class that will perform all the necessary steps to load a texture. Our texture image will be located in the resources folder and can be accessed as a CLASSPATH resource and passed as an input stream to the `PNGDecoder` class.
+Now we will create a new `Texture` class that will perform all the necessary steps to load a texture. First we need to load the image data into a `ByteBuffer`. The code is defined as this:
 
 ```java
-PNGDecoder decoder = new PNGDecoder(
-     Texture.class.getResourceAsStream(fileName));
+private static int loadTexture(String fileName) throws Exception {
+    int width;
+    int height;
+    ByteBuffer buf;
+    // Load Texture file
+    try (MemoryStack stack = MemoryStack.stackPush()) {
+        IntBuffer w = stack.mallocInt(1);
+        IntBuffer h = stack.mallocInt(1);
+        IntBuffer channels = stack.mallocInt(1);
+
+        URL url = Texture.class.getResource(fileName);
+        File file = Paths.get(url.toURI()).toFile();
+        String filePath = file.getAbsolutePath();
+        buf = stbi_load(filePath, w, h, channels, 4);
+        if (buf == null) {
+            throw new Exception("Image file [" + filePath  + "] not loaded: " + stbi_failure_reason());
+        }
+    
+        /* Get width and height of image */
+        width = w.get();
+        height = h.get();
+     }
+	 [... More next ....]
 ```
+The first thing we do is to allocate some memory for the library to return the image data itself (a `ByteBuffer`), and the width and  height. Then we need to transform the `CLASSPATH` relative path for the image to an absolute path.
 
-Then we need to decode the PNG image and store its content into a buffer by using the `decode` method of the `PNGDecoder` class. The PNG image will be decoded in RGBA format \(RGB for Red, Green, Blue and A for Alpha or transparency\) which uses four bytes per pixel.
+Then we call to the `stbi_load` method to actually load the image. It requires three parameters:
 
-The `decode` method requires three parameters:
-
-* `buffer`: The `ByteBuffer` that will hold the decoded image \(since each pixel uses four bytes its size will be 4 _ width _ height\).
-* `stride`:  Specifies the distance in bytes from the start of a line to the start of the next line. In this case it will be the number of bytes per line.
-* `format`: The target format into which the image should be decoded \(RGBA\).
-
-```java
-ByteBuffer buf = ByteBuffer.allocateDirect(
-    4 * decoder.getWidth() * decoder.getHeight());
-decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-buf.flip();
-```
+* `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embeded into a JAR file.
+* `width`:  Image width. This will be populated with the image width.
+* `height`: Image height. This will be populated with the image height.
+* `channels`: The image channels.
+* `desired_channels`: The desired image channels. We pass 4 (RGBA).
 
 One important thing to remember is that OpenGL, for historical reasons, requires that texture images have a size \(number of texels in each dimension\) of a power of two \(2, 4, 8, 16, ....\). Some drivers remove that constraint but it’s better to stick to it to avoid problems.
 
@@ -205,6 +218,12 @@ In order to generate mipmaps we just need to set the following line \(in this ca
 
 ```java
 glGenerateMipmap(GL_TEXTURE_2D);
+```
+
+Finally we can free the data for the raw image data itself:
+
+```
+stbi_image_free(buf);
 ```
 
 And that’s all, we have successfully loaded our texture. Now we need to use it. As we said before we need to pass texture coordinates as another VBO. So we will modify our Mesh class to accept an array of floats, that contains texture coordinates, instead of the colour \(we could have colours and texture but in order to simplify it we will strip colours off\). Our constructor will be like this:

@@ -52,19 +52,31 @@ public HeightMapMesh(float minY, float maxY, String heightMapFile, String textur
 
 It receives the minimum and maximum vale for the y axis, the name of the file that contains the image to be used as height map and the texture file to be used. It also receives an integer named ```textInc``` that we will discuss later on.
 
-The first thing that we do in the constructor is to load the height map image into a ```BufferedImage``` instance.
+The first thing that we do in the constructor is to load the height map image into a ```ByteBuffer``` instance.
 
 ```java
 this.minY = minY;
 this.maxY = maxY;
 
-PNGDecoder decoder = new PNGDecoder(getClass().getResourceAsStream(heightMapFile));
-int height = decoder.getHeight();
-int width = decoder.getWidth();
-ByteBuffer buf = ByteBuffer.allocateDirect(
-        4 * decoder.getWidth() * decoder.getHeight());
-decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
-buf.flip();
+ByteBuffer buf = null;
+int width;
+int height;
+try (MemoryStack stack = MemoryStack.stackPush()) {
+    IntBuffer w = stack.mallocInt(1);
+    IntBuffer h = stack.mallocInt(1);
+    IntBuffer channels = stack.mallocInt(1);
+
+    URL url = Texture.class.getResource(heightMapFile);
+    File file = Paths.get(url.toURI()).toFile();
+    String filePath = file.getAbsolutePath();
+    buf = stbi_load(filePath, w, h, channels, 4);
+    if (buf == null) {
+        throw new Exception("Image file [" + filePath  + "] not loaded: " + stbi_failure_reason());
+    }
+
+    width = w.get();
+    height = h.get();
+}
 ```
 
 Then, we load the texture file into a ```ByteBuffer``` and setup the variables that we will need to construct the ```Mesh```. The ```incx``` and ```incz``` variables will have the increment to be applied to each vertex in the x and z coordinates so the ```Mesh``` covers the range stated above.
@@ -135,6 +147,8 @@ float[] normalsArr = calcNormals(posArr, width, height);
 this.mesh = new Mesh(posArr, textCoordsArr, normalsArr, indicesArr);
 Material material = new Material(texture, 0.0f);
 mesh.setMaterial(material);
+
+stbi_image_free(buf);
 ```
 
 You can see that we calculate the normals taking as an input the vertex positions. Before we see how normals can be calculated, let’s see how heights are obtained. We have created a method named ```getHeight``` which calculates the height for a vertex.

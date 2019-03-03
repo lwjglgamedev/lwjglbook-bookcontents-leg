@@ -545,20 +545,21 @@ The image will be written to a temporary file. That file will contain a long str
 Finally, we just need to create a `Texture` instance from that image, we just dump the image bytes using a PNG format \(which is what the `Texture` class expects\).
 
 ```java
-    // Dump image to a byte buffer
-    InputStream is;
-    try (
-        ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-        ImageIO.write(img, IMAGE_FORMAT, out);
+    ByteBuffer buf = null;
+    try ( ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		ImageIO.write(img, IMAGE_FORMAT, out);
         out.flush();
-        is = new ByteArrayInputStream(out.toByteArray());
+        byte[] data = out.toByteArray();
+        buf = ByteBuffer.allocateDirect(data.length);
+        buf.put(data, 0, data.length);
+        buf.flip();
     }
 
-    texture = new Texture(is);
+    texture = new Texture(buf);
 }
 ```
 
-You may notice that we have modified a little bit the `Texture` class to have another constructor that receives an `InputStream`. Now we just need to change the `TextItem` class to receive a `FontTexture` instance in its constructor.
+You may notice that we have modified a little bit the `Texture` class to have another constructor that receives a `ByteBuffer`. Internally, this new constructor uses the `stbi_load_from_memory`. Now we just need to change the `TextItem` class to receive a `FontTexture` instance in its constructor.
 
 ```java
 public TextItem(String text, FontTexture fontTexture) throws Exception {
