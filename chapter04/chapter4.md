@@ -195,11 +195,17 @@ public void run() {
         cleanup();
     }
 }
+
+protected void cleanup() {
+    gameLogic.cleanup();                
+}
 ```
 
 Now we can use our shaders in order to display a triangle. We will do this in the `init` method of our `Renderer` class. First of all, we create the shader program:
 
 ```java
+private ShaderProgram shaderProgram;
+
 public void init() throws Exception {
     shaderProgram = new ShaderProgram();
     shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
