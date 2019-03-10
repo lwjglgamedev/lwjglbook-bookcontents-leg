@@ -574,7 +574,7 @@ private static List<AnimatedFrame> processAnimationFrames(MD5Model md5Model, MD5
 
 This method process each animation frame, defined in the MD5 animation definition file, and returns a list of `AnimatedFrame` instances. The real work is done in the `processAnimationFrame` method. Let’s explain what this method will do.
 
-We first, iterate over the joints defined in the hierarchy section in the MD5 animaton file.
+We first, iterate over the joints defined in the hierarchy section in the MD5 animation file.
 
 ```java
 private static AnimatedFrame processAnimationFrame(MD5Model md5Model, MD5AnimModel animModel, MD5Frame frame, List<Matrix4f> invJointMatrices) {
@@ -600,7 +600,7 @@ We get the position and orientation of the base frame element associated to each
 
 In principle, that information should be assigned to the the joint’s position and orientation, but it needs to be transformed according to the joint’s flag. If you recall, when the structure of the animation file was presented, each joint in the hierarchy section defines a flag. That flag models how the position and orientation information should be changed according to the information defined in each animation frame.
 
-If the first bit of that flag field is equal to 1, we should change the x component of the base frame position with the data contained in the animation frame we are processing. That animation farme defines a bug afloat array, so which I elements should we take. The answer is also in the joints definition which includes a startIndex attribute. If the second bit of the gal is equal to 1, we should change the y component of the base frame position with the value at startIndex + 1, and so on. The next bits are for the z position, and the x, y and z components of the orientation.
+If the first bit of that flag field is equal to 1, we should change the x component of the base frame position with the data contained in the animation frame we are processing. That animation frame defines a bug a float array, so which I elements should we take. The answer is also in the joints definition which includes a startIndex attribute. If the second bit of the gal is equal to 1, we should change the y component of the base frame position with the value at startIndex + 1, and so on. The next bits are for the z position, and the x, y and z components of the orientation.
 
 ```java
         int flags = hierarchyList.get(i).getFlags();
@@ -661,7 +661,7 @@ public void setMatrix(int pos, Matrix4f localJointMatrix, Matrix4f invJointMatri
 }
 ```
 
-The variable `localJointMatrix` stores the transformation matrix for the joint that occupies the position “i” for the current frame. The `invJointMatrix` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the `localJointMatrix` by the  invJointMatrix. This result will be used later to compute the final positions. We store also the original joint transformation matrix, the variable `localJointMatrix`, so we can use it to calculate this joint childs transformation matrices.
+The variable `localJointMatrix` stores the transformation matrix for the joint that occupies the position “i” for the current frame. The `invJointMatrix` holds the inverse transformation matrix for the joint that occupies the position “i” for the binding pose. We store the result of multiplying the `localJointMatrix` by the  invJointMatrix. This result will be used later to compute the final positions. We store also the original joint transformation matrix, the variable `localJointMatrix`, so we can use it to calculate this joint children's transformation matrices.
 
 Let's get back to the MD5Loader class. The `generateMesh` method also has changed, we calculate the positions of the binding pose as it has been explained before, but for each vertex we store two arrays:
 
@@ -756,8 +756,9 @@ $$Vpos$$ is calcualted by usin the $$Jt$$ matrix, which is the matrix of the joi
 
 The shader supports vertices with variable number of weights, up to a maximum of 4, and also supports the rendering of non animated items. In this case, the weights will be equal to 0 and we will get the original position.
 
-```glsl
 The rest of the shader stays more or less the same, we just use the updated position and pass the correct values to be used by the fragment shader.
+
+```glsl
     vec4 mvPos = modelViewMatrix * initPos;
     gl_Position = projectionMatrix * mvPos;
     outTexCoord = texCoord;
@@ -778,7 +779,7 @@ if ( gameItem instanceof AnimGameItem ) {
 }
 ```
 
-Of course, yo will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar \(each time the key is pressed a new frame is set and the jointsMatrix uniform changes\).
+Of course, you will need to create the uniform before using it, you can check the source code for that. If you run the example you will be able to see how the model animates by pressing the space bar \(each time the key is pressed a new frame is set and the jointsMatrix uniform changes\).
 
   
 You will see something like this.
@@ -789,7 +790,7 @@ Although the animation is smooth, the sample presents some problems. First of al
 
 ## Correcting animation issues
 
-The first issue that will address is the lightning problem. You may have already noticed the case, its due to the fact that we are not transforming normals. Thus, the normals that are used in the fragment shader are the ones that correspond to the binding pose. We need to transform them in the same way as the positions.
+The first issue that will address is the light problem. You may have already noticed the case, its due to the fact that we are not transforming normals. Thus, the normals that are used in the fragment shader are the ones that correspond to the binding pose. We need to transform them in the same way as the positions.
 
 This issue is easy to solve, we just need to include the normals in the loop that iterates over the weights in the vertex shader.
 
@@ -869,5 +870,5 @@ You need to modify the `Renderer` class to set up the new uniforms for this shad
 
 ![Animation refined](animation_refined.png)
 
-And that's all, you have now a working example that animates MD5 models. The source code can still be improved and you can modify the matrices that are loaded in each render cycle to interpolate betweeen frames positions. You can check the sources used for this chapter to see how this can be done.
+And that's all, you have now a working example that animates MD5 models. The source code can still be improved and you can modify the matrices that are loaded in each render cycle to interpolate between frames positions. You can check the sources used for this chapter to see how this can be done.
 
