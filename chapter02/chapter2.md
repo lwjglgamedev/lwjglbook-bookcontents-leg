@@ -104,7 +104,7 @@ public boolean isKeyPressed(int keyCode) {
 }
 ```
 
-The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized. The callback will receive the width and height, in pixels, of the framebuffer \(the rendering area, in this sample, the display area\). If you want the width, height of the framebuffer in screen coordinates you may use the the  `glfwSetWindowSizeCallback`method. Screen coordinates don't necessarilly correspond to pixels \(for instance, on a Mac with Retina display\). Since we are going to use that information when performing some OpenGL calls, we are interested in pixels not in screen coordinates. You can get more infomation in the GLFW documentation.
+The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized. The callback will receive the width and height, in pixels, of the framebuffer \(the rendering area, in this sample, the display area\). If you want the width, height of the framebuffer in screen coordinates you may use the the  `glfwSetWindowSizeCallback`method. Screen coordinates don't necessarilly correspond to pixels \(for instance, on a Mac with Retina display\). Since we are going to use that information when performing some OpenGL calls, we are interested in pixels not in screen coordinates. You can get more information in the GLFW documentation.
 
 ```java
 // Setup resize callback
