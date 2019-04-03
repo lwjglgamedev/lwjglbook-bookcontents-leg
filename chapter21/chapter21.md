@@ -24,21 +24,21 @@ But you may be wondering now how can you set the different transformations for e
 
 When using instanced rendering, in the vertex shader we can use an input variable that holds the index of the instance that is currently being drawn. With that built-in variable we can, for instance, pass an array of uniforms containing the transformations to be applied to each instance and use a single render call.
 
-The problem with this approach is that it still imposes too much overhead. In addition to that, the number of uniforms that we can pass is limited. Thus, we need to emply another approach, instead of using lists of uniforms we will use instanced arrays.
+The problem with this approach is that it still imposes too much overhead. In addition to that, the number of uniforms that we can pass is limited. Thus, we need to employ another approach, instead of using lists of uniforms we will use instanced arrays.
 
 If you recall from the first chapters, the data for each Mesh is defined by a set of arrays of data named VBOs. The data store in those VBOs is unique per Mesh instance.
 
 ![VBOs](vao_1.png)
 
-With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, textue, etc.\). Whenever the shader is run, the input variables are set to point to the specific data associated to each vertex. With instanced arrays we can set up data that is changed per instance instead of per vertex. If we combine both types we can use regular VBOs to store per vertex information \(position, texture coordinates\) and VBOs that contain per instance data such as model view matrices.
+With standard VBOs, inside a shader, we can access the data associated to each vertex \(its position, colour, texture, etc.\). Whenever the shader is run, the input variables are set to point to the specific data associated to each vertex. With instanced arrays we can set up data that is changed per instance instead of per vertex. If we combine both types we can use regular VBOs to store per vertex information \(position, texture coordinates\) and VBOs that contain per instance data such as model view matrices.
 
-The next figure shows a Mesh composed by three per vertex VBOs definig the positions, textures and normals. The first index of each of those elements is the instance that it belongs to \(in blue colour\). The second index represents the vertex position inside a instance.
+The next figure shows a Mesh composed by three per vertex VBOs defining the positions, textures and normals. The first index of each of those elements is the instance that it belongs to \(in blue colour\). The second index represents the vertex position inside a instance.
 
-The Mesh is also defined by two per instance VBOs. One for the model view matrix and the other one for the light view matrix. When rendering the vertices for the firs instance \(the 1X, ones\), the model view and light view matrices will be the same \(the 1\). When vertices of the second instance are to be rendered the second model view and light view matrices will be used.
+The Mesh is also defined by two per instance VBOs. One for the model view matrix and the other one for the light view matrix. When rendering the vertices for the first instance \(the 1X, ones\), the model view and light view matrices will be the same \(the 1\). When vertices of the second instance are to be rendered the second model view and light view matrices will be used.
 
 ![VBOs with instance attributes](vao_2.png)
 
-Thus, when rendering the first vertex of the first instance, V11, T11 and N11 would be used for position, texture and normal data and MV1 would be used as a model view matrix. When rendering the second vertex of the same first instance, V12, T12 and N12 would be used for position, texture and normal dara and MV1 wouls still be used as a model view matrix. MV2 and LV2 would not be used until second instance is rendered.
+Thus, when rendering the first vertex of the first instance, V11, T11 and N11 would be used for position, texture and normal data and MV1 would be used as a model view matrix. When rendering the second vertex of the same first instance, V12, T12 and N12 would be used for position, texture and normal data and MV1 would still be used as a model view matrix. MV2 and LV2 would not be used until second instance is rendered.
 
 In order to define per instance data we need to call the function `glVertexAttribDivisor` after defining vertex attributes. This function receives two parameters:
 
@@ -71,7 +71,7 @@ for (int i = 0; i < 4; i++) {
 
 The first thing that we do is create a new VBO and a new `FloatBuffer` to store the data on it. The size of that buffer is measured in floats, so it will be equal to the number of instances multiplied by the size in floats of a 4x4 matrix, which is equal to 16.
 
-Once the VBO has been bond we start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition into four pieces. Let’s refresh the parameters of the `glVertexAttribPointer`:
+Once the VBO has been bind we start defining the attributes for it. You can see that this is done in a for loop that iterates four times. Each turn of the loop defines one vector the matrix. Why not simply defining a single attribute for the whole matrix? The reason for that is that a vertex attribute cannot contain more than four floats. Thus, we need to split the matrix definition into four pieces. Let’s refresh the parameters of the `glVertexAttribPointer`:
 
 * Index: The index of the element to be defined.
 * Size: The number of components for this attribute. In this case it’s 4, 4 floats, which is the maximum accepted value.
@@ -208,13 +208,13 @@ But, instead of adding a new VBO we will set all the instance attributes inside 
 
 ![Single VBO](single_vbo.png)
 
-In order to use a single VBO we need to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definition of the texture offsets uses a  constant named  `INSTANCE_SIZE_BYTES`. This constant is equal to the size in bytes of two matrices \(one for the view model and the other one for the light view model\) plus two floats \(texture offesets\), which in total is 136. The stride also needs to be modified properly.
+In order to use a single VBO we need to modify the attribute size for all the attributes inside an instance. As you can see from the code above, the definition of the texture offsets uses a constant named  `INSTANCE_SIZE_BYTES`. This constant is equal to the size in bytes of two matrices \(one for the view model and the other one for the light view model\) plus two floats \(texture offsets\), which in total is 136. The stride also needs to be modified properly.
 
 You can check the modifications in the source code.
 
 The `Renderer` class needs also to be modified to use instanced rendering for particles and support texture atlas in scene rendering. In this case, there's no sense in support both types of rendering \(non instance and instanced\), so the modifications are simpler.
 
-The vertex shader for particles is also straight froward.
+The vertex shader for particles is also straight forward.
 
 ```glsl
 #version 330
@@ -237,7 +237,7 @@ void main()
     outTexCoord = vec2(x, y);}
 ```
 
-The results of this changes, look exactly the same as when rendering non instanced particles but the performance is much higher. A FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
+The results of this changes, look exactly the same as when rendering non instanced particles but the performance is much higher. An FPS counter has been added to the window title, as an option. You can play with instanced and non instanced rendering to see the improvements by yourself.
 
 ![Particles](particles.png)
 
