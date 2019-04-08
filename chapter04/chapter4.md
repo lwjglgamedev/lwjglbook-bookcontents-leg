@@ -75,7 +75,7 @@ void main()
 
 The structure is quite similar to our vertex shader. In this case we will set a fixed colour for each fragment. The output variable is defined in the second line and set as a vec4 fragColor.  
 Now that we have our shaders created, how do we use them? This is the sequence of steps we need to follow:  
-1.    Create a OpenGL Program  
+1.    Create an OpenGL program.  
 2.    Load the vertex and fragment shader code files.  
 3.    For each shader, create a new shader program and specify its type \(vertex, fragment\).  
 4.    Compile the shader.  
@@ -169,7 +169,7 @@ public class ShaderProgram {
 
 The constructor of the `ShaderProgram` creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly.
 
-Once the shader program has been linked, the compiled vertex and fragment shaders can be freed up \(by calling `glDetachShader`\)
+Once the shader program has been linked, the compiled vertex and fragment shaders can be freed up \(by calling `glDetachShader`\).
 
 Regarding verification, this is done through the `glValidateProgram` call. This method is used mainly for debugging purposes, and it should be removed when your game reaches production stage. This method tries to validate if the shader is correct given the **current OpenGL state**. This means, that validation may fail in some cases even if the shader is correct, due to the fact that the current state is not complete enough to run the shader \(some data may have not been uploaded yet\). So, instead of failing, we just print an error message to the standard error output.
 
@@ -226,9 +226,9 @@ float[] vertices = new float[]{
 };
 ```
 
-The following picture depicts the triangle in our coordinates system.
+The following picture depicts the triangle in our coordinate system.
 
-![Coordinates Syste](triangle_coordinates.png)
+![Triangle](triangle_coordinates.png)
 
 Now that we have our coordinates, we need to store them into our graphics card and tell OpenGL about the structure. We will introduce now two important concepts, Vertex Array Objects \(VAOs\) and Vertex Buffer Object \(VBOs\). If you get lost in the next code fragments remember that at the end what we are doing is sending the data that models the objects we want to draw to the graphics card memory. When we store it we get an identifier that serves us later to refer to it while drawing.
 
