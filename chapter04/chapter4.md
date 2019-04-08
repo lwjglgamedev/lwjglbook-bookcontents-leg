@@ -353,7 +353,9 @@ public void cleanup() {
 }
 ```
 
-And, that’s all! If you followed the steps carefully you will see something like this.
+And, that’s all! If you followed the steps carefully you will see something like this:
+
+![Triangle game](triangle_window.png)
 
 Our first triangle! You may think that this will not make it into the top ten game list, and you will be totally right. You may also think that this has been too much work for drawing a boring triangle. But keep in mind that we are introducing key concepts and preparing the base infrastructure to do more complex things. Please be patient and continue reading.
 
