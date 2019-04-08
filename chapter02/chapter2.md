@@ -47,7 +47,7 @@ double steps = 0.0;
 while (true) {
   double loopStartTime = getTime();
   double elapsed = loopStartTime - previous;
-  previous = current;
+  previous = loopStartTime;
   steps += elapsed;
 
   handleInput();
@@ -58,7 +58,7 @@ while (true) {
   }
 
   render();
-  sync(current);
+  sync(loopStartTime);
 }
 ```
 
