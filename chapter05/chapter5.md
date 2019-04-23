@@ -101,7 +101,7 @@ One important thing to note is this line:
 glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
 ```
 
-Our `Mesh` counts the number of vertices by dividing the position array by 3 \(since we are passing X, Y and Z coordinates\)\). Now that we can render more complex shapes, let us try to render a more complex shape. Let us render a quad. A quad can be constructed by using two triangles as shown in the next figure.
+Our `Mesh` counts the number of vertices by dividing the position array length by 3 \(since we are passing X, Y and Z coordinates\). Now that we can render more complex shapes, let us try to render a more complex shape. Let us render a quad. A quad can be constructed by using two triangles as shown in the next figure.
 
 ![Quad coordinates](quad_coordinates.png)
 
