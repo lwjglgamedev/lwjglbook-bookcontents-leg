@@ -2,7 +2,7 @@
 
 ## Projecting
 
-Let’s get back to our nice coloured quad we created in the previous chapter. If you look carefully at it, it more resembles a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
+Let’s get back to our nice coloured quad we created in the previous chapter. If you look carefully, you will see that the quad is distorted and appears as a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
 
 If you revisit our vertex shader code we are just passing our coordinates directly. That is, when we say that a vertex has a value for coordinate x of 0.5 we are saying to OpenGL to draw it at x position 0.5 on our screen. The following figure shows the OpenGL coordinates \(just for x and y axis\).
 
@@ -190,7 +190,7 @@ What is happening now is that we are drawing the quad too close to our camera. W
 
 ![Square coloured](square_coloured.png)
 
-If we continue pushing the quad backwards we will see it becoming smaller. Notice also that our quad does not resemble a rectangle anymore.
+If we continue pushing the quad backwards we will see it becoming smaller. Notice also that our quad does not appear as a rectangle anymore.
 
 ## Applying Transformations
 
