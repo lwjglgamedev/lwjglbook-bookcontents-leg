@@ -6,8 +6,8 @@ In this chapter we will continue talking about how OpenGL renders things. In ord
 package org.lwjglb.engine.graph;
 
 import java.nio.FloatBuffer;
-import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
