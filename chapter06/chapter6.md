@@ -8,7 +8,7 @@ If you revisit our vertex shader code we are just passing our coordinates direct
 
 ![Coordinates](coordinates.png)
 
-Those coordinates are mapped, considering our window size, to window coordinates \(which have the origin at the top-left corner of the previous figure\). So, if our window has a size of 900x480, OpenGL coordinates \(1,0\) will be mapped to coordinates \(900, 0\) creating a rectangle instead of a quad.
+Those coordinates are mapped, considering our window size, to window coordinates \(which have the origin at the top-left corner of the previous figure\). So, if our window has a size of 900x580, OpenGL coordinates \(1,0\) will be mapped to coordinates \(900, 0\) creating a rectangle instead of a quad.
 
 ![Rectangle](rectangle.png)
 
