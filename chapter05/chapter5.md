@@ -183,7 +183,7 @@ public void cleanUp() {
 Finally, we need to modify our drawing call that used the `glDrawArrays` method:
 
 ```java
-glDrawArrays(GL_TRIANGLES, 0, mesh. getVertexCount());
+glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
 ```
 
 To another call that uses the method `glDrawElements`:
