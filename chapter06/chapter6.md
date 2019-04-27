@@ -163,7 +163,7 @@ public void setUniform(String uniformName, Matrix4f value) {
 }
 ```
 
-As you can see we are creating buffers in a different way here. We are using auto-managed buffers, and allocating them on the stack. This is due to the fact that the size of this buffer is small and that it will not be used beyond this method. Thus, we use the `MemoryStack`class.
+As you can see we are creating buffers in a different way here. We are using auto-managed buffers, and allocating them on the stack. This is due to the fact that the size of this buffer is small and that it will not be used beyond this method. Thus, we use the `MemoryStack` class.
 
 Now we can use that method in the `Renderer` class in the `render` method, after the shader program has been bound:
 
