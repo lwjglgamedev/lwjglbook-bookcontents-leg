@@ -212,7 +212,7 @@ That world matrix will be calculated like this \(the order is important since mu
 
 
 $$
-World Matrix\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+World Matrix=\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
 $$
 
 
