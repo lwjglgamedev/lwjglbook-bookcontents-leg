@@ -220,7 +220,10 @@ If we include our projection matrix in the transformation matrix it would be lik
 
 
 $$
-Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]=\left[Proj Matrix\right]\left[World Matrix\right]
+\begin{array}{lcl}
+Transf & = & \left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right] \\
+ & = & \left[Proj Matrix\right]\left[World Matrix\right]
+\end{array}
 $$
 
 
