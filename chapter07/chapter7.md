@@ -46,7 +46,7 @@ float[] colours = new float[]{
 };
 ```
 
-Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order. If you do this by hand, is easy to make mistakes. Allways put the face that you want to define indices for in front of you. Then, idenifie the vertices and draw the triangles in counter-clock wise order.
+Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order. If you do this by hand, is easy to make mistakes. Always put the face that you want to define indices for in front of you. Then, identify the vertices and draw the triangles in counter-clock wise order.
 
 ```java
 int[] indices = new int[] {
@@ -108,7 +108,7 @@ So basically what we must do, in order to apply a texture to a model, is assigni
 
 How do we relate texture coordinates with our position coordinates? Easy, in the same way we passed the colour information. We set up a VBO which will have a texture coordinate for each vertex position.
 
-So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow another approach. We will use LWJGL wrapper for [stb](https://github.com/nothings/stb) library. In order to do that,  we need first to declare that dependency, includeing the natives in our `pom.xml` file.
+So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow another approach. We will use LWJGL wrapper for [stb](https://github.com/nothings/stb) library. In order to do that,  we need first to declare that dependency, including the natives in our `pom.xml` file.
 
 ```xml
 <dependency>
@@ -126,7 +126,7 @@ So let’s start modifying the code base to use textures in our 3D cube. The fir
 </dependency>
 ```
 
-One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling `glEnable(GL_TEXTURE_2D)`. This is true if you are using the fixed-function pipepline. Since we are using GLSL shaders it is not required anymore.
+One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling `glEnable(GL_TEXTURE_2D)`. This is true if you are using the fixed-function pipeline. Since we are using GLSL shaders it is not required anymore.
 
 Now we will create a new `Texture` class that will perform all the necessary steps to load a texture. First we need to load the image data into a `ByteBuffer`. The code is defined as this:
 
@@ -358,7 +358,7 @@ This is done, by this fragment of code:
 
 `glEnable(GL_BLEND);`
 
-But just by enabling blending, transparencies still will not show up. We need also to intsruct OpenGL about how the blending will be applied. This is done through the glBlendFunc method. For instance:
+But just by enabling blending, transparencies still will not show up. We need also to instruct OpenGL about how the blending will be applied. This is done through the glBlendFunc method. For instance:
 
 `glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);`
 
