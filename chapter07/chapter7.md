@@ -201,7 +201,7 @@ The `glTexImage2D` method has the following parameters:
 * `type`: Specifies the data type of the pixel data. We are using unsigned bytes for this.
 * `data`: The buffer that stores our data.
 
-In some code snippets that you may find yow will probably see that filtering parameters are set up before calling the `glTexImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated.
+In some code snippets that you may find, you will probably see that filtering parameters are set up before calling the `glTexImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated.
 
 If those parameters are not set the texture will not be displayed. So before the `glTexImage2D` method you could see something like this:
 
