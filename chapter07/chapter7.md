@@ -100,7 +100,7 @@ Now we are going to apply a texture to our cube. A texture is an image which is 
 
 ![Texture mapping](texture_mapping.png)
 
-The texture image does not have to have the same size as the model. It can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture. You can control how this process is done when a specific texture is created.
+The texture image does not have to be the same size as the model. It can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture. You can control how this process is done when a specific texture is created.
 
 So basically what we must do, in order to apply a texture to a model, is assigning texture coordinates to each of our vertices. The texture coordinate system is a bit different from the coordinate system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y. Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is 1.
 
