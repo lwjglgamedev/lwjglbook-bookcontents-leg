@@ -90,7 +90,7 @@ Now that we have our matrix, how do we use it? We need to use it in our shader, 
 
 The answer is to use “uniforms”. Uniforms are global GLSL variables that shaders can use and that we will employ to communicate with them.
 
-So we need to modify our vertex shader code and declare a new uniform called projectionMatrix and use it to calculate the projected position.
+So we need to modify our vertex shader code and declare a new uniform called `projectionMatrix` and use it to calculate the projected position.
 
 ```glsl
 #version 330
