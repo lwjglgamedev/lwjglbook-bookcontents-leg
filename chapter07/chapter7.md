@@ -189,7 +189,7 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(),
     decoder.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 ```
 
-The `glTextImage2D` method has the following parameters:
+The `glTexImage2D` method has the following parameters:
 
 * `target`: Specifies the target texture \(its type\). In this case: `GL_TEXTURE_2D`. 
 * `level`: Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image. More on this later.
