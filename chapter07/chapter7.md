@@ -218,7 +218,7 @@ In order to generate mipmaps we just need to set the following line \(in this ca
 glGenerateMipmap(GL_TEXTURE_2D);
 ```
 
-Finally we can free the data for the raw image data itself:
+Finally we can free the memory for the raw image data itself:
 
 ```
 stbi_image_free(buf);
