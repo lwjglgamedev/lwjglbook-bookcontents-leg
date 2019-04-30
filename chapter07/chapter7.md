@@ -201,7 +201,7 @@ The `glTexImage2D` method has the following parameters:
 * `type`: Specifies the data type of the pixel data. We are using unsigned bytes for this.
 * `data`: The buffer that stores our data.
 
-In some code snippets that you may find, you will probably see that filtering parameters are set up before calling the `glTexImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated. If those parameters are not set the texture will not be displayed. So before the `glTexImage2D` method you could see something like this:
+In some code snippets that you may find, you will probably see that filtering parameters are set up before calling the `glTexImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated. If filtering parameters are not set the texture will not be displayed. So before the `glTexImage2D` method you could see something like this:
 
 ```java
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -210,7 +210,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 These parameters basically say that when a pixel is drawn with no direct one to one association to a texture coordinate it will pick the nearest texture coordinate point.
 
-By this moment we will not set up those parameters. Instead we will generate a mipmap. A mipmap is a decreasing resolution set of images generated from a high detailed texture. Those lower resolution images will be used automatically when our object is scaled.
+By this moment we will not set up filtering parameters. Instead we will generate a mipmap. A mipmap is a decreasing resolution set of images generated from a high detailed texture. Those lower resolution images will be used automatically when our object is scaled.
 
 In order to generate mipmaps we just need to set the following line \(in this case after the `glTexImage2D` method\):
 
