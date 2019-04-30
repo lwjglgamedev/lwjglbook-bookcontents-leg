@@ -263,7 +263,7 @@ void main()
 }
 ```
 
-In the fragment shader we must use those texture coordinates in order to set the pixel colours:
+In the fragment shader we must use the texture coordinates in order to set the pixel colours:
 
 ```glsl
 #version 330
