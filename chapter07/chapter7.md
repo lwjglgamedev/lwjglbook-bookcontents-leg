@@ -243,7 +243,7 @@ glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
 glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 ```
 
-Now we need to use those textures in our shader. In the vertex shader we have changed the second uniform parameter because now it’s a `vec2` \(we also changed the uniform name, so remember to change it in the `Renderer` class\). The vertex shader, as in the colour case, just passes the texture coordinates to be used by the fragment shader.
+Now we need to use the texture in our shader. In the vertex shader we have changed the second uniform parameter because now it’s a `vec2` \(we also changed the uniform name, so remember to change it in the `Renderer` class\). The vertex shader, as in the colour case, just passes the texture coordinates to be used by the fragment shader.
 
 ```glsl
 #version 330
