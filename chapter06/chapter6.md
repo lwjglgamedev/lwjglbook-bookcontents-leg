@@ -22,7 +22,7 @@ For those not familiar with matrices, a matrix is a bi-dimensional array of numb
 
 ![2x2 Matrix](2_2_matrix.png)
 
-Matrices have a number of basic operations that can be applied to them \(such as addition, multiplication, etc.\) that you can consult in any maths book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
+Matrices have a number of basic operations that can be applied to them \(such as addition, multiplication, etc.\) that you can consult in a math book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
 
 You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid. The following picture shows a top view of that area.
 
