@@ -422,7 +422,7 @@ public void render(Window window, GameItem[] gameItems) {
 
 We update the projection matrix once per `render` call. By doing it this way we can deal with window resize operations. Then we iterate over the `GameItem` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the `Mesh` is drawn. The projection matrix is the same for all the items to be rendered. This is the reason why it’s a separate variable in our `Transformation` class.
 
-We moved the rendering code to draw a `Mesh` to this class:
+We moved the rendering code to draw a `Mesh` to its class:
 
 ```java
 public void render() {
