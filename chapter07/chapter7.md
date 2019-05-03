@@ -185,8 +185,8 @@ glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 And finally we can upload our texture data:
 
 ```java
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(),
-    decoder.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 ```
 
 The `glTexImage2D` method has the following parameters:
