@@ -2,13 +2,13 @@
 
 ## Projecting
 
-Let’s get back to our nice coloured quad we created in the previous chapter. If you look carefully at it, it more resembles a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
+Let’s get back to our nice coloured quad we created in the previous chapter. If you look carefully, you will see that the quad is distorted and appears as a rectangle. You can even change the width of the window from 600 pixels to 900 and the distortion will be more evident. What’s happening here?
 
 If you revisit our vertex shader code we are just passing our coordinates directly. That is, when we say that a vertex has a value for coordinate x of 0.5 we are saying to OpenGL to draw it at x position 0.5 on our screen. The following figure shows the OpenGL coordinates \(just for x and y axis\).
 
 ![Coordinates](coordinates.png)
 
-Those coordinates are mapped, considering our window size, to window coordinates \(which have the origin at the top-left corner of the previous figure\). So, if our window has a size of 900x480, OpenGL coordinates \(1,0\) will be mapped to coordinates \(900, 0\) creating a rectangle instead of a quad.
+Those coordinates are mapped, considering our window size, to window coordinates \(which have the origin at the top-left corner of the previous figure\). So, if our window has a size of 900x580, OpenGL coordinates \(1,0\) will be mapped to coordinates \(900, 0\) creating a rectangle instead of a quad.
 
 ![Rectangle](rectangle.png)
 
@@ -16,15 +16,15 @@ But, the problem is more serious than that. Modify the z coordinate of our quad 
 
 But, wait. Should this not be handled by the z coordinate? The answer is yes and no. The z coordinate tells OpenGL that an object is closer or farther away, but OpenGL does not know anything about the size of your object. You could have two objects of different sizes, one closer and smaller and one bigger and further that could be projected correctly onto the screen with the same size \(those would have same x and y coordinates but different z\). OpenGL just uses the coordinates we are passing, so we must take care of this. We need to correctly project our coordinates.
 
-Now that we have diagnosed the problem, how do we do this? The answer is using a projection matrix or frustum. The projection matrix will take care of the aspect ratio \(the relation between size and height\) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and how far the maximum distance is that should be displayed.
+Now that we have diagnosed the problem, how do we fix it? The answer is using a projection matrix or frustum. The projection matrix will take care of the aspect ratio \(the relation between size and height\) of our drawing area so objects won’t be distorted. It also will handle the distance so objects far away from us will be drawn smaller. The projection matrix will also consider our field of view and the maximum distance to be displayed.
 
 For those not familiar with matrices, a matrix is a bi-dimensional array of numbers arranged in columns and rows. Each number inside a matrix is called an element. A matrix order is the number of rows and columns. For instance, here you can see a 2x2 matrix \(2 rows and 2 columns\).
 
 ![2x2 Matrix](2_2_matrix.png)
 
-Matrices have a number of basic operations that can be applied to them \(such as addition, multiplication, etc.\) that you can consult in any maths book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
+Matrices have a number of basic operations that can be applied to them \(such as addition, multiplication, etc.\) that you can consult in a math book. The main characteristics of matrices, related to 3D graphics, is that they are very useful to transform points in the space.
 
-You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be a truncated pyramid. The following picture shows a top view of that area.
+You can think about the projection matrix as a camera, which has a field of view and a minimum and maximum distance. The vision area of that camera will be obtained from a truncated pyramid. The following picture shows a top view of that area.
 
 ![Projection Matrix concepts](projection_matrix.png)
 
@@ -90,7 +90,7 @@ Now that we have our matrix, how do we use it? We need to use it in our shader, 
 
 The answer is to use “uniforms”. Uniforms are global GLSL variables that shaders can use and that we will employ to communicate with them.
 
-So we need to modify our vertex shader code and declare a new uniform called projectionMatrix and use it to calculate the projected position.
+So we need to modify our vertex shader code and declare a new uniform called `projectionMatrix` and use it to calculate the projected position.
 
 ```glsl
 #version 330
@@ -163,7 +163,7 @@ public void setUniform(String uniformName, Matrix4f value) {
 }
 ```
 
-As you can see we are creating buffers in a different way here. We are using auto-managed buffers, and allocating them on the stack. This is due to the fact that the size of this buffer is small and that it will not be used beyond this method. Thus, we use the `MemoryStack`class.
+As you can see we are creating buffers in a different way here. We are using auto-managed buffers, and allocating them on the stack. This is due to the fact that the size of this buffer is small and that it will not be used beyond this method. Thus, we use the `MemoryStack` class.
 
 Now we can use that method in the `Renderer` class in the `render` method, after the shader program has been bound:
 
@@ -190,7 +190,7 @@ What is happening now is that we are drawing the quad too close to our camera. W
 
 ![Square coloured](square_coloured.png)
 
-If we continue pushing the quad backwards we will see it becoming smaller. Notice also that our quad does not resemble a rectangle anymore.
+If we continue pushing the quad backwards we will see it becoming smaller. Notice also that our quad does not appear as a rectangle anymore.
 
 ## Applying Transformations
 
@@ -204,15 +204,15 @@ So right now, in order to do that representation we need to provide some basic o
 
 ![Transformations](transformations.png)
 
-The operations described above are known as transformations. And you probable may be guessing that the way we are going to achieve that is by multiplying our coordinates by a set of matrices \(one for translation, one for rotation and one for scaling\). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
+The operations described above are known as transformations. And you are probably guessing, correctly, that the way we are going to achieve that is by multiplying our coordinates by a set of matrices \(one for translation, one for rotation and one for scaling\). Those three matrices will be combined into a single matrix called world matrix and passed as a uniform to our vertex shader.
 
-The reason why it is called world matrix is because we are transforming from model coordinates to world coordinates. When you will learn about loading 3D models you will see that those models are defined in their own coordinate systems. They don’t know the size of your 3D space and they need to be placed in it. So when we multiply our coordinates by our matrix what we are doing is transforming from a coordinate system \(the model one\) to another coordinate system \(the one for our 3D world\).
+The reason why it is called world matrix is because we are transforming from model coordinates to world coordinates. When you learn about loading 3D models you will see that those models are defined in their own coordinate systems. They don’t know the size of your 3D space and they need to be placed in it. So when we multiply our coordinates by our matrix what we are doing is transforming from one coordinate system \(the model one\) to another \(the one for our 3D world\).
 
 That world matrix will be calculated like this \(the order is important since multiplication using matrices is not commutative\):
 
 
 $$
-World Matrix\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
+World Matrix=\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]
 $$
 
 
@@ -220,7 +220,10 @@ If we include our projection matrix in the transformation matrix it would be lik
 
 
 $$
-Transf=\left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right]=\left[Proj Matrix\right]\left[World Matrix\right]
+\begin{array}{lcl}
+Transf & = & \left[Proj Matrix\right]\left[Translation Matrix\right]\left[Rotation Matrix\right]\left[Scale Matrix\right] \\
+ & = & \left[Proj Matrix\right]\left[World Matrix\right]
+\end{array}
 $$
 
 
@@ -417,9 +420,9 @@ public void render(Window window, GameItem[] gameItems) {
 }
 ```
 
-We update the projection matrix once per `render` call. By doing it this way we can deal with window resize operations. Then we iterate over the `GameItem` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the Mesh is drawn. The projection matrix is the same for all the items to be rendered. This is the reason why it’s a separate variable in our Transformation class.
+We update the projection matrix once per `render` call. By doing it this way we can deal with window resize operations. Then we iterate over the `GameItem` array and create a transformation matrix according to the position, rotation and scale of each of them. This matrix is pushed to the shader and the `Mesh` is drawn. The projection matrix is the same for all the items to be rendered. This is the reason why it’s a separate variable in our `Transformation` class.
 
-We moved the rendering code to draw a Mesh to this class:
+We moved the rendering code to draw a `Mesh` to its class:
 
 ```java
 public void render() {
@@ -461,7 +464,7 @@ As you can see the code is exactly the same. We are using the uniform to correct
 
 Another important thing to think about is, why don’t we pass the translation, rotation and scale matrices instead of combining them into a world matrix? The reason is that we should try to limit the matrices we use in our shaders. Also keep in mind that the matrix multiplication that we do in our shader is done once per each vertex. The projection matrix does not change between render calls and the world matrix does not change per `GameItem` instance. If we passed the translation, rotation and scale matrices independently we would be doing many more matrix multiplications. Think about a model with tons of vertices. That’s a lot of extra operations.
 
-But you may now think, that if the world matrix does not change per `GameItem` instance, why didn't we do the matrix multiplication in our Java class? We would multiply the projection matrix and the world matrix just once per GameItem and we send it as a single uniform. In this case we would be saving many more operations. The answer is that this is a valid point right now. But when we add more features to our game engine we will need to operate with world coordinates in the shaders anyway, so it’s better to handle those two matrices in an independent way.
+But you may think now that if the world matrix does not change per `GameItem` instance, why didn't we do the matrix multiplication in our Java class? We could multiply the projection matrix and the world matrix just once per `GameItem` and send it as a single uniform. In this case we would be saving many more operations, right? The answer is that this is a valid point for now, but when we add more features to our game engine we will need to operate with world coordinates in the shaders anyway, so it’s better to handle those two matrices in an independent way.
 
 Finally we only need to change the `DummyGame` class to create an instance of `GameItem` with its associated `Mesh` and add some logic to translate, rotate and scale our quad. Since it’s only a test example and does not add too much you can find it in the source code that accompanies this book.
 
