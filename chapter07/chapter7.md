@@ -354,10 +354,10 @@ As you have seen, when we load an image we retrieve the four RGBA components inc
 
 `glEnable(GL_BLEND);`
 
-But just by enabling blending, transparencies still will not show up. We need also to instruct OpenGL about how the blending will be applied. This is done through the glBlendFunc method:
+But just by enabling blending, transparencies still will not show up. We need also to instruct OpenGL about how the blending will be applied. This is done through the `glBlendFunc` method:
 
 `glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);`
 
-You can check an excellent explanation about the details of the different functions that can be applied [here]( https://learnopengl.com/Advanced-OpenGL/Blending)
+You can check an excellent explanation about the details of the different functions that can be applied [here]( https://learnopengl.com/Advanced-OpenGL/Blending).
 
 Even after you have enabled blending and set up a function you may not see correct values for transparencies. The reason behind that is depth testing. When fragments are discarded using depth values, we can end up blending fragments with transparent values with the background, not with fragments that were behind them. This will result in wrong rendering artifacts. In order to solve this we need to draw first opaque objects and then render objects that have transparencies in decreasing depth order (far objects should be drawn first).
