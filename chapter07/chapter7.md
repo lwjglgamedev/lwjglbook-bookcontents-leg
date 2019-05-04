@@ -224,7 +224,7 @@ Finally we can free the memory for the raw image data itself:
 stbi_image_free(buf);
 ```
 
-And that’s all, we have successfully loaded our texture. Now we need to use it. As we said before we need to pass texture coordinates as another VBO. So we will modify our Mesh class to accept an array of floats, that contains texture coordinates, instead of the colour \(we could have colours and texture but in order to simplify it we will strip colours off\). Our constructor will be like this:
+And that’s all, we have successfully loaded our texture. Now we need to use it. As we said before we need to pass texture coordinates as another VBO. So we will modify our `Mesh` class to accept an array of floats that contains texture coordinates instead of colours \(we could have both but in order to simplify it we will strip colours off\). Our constructor will be like this:
 
 ```java
 public Mesh(float[] positions, float[] textCoords, int[] indices,
