@@ -231,7 +231,7 @@ public Mesh(float[] positions, float[] textCoords, int[] indices,
     Texture texture)
 ```
 
-The texture coordinates VBO is created in the same way as the colour one. The only difference is that it has two components per position instead of three:
+The texture coordinates VBO is created in the same way as the colour one. The only difference is that it has two components per vertex attribute instead of three:
 
 ```java
 vboId = glGenBuffers();
