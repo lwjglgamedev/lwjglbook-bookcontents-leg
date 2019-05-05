@@ -281,7 +281,7 @@ void main()
 
 Before analyzing the code let’s clarify some concepts. A graphics card has several spaces or slots to store textures. Each of these spaces is called a texture unit. When we are working with textures we must set the texture unit that we want to work with. As you can see we have a new uniform named `texture_sampler`. That uniform has a `sampler2D` type and will hold the value of the texture unit that we want to work with.
 
-In the main function we use the texture `lookup` function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
+In the main function we use the texture lookup function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
 
 Thus, in our `ShaderProgram` class we will create a new method that allows us to set an integer value for a uniform:
 
