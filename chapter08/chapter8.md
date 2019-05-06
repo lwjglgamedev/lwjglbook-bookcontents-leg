@@ -262,7 +262,7 @@ The `MouseInput` class provides an `init` method which should be called during t
 
 The `MouseInput` class provides an input method which should be called when game input is processed. This method calculates the mouse displacement from the previous position and stores it into `Vector2f` `displVec` variable so it can be used by our game.
 
-The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter in the `init` and `update` methods of the game implementation \(so we need to change the interface accordingly\).
+The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter in the `input` and `update` methods of the game implementation \(so we need to change the interface `IGameLogic` accordingly\).
 
 ```java
 void input(Window window, MouseInput mouseInput);
