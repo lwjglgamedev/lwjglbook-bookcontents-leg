@@ -44,7 +44,7 @@ So, how many matrices should we push to our vertex shader ? You may see some cod
 
 But actually the most convenient approach is to combine the view and the world matrix. Why this? Because remember that the whole camera concept is a trick, what we are doing is pushing the whole world to simulate world displacement and to show only a small portion of the 3D world. So if we work directly with world coordinates we may be working with world coordinates that are far away from the origin and we may incur in some precision problems. If we work in what’s called the camera space we will be working with points that, although are far away from the world origin, are closer to the camera. The matrix that results of the combination of the view and the world matrix is often called as the model view matrix.
 
-So let’s start modifying our code to support a camera. First of all we will create a new class called `Camera` which will hold the position and rotation state of our camera. This class will provide methods to set the new position or rotation state \(`setPosition` or `setRotation`\) or to update those values with an offset upon the current state \(`movePosition` and `moveRotation`\)
+So let’s start modifying our code to support a camera. First of all we will create a new class called `Camera` which will hold the position and rotation state of our camera. This class will provide methods to set the new position or rotation state \(`setPosition` or `setRotation`\) or to update those values with an offset upon the current state \(`movePosition` and `moveRotation`\).
 
 ```java
 package org.lwjglb.engine.graph;
@@ -107,7 +107,7 @@ public class Camera {
 }
 ```
 
-Next in the `Transformation` class we will hold a new matrix to hold the values of the view matrix.
+Next in the `Transformation` class we will define a new matrix to hold the values of the view matrix.
 
 ```java
 private final Matrix4f viewMatrix;
@@ -130,7 +130,7 @@ public Matrix4f getViewMatrix(Camera camera) {
 }
 ```
 
-As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the `movePosition` method of the `Camera` class we just not simply increase the camera position by and offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
+As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the `movePosition` method of the `Camera` class we just not simply increase the camera position by an offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
 
 Besides what is mentioned above, we do not have here a full free fly camera \(for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forward\). This will be done in later chapters since is a little bit more complex.
 
