@@ -155,9 +155,7 @@ private static int loadTexture(String fileName) throws Exception {
      }
 	 [... More next ....]
 ```
-The first thing we do is to allocate some memory for the library to return the image data itself (a `ByteBuffer`), and the width and  height. Then we need to transform the `CLASSPATH` relative path for the image to an absolute path.
-
-Then we call to the `stbi_load` method to actually load the image. It requires three parameters:
+The first thing we do is to allocate `IntBuffer`s for the library to return the image size and number of channels. Then we transform the `CLASSPATH` relative path for the image to an absolute path. Finally, we call the `stbi_load` method to actually load the image into a `ByteBuffer`. This method requires the following parameters:
 
 * `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embeded into a JAR file.
 * `width`:  Image width. This will be populated with the image width.
