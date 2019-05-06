@@ -139,17 +139,16 @@ Finally we will remove the previous method `getWorldMatrix` and add a new one ca
 ```java
 public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
     Vector3f rotation = gameItem.getRotation();
-    modelViewMatrix.identity().translate(gameItem.getPosition()).
-        rotateX((float)Math.toRadians(-rotation.x)).
-        rotateY((float)Math.toRadians(-rotation.y)).
-        rotateZ((float)Math.toRadians(-rotation.z)).
-        scale(gameItem.getScale());
-    Matrix4f viewCurr = new Matrix4f(viewMatrix);
-    return viewCurr.mul(modelViewMatrix);
+    modelViewMatrix.set(viewMatrix).translate(gameItem.getPosition()).
+		rotateX((float)Math.toRadians(-rotation.x)).
+		rotateY((float)Math.toRadians(-rotation.y)).
+		rotateZ((float)Math.toRadians(-rotation.z)).
+			scale(gameItem.getScale());
+    return modelViewMatrix;
 }
 ```
 
-The `getModelViewMatrix` method will be called per each `GameItem` instance so we must work over a copy of the view matrix so transformations do not get accumulated in each call \(Remember that `Matrix4f` class is not immutable\).
+The `getModelViewMatrix` method will be called once per each `GameItem` instance.
 
 In the `render` method of the `Renderer` class we just need to update the view matrix according to the camera values, just after the projection matrix is also updated.
 
