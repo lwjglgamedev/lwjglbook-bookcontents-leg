@@ -46,7 +46,7 @@ float[] colours = new float[]{
 };
 ```
 
-Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order. If you do this by hand, is easy to make mistakes. Allways put the face that you want to define indices for in front of you. Then, idenifie the vertices and draw the triangles in counter-clock wise order.
+Finally, since a cube is made of six faces we need to draw twelve triangles \(two per face\), so we need to update the indices array. Remember that triangles must be defined in counter-clock wise order. If you do this by hand, is easy to make mistakes. Always put the face that you want to define indices for in front of you. Then, identify the vertices and draw the triangles in counter-clock wise order.
 
 ```java
 int[] indices = new int[] {
@@ -100,7 +100,7 @@ Now we are going to apply a texture to our cube. A texture is an image which is 
 
 ![Texture mapping](texture_mapping.png)
 
-The texture image does not have to have the same size as the model. It can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture. You can control how this process is done when a specific texture is created.
+The texture image does not have to be the same size as the model. It can be larger or smaller. OpenGL will extrapolate the colour if the pixel to be processed cannot be mapped to a specific point in the texture. You can control how this process is done when a specific texture is created.
 
 So basically what we must do, in order to apply a texture to a model, is assigning texture coordinates to each of our vertices. The texture coordinate system is a bit different from the coordinate system of our model. First of all, we have a 2D texture so our coordinates will only have two components, x and y. Besides that, the origin is setup in the top left corner of the image and the maximum value of the x or y value is 1.
 
@@ -108,7 +108,7 @@ So basically what we must do, in order to apply a texture to a model, is assigni
 
 How do we relate texture coordinates with our position coordinates? Easy, in the same way we passed the colour information. We set up a VBO which will have a texture coordinate for each vertex position.
 
-So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow another approach. We will use LWJGL wrapper for [stb](https://github.com/nothings/stb) library. In order to do that,  we need first to declare that dependency, includeing the natives in our `pom.xml` file.
+So let’s start modifying the code base to use textures in our 3D cube. The first step is to load the image that will be used as a texture. For this task, in previous versions of LWJGL, the Slick2D library was commonly used. At the moment of this writing it seems that this library is not compatible with LWJGL 3 so we will need to follow another approach. We will use the LWJGL wrapper for the [stb](https://github.com/nothings/stb) library. In order to do that,  we need first to declare that dependency, including the natives in our `pom.xml` file.
 
 ```xml
 <dependency>
@@ -126,7 +126,7 @@ So let’s start modifying the code base to use textures in our 3D cube. The fir
 </dependency>
 ```
 
-One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling `glEnable(GL_TEXTURE_2D)`. This is true if you are using the fixed-function pipepline. Since we are using GLSL shaders it is not required anymore.
+One thing that you may see in some web pages is that the first thing we must do is enable the textures in our OpenGL context by calling `glEnable(GL_TEXTURE_2D)`. This is true if you are using the fixed-function pipeline. Since we are using GLSL shaders it is not required anymore.
 
 Now we will create a new `Texture` class that will perform all the necessary steps to load a texture. First we need to load the image data into a `ByteBuffer`. The code is defined as this:
 
@@ -155,9 +155,7 @@ private static int loadTexture(String fileName) throws Exception {
      }
 	 [... More next ....]
 ```
-The first thing we do is to allocate some memory for the library to return the image data itself (a `ByteBuffer`), and the width and  height. Then we need to transform the `CLASSPATH` relative path for the image to an absolute path.
-
-Then we call to the `stbi_load` method to actually load the image. It requires three parameters:
+The first thing we do is to allocate `IntBuffer`s for the library to return the image size and number of channels. Then we transform the `CLASSPATH` relative path for the image to an absolute path. Finally, we call the `stbi_load` method to actually load the image into a `ByteBuffer`. This method requires the following parameters:
 
 * `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embeded into a JAR file.
 * `width`:  Image width. This will be populated with the image width.
@@ -185,11 +183,11 @@ glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 And finally we can upload our texture data:
 
 ```java
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, decoder.getWidth(),
-    decoder.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
 ```
 
-The `glTextImage2D` method has the following parameters:
+The `glTexImage2D` method has the following parameters:
 
 * `target`: Specifies the target texture \(its type\). In this case: `GL_TEXTURE_2D`. 
 * `level`: Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image. More on this later.
@@ -201,39 +199,37 @@ The `glTextImage2D` method has the following parameters:
 * `type`: Specifies the data type of the pixel data. We are using unsigned bytes for this.
 * `data`: The buffer that stores our data.
 
-In some code snippets that you may find yow will probably see that filtering parameters are set up before calling the `glTextImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated.
-
-If those parameters are not set the texture will not be displayed. So before the `glTextImage2D` method you could see something like this:
+In some code snippets that you may find, you will probably see that filtering parameters are set up before calling the `glTexImage2D` method. Filtering refers to how the image will be drawn when scaling and how pixels will be interpolated. If filtering parameters are not set the texture will not be displayed. So before the `glTexImage2D` method you could see something like this:
 
 ```java
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 ```
 
-This parameter basically says that when a pixel is drawn with no direct one to one association to a texture coordinate it will pick the nearest texture coordinate point.
+These parameters basically say that when a pixel is drawn with no direct one to one association to a texture coordinate it will pick the nearest texture coordinate point.
 
-By this moment we will not set up those parameters. Instead we will generate a mipmap. A mipmap is a decreasing resolution set of images generated from a high detailed texture. Those lower resolution images will be used automatically when our object is scaled.
+By this moment we will not set up filtering parameters. Instead we will generate a mipmap. A mipmap is a decreasing resolution set of images generated from a high detailed texture. These lower resolution images will be used automatically when our object is scaled.
 
-In order to generate mipmaps we just need to set the following line \(in this case after the glTextImage2D method:
+In order to generate mipmaps we just need to set the following line \(in this case after the `glTexImage2D` method\):
 
 ```java
 glGenerateMipmap(GL_TEXTURE_2D);
 ```
 
-Finally we can free the data for the raw image data itself:
+Finally we can free the memory for the raw image data itself:
 
 ```
 stbi_image_free(buf);
 ```
 
-And that’s all, we have successfully loaded our texture. Now we need to use it. As we said before we need to pass texture coordinates as another VBO. So we will modify our Mesh class to accept an array of floats, that contains texture coordinates, instead of the colour \(we could have colours and texture but in order to simplify it we will strip colours off\). Our constructor will be like this:
+And that’s all, we have successfully loaded our texture. Now we need to use it. As we said before we need to pass texture coordinates as another VBO. So we will modify our `Mesh` class to accept an array of floats that contains texture coordinates instead of colours \(we could have both but in order to simplify it we will strip colours off\). Our constructor will be like this:
 
 ```java
 public Mesh(float[] positions, float[] textCoords, int[] indices,
     Texture texture)
 ```
 
-The texture coordinates VBO is created in the same way as the colour one. The only difference is that it has two elements instead of three:
+The texture coordinates VBO is created in the same way as the colour one. The only difference is that it has two components per vertex attribute instead of three:
 
 ```java
 vboId = glGenBuffers();
@@ -245,7 +241,7 @@ glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
 glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 ```
 
-Now we need to use those textures in our shader. In the vertex shader we have changed the second uniform parameter because now it’s a `vec2` \(we also changed the uniform name, so remember to change it in the `Renderer` class\). The vertex shader, as in the colour case, just passes the texture coordinates to be used by the fragment shader.
+Now we need to use the texture in our shader. In the vertex shader we have changed the second uniform parameter because now it’s a `vec2` \(we also changed the uniform name, so remember to change it in the `Renderer` class\). The vertex shader, as in the colour case, just passes the texture coordinates to be used by the fragment shader.
 
 ```glsl
 #version 330
@@ -265,7 +261,7 @@ void main()
 }
 ```
 
-In the fragment shader we must use those texture coordinates in order to set the pixel colours:
+In the fragment shader we must use the texture coordinates in order to set the pixel colours:
 
 ```glsl
 #version 330
@@ -283,7 +279,7 @@ void main()
 
 Before analyzing the code let’s clarify some concepts. A graphics card has several spaces or slots to store textures. Each of these spaces is called a texture unit. When we are working with textures we must set the texture unit that we want to work with. As you can see we have a new uniform named `texture_sampler`. That uniform has a `sampler2D` type and will hold the value of the texture unit that we want to work with.
 
-In the main function we use the texture `lookup` function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
+In the main function we use the texture lookup function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
 
 Thus, in our `ShaderProgram` class we will create a new method that allows us to set an integer value for a uniform:
 
@@ -352,18 +348,14 @@ In the next chapters we will learn how to load models generated by 3D modeling t
 
 ## A brief note about transparencies
 
-As you have seen, when we load an image, we retrieve the four RGBA components, which include the transparency level. But, if you load a texture with transparencies you may not see anything. In other to support that we need to enable blending.
-
-This is done, by this fragment of code:
+As you have seen, when we load an image we retrieve the four RGBA components including the transparency level. But if you load a texture with transparencies you may not see anything. In order to support transparency we need to enable blending. This is done by this fragment of code:
 
 `glEnable(GL_BLEND);`
 
-But just by enabling blending, transparencies still will not show up. We need also to intsruct OpenGL about how the blending will be applied. This is done through the glBlendFunc method. For instance:
+But just by enabling blending, transparencies still will not show up. We need also to instruct OpenGL about how the blending will be applied. This is done through the `glBlendFunc` method:
 
 `glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);`
 
-You can check an excellent explanation about the details of the different functions that can be applied [here]( https://learnopengl.com/Advanced-OpenGL/Blending)
+You can check an excellent explanation about the details of the different functions that can be applied [here]( https://learnopengl.com/Advanced-OpenGL/Blending).
 
-Event after you have enabled blending and set up a function you may not see correct values for transparencies. The reason behind that is depth testing. When fragments are discarded using depth values, we can end up blending fragments with transparent values with the background, not with fragments that were behind them. This will result in wrong rendering artifacts.
-
-In order to solve that there we need to draw first opaque objects and then render objects that have transparencies in decreasing depth order (far objects should be drawn first).
+Even after you have enabled blending and set up a function you may not see correct values for transparencies. The reason behind that is depth testing. When fragments are discarded using depth values, we can end up blending fragments with transparent values with the background, not with fragments that were behind them. This will result in wrong rendering artifacts. In order to solve this we need to draw first opaque objects and then render objects that have transparencies in decreasing depth order (far objects should be drawn first).
