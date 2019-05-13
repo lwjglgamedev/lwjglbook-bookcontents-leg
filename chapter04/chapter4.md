@@ -20,11 +20,11 @@ The geometry processing stage connects the vertices that are transformed by the 
 
 The rasterization stage takes the triangles generated in the previous stages, clips them and transforms them into pixel-sized fragments.
 
-Those fragments are used during the fragment processing stage by the fragment shader to generate pixels assigning them the final color that gets written into the framebuffer. The framebuffer is the final result of the graphics pipeline. It holds the value of each pixel that should be drawn to the screen.
+Those fragments are used during the fragment processing stage by the fragment shader to generate pixels assigning them the final colour that gets written into the framebuffer. The framebuffer is the final result of the graphics pipeline. It holds the value of each pixel that should be drawn to the screen.
 
-Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processes in parallel in order to generate the final scene.
+Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processed in parallel in order to generate the final scene.
 
-So let's start writing our first shader program. Shaders are written by using the GLSL language \(OpenGL Shading Language\) which is based on ANSI C. First we will create a file named “`vertex.vs`” \(The extension is for Vertex Shader\) under the resources directory with the following content:
+So let's start writing our first shader program. Shaders are written by using the GLSL language \(OpenGL Shading Language\) which is based on ANSI C. First we will create a file named “`vertex.vs`” \(the extension is for Vertex Shader\) under the resources directory with the following content:
 
 ```
 #version 330
@@ -54,13 +54,13 @@ The first line is a directive that states the version of the GLSL language we ar
 | 4.40 | 4.4 | \#version 440 |
 | 4.50 | 4.5 | \#version 450 |
 
-The second line specifies the input format for this shader. Data in an OpenGL buffer can be whatever we want, that is, the language does not force you to pass a specific data structure with a predefined semantic. From the point of view of the shader it is expecting to receive a buffer with data. It can be a position, a position with some additional information or whatever we want. The vertex shader is just receiving an array of floats. When we fill the buffer, we define the buffer chunks that are going to be processed by the shader.
+The second line specifies the input format for this shader. Data in an OpenGL buffer can be whatever we want, that is, the language does not force you to pass a specific data structure with a predefined semantic. From the point of view of the shader it is expecting to receive a buffer with data. It can be a position, a position with some additional information or whatever else we want. The vertex shader is just receiving an array of floats. When we fill the buffer, we define the buffer chunks that are going to be processed by the shader.
 
 So, first we need to get that chunk into something that’s meaningful to us. In this case we are saying that, starting from the position 0, we are expecting to receive a vector composed of 3 attributes \(x, y, z\).
 
 The shader has a main block like any other C program which in this case is very simple. It is just returning the received position in the output variable `gl_Position` without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes \(vec4\). This is because `gl_Position` is expecting the result in vec4 format since it is using homogeneous coordinates. That is, it’s expecting something in the form \(x, y, z, w\), where w represents an extra dimension. Why add another dimension? In later chapters you will see that most of the operations we need to do are based on vectors and matrices. Some of those operations cannot be combined if we do not have that extra dimension. For instance we could not combine rotation and translation operations. \(If you want to learn more on this, this extra dimension allow us to combine affine and linear transformations. You can learn more about this by reading the excellent book “3D Math Primer for Graphics and Game Development", by Fletcher Dunn and Ian Parberry\).
 
-Let us now have a look at our first fragment shader. We will create a file named “`fragment.fs`” \(The extension is for Fragment Shader\) under the resources directory with the following content:
+Let us now have a look at our first fragment shader. We will create a file named “`fragment.fs`” \(the extension is for Fragment Shader\) under the resources directory with the following content:
 
 ```
 #version 330
@@ -248,8 +248,8 @@ We use the `MemoryUtil` class to create the buffer in off-heap memory so that it
 
 If you come from previous versions of LWJGL it's important to stress out a few topics. You may have noticed that we do not use the utility class `BufferUtils` to create the buffers. Instead we use the `MemoryUtil` class. This is due to the fact that `BufferUtils` was not very efficient, and has been mantained only for backwards compatibility. Instead, LWJGL 3 proposes two methods for buffer management:
 
-* Auto-managed buffers, that is, buffers that are automatically collected by the Garbage Collector. These buffers are mainly used for short lived operations, or for data that is transferred to the GPU and does not need to be present in the process memory. This is achieved by using the `org.lwjgl.system.MemoryStack` class.
-* Manually managed buffers. In this case we need to carefulley free them once we are finished. These buffers are intended for long time operations or for large amounts of data. This is achieved by using the `MemoryUtil` class.
+* Auto-managed buffers, that is, buffers that are automatically collected by the Garbage Collector. These buffers are mainly used for short-lived operations, or for data that is transferred to the GPU and does not need to be present in the process memory. This is achieved by using the `org.lwjgl.system.MemoryStack` class.
+* Manually managed buffers. In this case we need to carefully free them once we are finished. These buffers are intended for long time operations or for large amounts of data. This is achieved by using the `MemoryUtil` class.
 
 You can consult the details here:  [https://blog.lwjgl.org/memory-management-in-lwjgl-3/](https://blog.lwjgl.org/memory-management-in-lwjgl-3/ "here").
 

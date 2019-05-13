@@ -114,7 +114,7 @@ As you can see we define our `projectionMatrix` as a 4x4 matrix and the position
 This is done with the method `glGetUniformLocation` which receives two parameters:
 
 * The shader program identifier.
-* The name of the uniform \(it should match the once defined in the shader code\).
+* The name of the uniform \(it should match the one defined in the shader code\).
 
 This method returns an identifier holding the uniform location. Since we may have more than one uniform, we will store those locations in a Map indexed by the location's name \(We will need that location number later\). So in the `ShaderProgram` class we create a new variable that holds those identifiers:
 
@@ -171,7 +171,7 @@ Now we can use that method in the `Renderer` class in the `render` method, after
 shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 ```
 
-We are almost done. We can now show the quad correctly rendered. So you can now launch your program and will obtain a.... black background without any coloured quad. What’s happening? Did we break something? Well, actually no. Remember that we are now simulating the effect of a camera looking at our scene. And we provided two distances, one to the farthest plane \(equal to 1000f\) and one to the closest plane \(equal to 0.01f\). Our coordinates are:
+We are almost done. We can now show the quad correctly rendered. So you can now launch your program and will obtain a... black background without any coloured quad. What’s happening? Did we break something? Well, actually no. Remember that we are now simulating the effect of a camera looking at our scene. And we provided two distances, one to the farthest plane \(equal to 1000f\) and one to the closest plane \(equal to 0.01f\). Our coordinates are:
 
 ```java
 float[] positions = new float[]{
