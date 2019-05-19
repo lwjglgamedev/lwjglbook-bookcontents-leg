@@ -104,7 +104,7 @@ public boolean isKeyPressed(int keyCode) {
 }
 ```
 
-The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized. The callback will receive the width and height, in pixels, of the framebuffer \(the rendering area, in this sample, the display area\). If you want the width, height of the framebuffer in screen coordinates you may use the the  `glfwSetWindowSizeCallback`method. Screen coordinates don't necessarilly correspond to pixels \(for instance, on a Mac with Retina display\). Since we are going to use that information when performing some OpenGL calls, we are interested in pixels not in screen coordinates. You can get more information in the GLFW documentation.
+The `Window` class besides providing the initialization code also needs to be aware of resizing. So it needs to setup a callback that will be invoked whenever the window is resized. The callback will receive the width and height, in pixels, of the framebuffer \(the rendering area, in this sample, the display area\). If you want the width, height of the framebuffer in screen coordinates you may use the `glfwSetWindowSizeCallback` method. Screen coordinates don't necessarily correspond to pixels \(for instance, on a Mac with Retina display\). Since we are going to use that information when performing some OpenGL calls, we are interested in pixels not in screen coordinates. You can get more information in the GLFW documentation.
 
 ```java
 // Setup resize callback
@@ -115,7 +115,7 @@ glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> {
 });
 ```
 
-We will also create a `Renderer` class which will handle our game render logic. By now, it will just have an empty `init` method and another method to clear the screen with the configured clear color:
+We will also create a `Renderer` class which will handle our game render logic. By now, it will just have an empty `init` method and another method to clear the screen with the configured clear colour:
 
 ```java
 public void init() throws Exception {
@@ -150,9 +150,9 @@ public class GameEngine implements Runnable {
 
     private final Thread gameLoopThread;
 
-    public GameEngine(String windowTitle, int width, int height, boolean vsSync, IGameLogic gameLogic) throws Exception {
+    public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
-        window = new Window(windowTitle, width, height, vsSync);
+        window = new Window(windowTitle, width, height, vSync);
         this.gameLogic = gameLogic;
         //..[Removed code]..
     }
@@ -218,7 +218,7 @@ public class Main {
 }
 ```
 
-At the end we only need to create our game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear color of the window whenever the user presses the up / down key. The render method will just clear the window with that color.
+At the end we only need to create our game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear colour of the window whenever the user presses the up / down key. The render method will just clear the window with that colour.
 
 ```java
 public class DummyGame implements IGameLogic {
@@ -306,7 +306,7 @@ In the future it may be interesting to explore if LWJGL provides other GUI libra
 
 ## Platform Differences \(OSX\)
 
-You will be able to run the code described above on Windows or Linux, but we still need to do some modifications for OSX. As it's stated in th GLFW documentation:
+You will be able to run the code described above on Windows or Linux, but we still need to do some modifications for OSX. As it's stated in the GLFW documentation:
 
 > The only OpenGL 3.x and 4.x contexts currently supported by OS X are forward-compatible, core profile contexts. The supported versions are 3.2 on 10.7 Lion and 3.3 and 4.1 on 10.9 Mavericks. In all cases, your GPU needs to support the specified OpenGL version for context creation to succeed.
 

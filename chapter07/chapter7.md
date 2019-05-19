@@ -157,7 +157,7 @@ private static int loadTexture(String fileName) throws Exception {
 ```
 The first thing we do is to allocate `IntBuffer`s for the library to return the image size and number of channels. Then we transform the `CLASSPATH` relative path for the image to an absolute path. Finally, we call the `stbi_load` method to actually load the image into a `ByteBuffer`. This method requires the following parameters:
 
-* `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embeded into a JAR file.
+* `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embedded into a JAR file.
 * `width`:  Image width. This will be populated with the image width.
 * `height`: Image height. This will be populated with the image height.
 * `channels`: The image channels.
@@ -279,7 +279,7 @@ void main()
 
 Before analyzing the code let’s clarify some concepts. A graphics card has several spaces or slots to store textures. Each of these spaces is called a texture unit. When we are working with textures we must set the texture unit that we want to work with. As you can see we have a new uniform named `texture_sampler`. That uniform has a `sampler2D` type and will hold the value of the texture unit that we want to work with.
 
-In the main function we use the texture lookup function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allow us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
+In the main function we use the texture lookup function named `texture`. This function takes two arguments: a sampler and a texture coordinate and will return the correct colour. The sampler uniform allows us to do multi-texturing. We will not cover that topic right now but we will try to prepare the code to add it easily later on.
 
 Thus, in our `ShaderProgram` class we will create a new method that allows us to set an integer value for a uniform:
 
