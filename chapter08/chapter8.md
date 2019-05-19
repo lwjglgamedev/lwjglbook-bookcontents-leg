@@ -1,6 +1,6 @@
 # Camera
 
-In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact is the term used to refer to it.
+In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact that's the term used to refer to it.
 
 But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the \(0, 0, 0\) position at the center of the screen.
 
@@ -22,19 +22,29 @@ So basically what we must do is to be able to move and rotate all of the objects
 
 Let's see how we can construct that matrix. If you remember from the transformations chapter our transformation equation was like this:
 
-$$Transf = \lbrack ProjMatrix \rbrack \cdot \lbrack TranslationMatrix \rbrack \cdot \lbrack  RotationMatrix \rbrack \cdot \lbrack  ScaleMatrix \rbrack = \lbrack   ProjMatrix \rbrack  \cdot \lbrack  WorldMatrix \rbrack$$
+$$
+\begin{array}{lcl}
+Transf & = & \lbrack ProjMatrix \rbrack \cdot \lbrack TranslationMatrix \rbrack \cdot \lbrack  RotationMatrix \rbrack \cdot \lbrack  ScaleMatrix \rbrack \\ 
+ & = & \lbrack   ProjMatrix \rbrack  \cdot \lbrack  WorldMatrix \rbrack
+\end{array}
+$$
 
 The view matrix should be applied before multiplying by the projection matrix, so our equation should be now like this:
 
-$$Transf = \lbrack  ProjMatrix \rbrack \cdot \lbrack  ViewMatrix \rbrack \cdot \lbrack  TranslationMatrix \rbrack \cdot \lbrack  RotationMatrix \rbrack \cdot \lbrack ScaleMatrix \rbrack = \lbrack ProjMatrix \rbrack \cdot \lbrack  ViewMatrix \rbrack \cdot \lbrack  WorldMatrix \rbrack $$
+$$
+\begin{array}{lcl}
+Transf & = & \lbrack  ProjMatrix \rbrack \cdot \lbrack  ViewMatrix \rbrack \cdot \lbrack  TranslationMatrix \rbrack \cdot \lbrack  RotationMatrix \rbrack \cdot \lbrack ScaleMatrix \rbrack \\
+  & = & \lbrack ProjMatrix \rbrack \cdot \lbrack  ViewMatrix \rbrack \cdot \lbrack  WorldMatrix \rbrack 
+\end{array}
+$$
 
 Now we have three matrices, let's think a little bit about the life cycles of those matrices. The projection matrix should not change very much while our game is running, in the worst case it may change once per render call. The view matrix may change once per render call if the camera moves. The world matrix changes once per `GameItem` instance, so it will change several times per render call.
 
-So, how many matrices should we push to or vertex shader ? You may see some code that uses three uniforms for each of those matrices, but in principle the most efficient approach would be to combine the projection and the view matrices, let’s call it `pv` matrix, and push the `world` and the `pv` matrices to our shader. With this approach we would have the possibility to work with world coordinates and would be avoiding some extra multiplications.
+So, how many matrices should we push to our vertex shader ? You may see some code that uses three uniforms, one for each matrix, but in principle the most efficient approach is to combine the projection and view matrices, let’s call it `pv` matrix, and push the `world` and the `pv` matrices to our shader. With this approach we have the possibility to work with world coordinates and avoid some extra multiplications.
 
-Actually, the most convenient approach is to combine the view and the world matrix. Why this? Because remember that the whole camera concept is a trick, what we are doing is pushing the whole world to simulate world displacement and to show only a small portion of the 3D world. So if we work directly with world coordinates we may be working with world coordinates that are far away from the origin and we may incur in some precision problems. If we work in what’s called the camera space we will be working with points that, although are far away from the world origin, are closer to the camera. The matrix that results of the combination of the view and the world matrix is often called as the model view matrix.
+But actually the most convenient approach is to combine the view and the world matrix. Why this? Because remember that the whole camera concept is a trick, what we are doing is pushing the whole world to simulate world displacement and to show only a small portion of the 3D world. So if we work directly with world coordinates we may be working with world coordinates that are far away from the origin and we may incur in some precision problems. If we work in what’s called the camera space we will be working with points that, although are far away from the world origin, are closer to the camera. The matrix that results of the combination of the view and the world matrix is often called as the model view matrix.
 
-So let’s start modifying our code to support a camera. First of all we will create a new class called `Camera` which will hold the position and rotation state of our camera. This class will provide methods to set the new position or rotation state \(`setPosition` or `setRotation`\) or to update those values with an offset upon the current state \(`movePosition` and `moveRotation`\)
+So let’s start modifying our code to support a camera. First of all we will create a new class called `Camera` which will hold the position and rotation state of our camera. This class will provide methods to set the new position or rotation state \(`setPosition` or `setRotation`\) or to update those values with an offset upon the current state \(`movePosition` and `moveRotation`\).
 
 ```java
 package org.lwjglb.engine.graph;
@@ -97,7 +107,7 @@ public class Camera {
 }
 ```
 
-Next in the `Transformation` class we will hold a new matrix to hold the values of the view matrix.
+Next in the `Transformation` class we will define a new matrix to hold the values of the view matrix.
 
 ```java
 private final Matrix4f viewMatrix;
@@ -120,7 +130,7 @@ public Matrix4f getViewMatrix(Camera camera) {
 }
 ```
 
-As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the `movePosition` method of the `Camera` class we just not simply increase the camera position by and offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
+As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the `movePosition` method of the `Camera` class we just not simply increase the camera position by an offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
 
 Besides what is mentioned above, we do not have here a full free fly camera \(for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forward\). This will be done in later chapters since is a little bit more complex.
 
@@ -129,17 +139,16 @@ Finally we will remove the previous method `getWorldMatrix` and add a new one ca
 ```java
 public Matrix4f getModelViewMatrix(GameItem gameItem, Matrix4f viewMatrix) {
     Vector3f rotation = gameItem.getRotation();
-    modelViewMatrix.identity().translate(gameItem.getPosition()).
-        rotateX((float)Math.toRadians(-rotation.x)).
-        rotateY((float)Math.toRadians(-rotation.y)).
-        rotateZ((float)Math.toRadians(-rotation.z)).
-        scale(gameItem.getScale());
-    Matrix4f viewCurr = new Matrix4f(viewMatrix);
-    return viewCurr.mul(modelViewMatrix);
+    modelViewMatrix.set(viewMatrix).translate(gameItem.getPosition()).
+		rotateX((float)Math.toRadians(-rotation.x)).
+		rotateY((float)Math.toRadians(-rotation.y)).
+		rotateZ((float)Math.toRadians(-rotation.z)).
+			scale(gameItem.getScale());
+    return modelViewMatrix;
 }
 ```
 
-The `getModelViewMatrix` method will be called per each `GameItem` instance so we must work over a copy of the view matrix so transformations do not get accumulated in each call \(Remember that `Matrix4f` class is not immutable\).
+The `getModelViewMatrix` method will be called once per each `GameItem` instance.
 
 In the `render` method of the `Renderer` class we just need to update the view matrix according to the camera values, just after the projection matrix is also updated.
 
@@ -253,7 +262,7 @@ The `MouseInput` class provides an `init` method which should be called during t
 
 The `MouseInput` class provides an input method which should be called when game input is processed. This method calculates the mouse displacement from the previous position and stores it into `Vector2f` `displVec` variable so it can be used by our game.
 
-The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter in the `init` and `update` methods of the game implementation \(so we need to change the interface accordingly\).
+The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter in the `input` and `update` methods of the game implementation \(so we need to change the interface `IGameLogic` accordingly\).
 
 ```java
 void input(Window window, MouseInput mouseInput);
