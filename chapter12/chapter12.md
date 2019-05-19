@@ -1,24 +1,24 @@
 # Game HUD
 
-In this chapter we will create a HUD \(Heads-Up Display\) for our game. That is, a set of 2D shapes and text that are displayed at any time over the 3D scene to show relevant information. We will create a simple HUD that will serve us to show some basic techniques for representing that information.
+In this chapter we will create a HUD \(Heads-Up Display\) for our game, that is, a set of 2D shapes and text that are displayed at any time over the 3D scene to show relevant information. We will create a simple HUD that will serve us to show some basic techniques for representing that information.
 
-When you examine the source code for this chpater, you will see also that some little refactoring has been applied to the source code. The changes affect especially the `Renderer` class in order to prepare it for the HUD rendering.
+When you examine the source code for this chapter, you will see also that some little refactoring has been applied to the source code. The changes affect especially the `Renderer` class in order to prepare it for the HUD rendering.
 
 ## Text rendering
 
-The first thing that we will do to create a HUD is render text. In order to do that, we are going to map a texture that contains alphabet characters into a quad. That quad will be divided by a set of tiles which will represent a single letter. later on, we will use that texture to draw the text in the screen. So the first step is to create the texture that contains the alphabet. You can use many programs out there that can do this task, such as,  [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc. In this case, We will use Codehead’s Bitmap Font Generator \(CBFG\).
+The first thing that we will do to create a HUD is render text. In order to do that, we are going to map a texture that contains alphabet characters into a quad. That quad will be divided by a set of tiles which will represent a single letter. later on, we will use that texture to draw the text in the screen. So the first step is to create the texture that contains the alphabet. You can use many programs out there that can do this task, such as, [CBG](http://www.codehead.co.uk/cbfg/), [F2IBuilder](http://sourceforge.net/projects/f2ibuilder/), etc. In this case, We will use Codehead’s Bitmap Font Generator \(CBFG\).
 
 CBG lets you configure many options such as the texture size, the font type, the anti-aliasing to be applied, etc. The following figure depicts the configuration that we will use to generate a texture file. In this chapter we will assume that we will be rendering text encoded in ISO-8859-1 format, if you need to deal with different character sets you will need to tweak a little bit of the code.
 
 ![CBG Configuration](CBG.png)
 
-When you have finished configuring all the settings in CBG you can export the result to several image formats. In this case we will export it as a BMP file and then transform it to PNG so it can be loaded as a texture. When transforming it to PNG we will set up also the black background as transparent, that is, we will set the black colour to have an alpha value equal to 0 \(You can use tools like GIMP to do that\). At the end you will have something similar as the following picture.
+When you have finished configuring all the settings in CBG you can export the result to several image formats. In this case we will export it as a BMP file and then transform it to PNG so it can be loaded as a texture. When transforming it to PNG we will set up also the black background as transparent, that is, we will set the black colour to have an alpha value equal to 0 \(You can use tools like GIMP to do that\). At the end you will have something similar to the following picture.
 
 ![Font Texture](font_texture.png)
 
-As you can see, the image has all the characters displayed in rows and columns. In this case the image is composed by 15 columns  and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column can be calculated as follows:  $$column = code \space mod \space numberOfColumns$$. Where $$mod$$ is the module operator. The row can be calculated as follows: $$row = code / numberOfCols$$, in this case we will do an integer by integer operation so we can ignore the decimal part.
+As you can see, the image has all the characters displayed in rows and columns. In this case the image is composed by 15 columns and 17 rows. By using the character code of a specific letter we can calculate the row and the column that is enclosed in the image. The column can be calculated as follows: $$column = code \space mod \space numberOfColumns$$ where $$mod$$ is the module operator. The row can be calculated as follows: $$row = code / numberOfCols$$, in this case we will do an integer by integer operation so we can ignore the decimal part.
 
-We will create a new class named `TextItem` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc. but it will allow us to present textual information in the HUD.  Here you can see the first lines and the constructor of this class.
+We will create a new class named `TextItem` that will construct all the graphical elements needed to render text. This is a simplified version that does not deal with multiline texts, etc. but it will allow us to present textual information in the HUD. Here you can see the first lines and the constructor of this class.
 
 ```java
 package org.lwjglb.engine;
@@ -52,7 +52,7 @@ public class TextItem extends GameItem {
     }
 ```
 
-As you can see this class extends the `GameItem` class, this is because we will be interested in changing the text position in the screen and may also need to scale and rotate it. The constructor receives the text to be displayed and the relevant data of the texture file that will be used to render it \(the file that contains the image and the number of columns and rows\).
+As you can see, this class extends the `GameItem` class. This is because we will be interested in changing the text position in the screen and may also need to scale and rotate it. The constructor receives the text to be displayed and the relevant data of the texture file that will be used to render it \(the file that contains the image and the number of columns and rows\).
 
 In the constructor we load the texture image file and invoke a method that will create a `Mesh` instance that models our text. Let’s examine the `buildMesh` method.
 
@@ -70,11 +70,11 @@ private Mesh buildMesh(Texture texture, int numCols, int numRows) {
     float tileHeight = (float)texture.getHeight() / (float)numRows;
 ```
 
-The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them representing a single character. We need to assign also the appropriate texture coordinates depending on the character code associated to each tile. The following picture shows the different elements that compose the tiles and the quad.
+The first lines of code create the data structures that will be used to store the positions, texture coordinates, normals and indices of the Mesh. In this case we will not apply lighting, so the normals array will be empty. What we are going to do is construct a quad composed by a set of tiles, each of them representing a single character. We need to assign also the appropriate texture coordinates depending on the character code associated to each tile. The following picture shows the different elements that compose the tiles and the quad.
 
 ![Text Quad](text_quad.png)
 
-So, for each character we need to create a tile which is formed by two triangles which can be defined by using four vertices \(V1, V2, V3 and V4\). The indices will be \(0, 1, 2\) for the first triangle \(the lower one\) and \(3, 0, 2\) for the other triangle \(the upper one\).  Texture coordinates are calculated based on the column and the row associated to each character in the texture image. Texture coordinates need to be in the range \[0,1\] so we just need to divide the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
+So, for each character we need to create a tile which is formed by two triangles that can be defined by using four vertices \(V1, V2, V3 and V4\). The indices will be \(0, 1, 2\) for the first triangle \(the lower one\) and \(3, 0, 2\) for the other triangle \(the upper one\). Texture coordinates are calculated based on the column and the row associated to each character in the texture image. Texture coordinates need to be in the range \[0,1\] so we just need to divide the current row or the current column by the total number of rows or columns to get the coordinate associated to V1. For the rest of vertices we just need to increase the current column or row by one in order to get the appropriate coordinate.
 
 The following loop creates all the vertex position, texture coordinates and indices associated to the quad that contains the text.
 
@@ -118,7 +118,7 @@ for(int i=0; i<numChars; i++) {
     textCoords.add((float)row / (float)numRows );
     indices.add(i*VERTICES_PER_QUAD + 3);
 
-    // Add indices por left top and bottom right vertices
+    // Add indices for left top and bottom right vertices
     indices.add(i*VERTICES_PER_QUAD);
     indices.add(i*VERTICES_PER_QUAD + 2);
 }
@@ -134,9 +134,9 @@ The next figure shows the coordinates of some vertices.
 
 ![Text Quad coordinates](text_quad_coords.png)
 
-Why do we use screen coordinates ? First of all, because we will be rendering 2D objects in our HUD and often is more handy to use them, and secondly because we will use an orthographic projection in order to draw them. We will explain what is an orthographic projection later on.
+Why do we use screen coordinates? First of all, because we will be rendering 2D objects in our HUD and often is more handy to use them, and secondly because we will use an orthographic projection in order to draw them. We will explain what is an orthographic projection later on.
 
-The `TextItem` class is completed with other methods to get the text and to change it at run time. Whenever the text is changed, we need to clean up the previous VAOs \(stored in the `Mesh` instance\) and create a new one. We do not need to destroy the texture, so we have created a new method in the `Mesh` class to just remove that data.
+The `TextItem` class is completed with other methods to get the text and to change it at run time. Whenever the text is changed, we need to clean up the previous VAOs \(stored in the `Mesh` instance\) and create a new one. We do not need to destroy the texture, so we have created a new method in the `Mesh` class just to remove that data.
 
 ```java
 public String getText() {
@@ -151,19 +151,19 @@ public void setText(String text) {
 }
 ```
 
-Now that we have set up the infrastucture needed to draw text, How do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. In order to render the HUD we will use an orthographic projection \(also named orthogonal projection\). An Orthographic projection is a 2D representation of a 3D object. You may already have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
+Now that we have set up the infrastructure needed to draw text, how do we do it? The basis is first to render the 3D scene, as in the previous chapters, and then render the 2D HUD over it. In order to render the HUD we will use an orthographic projection \(also named orthogonal projection\). An Orthographic projection is a 2D representation of a 3D object. You may already have seen some samples in blueprints of 3D objects which show the representation of those objects from the top or from some sides. The following picture shows the orthographic projection of a cylinder from the top and from the front.
 
-![Orthopgraphic Projections](orthographic_projections.png)
+![Orthographic Projections](orthographic_projections.png)
 
 This projection is very convenient in order to draw 2D objects because it "ignores" the values of the z coordinates, that is, the distance to the view. With this projection the objects sizes do not decrease with the distance \(as in the perspective projection\). In order to project an object using an orthographic projection we will need to use another matrix, the orthographic matrix which formula is shown below.
 
-![Orthopgraphic Projection Matrix](orthographic_matrix.png)
+![Orthographic Projection Matrix](orthographic_matrix.png)
 
 This matrix also corrects the distortions that otherwise will be generated due to the fact that our window is not always a perfect square but a rectangle. The right and bottom parameters will be the screen size, the left and the top ones will be the origin. The orthographic projection matrix is used to transform screen coordinates to 3D space coordinates. The following picture shows how this mapping is done.
 
-![Orthopgraphic Projection sample](orthographic_projection_sample.png)
+![Orthographic Projection sample](orthographic_projection_sample.png)
 
-The properties of this matrix, will allow us to use screen coordinates.
+The properties of this matrix will allow us to use screen coordinates.
 
 We can now continue with the implementation of the HUD. The next thing that we should do is create another set of shaders, a vertex and a fragment shaders, in order to draw the objects of the HUD. The vertex shader is actually very simple.
 
@@ -185,7 +185,7 @@ void main()
 }
 ```
 
-It will just receive the vertices positions, the texture coordinates, the indices and the normals and will transform them to the 3D space coordinates using a matrix. That matrix is the multiplication of the orthographic projection matrix and the model matrix, $$projModelMatrix  =  orthographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in java code than in the shader. By doing so we will be doing that multiplication once per item insted of doing it for each vertex. Remember that our vertices should be expressed in screen coordinates.
+It receives the vertices positions, the texture coordinates, the indices and the normals and transforms them to the 3D space coordinates using a matrix. That matrix is the multiplication of the orthographic projection matrix and the model matrix, $$projModelMatrix = orthographicMatrix \cdot modelMatrix$$. Since we are not doing anything with the coordinates in model space, it’s much more efficient to multiply both matrices in the Java code than in the shader. By doing so we will be doing that multiplication once per item instead of doing it for each vertex. Remember that our vertices should be expressed in screen coordinates.
 
 The fragment shader is also very simple.
 
@@ -205,7 +205,7 @@ void main()
 }
 ```
 
-It just uses the texture coordinates and multiples that colour by a base colour. This can be used to change the colour of the text to be rendered without the need of creating several texture files. Now that we have created the new pair of shaders we can use them in the `Renderer` class. But, before that, we will create a new interface named `IHud` that will contain all the elements that are to be displayed in the HUD. This interface will also provide a default `cleanup` method.
+It just uses the texture coordinates and multiples that colour by a base colour. This can be used to change the colour of the text to be rendered without the need of creating several texture files. Now that we have created the new pair of shaders we can use them in the `Renderer` class. Before that, we create a new interface named `IHud` that will contain all the elements that are to be displayed in the HUD. This interface will also provide a default `cleanup` method.
 
 ```java
 package org.lwjglb.engine;
@@ -223,7 +223,7 @@ public interface IHud {
 }
 ```
 
-By using that interface our different games can define custom HUDs but the rendering mechanism does not need to be changed. Now we can get back to the `Renderer` class, which by the way has been moved to the engine graphics package because now it’s generic enough to not be dependent on the specific implementation of each game. In the `Renderer` class we have added a new method to create, link and set up a new `ShaderProgram` that uses the shaders described above.
+By using this interface our different games can define custom HUDs but the rendering mechanism does not need to be changed. Now we can get back to the `Renderer` class, which by the way has been moved to the engine graphics package because now it’s generic enough to not be dependent on the specific implementation of each game. In the `Renderer` class we have added a new method to create, link and set up a new `ShaderProgram` that uses the shaders described above.
 
 ```java
 private void setupHudShader() throws Exception {
@@ -267,7 +267,7 @@ private void renderHud(Window window, IHud hud) {
     Matrix4f ortho = transformation.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
     for (GameItem gameItem : hud.getGameItems()) {
         Mesh mesh = gameItem.getMesh();
-        // Set ortohtaphic and model matrix for this HUD item
+        // Set orthographic and model matrix for this HUD item
         Matrix4f projModelMatrix = transformation.getOrtoProjModelMatrix(gameItem, ortho);
         hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
         hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColour());
@@ -280,7 +280,7 @@ private void renderHud(Window window, IHud hud) {
 }
 ```
 
-The previous fragment of code, iterates over the elements that compose the HUD and multiplies the orthographic projection matrix by  the model matrix associated to each element. The orthographic projection matrix is updated in each `render` call \(because the screen dimensions can change\), and it’s calculated in the following way:
+The previous fragment of code iterates over the elements that compose the HUD and multiplies the orthographic projection matrix by the model matrix associated to each element. The orthographic projection matrix is updated in each `render` call \(because the screen dimensions can change\), and it’s calculated in the following way:
 
 ```java
 public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
@@ -290,7 +290,7 @@ public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bo
 }
 ```
 
-In our game package we will create a `Hud` class which implements the `IHud` interface and receives a text in the constructor creating internally a `TexItem` instance.
+In our game package we will create a `Hud` class which implements the `IHud` interface and receives a text in the constructor creating internally a `TextItem` instance.
 
 ```java
 package org.lwjglb.game;
@@ -337,7 +337,7 @@ In the `DummyGame` class we create an instance of that class an initialize it wi
 
 ![Text result](text_result.png)
 
-In the `Texture` class we need to modify the way textures are interpolated to improve text readibility \(you will only notice if you play with the text scaling\).
+In the `Texture` class we need to modify the way textures are interpolated to improve text readability \(you will only notice if you play with the text scaling\).
 
 ```java
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -351,7 +351,7 @@ But the sample is not finished yet. If you play with the zoom so the text overla
 The text is not drawn with a transparent background. In order to achieve that, we must explicitly enable support for blending so the alpha component can be used. We will do this in the `Window` class when we set up the other initialization parameters with the following fragment of code.
 
 ```java
-// Support for transparencies
+// Support for transparency
 glEnable(GL_BLEND);
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ```
@@ -362,11 +362,11 @@ Now you will see the text drawn with a transparent background.
 
 ## Complete the HUD
 
-Now that we have rendered a text we can add more elements to the HUD. We will add a compass that rotates depending on the direction the camera is facing. In this case, we will add a new GameItem to the Hud class that will have a mesh that models a compass.
+Now that we have rendered some text, we can add more elements to the HUD. We will add a compass that rotates depending on the direction the camera is facing. In this case, we will add a new GameItem to the Hud class that will have a mesh that models a compass.
 
 ![Compass](compass.png)
 
-The compass will be modeled by an .obj file but will not have a texture associated, instead it will have just a background colour. So we need to change the fragment shader for the HUD a little bit to detect if we have a texture or not. We will be able to do this by setting a new uniform named `hasTexture`.
+The compass will be modeled by an .obj file but will not have a texture associated, it will only have a background colour. So we need to change the fragment shader for the HUD a little bit to detect if we have a texture or not. We will be able to do this by setting a new uniform named `hasTexture`.
 
 ```glsl
 #version 330
@@ -392,7 +392,7 @@ void main()
 }
 ```
 
-To add the compass the the HUD we just need to create a new `GameItem` instance, to the `Hud` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so usually you will need to increase its size.
+To add the compass the HUD we just need to create a new `GameItem` instance, to the `Hud` class, that loads the compass model and adds it to the list of items. In this case we will need to scale up the compass. Remember that it needs to be expressed in screen coordinates, so usually you will need to increase its size.
 
 ```java
 // Create compass
@@ -409,7 +409,7 @@ compassItem.setRotation(0f, 0f, 180f);
 gameItems = new GameItem[]{statusTextItem, compassItem};
 ```
 
-Notice also that, in order for the compass to point upwards we need to rotate 180 degrees since the model will often tend to use OpenGL space  coordinates. If we are expecting screen coordinates it would pointing downwards. The `Hud` class will also provide a method to update the angle of the compass that must take this also into consideration.
+Notice also that, in order for the compass to point upwards, we need to rotate it by 180 degrees since models often tend to use OpenGL space coordinates. If we are expecting screen coordinates it would pointing downwards. The `Hud` class will also provide a method to update the angle of the compass that must take this also into consideration.
 
 ```java
 public void rotateCompass(float angle) {
@@ -436,15 +436,15 @@ We will get something like this \(remember that it is only a sample, in a real g
 
 ## Text rendering revisited
 
-Before reviewing other topics let’s go back to the text rendering approach we have presented here. The solution is very simple and handy to introduce the concepts involved in rendering HUD elements but it presents some problems:
+Before reviewing other topics let’s go back to the text rendering approach we have presented here. The solution is very simple and handy to introduce the concepts involved in rendering HUD elements, but it presents some problems:
 
-* It does not support non latin character sets.
+* It does not support non-latin character sets.
 * If you want to use several fonts you need to create a separate texture file for each font. Also, the only way to change the text size is either to scale it, which may result in a poor quality rendered text, or to generate another texture file.
-* The most important one, characters in most of the fonts do not occupy the same size but we are dividing the font texture in equally sized elements.  We have cleverly used “Consolas” font  which is [monospaced](https://en.wikipedia.org/wiki/Monospaced_font) \(that is, all the characters occupy the same amount of horizontal space\), but if you use  a non-monospaced font you will see annoying variable white spaces between the characters. 
+* The most important one, characters in most of the fonts do not occupy the same size but we are dividing the font texture in equally sized elements. We have cleverly used “Consolas” font  which is [monospaced](https://en.wikipedia.org/wiki/Monospaced_font) \(that is, all the characters occupy the same amount of horizontal space\), but if you use a non-monospaced font you will see annoying variable white spaces between the characters.
 
-We need to change our approach an provide a more flexible way to render text. If you think about it, the overall mechanism is ok, that is, the way of rendering text by texturing quads for each character. The issue here is how we are generating the textures. We need to be able to generate those texture dynamically by using the fonts available in the System.
+We need to change our approach an provide a more flexible way to render text. If you think about it, the overall mechanism is OK, that is, the way of rendering text by texturing quads for each character. The issue here is how we are generating the textures. We need to be able to generate those texture dynamically by using the fonts available in the System.
 
-This is where `java.awt.Font` comes to the rescue, we will generate the textures by drawing each letter for a specified font family and size dynamically. That texture will be used in the same way as described previously, but it will solve perfectly all the issues mentioned above. We will create a new class named `FontTexture` that will receive a Font instance and a charset name and will dynamically create a texture that contains all the available characters. This is the constructor.
+This is where `java.awt.Font` comes to the rescue: with it, we will generate the textures by drawing each letter for a specified font family and size dynamically. That texture will be used in the same way as described previously, but it will solve perfectly all the issues mentioned above. We will create a new class named `FontTexture` that will receive a Font instance and a charset name and will dynamically create a texture that contains all the available characters. This is the constructor.
 
 ```java
 public FontTexture(Font font, String charSetName) throws Exception {
@@ -456,7 +456,7 @@ public FontTexture(Font font, String charSetName) throws Exception {
 }
 ```
 
-The first step is to handle the non latin issue, given a char set and a font we will build a `String` that contains all the characters that can be rendered.
+The first step is to handle the non-latin issue. Given a char set and a font we will build a `String` that contains all the characters that can be rendered.
 
 ```java
 private String getAllAvailableChars(String charsetName) {
@@ -494,7 +494,7 @@ private void buildTexture() throws Exception {
     g2D.dispose();
 ```
 
-We first obtain the font metrics by creating a temporary image. Then we iterate over the `String` that contains all the available characters and get the width, with the help of the font metrics, of each of them. We store that information on a map, `charMap`, which will use as a key the character. With that process we determine the size of the image that will have the texture \(with a height equal to the maximum size of all the characters and its with equal to the sum of each character width\). `CharSet` is an inner class that holds the information about a character \(its width and where it starts, in the x coordinate, in the texture image\).
+We first obtain the font metrics by creating a temporary image. Then we iterate over the `String` that contains all the available characters and get the width, with the help of the font metrics, of each of them. We store that information on a map, `charMap`, which will use as a key the character. With that process we determine the size of the image that will have the texture \(with a height equal to the maximum size of all the characters and its width equal to the sum of each character width\). `CharSet` is an inner class that holds the information about a character \(its width and where it starts, in the x coordinate, in the texture image\).
 
 ```java
     public static class CharInfo {
@@ -518,7 +518,7 @@ We first obtain the font metrics by creating a temporary image. Then we iterate 
     }
 ```
 
-Then we will create an image that will contain all the available characters. In order to do this, we just draw the string over a `BufferedImage`.
+Then we will create an image that contains all the available characters. In order to do this, we just draw the string over a `BufferedImage`.
 
 ```java
     // Create the image associated to the charset
@@ -532,7 +532,7 @@ Then we will create an image that will contain all the available characters. In 
     g2D.dispose();
 ```
 
-We are generating an image which contains all the characters in a single row \(we maybe are not fulfilling  the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any case you could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
+We are generating an image that contains all the characters in a single row \(we maybe are not fulfilling the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any case you could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
 
 ```java
 ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
@@ -596,15 +596,15 @@ You can check the rest of the changes directly in the source code. The following
 
 ![Text rendered improved](text_rendered_improved.png)
 
-As you can see the quality of the rendered text has been improved a lot, you can play with different fonts and sizes and check it by your own. There’s still plenty of room for improvement \(like supporting multiline texts, effects, etc.\), but this will be left as an exercise for the reader.
+As you can see the quality of the rendered text has improved a lot. You can play with different fonts and sizes and check it by your own. There’s still plenty of room for improvement \(like supporting multiline texts, effects, etc.\), but this will be left as an exercise for the reader.
 
 You may also notice that we are still able to apply scaling to the text \(we pass a model view matrix in the shader\). This may not be needed now for text but it may be useful for other HUD elements.
 
-We have set up all the infrastructure needed in order to create a HUD for our games. Now it is just a matter of creating all the elements that represent relevant information to the user and  give them a professional look and feel.
+We have set up all the infrastructure needed in order to create a HUD for our games. Now it is just a matter of creating all the elements that represent relevant information to the user and give them a professional look and feel.
 
 ## OSX
 
-If you try to run the samples in this chapter, and the next ones that render text, you may find that the application blocks and nothing is shown in the screen. This is due to the fact that AWT and GLFW do get along very well under OSX. But, what does it have to do with AWT ? We are using the `Font` class, which belongs to AWT, and just by instantiating it, AWT gets initialized also. In OSX AWT tries to run under the main thread, which is also required by GLFW. This is what causes this mess.
+If you try to run the samples in this chapter, and the next ones that render text, you may find that the application blocks and nothing is shown in the screen. This is due to the fact that AWT and GLFW do not get along very well under OSX. But, what does it have to do with AWT? We are using the `Font` class, which belongs to AWT, and just by instantiating it, AWT gets initialized also. In OSX AWT tries to run under the main thread, which is also required by GLFW. This is what causes this mess.
 
 In order to be able to use the `Font` class, GLFW must be initialized before AWT and the samples need to be run in headless mode. You need to setup this property before anything gets intialized:
 
