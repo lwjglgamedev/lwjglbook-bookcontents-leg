@@ -1,8 +1,8 @@
 # Loading more complex models
 
-In this chapter we will learn to load more complex models defined in external files. Those models will be created by 3D modelling tools \(such as [Blender](https://www.blender.org/)\). Up to now we were creating our models by hand directly coding the arrays that define their geometry, in this chapter we will learn how to load models defined in OBJ format.
+In this chapter we will learn to load more complex models defined in external files. These models will be created by 3D modelling tools \(such as [Blender](https://www.blender.org/)\). Up to now we have been creating models by coding directly the arrays that define their geometry, but in this chapter we will learn how to load models defined in OBJ format.
 
-OBJ \(or .OBJ\) is a geometry definition open file format developed by Wavefront Technologies which has been widely adopted. An OBJ file defines the vertices, texture coordinates and polygons that compose a 3D model. It’s a relative easy format to parse since is text based and each line defines an element \(a vertex, a texture coordinate, etc.\).
+OBJ \(or .OBJ\) is a geometry definition open file format developed by Wavefront Technologies which has been widely adopted. An OBJ file defines the vertices, texture coordinates and polygons that compose a 3D model. It’s a relatively easy format to parse since it is text based and each line defines an element \(a vertex, a texture coordinate, etc.\).
 
 In an .obj file each line starts with a token with identifies the type of element:
 
@@ -12,25 +12,23 @@ In an .obj file each line starts with a token with identifies the type of elemen
 * The token “vt” defines a texture coordinate. Example: vt 0.500 1. 
 * The token “f” defines a face. With the information contained in these lines we will construct our indices array. We will handle only the case were faces are exported as triangles. It can have several variants:
   * It can define just vertex positions \(f v1 v2 v3\). Example: f 6 3 1. In this case this triangle is defined by the geometric vertices that occupy positions 6, 3 a and 1. \(Vertex indices always starts by 1\).
-  * It can define vertex positions, texture coordinates and normals \(f v1/t1/n1 v2/t2/n2 V3/t3/n3\). Example: f 6/4/1 3/5/3 7/6/5. The first block is “6/4/1” and defines the coordinates, texture coordinates and normal vertex. What you see here is the position, so we are saying: pick the geometric vertex number six, the texture coordinate number 4 and the vertex normal number one. 
+  * It can define vertex positions, texture coordinates and normals \(f v1/t1/n1 v2/t2/n2 V3/t3/n3\). Example: f 6/4/1 3/5/3 7/6/5. The first block is “6/4/1” and defines the coordinates, texture coordinates and normal vertex. What you see here is the position, so we are saying: pick the geometric vertex number six, the texture coordinate number four and the vertex normal number one.
 
-OBJ format has many more entry types \(like one to group polygons, defining materials, etc.\). By now we will stick to this subset, our OBJ loader will ignore other entry types.
+OBJ format has many more entry types \(like one to group polygons, defining materials, etc.\). For now we will stick to this subset, our OBJ loader will ignore other entry types.
 
-But what is anormal ? Let’s define it first. When you have a plane its normal is a vector perpendicular to that plane which has a length equal to one.
+But what is a normal? Let’s define it first. The normal of a plane is a vector perpendicular to that plane which has a length equal to one.
 
 ![Normals](normals.png)
 
-As you can see in the figure above a plane can have two normals, which one should we use ? Normals in 3D graphics are used for lightning, so we should chose the normal which is oriented towards the source of light. In other words we should choose the normal that points out from the external face of our model.
+As you can see in the figure above, a plane can have two normals. Which one should we use? Normals in 3D graphics are used for lighting, so we should chose the normal which is oriented towards the source of light. In other words, we should choose the normal that points out from the external face of our model.
 
 When we have a 3D model, it is composed by polygons, triangles in our case. Each triangle is composed by three vertices. The Normal vector for a triangle will be the vector perpendicular to the triangle surface which has a length equal to one.
 
-A vertex normal is associated to a specific vertex and is the combination of the normals of the surrounding triangles \(of course its length is equal to one\). Here you can see the vertex models of a 3D mesh \(taken from  [Wikipedia](https://en.wikipedia.org/wiki/Vertex_normal#/media/File:Vertex_normals.png)\)
+A vertex normal is associated to a specific vertex and is the combination of the normals of the surrounding triangles \(of course its length is equal to one\). Here you can see the vertex models of a 3D mesh \(taken from [Wikipedia](https://en.wikipedia.org/wiki/Vertex_normal#/media/File:Vertex_normals.png)\)
 
 ![Vertex normals](vertex_normals.png)
 
-Normals will be  used for lighting.
-
-So let’s start creating our OBJ loader. First of all we will modify our `Mesh` class since now it’s mandatory to use a texture. Some of the obj files that we may load may not define texture coordinates and we must be able to render them using a colour instead of a texture. In this case the face definition will be like this: “f v//n”.
+Let’s now start creating our OBJ loader. First of all we will modify our `Mesh` class since now it’s mandatory to use a texture. Some of the obj files that we may load may not define texture coordinates and we must be able to render them using a colour instead of a texture. In this case the face definition will be of the form: “f v//n”.
 
 Our `Mesh` class will have a new attribute named `colour`
 
@@ -38,13 +36,13 @@ Our `Mesh` class will have a new attribute named `colour`
 private Vector3f colour;
 ```
 
-And the constructor will not require a `Texture` instance any more. Instead we will provide getters and setters for texture and colour attributes.
+And the constructor will no longer require a `Texture` instance. Instead we will provide getters and setters for texture and colour attributes.
 
 ```java
 public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
 ```
 
-Of course, in the `render` and `cleanup` methods we must check if texture attribute is not null before using it. As you can see in the constructor we pass now a new array of floats named `normals`. How do we use normals for rendering ? The answer is easy it will be just another VBO inside our VAO, so we need to add this code.
+Of course, in the `render` and `cleanup` methods we must check if a texture attribute is not null before using it. As you can see in the constructor we now pass a new array of floats named `normals`. How do we use normals for rendering? The answer is easy: it will be just another VBO inside our VAO, so we need to add this code.
 
 ```java
 // Vertex normals VBO
@@ -101,7 +99,7 @@ void main()
 }
 ```
 
-As you can see we have create two new uniforms:
+As you can see we have created two new uniforms:
 
 * `colour`: Will contain the base colour.
 * `useColour`: It’s a flag that we will set to 1 when we don’t want to use textures.
@@ -129,13 +127,13 @@ for(GameItem gameItem : gameItems) {
 }
 ```
 
-Now we can create a new class named `OBJLoader` which parses OBJ files and will create a `Mesh` instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
+Now we can create a new class named `OBJLoader` which parses OBJ files and creates a `Mesh` instance with the data contained in it. You may find some other implementations in the web that may be a bit more efficient than this one, but I think this version is simpler to understand. This will be an utility class which will have a static method like this:
 
 ```java
 public static Mesh loadMesh(String fileName) throws Exception {
 ```
 
-The parameter `filename` specifies the name of the file, that must be in the CLASSPATH that contains the OBJ model.
+The parameter `filename` specifies the name of the file, which must be in the CLASSPATH, that contains the OBJ model.
 
 The first thing that we will do in that method is to read the file contents and store all the lines in an array. Then we create several lists that will hold the vertices, the texture coordinates, the normals and the faces.
 
@@ -148,7 +146,7 @@ List<Vector3f> normals = new ArrayList<>();
 List<Face> faces = new ArrayList<>();
 ```
 
-Then will parse each line and depending on the starting token will get a vertex position, a texture coordinate, a vertex normal or a face definition. At the end we will need to reorder that information.
+We then parse each line and, depending on the starting token, we will get a vertex position, a texture coordinate, a vertex normal or a face definition. At the end we will need to reorder that information.
 
 ```java
 for (String line : lines) {
@@ -256,9 +254,9 @@ protected static class Face {
 }
 ```
 
-When parsing faces we may see objects with no textures but with vector normals, in this case a face line could be like this `f 11//1 17//1 13//1`, so we need to detect those cases.
+When parsing faces we may encounter objects with no textures but with vector normals. In this case a face line could be like `f 11//1 17//1 13//1`, so we need to detect those cases.
 
-Now we can talk about how to reorder the information we have. Finally we need to reorder that information. Our `Mesh` class expects four arrays, one for position coordinates, other for texture coordinates, other for vector normals and another one for the indices. The first three arrays shall have the same number of elements since the indices array is unique \(note that the same number of elements does not imply the same length. Position elements, vertex coordinates, are 3D and are composed by three floats. Texture elements, texture coordinates, are 2D and thus are composed by two floats\). OpenGL does not allow us to define different indices arrays per type of element \(if so, we would not need to repeat vertices while applying textures\).
+Now we can talk about how to reorder the information we have. Our `Mesh` class expects four arrays, one for position coordinates, one for texture coordinates, one for vector normals and another one for the indices. The first three arrays will have the same number of elements since the indices array is unique \(note that the same number of elements does not imply the same length. Position elements, vertex coordinates, are 3D and are composed by three floats. Texture elements, texture coordinates, are 2D and thus are composed by two floats\). OpenGL does not allow us to define different indices arrays per type of element \(if so, we would not need to repeat vertices while applying textures\).
 
 When you open an OBJ line you will first probably see that the list that holds the vertices positions has a higher number of elements than the lists that hold the texture coordinates and the number of vertices. That’s something that we need to solve. Let’s use a simple example which defines a quad with a texture with a pixel height \(just for illustration purposes\). The OBJ file may be like this \(don’t pay too much attention about the normals coordinate since it’s just for illustration purpose\).
 
@@ -281,22 +279,22 @@ When we have finished parsing the file we have the following lists \(the number 
 
 ![Ordering I](ordering_i.png)
 
-Now we will use the face definitions to construct the final arrays including the indices. A thing to take into consideration is that  the order in which textures coordinates and vector normals are defined does not  correspond to the orders in which vertices are defined. If the size of the lists would be the same and they were ordered, face definition lines would only just need to include a number per vertex.
+Now we will use the face definitions to construct the final arrays including the indices. A thing to take into consideration is that the order in which texture coordinates and vector normals are defined does not correspond to the order in which vertices are defined. If the size of the lists were the same and they were ordered, face definition lines would only just need to include a number per vertex.
 
-So we need to order the data and setup accordingly to our needs. The first thing that we must do is create three arrays and one list, one for the vertices, other for the texture coordinates, other for the normals and the list for the indices. As we have said before the three arrays will have the same number of elements \(equal to the number of vertices\). The vertices array will have a copy of the list of vertices.
+So we need to order the data and setup accordingly to our needs. The first thing that we must do is create three arrays (for the vertices, the texture coordinates, and the normals) and one list for the indices. As we said before, the three arrays will have the same number of elements \(equal to the number of vertices\). The vertices array will have a copy of the list of vertices.
 
 ![Ordering II](ordering_ii.png)
 
-Now we start processing the faces. The first index group of the first face is 1/2/1. We use the first index  in the index group, the one that defines the geometric vertex to construct the index list.  Let’s name it as `posIndex`.  
-Our face is specifiying that the we should add the index of the element that occupies the first position into our indices list. So we put the value of `posIndex` minus one into the `indicesList` \(we must substract 1 since arrays start at 0 but OBJ file format assumes that they start at 1\).
+Now we start processing the faces. The first index group of the first face is 1/2/1. We use the first index in the index group, the one that defines the geometric vertex, to construct the index list. Let’s call it `posIndex`.
+Our face is specifying that the we should add the index of the element that occupies the first position into our indices list. So we put the value of `posIndex` minus one into the `indicesList` \(we must subtract 1 since arrays start at 0 but the OBJ file format assumes that they start at 1\).
 
 ![Ordering III](ordering_iii.png)
 
-Then we use the rest of the indices of the index group to set up the `texturesArray` and `normalsArray`. The second index, in the index group, is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex \(V1\).
+Then we use the rest of the indices of the index group to set up the `texturesArray` and `normalsArray`. The second index in the index group is 2, so what we must do is put the second texture coordinate in the same position as the one that occupies the vertex designated posIndex \(V1\).
 
 ![Ordering IV](ordering_iv.png)
 
-Then we pick the third index, which  is 1, so what we must do is put the first vector normal coordinate in the same position as the one that occupies the vertex designated `posIndex` \(V1\).
+Then we pick the third index, which is 1, so what we must do is put the first vector normal coordinate in the same position as the one that occupies the vertex designated `posIndex` \(V1\).
 
 ![Ordering V](ordering_v.png)
 
@@ -308,7 +306,7 @@ After we have processed the second face the arrays and lists will be like this.
 
 ![Ordering VII](ordering_vii.png)
 
-The second face defines vertices which already have been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are set below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by two in the case of texture coordinates.
+The second face defines vertices which already have been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are shown below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by two in the case of texture coordinates.
 
 ```java
 private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
@@ -381,7 +379,7 @@ And we will get our familiar textured cube.
 
 ![Textured cube](textured_cube.png)
 
-We can now try with other models. We can use the famous Standford Bunny \(it can be freely downloaded\) model, which is included in the resources. This model is not textured so we can use it this way:
+We can now try with other models. We can use the famous Stanford Bunny \(it can be freely downloaded\) model, which is included in the resources. This model is not textured so we can use it this way:
 
 ```java
 Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
@@ -391,7 +389,7 @@ gameItem.setPosition(0, 0, -2);
 gameItems = new GameItem[]{gameItem};
 ```
 
-![Standford Bunny](standford_bunny.png)
+![Stanford Bunny](standford_bunny.png)
 
 The model looks a little bit strange because we have no textures and there’s no light so we cannot appreciate the volumes but you can check that the model is correctly loaded. In the `Window` class when we set up the OpenGL parameters add this line.
 
@@ -401,15 +399,15 @@ glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 You should now see something like this when you zoom in.
 
-![Standford Bunny Triangles](standford_bunny_triangles.png)
+![Stanford Bunny Triangles](standford_bunny_triangles.png)
 
-Now you can now see all the triangles that compose the model.
+Now you can see all the triangles that compose the model.
 
-With this OBJ loader class you can now use Blender to create your models. Blender is a powerful tool but it can be some bit of overwhelming at first, there are lots of options, lots of key combinations and you need to take your time to do the most basic things by the first time. When you export the models using blender please make sure to include the normals and export faces as triangles.
+With this OBJ loader class you can now use Blender to create your models. Blender is a powerful tool but it can be some bit of overwhelming at first, there are lots of options, lots of key combinations and you need to take your time to do the most basic things by the first time. When you export the models using Blender please make sure to include the normals and export faces as triangles.
 
 ![OBJ Export options](obj_export_options.png)
 
-Also remeber to split edges when exporting, since  we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not asigned to vertices. If you find light problems \(next chapters\), with some models, you should verify the normals. You can visualize them inside blender.
+Remember to split edges when exporting, since we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not assigned to vertices. If you find light problems \(next chapters\), with some models, you should verify the normals. You can visualize them inside Blender.
 
 ![Edge split](edge_split.png)
 

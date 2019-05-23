@@ -1,6 +1,6 @@
 # Camera
 
-In this chapter we will learn how to move inside a rendered 3D scene, this capability is like having a camera that can travel inside the 3D world and in fact that's the term used to refer to it.
+In this chapter we will learn how to move inside a rendered 3D scene. This capability is like having a camera that can travel inside the 3D world and in fact that's the term used to refer to it.
 
 But if you try to search for specific camera functions in OpenGL you will discover that there is no camera concept, or in other words the camera is always fixed, centered in the \(0, 0, 0\) position at the center of the screen.
 
@@ -40,7 +40,7 @@ $$
 
 Now we have three matrices, let's think a little bit about the life cycles of those matrices. The projection matrix should not change very much while our game is running, in the worst case it may change once per render call. The view matrix may change once per render call if the camera moves. The world matrix changes once per `GameItem` instance, so it will change several times per render call.
 
-So, how many matrices should we push to our vertex shader ? You may see some code that uses three uniforms, one for each matrix, but in principle the most efficient approach is to combine the projection and view matrices, let’s call it `pv` matrix, and push the `world` and the `pv` matrices to our shader. With this approach we have the possibility to work with world coordinates and avoid some extra multiplications.
+So, how many matrices should we push to our vertex shader? You may see some code that uses three uniforms, one for each matrix, but in principle the most efficient approach is to combine the projection and view matrices, let’s call it `pv` matrix, and push the `world` and the `pv` matrices to our shader. With this approach we have the possibility to work with world coordinates and avoid some extra multiplications.
 
 But actually the most convenient approach is to combine the view and the world matrix. Why this? Because remember that the whole camera concept is a trick, what we are doing is pushing the whole world to simulate world displacement and to show only a small portion of the 3D world. So if we work directly with world coordinates we may be working with world coordinates that are far away from the origin and we may incur in some precision problems. If we work in what’s called the camera space we will be working with points that, although are far away from the world origin, are closer to the camera. The matrix that results of the combination of the view and the world matrix is often called as the model view matrix.
 
@@ -113,7 +113,7 @@ Next in the `Transformation` class we will define a new matrix to hold the value
 private final Matrix4f viewMatrix;
 ```
 
-We will also provide a method to update its value. Like the projection matrix this matrix will be the same for all the objects to be rendered in a render cycle.
+We will also provide a method to update its value. Similarly to the projection matrix, this matrix will be the same for all the objects to be rendered in a render cycle.
 
 ```java
 public Matrix4f getViewMatrix(Camera camera) {
@@ -130,7 +130,7 @@ public Matrix4f getViewMatrix(Camera camera) {
 }
 ```
 
-As you can see we first need to do the rotation and then the translation. If we do the opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that  in the `movePosition` method of the `Camera` class we just not simply increase the camera position by an offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
+As you can see, we first need to do the rotation and then the translation. If we didthe opposite we would not be rotating along the camera position but along the coordinates origin. Please also note that in the `movePosition` method of the `Camera` class we just not simply increase the camera position by an offset. We also take into consideration the rotation along the y axis, the yaw, in order to calculate the final position. If we would just increase the camera position by the offset the camera will not move in the direction its facing.
 
 Besides what is mentioned above, we do not have here a full free fly camera \(for instance, if we rotate along the x axis the camera does not move up or down in the space when we move it forward\). This will be done in later chapters since is a little bit more complex.
 
@@ -178,7 +178,7 @@ And that’s all, our base code supports the concept of a camera. Now we need to
 * Keys “Z” and “X” to move the camera up and down \(y axis\) respectively.
 
 We will use the mouse position to rotate the camera along the x and y axis when the right button of the mouse is pressed.  
-As you can see we will be using the mouse for the first time. We will create a new class named `MouseInput` that will encapsulate mouse access. Here’s the code for that class.
+As you can see we will be using the mouse for the first time. We will create a new class named `MouseInput` that encapsulates mouse access. Here’s the code for that class.
 
 ```java
 package org.lwjglb.engine;
@@ -260,9 +260,9 @@ The `MouseInput` class provides an `init` method which should be called during t
 * `glfwSetCursorEnterCallback`: Registers a callback that will be invoked when the mouse enters our window. We will be receiving mouse events even if the mouse is not in our window. We use this callback to track when the mouse is in our window.
 * `glfwSetMouseButtonCallback`: Registers a callback that will be invoked when a mouse button is pressed.
 
-The `MouseInput` class provides an input method which should be called when game input is processed. This method calculates the mouse displacement from the previous position and stores it into `Vector2f` `displVec` variable so it can be used by our game.
+The `MouseInput` class provides an input method which should be called when game input is processed. This method calculates the mouse displacement from the previous position and stores it into the `displVec` variable so it can be used by our game.
 
-The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter in the `input` and `update` methods of the game implementation \(so we need to change the interface `IGameLogic` accordingly\).
+The `MouseInput` class will be instantiated in our `GameEngine` class and will be passed as a parameter to the `input` and `update` methods of the game implementation \(so we need to change the interface `IGameLogic` accordingly\).
 
 ```java
 void input(Window window, MouseInput mouseInput);
@@ -303,8 +303,8 @@ public void input(Window window, MouseInput mouseInput) {
 }
 ```
 
-It just updates a `Vector3f` variable named `cameraInc` which holds the camera displacement that should be applied.  
-The update method of the `DummyGame` class modifies the camera position and rotation according to the processes key and mouse events.
+It just updates a `Vector3f` variable named `cameraInc` which holds the camera displacement that should be applied.
+The update method of the `DummyGame` class modifies the camera position and rotation according to the processed key and mouse events.
 
 ```java
 @Override
@@ -322,7 +322,7 @@ public void update(float interval, MouseInput mouseInput) {
 }
 ```
 
-Now we can add more cubes to our world, scale them set them up in a specific location and play with our new camera. As you can see all the cubes share the same mesh.
+Now we can add more cubes to our world, scale them, set them up in a specific location and play with our new camera. As you can see all the cubes share the same mesh.
 
 ```java
 GameItem gameItem1 = new GameItem(mesh);
