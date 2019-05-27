@@ -20,7 +20,7 @@ But what is a normal? Let’s define it first. The normal of a plane is a vector
 
 ![Normals](normals.png)
 
-As you can see in the figure above, a plane can have two normals. Which one should we use? Normals in 3D graphics are used for lighting, so we should chose the normal which is oriented towards the source of light. In other words, we should choose the normal that points out from the external face of our model.
+As you can see in the figure above, a plane can have two normals. Which one should we use? Normals in 3D graphics are used for lighting, so we should choose the normal which is oriented towards the source of light. In other words, we should choose the normal that points out from the external face of our model.
 
 When we have a 3D model, it is composed by polygons, triangles in our case. Each triangle is composed by three vertices. The Normal vector for a triangle will be the vector perpendicular to the triangle surface which has a length equal to one.
 
@@ -30,7 +30,7 @@ A vertex normal is associated to a specific vertex and is the combination of the
 
 Let’s now start creating our OBJ loader. First of all we will modify our `Mesh` class since now it’s mandatory to use a texture. Some of the obj files that we may load may not define texture coordinates and we must be able to render them using a colour instead of a texture. In this case the face definition will be of the form: “f v//n”.
 
-Our `Mesh` class will have a new attribute named `colour`
+Our `Mesh` class will have a new attribute named `colour`.
 
 ```java
 private Vector3f colour;
@@ -42,7 +42,7 @@ And the constructor will no longer require a `Texture` instance. Instead we will
 public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
 ```
 
-Of course, in the `render` and `cleanup` methods we must check if a texture attribute is not null before using it. As you can see in the constructor we now pass a new array of floats named `normals`. How do we use normals for rendering? The answer is easy: it will be just another VBO inside our VAO, so we need to add this code.
+Of course, in the `render` and `cleanup` methods we must check if the texture attribute is not null before using it. As you can see in the constructor we now pass a new array of floats named `normals`. How do we use normals for rendering? The answer is easy: it will be just another VBO inside our VAO, so we need to add this code.
 
 ```java
 // Vertex normals VBO
@@ -120,7 +120,7 @@ for(GameItem gameItem : gameItems) {
     // Set model view matrix for this item
     Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
     shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-    // Render the mes for this game item
+    // Render the mesh for this game item
     shaderProgram.setUniform("colour", mesh.getColour());
     shaderProgram.setUniform("useColour", mesh.isTextured() ? 0 : 1);
     mesh.render();
@@ -306,7 +306,7 @@ After we have processed the second face the arrays and lists will be like this.
 
 ![Ordering VII](ordering_vii.png)
 
-The second face defines vertices which already have been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be some tricky until you get it. The methods that reorder the data are shown below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by two in the case of texture coordinates.
+The second face defines vertices which already have been assigned, but they contain the same values, so there’s no problem in reprocessing this. I hope the process has been clarified enough, it can be somewhat tricky until you get it. The methods that reorder the data are shown below. Keep in mind that what we have are float arrays so we must transform those arrays of vertices, textures and normals into arrays of floats. So the length of these arrays will be the length of the vertices list multiplied by the number three in the case of vertices and normals or multiplied by two in the case of texture coordinates.
 
 ```java
 private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
@@ -407,7 +407,7 @@ With this OBJ loader class you can now use Blender to create your models. Blende
 
 ![OBJ Export options](obj_export_options.png)
 
-Remember to split edges when exporting, since we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not assigned to vertices. If you find light problems \(next chapters\), with some models, you should verify the normals. You can visualize them inside Blender.
+Remember to split edges when exporting, since we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not assigned to vertices. If you find light problems with some models \(next chapters\), you should verify the normals. You can visualize them inside Blender.
 
 ![Edge split](edge_split.png)
 
