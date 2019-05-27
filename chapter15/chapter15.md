@@ -1,10 +1,10 @@
 # Terrain Collisions
 
-Once we have created a terrain the next step is to detect collisions to avoid traversing through it. If you recall from previous chapter, a terrain is composed by blocks, and each of those blocks is constructed from a height map. The height map is used to set the height of the vertices that compose the triangles that form the terrain.
+Once we have created a terrain, the next step is to detect collisions to avoid traversing through it. If you recall from previous chapter, a terrain is composed by blocks, and each of those blocks is constructed from a height map. The height map is used to set the height of the vertices of the triangles that form the terrain.
 
-In order to detect a collision we must compare current position $$y$$ value with the $$y$$ value of the point of the terrain we are currently in. If we are above terrain’s $$y$$ value there’s no collision, if not, we need to get back. Simple concept, does it ? Indeed it is but we need to perform several calculations before we are able to do that comparison.
+In order to detect a collision we must compare current position $$y$$ value with the $$y$$ value of the point of the terrain we are currently in. If we are above terrain’s $$y$$ value there’s no collision, otherwise we need to get back. It's a simple concept, isn't it? Indeed it is, but we need to perform several calculations before we are able to do that comparison.
 
-The first thing we need to define is what we understand for the term "current position". Since we do not have yet a player concept the answer is easy, the current position will be the camera position. So we already have one of the components of the comparison, thus, the next thing to calculate is terrain height at current position.
+The first thing we need to define is what we understand for the term "current position". Since we do not have yet a player concept the answer is easy, the current position will be the camera position. So we already have one of the components of the comparison, thus, the next thing to calculate is terrain height at the current position.
 
 As it's been said before, the terrain is composed by a grid of terrain blocks as shown in the next figure.
 
@@ -12,7 +12,7 @@ As it's been said before, the terrain is composed by a grid of terrain blocks as
  
 Each terrain block is constructed from the same height map mesh, but is scaled and displaced precisely to form a terrain grid that looks like a continuous landscape.
 
-So, what we need to do first is determine in which terrain block the current position, the camera, is in. In order to do that, we will calculate the bounding box of each terrain block taking into consideration the displacement and the scaling. Since the terrain will not be displaced or scaled at runtime, we can perform those calculations in the ```Terrain``` class constructor. By doing this way we access them later at any time without repeating those operations in each game loop cycle.
+So first we need to determine which terrain block the camera is in. In order to do that, we will calculate the bounding box of each terrain block taking into consideration the displacement and the scaling. Since the terrain will not be displaced or scaled at runtime, we can perform those calculations in the ```Terrain``` class constructor. By doing so we can access them later at any time without repeating those operations in each game loop cycle.
 
 We will create a new method that calculates the bounding box of a terrain block, named ```getBoundingBox```.
 
@@ -30,9 +30,9 @@ private Box2D getBoundingBox(GameItem terrainBlock) {
 }
 ```
 
-The ```Box2D``` class is a simplified version of the ```java.awt.Rectangle2D.Float``` class; created to avoid using AWT.
+The ```Box2D``` class is a simplified version of the ```java.awt.Rectangle2D.Float``` class which we created to avoid using AWT.
 
-Now we need to calculate the world coordinates of the terrain blocks. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to ```[STARTX, STARTZ]```. Thus,we need to transform those coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
+Now we need to calculate the world coordinates of the terrain blocks. In the previous chapter you saw that all of our terrain meshes were created inside a quad with its origin set to ```[STARTX, STARTZ]```. Thus, we need to transform those coordinates to the world coordinates taking into consideration the scale and the displacement as shown in the next figure.
 
 ![Model to world coordinates](model_to_world_coordinates.png)
  
@@ -93,12 +93,12 @@ public Terrain(int terrainSize, float scale, float minY, float maxY, String heig
 }
 ```
 
-So, with all the bounding boxes pre-calculated, we are ready to create a new method that will return the height of the terrain taking as a parameter the current position. This method will be named ```getHeightVector``` and its defined like this.
+So, with all the bounding boxes pre-calculated, we are ready to create a new method that will return the height of the terrain taking as a parameter the current position. This method will be named ```getHeightVector``` and is defined like this.
 
 ```java
 public float getHeight(Vector3f position) {
     float result = Float.MIN_VALUE;
-    // For each terrain block we get the bounding box, translate it to view coodinates
+    // For each terrain block we get the bounding box, translate it to view coordinates
     // and check if the position is contained in that bounding box
     Box2D boundingBox = null;
     boolean found = false;
@@ -125,13 +125,13 @@ public float getHeight(Vector3f position) {
 The first thing that to we do in that method is to determine the terrain block that we are in. Since we already have the bounding box for each terrain block, the algorithm is simple. We just simply need to iterate over the array of bounding boxes and check if the current position is inside (the class 
 ```Box2D``` provides a method for this).
 
-Once we have found the terrain block, we need to calculate the triangle which we are in. This is done in the ```getTriangle``` method that will be described later on. After that, we have the coordinates of the triangle that we are in, including its height. But, we need the height of a point that is not located at any of those vertices but in a place in between. This is done in the $$interpolateHeight$$ method. We will also explain how this is done later on.
+Once we have found the terrain block, we need to calculate the triangle we are in. This is done in the ```getTriangle``` method that will be described later on. After that, we have the coordinates of the triangle that we are in, including its height. But we need the height of a point that is not located at any of those vertices but in a place in between. This is done in the $$interpolateHeight$$ method. We will also explain how this is done later on.
 
 Let’s first start with the process of determining the triangle that we are in. The quad that forms a terrain block can be seen as a grid in which each cell is formed by two triangles Let’s define some variables first:
 
 * $$boundingBox.x$$ is the $$x$$ coordinate of the origin of the bounding box associated to the quad.
 * $$boundingBox.y$$ is the $$z$$ coordinates  of the origin of the bounding box associated to the quad (Although you see a “$$y$$”, it models the $$z$$ axis).
-* $$boundingBox.width$$ is the width of the quad
+* $$boundingBox.width$$ is the width of the quad.
 * $$boundingBox.height$$ is the height of the quad.
 * $$cellWidth$$ is the width  of a cell.
 * $$cellHeight$$ is the height of a cell.
@@ -140,11 +140,11 @@ All of the variables defined above are expressed in world coordinates.  To calcu
 
 $$cellWidth = \frac{boundingBox.width}{verticesPerCol}$$
 
-And the variable ```cellHeight``` is calculated analogous 
+And the variable ```cellHeight``` is calculated analogously:
 
 $$cellHeight = \frac{boundingBox.height}{verticesPerRow}$$
 
-Once we have those variables we can calculate the row and the column of the cell we are currently in width is quite straight forward:
+Once we have those variables we can calculate the row and the column of the cell we are currently in, which is quite straightforward:
 
 $$col = \frac{position.x - boundingBox.x}{boundingBox.width}$$
 
@@ -154,23 +154,23 @@ The following picture shows all the variables  described above for a sample terr
 
 ![Terrain block variables](terrain_block_variables_n.png)
 
-With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell. How we can do this ? Let’s examine the triangles that form a single cell.
+With all that information we are able to calculate the positions of the vertices of the triangles contained in the cell. How we can do this? Let’s examine the triangles that form a single cell.
  
 ![Cell](cell.png)
 
-You can see that the cell is divided by a diagonal that separates the two triangles. The way to determine  the triangle associated to the current position, is by checking if the $$z$$ coordinate is above or below that diagonal. In our case, if current position $$z$$ value is less than the $$z$$ value of the diagonal setting the $$x$$ value to the $$x$$ value of current position we are in T1. If it's greater than that we are in T2.
+You can see that the cell is divided by a diagonal that separates the two triangles. To determine which is the triangle associated to the current position, we check if the $$z$$ coordinate is above or below that diagonal. In our case, if current position $$z$$ value is less than the $$z$$ value of the diagonal setting the $$x$$ value to the $$x$$ value of current position we are in T1. If it's greater than that we are in T2.
 
 We can determine that by calculating the line equation that matches the diagonal.
 
 If you remember your school math classes, the equation of a line that passes from two points (in 2D) is:
 
-$$y-y1=m\cdot(x-x1)$$
+$$y-y1=m\cdot(x-x1),$$
 
-Where m is the line slope, that is, how much the height changes when moving through the $$x$$ axis. Note that, in our case, the $$y$$ coordinates are the $$z$$ ones. Also note, that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that $$x$$ an $$z$$ coordinates are enough. So, in our case the line equation should be rewritten like this.
+where m is the line slope, that is, how much the height changes when moving through the $$x$$ axis. Note that, in our case, the $$y$$ coordinates are the $$z$$ ones. Also note that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that $$x$$ an $$z$$ coordinates are enough. So, in our case the line equation should be rewritten like this.
 
 $$z-z1=m\cdot(z-z1)$$
 
-The slope can be calculate in the following way:
+The slope can be calculated in the following way:
 
 $$m=\frac{z1-z2}{x1-x2}$$
 
@@ -178,7 +178,7 @@ So the equation of the diagonal to get the $$z$$ value given a $$x$$ position is
 
 $$z=m\cdot(xpos-x1)+z1=\frac{z1-z2}{x1-x2}\cdot(zpos-x1)+z1$$
 
-Where $$x1$$$$, $$$$x2$$$$, $$$$z1$$ and $$z2$$ are the $$x$$ and $$z$$ coordinates of the vertices $$V1$$ and $$V2$$ respectively.
+Where $$x1$$, $$x2$$, $$z1$$ and $$z2$$ are the $$x$$ and $$z$$ coordinates of the vertices $$V1$$ and $$V2$$, respectively.
 
 So the method to get the triangle that the current position is in, named ```getTriangle```, applying all the calculations described above can be implemented like this:
 
@@ -227,7 +227,7 @@ protected float getWorldHeight(int row, int col, GameItem gameItem) {
 
 You can see that we have two additional methods. The first one, named ```getDiagonalZCoord```, calculates the $$z$$ coordinate of the diagonal given a $$x$$ position and two vertices. The other one, named ```getWorldHeight```, is used to retrieve the height of the triangle vertices, the $$y$$ coordinate. When the terrain mesh is constructed the height of each vertex is pre-calculated and stored, we only need to translate it to world coordinates.
 
-Ok, so we have the triangle coordinates that the current position is in. Finally, we are ready to calculate terrain height at current position. How can we do this ? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
+At this point we have the triangle coordinates that the current position is in. Finally, we are ready to calculate terrain height at the current position. How can we do this? Well, our triangle is contained in a plane, and a plane can be defined by three points, in this case, the three vertices that define a triangle.
 
 The plane equation is as follows:
 $$a\cdot x+b\cdot y+c\cdot z+d=0$$
@@ -261,7 +261,7 @@ protected float interpolateHeight(Vector3f pA, Vector3f pB, Vector3f pC, float x
 }
 ```
 
-And that’s all ! we are now able to detect the collisions, so in the ```DummyGame``` class we can change the following lines when we update the camera position:
+And that’s all! We are now able to detect the collisions, so in the ```DummyGame``` class we can change the following lines when we update the camera position:
 
 ```java
 // Update camera position
@@ -275,10 +275,10 @@ if ( camera.getPosition().y <= height )  {
 }
 ```
 
-As you can see the concept of detecting terrain collisions is easy to understand but we need to carefully perform a set of calculations and be aware of the different coordinate systems we are dealing with.
+As you can see, the concept of detecting terrain collisions is easy to understand, but we need to carefully perform a set of calculations and be aware of the different coordinate systems we are dealing with.
 
-Besides that, although the algorithm presented here is valid in most of the cases, there are still situations that need to be handled carefully. One effect that you may observe is the one called tunnelling. Imagine the following situation, we are travelling at a fast speed through our terrain and because of that, the position increment gets a high value. This value can get so high that, since we are detecting collisions with the final position, we may have skipped obstacles that lay in between.
+Besides that, although the algorithm presented here is valid in most of the cases, there are still situations that need to be handled carefully. One effect that you may observe is the one called tunnelling. Imagine the following situation: we are travelling at a fast speed through our terrain and because of that, the position increment gets a high value. This value can get so high that, since we are detecting collisions with the final position, we may have skipped obstacles that lay in between.
 
 ![Tunnelling](tunnelling.png)
 
-There are many possible solutions to avoid that effect, the simplest one is to split the calculation to be performed in smaller increments.
+There are many solutions to the tunnelling effect, the simplest one being to split the calculation to be performed in smaller increments.
