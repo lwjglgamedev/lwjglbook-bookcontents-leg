@@ -4,9 +4,9 @@
 
 In this chapter we will add particle effects to the game engine. With this effect we will be able to simulate rays, fire, dust and clouds.  It’s a simple effect to implement that will improve the graphical aspect of any game.
 
-Before we start it's worth to mention that there are many ways to implement particle effects with different, results. In this case we will use billboard particles. This technique uses moving texture quads to represent a particle with the peculiarity that they are always always facing the observer, in our case, the camera. You can also use billboarding technique to show information panels over game items like a mini HUDs.
+Before we start it's worth to mention that there are many ways to implement particle effects with different results. In this case we will use billboard particles. This technique uses moving texture quads to represent a particle with the peculiarity that they are always always facing the observer, in our case, the camera. You can also use billboarding technique to show information panels over game items like a mini HUDs.
 
-Let’s start by defining what is a particle. A particle can de defined by the following attributes:  
+Let’s start by defining what is a particle. A particle can be defined by the following attributes:
 1. A mesh that represents the quad vertices.  
 2. A texture.  
 3. A position at a given instant.  
@@ -78,9 +78,9 @@ public class Particle extends GameItem {
 }
 ```
 
-As you can see from the code above, particle's speed and movement direction can be expressed as a single vector. The direction of that vector models the movement direction and its module the speed. The Particle Time To Live \(TTL\) is modelled as milliseconds counter that will be decreased whenever the game state is updated. The class has also a copy constructor, that is, a constructor that takes an instance of another Particle to make a copy.
+As you can see from the code above, the particle's speed and movement direction can be expressed as a single vector. The direction of that vector models the movement direction and its module the speed. The Particle Time To Live \(TTL\) is modelled as a milliseconds counter that will be decreased whenever the game state is updated. The class has also a copy constructor, that is, a constructor that takes an instance of another Particle to make a copy.
 
-Now, we need to create a particle generator or particle emitter, that is, a class that generates the particles dynamically, controls their life cycle and updates their position according to a specific model.  We can create many implementations that vary in how particles and created and how their positions are updated \(for instance, taking into consideration the gravity or not\). So, in order to keep our game engine generic, we will create an interface that all the Particle emitters must implement. This interface, named `IParticleEmitter`, is defined like this:
+Now, we need to create a particle generator or particle emitter, that is, a class that generates the particles dynamically, controls their life cycle and updates their position according to a specific model.  We can create many implementations that vary in how particles are created and how their positions are updated \(for instance, taking into consideration gravity or not\). So, in order to keep our game engine generic, we will create an interface that all the Particle emitters must implement. This interface, named `IParticleEmitter`, is defined like this:
 
 ```java
 package org.lwjglb.engine.graph.particles;
@@ -98,7 +98,7 @@ public interface IParticleEmitter {
 }
 ```
 
-The `IParticleEmitter` interface has a method to clean up resources, named `cleanup`, and a method to get the list of Particles, named `getParticles`. It also as a method named `getBaseParticle`, but What’s this method for? A particle emitter will create many particles dynamically. Whenever a particle expires, new ones will be created. That particle renewal cycle will use a base particle, like a pattern, to create new instances. This is what this base particle is used for, This is also the reason why the `Particle` class defines a copy constructor.
+The `IParticleEmitter` interface has a method to clean up resources, named `cleanup`, and a method to get the list of Particles, named `getParticles`. It also has a method named `getBaseParticle`, but what’s this method for? A particle emitter will create many particles dynamically. Whenever a particle expires, new ones will be created. That particle renewal cycle will use a base particle, like a pattern, to create new instances. This is what this base particle is used for, and it's also the reason why the `Particle` class defines a copy constructor.
 
 In the game engine code we will refer only to the `IParticleEmitter` interface so the base code will not be dependent on the specific implementations. Nevertheless we can create a implementation that simulates a flow of particles that are not affected by gravity. This implementation can be used to simulate rays or fire and is named `FlowParticleEmitter`.
 
@@ -206,7 +206,7 @@ public class FlowParticleEmitter implements IParticleEmitter {
         this.speedRndRange = speedRndRange;
     }
 
-    public void update(long ellapsedTime) {
+    public void update(long elapsedTime) {
         long now = System.currentTimeMillis();
         if (lastCreationTime == 0) {
             lastCreationTime = now;
@@ -214,10 +214,10 @@ public class FlowParticleEmitter implements IParticleEmitter {
         Iterator<? extends GameItem> it = particles.iterator();
         while (it.hasNext()) {
             Particle particle = (Particle) it.next();
-            if (particle.updateTtl(ellapsedTime) < 0) {
+            if (particle.updateTtl(elapsedTime) < 0) {
                 it.remove();
             } else {
-                updatePosition(particle, ellapsedTime);
+                updatePosition(particle, elapsedTime);
             }
         }
 
@@ -230,7 +230,7 @@ public class FlowParticleEmitter implements IParticleEmitter {
 
     private void createParticle() {
         Particle particle = new Particle(this.getBaseParticle());
-        // Add a little bit of randomness of the parrticle
+        // Add a little bit of randomness of the particle
         float sign = Math.random() > 0.5d ? -1.0f : 1.0f;
         float speedInc = sign * (float)Math.random() * this.speedRndRange;
         float posInc = sign * (float)Math.random() * this.positionRndRange;        
@@ -265,7 +265,7 @@ public class FlowParticleEmitter implements IParticleEmitter {
 }
 ```
 
-Now we can extend the information that’s contained in the `Scene` class to include an array of `ParticleEmitter` instances.
+Now we can extend the information contained in the `Scene` class to include an array of `ParticleEmitter` instances.
 
 ```java
 package org.lwjglb.engine;
@@ -319,7 +319,7 @@ void main()
 }
 ```
 
-As you can see  they are very simple, they resemble the pair of shaders used in the first chapters. Now, as in other chapters, we need to setup and use those shaders in the `Renderer` class. The shaders setup will be done in a method named `setupParticlesShader` which is defined like this:
+As you can see, they are very simple: they resemble the pair of shaders used in the first chapters. Now, as in other chapters, we need to setup and use those shaders in the `Renderer` class. The shaders' setup will be done in a method named `setupParticlesShader` which is defined like this:
 
 ```java
 private void setupParticlesShader() throws Exception {
@@ -362,7 +362,7 @@ private void renderParticles(Window window, Camera camera, Scene scene) {
 }
 ```
 
-The fragment above should be self explanatory if you managed to get to this point, it just renders each particle setting up the required uniforms. We have now created all the methods we need to test the implementation of the particle effect. We just need to modify the `DummyGame` class we can setup a particle emitter and the characteristics of the base particle.
+The fragment above should be self explanatory if you managed to get to this point, it just renders each particle setting up the required uniforms. We have now created all the methods we need to test the implementation of the particle effect. We just need to modify the `DummyGame` class to setup a particle emitter and the characteristics of the base particle.
 
 ```java
 Vector3f particleSpeed = new Vector3f(0, 1, 0);
@@ -385,11 +385,11 @@ particleEmitter.setSpeedRndRange(range);
 this.scene.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
 ```
 
-We are using a plain filled circle as the particle’s texture by now, to better understand what’s happening. If you execute it you will see something like this.
+We are using a plain filled circle as the particle texture for now to better understand what’s happening. If you execute the code above you will see something like this.
 
 ![Particles I](particles_i.png)
 
-Why some particles seem to be cut off? Why the transparent background does not solve this? The reason for that is depth testing. Some fragments of the particles get discarded because they have a depth buffer value higher than the current value of the depth buffer for that zone. We can solve this by ordering the particle drawings depending in their distance to the camera or we can just disable the depth writing.
+Why do some particles seem to be cut off? Why the transparent background does not solve this? The reason for that is depth testing. Some fragments of the particles get discarded because they have a depth buffer value higher than the current value of the depth buffer for that zone. We can solve this by ordering the particle drawings depending in their distance to the camera or we can just disable writing to the depth buffer.
 
 Before we draw the particles we just need to insert this line:
 
@@ -407,7 +407,7 @@ Then we will get something like this.
 
 ![Particles II](particles_ii.png)
 
-Ok, problem solved. Nevertheless, we still want another effect to be applied, we would want that colours get blended so colours will be added to create better effects. This is achieved with by adding this line before rendering to setup additive blending.
+OK, problem solved. Nevertheless, we still want another effect to be applied, we would want that colours get blended so colours will be added to create better effects. This is achieved with by adding this line before rendering to setup additive blending.
 
 ```java
 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -427,7 +427,7 @@ But we have not finished yet. If you have moved the camera over the blue square 
 
 ![Particles IV](particles_iv.png)
 
-The particles do not look very good, they should look round but they resemble a sheet of paper. At this points is where we should be applying the billboard technique. The quad that is used to render the particle should always be facing the camera, totally perpendicular to it as if it there was no rotation at all. The camera matrix applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
+The particles do not look very good, they should look round but they resemble a sheet of paper. This point is where we should be applying the billboard technique. The quad that is used to render the particle should always be facing the camera, totally perpendicular to it as if it there was no rotation at all. The camera matrix applies translation and rotation to every object in the scene, we want to skip the rotation to be applied.
 
 Warning: Maths ahead, you can skip it if you don't feel comfortable with this. Let’s review that view matrix once again. That matrix can be represented like this \(without any scale applied to it\).
 
@@ -455,7 +455,7 @@ $$
 $$
 
 
-So, we have a 3x3 matrix, the upper left red fragment, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the upper left 3x3 matrix from the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much more easier to calculate than the inverse. The transpose of a matrix is like if we flip it, we change rows per columns.
+So, we have a 3x3 matrix, the upper left red fragment, let's name it $$M_{r}$$ and we want it to transform it to the identify matrix: $$I$$. Any matrix multiplied by its inverse will give the identify matrix: $$M_{r} \times M_{r}^{-1} = I$$. So we just need to get the upper left 3x3 matrix from the view matrix, and multiply it by its inverse, but we can even optimize this. A rotation matrix has an interesting characteristic, its inverse coincides with its transpose matrix. That is: $$ M_{r} \times M_{r}^{-1} = M_{r} \times M_{r}^{T} = I $$. And a transpose matrix is much easier to calculate than the inverse, as it only requires swapping rows and columns.
 
 
 $$
@@ -473,7 +473,7 @@ r_{20} & r_{21} & r_{22}
 $$
 
 
-Ok, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can express that expression like this:
+OK, let's summarize. We have this transformation: $$V \times M$$, where $$V$$ is the view matrix and $$M$$ is the model matrix. We can write that expression like this:
 
 
 $$
@@ -526,7 +526,7 @@ m_{03} & m_{13} & m_{23} & m_{33}
 $$
 
 
-But, after doing this, we have removed the scaling factor, indeed what we do really whant to achieve is something like this:
+But, after doing this, we have removed the scaling factor, indeed what we do really want to achieve is something like this:
 
 $$\begin{bmatrix}
 \color{red}{sx} & \color{red}{0} & \color{red}{0} & mv_{30} \\
@@ -559,30 +559,30 @@ And that's all, we just need to change this in the `renderParticlesMethod` like 
 
 We also have added another method to the `Transformation` class to construct a model view matrix using two matrices instead of a `GameItem` and the view matrix.
 
-With that change, when we look the particles from above we get something like this.
+With that change, when we look at the particles from above we get something like this.
 
 ![Particles V](particles_v.png)
 
 Now we have everything we need to create a more realistic particle effect so let's change the texture to something more elaborated. We will use this image \(it was created with [GIMP](https://www.gimp.org/) with the lights and shadows filters\).
 
-![Particle texture](particle_texture.png)  
+![Particle texture](particle_texture.png)
 With this texture, we will get something like this.
 
 ![Particles VI](particles_vi.png)
 
-Much better ! You may notice that we need to adjust the scale, since particles are now always facing the camera the displayed area is always the maximum.
+Much better! You may notice that we need to adjust the scale, since particles are now always facing the camera the displayed area is always the maximum.
 
 Finally, another conclusion, to get perfect results which can be used in any scene you will need to implement particle ordering and activate depth buffer. In any case, you have here a sample to include this effect in your games.
 
 ## Texture Atlas
 
-Now that we have set the basic infrastructure for particle effect we can add some animation effects to it. In order to achieve that, we are going to support texture atlas. A texture atlas is a large image that contains all the textures that will be used. With a texture atlas we need only to load a large image and then while drawing the game items we select the portions of that image to be used as our texture. This technique can be applied for instance when we want to represent the same model many times with different textures \(think for instance about trees, or rocks\). Instead of having many texture instances and switching between them \(remember that switching states are always slow\) we can use the same texture atlas and just select the appropriate coordinates.
+Now that we have set the basic infrastructure for particle effect we can add some animation effects to it. In order to achieve that, we are going to support texture atlases. A texture atlas is a large image that contains all the textures that will be used. With a texture atlas we need only to load a large image and then while drawing the game items we select the portions of that image to be used as our texture. This technique can be applied for instance when we want to represent the same model many times with different textures \(think for instance about trees, or rocks\). Instead of having many texture instances and switching between them \(remember that switching states are always slow\) we can use the same texture atlas and just select the appropriate coordinates.
 
 In this case, we are going to use texture coordinates to animate particles. We will iterate over different textures to model a particle animation. All those textures will be grouped into a texture atlas which looks like this.
 
 ![Texture Atlas](texture_atlas.png)
 
-The texture atlas can be divided into quad tiles. We will assign a tile position to a particle and will change it over time to represent animation. So let’s get on it. The first thing that we are going to do is modifying  the `Texture` class to specify the number of rows and columns that a texture atlas can have.
+The texture atlas can be divided into quad tiles. We will assign a tile position to a particle and will change it over time to represent animation. So let’s get on it. The first thing that we are going to do is modifying the `Texture` class to specify the number of rows and columns that a texture atlas can have.
 
 ```java
 package org.lwjglb.engine.graph;
@@ -639,9 +639,9 @@ public class Particle extends GameItem {
     private long currentAnimTimeMillis;
 ```
 
-The `updateTextureMillis` attribute models the period of time \(in milliseconds\) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures.  The `currentAnimTimeMillis` attribute just keeps track of the time that the particle has maintained a texture position.
+The `updateTextureMillis` attribute models the period of time \(in milliseconds\) to move to the next position in the texture atlas. The lowest the value the fastest the particle will roll over the textures. The `currentAnimTimeMillis` attribute just keeps track of the time that the particle has maintained a texture position.
 
-Thus, we need to modify the `Particle` class constructor to set  up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute `animFrames`.
+Thus, we need to modify the `Particle` class constructor to set up those values. Also we calculate the number of tiles of the texture atlas, which is modelled by the attribute `animFrames`.
 
 ```java
 public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
@@ -655,7 +655,7 @@ public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
 }
 ```
 
-Now, we just need to modify the method that checks if the particle has expired to check also if we need to update the texture position.
+Now we just need to modify the method that checks if the particle has expired to check also if we need to update the texture position.
 
 ```java
 public long updateTtl(long elapsedTime) {
@@ -675,7 +675,7 @@ public long updateTtl(long elapsedTime) {
 }
 ```
 
-Besides that, we also have modified the `FlowRangeEmitter` class to add some randomness to the period of time when we should change the a particle’s texture position. You can check it in the source code.
+Beside that, we also have modified the `FlowRangeEmitter` class to add some randomness to the period of time when we should change a particle’s texture position. You can check it in the source code.
 
 Now we can use that information to set up appropriate texture coordinates. We will do this in the vertex fragment since it outputs those values to be used in the fragment shader. The new version of that shader is defined like this.
 
@@ -708,10 +708,10 @@ void main()
 }
 ```
 
-As you can see we have now three new uniforms. The uniforms `numCols` and `numRows` just contain the number of columns and rows of the texture atlas.  In order to calculate the texture coordinates, we first must scale down these parameters. Each tile will have a width which is equal to $$1 / numCols$$ and a height which is equal to $$1 / numRows$$ as shown in the next figure.
+As you can see we have now three new uniforms. The uniforms `numCols` and `numRows` contain the number of columns and rows of the texture atlas.  In order to calculate the texture coordinates, we first must scale down these parameters. Each tile will have a width which is equal to $$1 / numCols$$ and a height which is equal to $$1 / numRows$$ as shown in the next figure.
 
 ![Texture coordinates](texture_coordinates.png)  
-Then we just need to apply and offset depending on the row and column, this is what is modelled by the `texXOffset` and `texYOffset` uniforms.
+Then we just need to apply and offset depending on the row and column. This is what is modelled by the `texXOffset` and `texYOffset` uniforms.
 
 We will calculate these offsets in the `Renderer` class as shown in the next fragment. We calculate the row and column that each particle is in according to its position and calculate the offset accordingly  as a multiple of tile’s width and height.
 
@@ -729,5 +729,5 @@ Note that if you only need to support perfectly square texture atlas, you will o
 
 ![Animated particles](animated_particles.png)
 
-Now we have animated particles working. In the next chapter we will learn how to optimize the rendering process. We are rendering multiple elements that have the same mesh and we are performing a drawing call for each of them. In the next chapter we will learn how to do it in a single call. That technique is useful for particles but also for rendering scenes where multiple elements share the same model but are placed in different locations or have different textures.
+Now we have animated particles working. In the next chapter we will learn how to optimize the rendering process. We are currently rendering multiple elements that have the same mesh and we are performing a drawing call for each of them, and in the next chapter we will learn how to do it in a single call. That technique is not only useful for particles but also for rendering scenes where multiple elements share the same model but are placed in different locations or have different textures.
 
