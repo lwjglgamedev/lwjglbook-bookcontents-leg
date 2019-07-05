@@ -6,11 +6,15 @@ One of the key aspects of every game is the ability to interact with the environ
 
 But, before we start talking about the steps to be performed to select objects, we need a way to represent selected objects. Thus, the first thing that we must do, is add another attribute to the GameItem class, which will allow us to tag selected objects:
 
-```private boolean selected;```
+```java
+private boolean selected;
+```
 
 Then, we need to be able to use that value in the scene shaders. Let’s start with the fragment shader (```scene_fragment.fs```). In this case, we will assume that we will receive a flag, from the vertex shader, that will determine if the fragment to be rendered belongs to a selected object or not.
 
-```in float outSelected;``` 
+```glsl
+in float outSelected;
+``` 
 
 Then, at the end of the fragment shader, we will modify the final fragment colour, by setting the blue component to $$1$$ if it’s selected.
 
@@ -20,7 +24,7 @@ if ( outSelected > 0 ) {
 }
 ```
 
-Then, we need to be able to set that value for each . If you recall from previous chapters we have two scenarios:
+Then, we need to be able to set that value for each `GameItem`. If you recall from previous chapters we have two scenarios:
 
 * Rendering of non instanced meshes.
 * Rendering of instanced meshes.
@@ -43,7 +47,7 @@ uniform float selectedNonInstanced;
 ...
 ```
 
-Now that the infrastructure has been set-up we just need to define how objects will be selected. Before we continue you may notice, if you look at the source code, that the View matrix is now stored in the ```Camera``` class. This is due to the fact that we werrecalculating the view matrix sin several classes in the source code. Previously, it was stored in the ```Transformation``` and in the ```SoundManager``` classes. In order to calculate intersections we would need to cerate another replica. Instead of that, we centralize that in the ```Camera``` class. This change also, requires that the view matrix is updated in our main game loop.
+Now that the infrastructure has been set-up we just need to define how objects will be selected. Before we continue you may notice, if you look at the source code, that the View matrix is now stored in the ```Camera``` class. This is due to the fact that we werrecalculating the view matrix sin several classes in the source code. Previously, it was stored in the ```Transformation``` and in the ```SoundManager``` classes. In order to calculate intersections we would need to create another replica. Instead of that, we centralize that in the ```Camera``` class. This change also, requires that the view matrix is updated in our main game loop.
 
 Let’s continue with the picking discussion. In this sample, we will follow a simple approach, selection will be done automatically using the camera. The closest object to where the camera is facing will be selected. Let’s discuss how this can be done.
 
@@ -55,7 +59,7 @@ We have the camera, placed in some coordinates in world-space, facing a specific
 
 In our sample, game items are cubes, so we need to calculate the intersection of the camera’s forward vector with cubes. It may seem to be a very specific case, but indeed is very frequent. In many games, the game items have associated what’s called a bounding box. A bounding box is a rectangle box, that contains all the vertices for that object. This bounding box is used also, for instance, for collision detection. In fact, in the animation chapter, you saw that each animation frame defined a bounding box, that helps to set the boundaries at any given time.
 
-So, let’s start coding. We will create a new class named `` `CameraBoxSelectionDetector```, which will have a method named ```selectGameItem``` which will receive a list of game items and a reference to the camera. The method is defined like this.
+So, let’s start coding. We will create a new class named ```CameraBoxSelectionDetector```, which will have a method named ```selectGameItem``` which will receive a list of game items and a reference to the camera. The method is defined like this.
 
 ```java
 public void selectGameItem(GameItem[] gameItems, Camera camera) {
@@ -95,7 +99,7 @@ The method tests if a ray, defined by an origin and a direction, intersects a bo
 
 * An origin: In our case, this will be our camera position.
 * A direction: This is where the camera is facing, the forward vector.
-* The minimum corner of the box. In our case, the cubes are centered around the GameItem position, the minimum corner will be those coordinates minus the scale. (In its original size, cubes have a length of 2 and a sacle of 1).
+* The minimum corner of the box. In our case, the cubes are centered around the GameItem position, the minimum corner will be those coordinates minus the scale. (In its original size, cubes have a length of 2 and a scale of 1).
 * The maximum corner. Self explanatory.
 * A result vector. This will contain the near and far distances of the intersection points.
 
@@ -105,7 +109,7 @@ The method will return true if there is an intersection. If true, we check the c
 
 Once the loop has finished, the candidate ```GameItem``` is marked as selected.
 
-And that’s, all. The ```selectGameItem``` will be invoked in the update method of the DummyGame class, along with the view matrix update.
+And that's all. The ```selectGameItem``` will be invoked in the update method of the DummyGame class, along with the view matrix update.
 
 ```java
 // Update view matrix
@@ -121,7 +125,7 @@ Besides that, a cross-hair has been added to the rendering process to check that
 
 ![Object Picking result](/chapter23/object_picking_result.png)
 
-Obviously, the method presented here is far from optimal but it will give you the basics to develop more sophisticated methods on your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or. rotated from previous update.
+Obviously, the method presented here is far from optimal but it will give you the basics to develop more sophisticated methods on your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or rotated from previous update.
 
 ## Mouse Selection
 
@@ -134,11 +138,11 @@ But, how do we pass from a $$(x,y)$$ coordinates in viewport space to world spac
 * We pass from model coordinates to world coordinates using the model matrix.
 * We pass from world coordinates to view space coordinates using the view matrix (that provides the camera effect)-
 * We pass from view coordinates to homogeneous clip space by applying the perspective projection matrix.
-* Final screen coordinates are calculate automatically by OpenGL for us. Before doint that, it passes to normalized device space (by dividing the $$x, y,z$$ coordinates by the $$w$$ component) and then to $$x,y$$ screen coordinates.
+* Final screen coordinates are calculate automatically by OpenGL for us. Before that, it passes to normalized device space (by dividing the $$x, y,z$$ coordinates by the $$w$$ component) and then to $$x,y$$ screen coordinates.
 
-So we need just to perform the traverse the inevrse path to get from screen coordinates $$(x,y)$$, to world coordinates.
+So we need just to perform the traverse the inverse path to get from screen coordinates $$(x,y)$$, to world coordinates.
 
-The first step is to transform from screen coordinates to normalized device space. The $$(x, y)$$ coordinates in the view port space are in the range $$[0, screen with]$$ $$[0, screen height]$$. The upper left corner of the screen has a value of $$[0, 0]$$. We need to transform that into coordinates in the range $$[-1, 1]$$.
+The first step is to transform from screen coordinates to normalized device space. The $$(x, y)$$ coordinates in the view port space are in the range $$[0, screen width]$$ $$[0, screen height]$$. The upper left corner of the screen has a coordinate of $$(0, 0)$$. We need to transform that into coordinates in the range $$[-1, 1]$$.
 
 ![Screen coordinates to normalized device space](/chapter23/screen_coordinates.png)
 
@@ -148,19 +152,19 @@ $$x = 2 \cdot screen_x / screenwidth - 1$$
 
 $$y = 1 - 2 * screen_y / screenheight$$
 
-But, how do we calculate the $$z$$ coordinate? The answer is simple, we simply assign it the $$-1$$ value, so that the ray points to the farthest visible distance (Remember that in OpenGL, $$-1$$ points to the screen). Now we have the coordinates in normalised device space.
+But, how do we calculate the $$z$$ component? The answer is simple, we simply assign it the $$-1$$ value, so that the ray points to the farthest visible distance (Remember that in OpenGL, $$-1$$ points to the screen). Now we have the coordinates in normalised device space.
 
-In order to continue with the transformations we need to convert them to the homogeneous clip space. We need to have the $$w$$ component, that is use homogeneous coordinates. Although this concept was presented in the previous chapters, let’s get back to it. In order to represent a 3D point we just need the $$x,y$$ and $$z$$ coordinates, but we are continuously working with an additional coordinate, the $$w$$ component. We need this extra component in order to use matrices to perform the different transformations. Some transformations do not need that extra component but other do. For instance, the translation matrix does not work if we only have $$x,y$$ and $$z$$ components. Thus, we have added the w component and assigned them a value of $$1$$ so we can work with 4 by 4 matrices.
+In order to continue with the transformations we need to convert them to the homogeneous clip space. We need to have the $$w$$ component, that is use homogeneous coordinates. Although this concept was presented in the previous chapters, let’s get back to it. In order to represent a 3D point we just need the $$x$$, $$y$$ and $$z$$ components, but we are continuously working with an additional component, the $$w$$ component. We need this extra component in order to use matrices to perform the different transformations. Some transformations do not need that extra component but other do. For instance, the translation matrix does not work if we only have $$x$$, $$y$$ and $$z$$ components. Thus, we have added the w component and assigned them a value of $$1$$ so we can work with 4 by 4 matrices.
 
 Besides that, most of transformations, or to be more precise, most of the transformation matrices do not alter the $$w$$ component. An exception to this is the projection matrix. This matrix changes the $$w$$ value to be proportional to the $$z$$ component.
 
-Transforming from homogeneous clip space to normalized device coordinates is achieved by dividing the $$x$$, $$y$$ and $$z$$ coordinates by $$w$$. As this component is proportional to the z component, this implies that distant objects are drawn smaller. In our case we need to do the reverse, we need to unproject, but since what we are calculating it’s a ray we just simply can ignore that step, we just set the $$w$$ component to $$1$$ and leave the rest of the components with their original value.
+Transforming from homogeneous clip space to normalized device coordinates is achieved by dividing the $$x$$, $$y$$ and $$z$$ components by $$w$$. As this component is proportional to the z component, this implies that distant objects are drawn smaller. In our case we need to do the reverse, we need to unproject, but since what we are calculating it’s a ray we just simply can ignore that step, we just set the $$w$$ component to $$1$$ and leave the rest of the components with their original value.
 
-Now we need to go back yo view space. This is easy, we just need to calculate the inverse of the projection matrix and multiply it by our 4 components vector. Once we have done that, we need to transform them to world space. Again, we just need to use the view matrix, calculate it’s inverse and multiply it by our vector.
+Now we need to go back view space. This is easy, we just need to calculate the inverse of the projection matrix and multiply it by our 4 components vector. Once we have done that, we need to transform them to world space. Again, we just need to use the view matrix, calculate it’s inverse and multiply it by our vector.
 
 Remember that we are only interested in directions, so, in this case we set the $$w$$ component to $$0$$. Also we can set the $$z$$ component again to $$-1$$, since we want it to point towards the screen. Once we have done that and applied the inverse view matrix we have our vector in world space. We have our ray calculated and can apply the same algorithm as in the case of the camera picking.
 
-We have created a new class named `MouseBoxSelectionDetector `that implements the setps described above. Besides that, we have moved the projection matrix to the `Window `class so we can use them in several places of the source code and refactroed a little bit the `CameraBoxSelectionDetector `so the `MouseBoxSelectionDetector `can inheit from it and use the collision detection method. You can check the source code directly, since the implemenattion it’s very simple.
+We have created a new class named `MouseBoxSelectionDetector` that implements the steps described above. Besides that, we have moved the projection matrix to the `Window` class so we can use them in several places of the source code and refactored a little bit the `CameraBoxSelectionDetector` so the `MouseBoxSelectionDetector` can inherit from it and use the collision detection method. You can check the source code directly, since the implemenattion it’s very simple.
 
 The result now looks like this.
 
