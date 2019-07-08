@@ -1,4 +1,4 @@
-# The Game Loop
+﻿# The Game Loop
 
 In this chapter we will start developing our game engine by creating our game loop. The game loop is the core component of every game. It is basically an endless loop which is responsible for periodically handling user input, updating game state and rendering to the screen.
 
