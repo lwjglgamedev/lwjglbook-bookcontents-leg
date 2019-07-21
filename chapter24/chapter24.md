@@ -1,10 +1,10 @@
 # HUD Revisited - NanoVG
 
-In previous chapters we explained how a HUD can be created renderings shapes and textures over the top of the scene using an orthographic projection.  In this chapter we will learn how to use the [NanoVG](https://github.com/memononen/nanovg) library to be able to render antialiased vector graphics to construct more complex HUDs in an easy way.
+In previous chapters we explained how a HUD can be created by rendering shapes and textures over the top of the scene using an orthographic projection. In this chapter we will learn how to use the [NanoVG](https://github.com/memononen/nanovg) library to be able to render antialiased vector graphics to construct more complex HUDs in an easy way.
 
-There are many other libraries out there that you can use to accomplish this task, such as [Nifty GUI](https://github.com/nifty-gui/nifty-gui), [Nuklear](https://github.com/vurtun/nuklear), etc. In this chapter we will focus on Nanovg since it’s very simple to use, but if you’re looking for developing complex GUI interactions with buttons, menus and windows you should probably look for [Nifty GUI](https://github.com/nifty-gui/nifty-gui).
+There are many other libraries out there that you can use to accomplish this task, such as [Nifty GUI](https://github.com/nifty-gui/nifty-gui), [Nuklear](https://github.com/vurtun/nuklear), etc. In this chapter we will focus on Nanovg since it’s very simple to use, but if you’re looking for developing complex GUI interactions with buttons, menus and windows you should probably look at [Nifty GUI](https://github.com/nifty-gui/nifty-gui).
 
-The first step in order to start using [NanoVG](https://github.com/memononen/nanovg) is adding the dependences in the `pom.xml` file \(one  for the dependencies required at compile time and the other one for the natives required at runtime\).
+The first step in order to start using [NanoVG](https://github.com/memononen/nanovg) is adding the dependencies in the `pom.xml` file \(one for the dependencies required at compile time and the other one for the natives required at runtime\).
 
 ```xml
 ...
@@ -104,7 +104,7 @@ public void render(Window window) {
 The first thing that we must do is call the `nvgBeginFrame` method. All the NanoVG rendering operations must be enclosed between a `nvgBeginFrame` and `nvgEndFrame` calls. The `nvgBeginFrame` accepts the following parameters:
 
 * The NanoVG context.
-* The size of the window to render \(width an height\).
+* The size of the window to render \(width and height\).
 * The pixel ratio. If you need to support Hi-DPI, you can change this value. For this sample we just set it to 1.
 
 Then we create several ribbons that occupy the whole screen with. The first one is drawn like this:
@@ -117,11 +117,11 @@ nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
 nvgFill(vg);
 ```
 
-While rendering a shape, the first method that shall be invoked is `nvgBeginPath`, that instructs NanoVG to start drawing a new shape. Then we define what to draw, a rect, the fill colour and by invoking the `nvgFill` we draw it.
+While rendering a shape, the first method that will be invoked is `nvgBeginPath`, which instructs NanoVG to start drawing a new shape. Then we define what to draw, a rect, the fill colour and by invoking the `nvgFill` we draw it.
 
 You can check the rest of the source code to see how the rest of the shapes are drawn. When rendering text is not necessary to call `nvgBeginPath` before rendering it.
 
-After we have finished drawing all the shapes, we just call the `nvgEndFrame` to end rendering, but there’s one important thing to be done before leaving the method. We must restore the OpenGL state. NanoVG modifies OpenGL state in order to perform their operations, if the state is not correctly restored you  may see that the scene is not correctly rendered or even that it's been wiped out. Thus, we need to restore the relevant OpenGL status that we need for our rendering. This is delegated in the `Window` class:
+After we have finished drawing all the shapes, we just call the `nvgEndFrame` to end rendering, but there’s one important thing to be done before leaving the method: we must restore the OpenGL state. NanoVG modifies the OpenGL state in order to perform their operations; if the state is not correctly restored, you may see that the scene is not correctly rendered or even that it's been wiped out. Thus, we need to restore the relevant OpenGL status that we need for our rendering. This is delegated in the `Window` class:
 
 ```java
 // Restore state
