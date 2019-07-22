@@ -58,7 +58,7 @@ public class FrustumCullingFilter {
     }
 ```
 
-The `FrustumCullingFilter`class will also have a method to calculate the plane equations called `updateFrustum`which will be called before rendering. The method is defined like this:
+The `FrustumCullingFilter` class will also have a method to calculate the plane equations called `updateFrustum` which will be called before rendering. The method is defined like this:
 
 ```java
 public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
@@ -72,9 +72,9 @@ public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
 }
 ```
 
-First, we store a copy of the projection matrix and multiply it by the view matrix to get the projection view matrix. Then, with that transformation matrix we just simply need to invoke the `frustumPlane`method for each of the frustum planes. It’s important to note that these plane equations are expressed in world coordinates, so all the calculations need to be done in that space.
+First, we store a copy of the projection matrix and multiply it by the view matrix to get the projection view matrix. Then, with that transformation matrix we just simply need to invoke the `frustumPlane` method for each of the frustum planes. It’s important to note that these plane equations are expressed in world coordinates, so all the calculations need to be done in that space.
 
-Now that we have all the planes calculated we just need to check if the `GameItem`instances are inside the frustum or not. How can we do this ? Let’s first examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
+Now that we have all the planes calculated we just need to check if the `GameItem` instances are inside the frustum or not. How can we do this? Let’s first examine how we can check if a point is inside the frustum. We can achieve that by calculating the signed distance of the point to each of the planes. If the distance of the point to the plane is positive, this means that the point is in front of the plane \(according to its normal\). If it’s negative, this means that the point is behind the plane.
 
 ![Distance to a plane](/chapter25/distance_to_plane.png)
 
@@ -84,19 +84,19 @@ $$dist=Ax_{0}+By_{0}+Cz_{0}+D$$, where $$x_{0}$$, $$y_{0}$$ and $$z_{0}$$ are th
 
 So, a point is behind the plane if $$Ax_{0}+By_{0}+Cz_{0}+D <= 0$$.
 
-But, we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem`and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
+But we do not have points, we have complex meshes, we cannot just use a point to check if an object is inside a frustum or not. You may think in checking every vertex of the `GameItem` and see if it’s inside the frustum or not. If any of the points is inside, the GameItem should be drawn. But this what OpenGL does in fact when clipping, this is what we are tying to avoid. Remember that frustum culling benefits will be more noticeable the more complex the meshes to be rendered are.
 
-We need to enclsoe evey `GameItem`into a simple volume that is easy to check. Here we have basically two options:
+We need to enclose every `GameItem` into a simple volume that is easy to check. Here we have basically two options:
 
 * Bounding boxes.
 
-* Bounding Spheres.
+* Bounding spheres.
 
-In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItems`into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
+In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItem` into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
 
 ![Bounding sphere](/chapter25/bounding_sphere.png)
 
-So, we will add a new method to the `FrustumCullingFilter`class to check if a spphere is inside the frustum or not. The method is defined like this.
+So, we will add a new method to the `FrustumCullingFilter` class to check if a spphere is inside the frustum or not. The method is defined like this.
 
 ```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
@@ -125,9 +125,9 @@ public void filter(List<GameItem> gameItems, float meshBoundingRadius) {
 }
 ```
 
-We have added a new attribute, insideFrustum, to the `GameItem`class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem`is the centre of the spehere \(in world space coordinates\).
+We have added a new attribute, insideFrustum, to the `GameItem` class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem` is the centre of the spehere \(in world space coordinates\).
 
-The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem`instances contained in it.
+The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem` instances contained in it.
 
 ```java
 public void filter(Map<? extends Mesh, List<GameItem>> mapMesh) {
@@ -146,11 +146,11 @@ frustumFilter.filter(scene.getGameMeshes());
 frustumFilter.filter(scene.getGameInstancedMeshes());
 ```
 
-You can play with activating and deactivating the filtering and can check the increase and decrease in the FPS that you can achieve. Particles are not considered in the filtering, but its trivial to add it. In any case, for particles, it may be better to just check the position of the emitter instead of checking every particle.
+You can play with activating and deactivating the filtering and can check the increase and decrease in the FPS that you can achieve. Particles are not considered in the filtering, but it's trivial to add it. In any case, for particles, it may be better to just check the position of the emitter instead of checking every particle.
 
 # Optimizations - Frustum Culling \(II\)
 
-Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML")library provides. In particular, it provdies a class named `FrustumIntersection`which extracts the planes of the veiw frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
+Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML") library provides. In particular, it provdies a class named `FrustumIntersection` which extracts the planes of the veiw frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
 
 So, let's change the `FrustumCullingFilter` class. The attributes and constructor are simplified like this:
 
@@ -167,7 +167,7 @@ public class FrustumCullingFilter {
     }
 ```
 
-The updateFrustum method just delegates the plane extraction to the `FrustumIntersection`instance.
+The updateFrustum method just delegates the plane extraction to the `FrustumIntersection` instance.
 
 ```java
 public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
@@ -179,7 +179,7 @@ public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
 }
 ```
 
-And the method that `insideFrustum`method is vene more simple:
+And the method that `insideFrustum` method is even simpler:
 
 ```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
@@ -187,5 +187,5 @@ public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius)
 }
 ```
 
-With this approach you will be able to vene get a few more FPS. Besides that, a global flag has been added to the `Window `class to enable / disbale frustum culling. The `GameItem `class also has a flag for enabling / disabling the filtering, because there may be some items for which frustum culling filtering does not make sense.
+With this approach you will even be able to get a few more FPS. Besides that, a global flag has been added to the `Window` class to enable / disable frustum culling. The `GameItem` class also has a flag for enabling / disabling the filtering, because there may be some items for which frustum culling filtering does not make sense.
 

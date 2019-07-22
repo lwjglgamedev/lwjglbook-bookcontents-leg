@@ -2,7 +2,7 @@
 
 In the shadows chapter we presented the shadow map technique to be able to display shadows using directional lights when rendering a 3D scene. The solution presented there, required you to manually tweak some of the parameters in order to improve the results. In this chapter we are going to change that technique to automate all the process and to improve the r results for open spaces. In order to achieve that goal we are going to use a technique called Cascaded Shadow Maps \(CSM\).
 
-Let’s first start by examining how we can automate the construction of the light view matrix and the orthographic projection matrix used to render the shadows. If you recall from the shadows chapter, we need to draw the scene form the light’s perspective. This implies the creation of a light view matrix, which acts like a camera for light and a projection matrix. Since light is directional, and is supposed to be located at the infinity, we chose an orthographic projection.
+Let’s first start by examining how we can automate the construction of the light view matrix and the orthographic projection matrix used to render the shadows. If you recall from the shadows chapter, we need to draw the scene from the light’s perspective. This implies the creation of a light view matrix, which acts like a camera for light and a projection matrix. Since light is directional, and is supposed to be located at the infinity, we chose an orthographic projection.
 
 We want all the visible objects to fit into the light view projection matrix. Hence, we need to fit the view frustum into the light frustum. The following picture depicts what we want to achieve.
 
@@ -12,7 +12,7 @@ How can we construct that? The first step is to calculate the frustum corners of
 
 ![](/chapter26/frustum_center.png)
 
-With that information we can set the position of the light. That position and its direction will be used to construct the light view matrix. In order to calculate the position, we start form the centre of the view frustum obtained before. We then go back to the direction of light an amount equal to the distance between the near and far z planes of the view frustum.
+With that information we can set the position of the light. That position and its direction will be used to construct the light view matrix. In order to calculate the position, we start from the centre of the view frustum obtained before. We then go back to the direction of light an amount equal to the distance between the near and far z planes of the view frustum.
 
 ![](/chapter26/light_position.png)
 
@@ -32,7 +32,7 @@ The approach that Cascaded Shadow Maps \(CSMs\) use is to divide the view frustu
 
 For each of these splits, the depth map is rendered, adjusting the light view and projection matrices to cover fit to each split. Thus, the texture that stores the depth map covers a reduced area of the view frustum. And, since the split closest to the camera covers less space, the depth resolution is increased.
 
-As it can be deduced form explanation above, We will need as many depth textures as splits, and we will also change the light view and projection matrices for each of the, Hence, the steps to be done in order to apply CSMs are:
+As it can be deduced from the explanation above, we will need as many depth textures as splits, and we will also change the light view and projection matrices for each of the. Hence, the steps to be done in order to apply CSMs are:
 
 * Divide the view frustum into n splits.
 
@@ -52,9 +52,9 @@ As it can be deduced form explanation above, We will need as many depth textures
 
 As you can see, the main drawback of CSMs is that we need to render the scene, from light’s perspective, for each split. This is why is often only used for open spaces. Anyway, we will see how we can easily reduce that overhead.
 
-So let’s start examining the code, but before we continue a little warning, I will not include the full source code here since it would be very tedious to red. Instead, I will present the main classes their responsibilities and the fragments that may require further explanation in order to get a good understanding. All the shading related classes have been moved to a new package called`org.lwjglb.engine.graph.shadow`.
+So let’s start examining the code, but before we continue a little warning, I will not include the full source code here since it would be very tedious to red. Instead, I will present the main classes their responsibilities and the fragments that may require further explanation in order to get a good understanding. All the shading related classes have been moved to a new package called `org.lwjglb.engine.graph.shadow`.
 
-The code that renders shadows, that is, the scene from light’s perspective has been moved to the `ShadowRenderer`class. \(That code was previously contained in the `Renderer`class\).
+The code that renders shadows, that is, the scene from light’s perspective has been moved to the `ShadowRenderer` class. \(That code was previously contained in the `Renderer` class\).
 
 The class defines the following constants:
 
@@ -65,9 +65,9 @@ public static final float[] CASCADE_SPLITS = new float[]{Window.Z_FAR / 20.0f, W
 
 The first one is the number of cascades or splits. The second one defines where the far z plane is located for each of these splits. As you can see they are not equally spaced. The split that is closer to the camera has the shortest distance in the z plane.
 
-The class also stores the reference to the shader program used to render the depth map, a list with the information associated to each split, modelled by the `ShadowCascade`class, and a reference to the object that whill host the depth mapth information \(tetxures\), modelled by the `ShadowBuffer`class.
+The class also stores the reference to the shader program used to render the depth map, a list with the information associated to each split, modelled by the `ShadowCascade` class, and a reference to the object that will host the depth map information \(textures\), modelled by the `ShadowBuffer` class.
 
-The `ShadowRenderer`class has methods for setting up the shaders and the required attributes and a render method . The `render`method is defined like this.
+The `ShadowRenderer` class has methods for setting up the shaders and the required attributes and a render method. The `render` method is defined like this.
 
 ```java
 public void render(Window window, Scene scene, Camera camera, Transformation transformation, Renderer renderer) {
@@ -101,15 +101,15 @@ public void render(Window window, Scene scene, Camera camera, Transformation tra
 }
 ```
 
-As you can see, I similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split.  In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated `ShadowCascade`instande.
+As you can see, it's similar to the previous render method for shadow maps, except that we are performing several rendering passes, one per split. In each pass we change the light view matrix and the orthographic projection matrix with the information contained in the associated `ShadowCascade` instance.
 
-Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the `ShadowBuffer`class, and is setup to be used by the FBO with this line:
+Also, in each pass, we need to change the texture we are using. Each pass will render the depth information to a different texture. This information is stored in the `ShadowBuffer` class, and is setup to be used by the FBO with this line:
 
 ```java
 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
 ```
 
-As it’s just have been mentioned, the `ShadowBuffer`class stores the information related to the textures used to store depth information. The code its very similar to the code used in the shadows chapter, excep t that we are using texture arrays. Thus, we have created a new class, `ArrTexture`, that creates an  array of textures with the same attributes. This class also provides a `bind`method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
+As it’s just have been mentioned, the `ShadowBuffer` class stores the information related to the textures used to store depth information. The code is very similar to the code used in the shadows chapter, except t that we are using texture arrays. Thus, we have created a new class, `ArrTexture`, that creates an  array of textures with the same attributes. This class also provides a `bind` method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
 
 ```java
 public void bindTextures(int start) {
@@ -120,9 +120,9 @@ public void bindTextures(int start) {
 }
 ```
 
-`ShadowCascade`class, stores the light view and orthographic projection matrices associated to one split. Each split is defined by a near and a z far plan distance, and with that information the matrices are calculated accordingly.
+The `ShadowCascade` class stores the light view and orthographic projection matrices associated to one split. Each split is defined by a near and a z far plan distance, and with that information the matrices are calculated accordingly.
 
-The class provided and update method which, taking as an input the view natrix and the light direction.  The method calculates the view frustum corners in world space and then calculates the light position. That position is calculated going back, suing the light direction, from the frustum centre to a distance equal to the distance between the far and near z planes.
+The class provided and update method which, taking as an input the view matrix and the light direction.  The method calculates the view frustum corners in world space and then calculates the light position. That position is calculated going back, suing the light direction, from the frustum centre to a distance equal to the distance between the far and near z planes.
 
 ```java
 public void update(Window window, Matrix4f viewMatrix, DirectionalLight light) {
@@ -159,7 +159,7 @@ public void update(Window window, Matrix4f viewMatrix, DirectionalLight light) {
 }
 ```
 
-With the light position and the light direction. we can construct the light view matrix. This is done in the `updateLightViewMatrix`:
+With the light position and the light direction, we can construct the light view matrix. This is done in the `updateLightViewMatrix`:
 
 ```java
 private void updateLightViewMatrix(Vector3f lightDirection, Vector3f lightPosition) {
@@ -170,7 +170,7 @@ private void updateLightViewMatrix(Vector3f lightDirection, Vector3f lightPositi
 }
 ```
 
-Finally, we need to construct the orthographic projection matrix.  This is done in the `updateLightProjectionMatrix`method. The method is to transform the view frustum coordinates into light space. We then get the minimum and maximum values for the x, y coordinates to construct the bounding box that encloses the view frustum. Near z plane can be set to 0 and the far z plane to the distance between the maximum and minimum value of the  coordinates.
+Finally, we need to construct the orthographic projection matrix. This is done in the `updateLightProjectionMatrix` method. The method transforms the view frustum coordinates into light space. We then get the minimum and maximum values for the x, y coordinates to construct the bounding box that encloses the view frustum. Near z plane can be set to 0 and the far z plane to the distance between the maximum and minimum value of the coordinates.
 
 ```java
 private void updateLightProjectionMatrix() {
@@ -200,7 +200,7 @@ private void updateLightProjectionMatrix() {
 
 Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculate the minimum bounding box, axis aligned with the light position , hat encloses the view frustum.
 
-The `Renderer`class has been modified  to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal with the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders. Also, for particles, we need to preserve the scale, since we no longer pass the model view matrix, that information is lost now. We reuse the attribute used to mark selected items to set that scale information. In the particles shader we will use that value to set the scaling again.
+The `Renderer` class has been modified to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal with the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders. Also, for particles, we need to preserve the scale, since we no longer pass the model view matrix, that information is lost now. We reuse the attribute used to mark selected items to set that scale information. In the particles shader we will use that value to set the scaling again.
 
 In the scene vertex shader, we calculate model light view matrix for each split, and pass it as an output to the fragment shader.
 
@@ -219,7 +219,7 @@ Also, in the fragment shader we must decide which split we are into. In order to
 uniform float cascadeFarPlanes[NUM_CASCADES];
 ```
 
-We calculate de split like this. The variable `idx`will have the split to be used:
+We calculate the split like this. The variable `idx` will have the split to be used:
 
 ```glsl
 int idx;

@@ -18,7 +18,7 @@ The next element are sources, which represent a location in a 3D space (a point)
 
 A source has additional attributes which will be shown later when describing the source code.
 
-And last, but no least, a listener which is where the generated sounds are supposed to be heard. The Listener represents were the microphone is set in a 3D audio scene to receive the sounds. There is only one listener. Thus, it’s often said that audio rendering is done form the listener’s perspective. A listener shares some the attributes but it has some additional ones such as the orientation. The orientation represents where the listener is facing.
+And last, but no least, a listener which is where the generated sounds are supposed to be heard. The Listener represents were the microphone is set in a 3D audio scene to receive the sounds. There is only one listener. Thus, it’s often said that audio rendering is done from the listener’s perspective. A listener shares some the attributes but it has some additional ones such as the orientation. The orientation represents where the listener is facing.
 
 So an audio 3D scene is composed by a set of sound sources which emit sound and a listener that receives them. The final perceived sound will depend on the distance of the listener to the different sources, their relative speed and the selected propagation models. Sources can share buffers and play the same data. The following figure depicts a sample 3D scene with the different element types involved.
 
@@ -29,7 +29,7 @@ So, let's start coding, we will create a new package under the name ```org.lwjgl
 ```java
 package org.lwjglb.engine.sound;
 
-// ... Some inports here
+// ... Some imports here
 
 public class SoundBuffer {
 
@@ -59,9 +59,9 @@ public class SoundBuffer {
 
 The constructor of the class expects a sound file (which may be in the classpath as the rest of resources) and creates a new buffer from it. The first thing that we do is create an OpenAL buffer with the call to ```alGenBuffers```. At the end our sound buffer will be identified by an integer which is like a pointer to the data it holds. Once the buffer has been created we dump the audio data in it. The constructor expects a file in OGG format, so we need to transform it to PCM format. You can check how that's done in the source code, anyway, the source code has been extracted from the LWJGL OpenAL tests.
 
-Previous versions of LWJGL had a helper class named ```WaveData```which was used to load audio files in WAV format. This class is no longer present in LWJGL 3. Nevertheless, you may get the source code from that class and use it in your games (maybe without requiring any changes).
+Previous versions of LWJGL had a helper class named ```WaveData``` which was used to load audio files in WAV format. This class is no longer present in LWJGL 3. Nevertheless, you may get the source code from that class and use it in your games (maybe without requiring any changes).
 
-The ```SoundBuffer``` class also provides a ```cleanup``` method to free the resources when we are done with it.
+The ```SoundBuffer``` class also provides a `cleanup` method to free the resources when we are done with it.
 
 Let's continue by modelling an OpenAL, which will be implemented by class named ```SoundSource```. The class is defined below.
 
