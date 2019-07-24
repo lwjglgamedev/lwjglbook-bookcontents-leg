@@ -478,18 +478,18 @@ private void buildTexture() throws Exception {
     // Get the font metrics for each character for the selected font by using image
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g2D = img.createGraphics();
+    g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2D.setFont(font);
     FontMetrics fontMetrics = g2D.getFontMetrics();
 
     String allChars = getAllAvailableChars(charSetName);
     this.width = 0;
-    this.height = 0;
+    this.height = fontMetrics.getHeight();
     for (char c : allChars.toCharArray()) {
         // Get the size for each character and update global image size
         CharInfo charInfo = new CharInfo(width, fontMetrics.charWidth(c));
         charMap.put(c, charInfo);
-        width += charInfo.getWidth();
-        height = Math.max(height, fontMetrics.getHeight());
+        width += charInfo.getWidth() + CHAR_PADDING;
     }
     g2D.dispose();
 ```
@@ -528,11 +528,16 @@ Then we will create an image that contains all the available characters. In orde
     g2D.setFont(font);
     fontMetrics = g2D.getFontMetrics();
     g2D.setColor(Color.WHITE);
-    g2D.drawString(allChars, 0, fontMetrics.getAscent());
+    int startX = 0;
+    for (char c : allChars.toCharArray()) {
+        CharInfo charInfo = charMap.get(c);
+        g2D.drawString("" + c, startX, fontMetrics.getAscent());
+        startX += charInfo.getWidth() + CHAR_PADDING;
+    }
     g2D.dispose();
 ```
 
-We are generating an image that contains all the characters in a single row \(we maybe are not fulfilling the premise that the texture should have a size of a power of two, but it should work on most modern cards. In any case you could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
+We are generating an image that contains all the characters in a single row \(we maybe are not fulfilling the premise that the texture should have a size of a power of two, but it should work on most modern cards. We need to draw each character one by one to apply the padding. In any case you could always achieve that by adding some extra empty space\). You can even see the image that we are generating, if after that block of code, you put a line like this:
 
 ```java
 ImageIO.write(img, IMAGE_FORMAT, new java.io.File("Temp.png"));
