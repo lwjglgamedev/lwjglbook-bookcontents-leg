@@ -2,9 +2,9 @@
 
 ## Static Meshes
 
-The capability of loading complex 3d models in different formats is crucial in order to write a game. The task of writing parsers for some of them would require lots of work. Even just supporting a single format can be time consuming. For instance, the wavefront loader described in chapter 9, only parses a small subset of the specification \(materials are not handled at all\).
+The capability of loading complex 3D models in different formats is crucial in order to write a game. The task of writing parsers for some of them would require lots of work. Even just supporting a single format can be time consuming. For instance, the wavefront loader described in chapter 9, only parses a small subset of the specification \(materials are not handled at all\).
 
-Fortunately, the [Assimp ](http://assimp.sourceforge.net/)library already can be used to parse many common 3D formats. It’s a C++ library which can load static and animated models in a variety of formats. LWJGL provides the bindings to use them from Java code. In this chapter, we will explain how it can be used.
+Fortunately, the [Assimp ](http://assimp.sourceforge.net/) library already can be used to parse many common 3D formats. It’s a C++ library which can load static and animated models in a variety of formats. LWJGL provides the bindings to use them from Java code. In this chapter, we will explain how it can be used.
 
 The first thing is adding assimp maven dependencies to the project pom.xml. We need to add compile time and runtime dependencies.
 
@@ -23,7 +23,7 @@ The first thing is adding assimp maven dependencies to the project pom.xml. We n
 </dependency>
 ```
 
-Once the dependencies has been set, we will cerate a new class named StaticMeshesLoader that will be used to load meshes with no animations. The class defines two static public methods:
+Once the dependencies has been set, we will create a new class named StaticMeshesLoader that will be used to load meshes with no animations. The class defines two static public methods:
 
 ```java
 public static Mesh[] load(String resourcePath, String texturesDir) throws Exception {
@@ -36,21 +36,21 @@ public static Mesh[] load(String resourcePath, String texturesDir, int flags) th
 
 Both methods have the following arguments:
 
-* `resourcePath`: The path to the file where the model file is located. This is an absolute path, because Assimp may need to load additional files and may use the same base path as the resource path \(For instance, material files for wavefront, OBJ, files\). If you embed your resources inside a JAR file, Assimp will not be able to import it, so uts must be a file system path.
+* `resourcePath`: The path to the file where the model file is located. This is an absolute path, because Assimp may need to load additional files and may use the same base path as the resource path \(For instance, material files for wavefront, OBJ, files\). If you embed your resources inside a JAR file, Assimp will not be able to import it, so it must be a file system path.
 
-* `texturesDir`: The path to the directory that will hold the textures for this model. This a CLASSPATH relative path. For instance, a wavefront material file may define several texture files. The code, expect this files to be located in the `texturesDir`directory. If you find texture loading errors you may need to manually tweak these paths in the model file.
+* `texturesDir`: The path to the directory that will hold the textures for this model. This a CLASSPATH relative path. For instance, a wavefront material file may define several texture files. The code, expect this files to be located in the `texturesDir` directory. If you find texture loading errors you may need to manually tweak these paths in the model file.
 
-The second method has an extra argument named `flags`. This parameter allows to tune the loading process. The firstmethodsjust invokes the secondoneand passes some values that are useful in most of the situations:
+The second method has an extra argument named `flags`. This parameter allows to tune the loading process. The first method invokes the second one and passes some values that are useful in most of the situations:
 
-* `aiProcess_JoinIdenticalVertices`: This flag reduces the number of vertices that are used, identifiying those that can be reused between faces.
+* `aiProcess_JoinIdenticalVertices`: This flag reduces the number of vertices that are used, identifying those that can be reused between faces.
 
 * `aiProcess_Triangulate`: The model may use quads or other geometries to define their elements. Since we are only dealing with triangles, we must use this flag to split all he faces into triangles \(if needed\).
 
 * `aiProcess_FixInfacingNormals`: This flags try to reverse normals that may point inwards.
 
-There are many other flags that can be used, you chan check them in the LWJGL Javadoc documentation.
+There are many other flags that can be used, you can check them in the LWJGL Javadoc documentation.
 
-Let’s go back to the second constructor. The first thing we do is invoke the `aiImportFile`method to load the model with the selectedflags.
+Let’s go back to the second constructor. The first thing we do is invoke the `aiImportFile` method to load the model with the selected flags.
 
 ```java
 AIScene aiScene = aiImportFile(resourcePath, flags);
@@ -84,9 +84,9 @@ return meshes;
 
 We process the materials contained in the model. Materials define colour and textures to be used by the meshes that compose the model. Then we process the different meshes. A model can define several meshes and each of them can use one of the materials defined for the model.
 
-If you examine the code above you may see that many of the calls to the Assimp library return `PointerBuffer`instances. You can think about them like C pointers, they just point to a memory region which contain data. You need to know in advance the type of data that they hold in order to process them. In the case of materials, we iterate over that buffer creating instances of theAIMaterialclass. In the second case, we iterate over the buffer that holds mesh data creating instance of the `AIMesh`class.
+If you examine the code above you may see that many of the calls to the Assimp library return `PointerBuffer` instances. You can think about them like C pointers, they just point to a memory region which contain data. You need to know in advance the type of data that they hold in order to process them. In the case of materials, we iterate over that buffer creating instances of the `AIMaterial` class. In the second case, we iterate over the buffer that holds mesh data creating instance of the `AIMesh` class.
 
-Let’s examine the `processMaterial`method.
+Let’s examine the `processMaterial` method.
 
 ```java
 private static void processMaterial(AIMaterial aiMaterial, List<Material> materials, String texturesDir) throws Exception {
@@ -125,11 +125,11 @@ private static void processMaterial(AIMaterial aiMaterial, List<Material> materi
 }
 ```
 
-We check if the material defines a texture or not. If so, we load the texture. We have created a new class named `TextureCache`which caches textures. This is due to the fact that several meshes may share the same texture and we do not want to waste space loading again and again the same data. Then we try to get the colours of the material for the ambient, diffuse and specular components. Fortunately, the definition that we had for a material already contained that information.
+We check if the material defines a texture or not. If so, we load the texture. We have created a new class named `TextureCache` which caches textures. This is due to the fact that several meshes may share the same texture and we do not want to waste space loading again and again the same data. Then we try to get the colours of the material for the ambient, diffuse and specular components. Fortunately, the definition that we had for a material already contained that information.
 
-The `TextureCache`definition is very simple is just a map that indexes the different textures by the path to the texture file \(You can check directly in the source code\). Due to the fact, that now textures may use different image formats \(PNG, JPEG, etc.\), we have modified the way that textures are loaded. Instead of using the PNG library, we now use the STB library to be able to load more formats.
+The `TextureCache` definition is very simple is just a map that indexes the different textures by the path to the texture file \(You can check directly in the source code\). Due to the fact, that now textures may use different image formats \(PNG, JPEG, etc.\), we have modified the way that textures are loaded. Instead of using the PNG library, we now use the STB library to be able to load more formats.
 
-Let’s go back to the `StaticMeshesLoader`class. The `processMesh`is defined like this.
+Let’s go back to the `StaticMeshesLoader` class. The `processMesh` is defined like this.
 
 ```java
 private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
@@ -161,9 +161,9 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
 }
 ```
 
-A `Mesh`is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords`and `processIndices`method. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
+A `Mesh` is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords` and `processIndices` methods. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
 
-The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh`instance that returns the desired data. For instance, the process processVertices is defined like this:
+The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh` instance that returns the desired data. For instance, the process processVertices is defined like this:
 
 ```java
 private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
@@ -177,17 +177,17 @@ private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
 }
 ```
 
-You can see that get get a buffer to the vertices by invoking the `mVertices`method. We just simply process them to create a `List`of floats that contain the vertices positions. Since, the method retyrns jusst a buffer you could pass that information directly to the OpenGL methods that create vertices. We do not do it that way for two reasons. The first one is try to reduce as much as possible the modifications over the code base. Second one is that by loading into an intermediate structure you may be able to perform some pros-processing tasks and even debug the loading process.
+You can see that get get a buffer to the vertices by invoking the `mVertices` method. We just simply process them to create a `List` of floats that contain the vertices positions. Since, the method returns just a buffer you could pass that information directly to the OpenGL methods that create vertices. We do not do it that way for two reasons. The first one is try to reduce as much as possible the modifications over the code base. Second one is that by loading into an intermediate structure you may be able to perform some pros-processing tasks and even debug the loading process.
 
 If you want a sample of the much more efficient approach, that is, directly passing the buffers to OpenGL, you can check this [sample](https://github.com/LWJGL/lwjgl3-demos/blob/master/src/org/lwjgl/demo/opengl/assimp/WavefrontObjDemo.java).
 
-The `StaticMeshesLoader`makes the `OBJLoader`class obsolete, so it has been removed form the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
+The `StaticMeshesLoader` makes the `OBJLoader` class obsolete, so it has been removed from the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
 
 ![](/chapter27/model.png)
 
 ## Animations
 
-Now that we have used assimp for loading static meshes we can proceed with animations. If you recall form the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
+Now that we have used assimp for loading static meshes we can proceed with animations. If you recall from the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
 
 #### ![](/chapter27/vao_animation.png)
 
@@ -195,9 +195,9 @@ Each vertex position has associated a list of four weights that change the final
 
 In the animation chapter, we developed a MD5 parser to load animated meshes. In this chapter we will use assimp library. This will allow us to load many more formats besides MD5, such as [COLLADA](https://en.wikipedia.org/wiki/COLLADA "COLLADA"), [FBX](https://en.wikipedia.org/wiki/FBX "FBX"), etc.
 
-Before we start coding let’s clarify some terminology. In this chapter we will refer to bones and joints indistinguishably. A joint / bone is are just elements that affect vertices, and that have a parent  forming a hierarchy. MD5 format uses the term joint, but assimp uses the term bone.
+Before we start coding let’s clarify some terminology. In this chapter we will refer to bones and joints indistinguishably. A joint / bone is are just elements that affect vertices, and that have a parent forming a hierarchy. MD5 format uses the term joint, but assimp uses the term bone.
 
-Let’s review first the structures handled by assimp that contain animation information. We will start first with the bones and weights information.  For each Mesh, we can access the vertices positions, texture coordinates and indices.  Meshes store also a list of bones. Each bone is defined by the following attributes:
+Let’s review first the structures handled by assimp that contain animation information. We will start first with the bones and weights information. For each Mesh, we can access the vertices positions, texture coordinates and indices. Meshes store also a list of bones. Each bone is defined by the following attributes:
 
 * A name.
 * An offset matrix: This will used later to compute the final transformations that should be used by each bone.
@@ -213,27 +213,27 @@ The following picture shows the relationships between all these elements.
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
-Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied  to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that these Node’s hierarchy is defined from the whole model, we do not have separate hierarchies for each mesh.
+Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that these Node’s hierarchy is defined from the whole model, we do not have separate hierarchies for each mesh.
 
 A scene also defines a set of animations. A single model can have more than one animation. You can have animations for a model to walk, run etc. Each of these animations define different transformations. An animation has the following attributes:
 
 * A name.
-* A duration.  That is, the duration in time of the animation. name may seem confusing since an animation is the list of transformations that should be applied to each node for each different frame. 
-* A list of animation channels. An animation channel, contains, for a specific instant in time the translation, rotation and scaling informations that should be applied to each node. The class that models the data contained in the animation channels is the AINodeAnim.
+* A duration. That is, the duration in time of the animation. The name may seem confusing since an animation is the list of transformations that should be applied to each node for each different frame. 
+* A list of animation channels. An animation channel contains, for a specific instant in time the translation, rotation and scaling information that should be applied to each node. The class that models the data contained in the animation channels is the AINodeAnim.
 
 The following figure shows the relationships between all the elements described above.
 
 #### ![](/chapter27/node_animations.png)
 
-For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node.  Hence, we need to reorder the information stored in the scene, the process is as follows:
+For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node. Hence, we need to reorder the information stored in the scene, the process is as follows:
 
 * Construct the node hierarchy.
-* For each animation, iterate overeach animation channel \(for each animation node\):
+* For each animation, iterate over each animation channel \(for each animation node\):
    Construct the transformation matrices for all the frames. The transformation m matrix is the composition of the translation, rotation and scale matrix .
 * Reorder that information for each frame:
    Construct the final transformations to be applied for each bone in the Mesh. This is achieved by multiplying the transformation matrix of the bone \(of the associated node\) by the transformation matrices of all the parent nodes up to the root node.
 
-So let’s start coding. We will create firs a class named  `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of Meshes, it returns an `AnimGameItem` instance. It defines two public methods for that:
+So let’s start coding. We will first create a class named `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of Meshes, it returns an `AnimGameItem` instance. It defines two public methods for that:
 
 ```java
 public static AnimGameItem loadAnimGameItem(String resourcePath, String texturesDir)
@@ -278,12 +278,12 @@ public static AnimGameItem loadAnimGameItem(String resourcePath, String textures
 }
 ```
 
-The methods are quite similar to the ones defined in the  `StaticMeshesLoader` with the following differences:
+The methods are quite similar to the ones defined in the `StaticMeshesLoader` with the following differences:
 
 * The method that passes a default set of loading flags, uses this new parameter: `aiProcess_LimitBoneWeights`. This will limit the maximum number of weights that affect a vertex to four \(This is also the maximum value that we are currently supporting from the animations chapter\).
 * The method that actually loads the model just loads the different meshes but it first calculates the node hierarchy and then calls to the `processAnimations` at the end to build an `AnimGameItem` instance.
 
-The `processMesh` method is quite similar to the one in the  `StaticMeshesLoader` with the exception that it creates Meshes passing joint indices and weights as a parameter:
+The `processMesh` method is quite similar to the one in the `StaticMeshesLoader` with the exception that it creates Meshes passing joint indices and weights as a parameter:
 
 ```java
 processBones(aiMesh, boneList, boneIds, weights);
@@ -347,7 +347,7 @@ This method traverses the bone definition for a specific mesh, getting their wei
 
 The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the boneList will be used later when calculating animation data.
 
-Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes,  we also get the transformation which is applied to the  root node which will be used also to calculate the final transformation. After that , we need to process the hierarchy of nodes, which is done  in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes, we also get the transformation which is applied to the root node which will be used also to calculate the final transformation. After that , we need to process the hierarchy of nodes, which is done in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
 
 ```java
 private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
@@ -366,7 +366,7 @@ private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
 }
 ```
 
-We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the  `loadAnimGameItem` method, we just use that information to calculate the animations in the `processAnimations` method. This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. With that information we can finally construct an `AnimAgameItem` instance.
+We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the `loadAnimGameItem` method, we just use that information to calculate the animations in the `processAnimations` method. This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. With that information we can finally construct an `AnimAgameItem` instance.
 
 The `processAnimations` method is defined like this
 
@@ -401,7 +401,7 @@ private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bo
 
 For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatricesmethod`. These matrices are stored for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
 
-Let’s first review the  `buildTransFormationMatrices` method:
+Let’s first review the `buildTransFormationMatrices` method:
 
 ```java
 private static void buildTransFormationMatrices(AINodeAnim aiNodeAnim, Node node) {
@@ -432,7 +432,7 @@ private static void buildTransFormationMatrices(AINodeAnim aiNodeAnim, Node node
 }
 ```
 
-As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames`method:
+As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames` method:
 
 ```java
 private static List<AnimatedFrame> buildAnimationFrames(List<Bone> boneList, Node rootNode,
