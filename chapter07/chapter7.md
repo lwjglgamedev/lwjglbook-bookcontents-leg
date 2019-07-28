@@ -141,12 +141,9 @@ private static int loadTexture(String fileName) throws Exception {
         IntBuffer h = stack.mallocInt(1);
         IntBuffer channels = stack.mallocInt(1);
 
-        URL url = Texture.class.getResource(fileName);
-        File file = Paths.get(url.toURI()).toFile();
-        String filePath = file.getAbsolutePath();
-        buf = stbi_load(filePath, w, h, channels, 4);
+        buf = stbi_load(fileName, w, h, channels, 4);
         if (buf == null) {
-            throw new Exception("Image file [" + filePath  + "] not loaded: " + stbi_failure_reason());
+            throw new Exception("Image file [" + fileName  + "] not loaded: " + stbi_failure_reason());
         }
     
         /* Get width and height of image */
@@ -155,9 +152,9 @@ private static int loadTexture(String fileName) throws Exception {
      }
 	 [... More next ....]
 ```
-The first thing we do is to allocate `IntBuffer`s for the library to return the image size and number of channels. Then we transform the `CLASSPATH` relative path for the image to an absolute path. Finally, we call the `stbi_load` method to actually load the image into a `ByteBuffer`. This method requires the following parameters:
+The first thing we do is to allocate `IntBuffer`s for the library to return the image size and number of channels. Then, we call the `stbi_load` method to actually load the image into a `ByteBuffer`. This method requires the following parameters:
 
-* `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. So, keep in mind that the resources, for the stb library, may be in the `CLASSPATH` but cannot be embedded into a JAR file.
+* `filePath`: The absolute path to the file. The stb library is native and does not understand anything about `CLASSPATH`. Therefore, we will be using regular file system paths.
 * `width`:  Image width. This will be populated with the image width.
 * `height`: Image height. This will be populated with the image height.
 * `channels`: The image channels.

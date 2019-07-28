@@ -141,17 +141,14 @@ public interface IGameLogic {
 }
 ```
 
-Then we will create a class named `GameEngine` which will contain our game loop code. This class will implement the `Runnable` interface since the game loop will be run inside a separate thread:
+Then we will create a class named `GameEngine` which will contain our game loop code. This class will implement hold the game loop:
 
 ```java
 public class GameEngine implements Runnable {
 
     //..[Removed code]..
 
-    private final Thread gameLoopThread;
-
     public GameEngine(String windowTitle, int width, int height, boolean vSync, IGameLogic gameLogic) throws Exception {
-        gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
         window = new Window(windowTitle, width, height, vSync);
         this.gameLogic = gameLogic;
         //..[Removed code]..
@@ -161,10 +158,6 @@ public class GameEngine implements Runnable {
 The `vSync` parameter allows us to select if we want to use v-sync or not. You can see we create a new Thread which will execute the run method of our `GameEngine` class which will contain our game loop:
 
 ```java
-public void start() {
-    gameLoopThread.start();
-}
-
 @Override
 public void run() {
     try {
@@ -176,7 +169,7 @@ public void run() {
 }
 ```
 
-Our `GameEngine` class provides a start method which just starts our Thread so the run method will be executed asynchronously. That method will perform the initialization tasks and will run the game loop until our window is closed. It is very important to initialize GLFW inside the thread that is going to update it later. Thus, in that `init` method our Window and `Renderer` instances are initialized.
+Our `GameEngine` class provides a  run method that will perform the initialization tasks and will run the game loop until our window is closed. A little bit note on threading. GLFW requires to be initialized from the main thread. Polling of events should also be done in that thread. Therefore, instead of creating a separate thread for the game loop, which is what you would see commonly in games, we will execute everything from the main thread.
 
 In the source code you will see that we created other auxiliary classes such as Timer \(which will provide utility methods for calculating elapsed time\) and will be used by our game loop logic.
 
@@ -208,7 +201,7 @@ public class Main {
             IGameLogic gameLogic = new DummyGame();
             GameEngine gameEng = new GameEngine("GAME",
                 600, 480, vSync, gameLogic);
-            gameEng.start();
+            gameEng.run();
         } catch (Exception excp) {
             excp.printStackTrace();
             System.exit(-1);
@@ -274,35 +267,6 @@ public class DummyGame implements IGameLogic {
 In the `render` method we get notified when the window has been resized in order to update the viewport to locate the center of the coordinates to the center of the window.
 
 The class hierarchy that we have created will help us to separate our game engine code from the code of a specific game. Although it may seem unnecessary at this moment, we need to isolate generic tasks that every game will use from the state logic, artwork and resources of a specific game in order to reuse our game engine. In later chapters we will need to restructure this class hierarchy as our game engine gets more complex.
-
-## Threading issues
-
-If you try to run the source code provided above in OSX you will get an error like this:
-
-```
-Exception in thread "GAME_LOOP_THREAD" java.lang.ExceptionInInitializerError
-```
-
-What does this mean? The answer is that some functions of the GLFW library cannot be called in a `Thread` which is not the main `Thread`. We are doing the initializing stuff, including window creation in the `init` method of the  `GameEngine class`. That method gets called in the `run` method of the same class, which is invoked by a new `Thread` instead of the one that's used to launch the program.
-
-This is a constraint of the GLFW library and basically it implies that we should avoid the creation of new Threads for the game loop. We could try to create all the Windows related stuff in the main thread but we will not be able to render anything. The problem is that, OpenGL calls need to be performed in the same `Thread` that its context was created.
-
-On Windows and Linux platforms, although we are not using the main thread to initialize the GLFW stuff the samples will work. The problem is with OSX, so we need to change the source code of the `run` method of the `GameEngine` class to support that platform like this:
-
-```java
-public void start() {
-    String osName = System.getProperty("os.name");
-    if ( osName.contains("Mac") ) {
-        gameLoopThread.run();
-    } else {
-        gameLoopThread.start();
-    }
-}
-```
-
-What we are doing is just ignoring the game loop thread when we are in OSX and execute the game loop code directly in the main Thread. This is not a perfect solution but it will allow you to run the samples on Mac. Other solutions found in the forums \(such as executing the JVM with the `-XstartOnFirstThread`  flag seem to not work\).
-
-In the future it may be interesting to explore if LWJGL provides other GUI libraries to check if this restriction applies to them. \(Many thanks to Timo Bühlmann for pointing out this issue\).
 
 ## Platform Differences \(OSX\)
 

@@ -306,7 +306,7 @@ public class Hud implements IHud {
 
     private static final int FONT_ROWS = 17;
 
-    private static final String FONT_TEXTURE = "/textures/font_texture.png";
+    private static final String FONT_TEXTURE = "textures/font_texture.png";
 
     private final GameItem[] gameItems;
 
