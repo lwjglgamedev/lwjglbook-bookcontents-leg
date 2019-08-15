@@ -46,16 +46,6 @@ public class FrustumCullingFilter {
             frustumPlanes[i] = new Vector4f();
         }
     }
-
-    public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
-        // Calculate projection view matrix
-        prjViewMatrix.set(projMatrix);
-        prjViewMatrix.mul(viewMatrix);
-        // Get frustum planes
-        for (int i = 0; i < NUM_PLANES; i++) {
-            prjViewMatrix.frustumPlane(i, frustumPlanes[i]);
-        }
-    }
 ```
 
 The `FrustumCullingFilter` class will also have a method to calculate the plane equations called `updateFrustum` which will be called before rendering. The method is defined like this:
@@ -92,11 +82,11 @@ We need to enclose every `GameItem` into a simple volume that is easy to check. 
 
 * Bounding spheres.
 
-In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItem` into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustim if it the following condition is met: $$dist=Ax0+By0+Cz0 <= -radius$$.
+In this case, we will use spheres, since is the most simple approach. We will enclose every `GameItem` into a sphere and will check if the sphere is inside the view frustum or not. In order to do that, we just need the center and the radius of the sphere. The checks are almost equal to the point case, except that we need to take the radius into consideration. A sphere will be outside the frustum if it the following condition is met: $$dist=Ax_{0}+By_{0}+Cz_{0} <= -radius$$.
 
 ![Bounding sphere](/chapter25/bounding_sphere.png)
 
-So, we will add a new method to the `FrustumCullingFilter` class to check if a spphere is inside the frustum or not. The method is defined like this.
+So, we will add a new method to the `FrustumCullingFilter` class to check if a sphere is inside the frustum or not. The method is defined like this.
 
 ```java
 public boolean insideFrustum(float x0, float y0, float z0, float boundingRadius) {
@@ -125,7 +115,7 @@ public void filter(List<GameItem> gameItems, float meshBoundingRadius) {
 }
 ```
 
-We have added a new attribute, insideFrustum, to the `GameItem` class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radios of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem` is the centre of the spehere \(in world space coordinates\).
+We have added a new attribute, `insideFrustum`, to the `GameItem` class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radius of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem` is the centre of the sphere \(in world space coordinates\).
 
 The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem` instances contained in it.
 
@@ -140,7 +130,7 @@ public void filter(Map<? extends Mesh, List<GameItem>> mapMesh) {
 
 And that’s it. We can use that class inside the rendering process. We just need to update the frustum planes, calculate which GameItems are visible and filter them out when drawing instanced and non instanced meshes.
 
-```
+```java
 frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
 frustumFilter.filter(scene.getGameMeshes());
 frustumFilter.filter(scene.getGameInstancedMeshes());
@@ -150,7 +140,7 @@ You can play with activating and deactivating the filtering and can check the in
 
 # Optimizations - Frustum Culling \(II\)
 
-Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML") library provides. In particular, it provdies a class named `FrustumIntersection` which extracts the planes of the veiw frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
+Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML") library provides. In particular, it provides a class named `FrustumIntersection` which extracts the planes of the view frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
 
 So, let's change the `FrustumCullingFilter` class. The attributes and constructor are simplified like this:
 
@@ -167,7 +157,7 @@ public class FrustumCullingFilter {
     }
 ```
 
-The updateFrustum method just delegates the plane extraction to the `FrustumIntersection` instance.
+The `updateFrustum` method just delegates the plane extraction to the `FrustumIntersection` instance.
 
 ```java
 public void updateFrustum(Matrix4f projMatrix, Matrix4f viewMatrix) {
