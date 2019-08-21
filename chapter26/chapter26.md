@@ -1,6 +1,6 @@
 # Cascaded Shadow Maps
 
-In the shadows chapter we presented the shadow map technique to be able to display shadows using directional lights when rendering a 3D scene. The solution presented there, required you to manually tweak some of the parameters in order to improve the results. In this chapter we are going to change that technique to automate all the process and to improve the r results for open spaces. In order to achieve that goal we are going to use a technique called Cascaded Shadow Maps \(CSM\).
+In the shadows chapter we presented the shadow map technique to be able to display shadows using directional lights when rendering a 3D scene. The solution presented there, required you to manually tweak some of the parameters in order to improve the results. In this chapter we are going to change that technique to automate all the process and to improve the results for open spaces. In order to achieve that goal we are going to use a technique called Cascaded Shadow Maps \(CSM\).
 
 Let’s first start by examining how we can automate the construction of the light view matrix and the orthographic projection matrix used to render the shadows. If you recall from the shadows chapter, we need to draw the scene from the light’s perspective. This implies the creation of a light view matrix, which acts like a camera for light and a projection matrix. Since light is directional, and is supposed to be located at the infinity, we chose an orthographic projection.
 
@@ -198,7 +198,7 @@ private void updateLightProjectionMatrix() {
 }
 ```
 
-Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculate the minimum bounding box, axis aligned with the light position , hat encloses the view frustum.
+Remember that the orthographic projection is like a bounding box that should enclose all the objects that will be rendered. That bounding box is expressed in light view coordinates space. Thus, what we are doing is calculating the minimum bounding box, axis aligned with the light position ,that encloses the view frustum.
 
 The `Renderer` class has been modified to use the classes in the view package and also to modify the information that is passed to the renderers. In the renderer we need to deal with the model, the model view, and the model light matrices. In previous chapters we used the model–view / light–view matrices, to reduce the number of operations. In this case, we opted to simplify the number of elements to be passed and now we are passing just the model, view and light matrices to the shaders. Also, for particles, we need to preserve the scale, since we no longer pass the model view matrix, that information is lost now. We reuse the attribute used to mark selected items to set that scale information. In the particles shader we will use that value to set the scaling again.
 
@@ -233,7 +233,7 @@ for (int i=0; i<NUM_CASCADES; i++)
 }
 ```
 
-Also, in the scene shaders we need to pass an array of textures, an array of `sampler2D's`, to use the depth map, the texture, associated to the split we are into. The source code, instead of using an array uses a list of uniforms that will hold the texture unit that is used to refer to the depth map associated to each split.
+Also, in the scene shaders we need to pass an array of textures, an array of `sampler2D`'s, to use the depth map, the texture, associated to the split we are into. The source code, instead of using an array uses a list of uniforms that will hold the texture unit that is used to refer to the depth map associated to each split.
 
 ```glsl
 uniform sampler2D normalMap;
@@ -246,7 +246,7 @@ Changing it to an array of uniforms causes problems with other textures that are
 
 The rest of the changes in the source code, and the shaders are just adaptations required by the changes described above. You can check it directly over the source code.
 
-Finally, when introducing these changes you may see that performance has dropped. This is due to the fact that we are rendering three times the depth map. We can mitigate this effect by avoiding rendering at all when the scene has not changed. If the camera has not been moved or the scene items have not changed we do not need to render again and again the depth map. The depth maps are stored in textures, so they are not wiped out for each render call.  Thus, we have added a new variable to the render method that indicates if this has changed, avoiding updating the depth maps it remains the same. This increases the FPS dramatically. At the end, you will get something like this:
+Finally, when introducing these changes you may see that performance has dropped. This is due to the fact that we are rendering three times the depth map. We can mitigate this effect by avoiding rendering at all when the scene has not changed. If the camera has not been moved or the scene items have not changed we do not need to render again and again the depth map. The depth maps are stored in textures, so they are not wiped out for each render call.  Thus, we have added a new variable to the `render` method that indicates if this has changed, avoiding updating the depth maps it remains the same. This increases the FPS dramatically. At the end, you will get something like this:
 
 ![](/chapter26/csmpng.png)
 
