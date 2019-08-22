@@ -4,7 +4,7 @@
 
 The capability of loading complex 3D models in different formats is crucial in order to write a game. The task of writing parsers for some of them would require lots of work. Even just supporting a single format can be time consuming. For instance, the wavefront loader described in chapter 9, only parses a small subset of the specification \(materials are not handled at all\).
 
-Fortunately, the [Assimp ](http://assimp.sourceforge.net/) library already can be used to parse many common 3D formats. It’s a C++ library which can load static and animated models in a variety of formats. LWJGL provides the bindings to use them from Java code. In this chapter, we will explain how it can be used.
+Fortunately, the [Assimp](http://assimp.sourceforge.net/) library already can be used to parse many common 3D formats. It’s a C++ library which can load static and animated models in a variety of formats. LWJGL provides the bindings to use them from Java code. In this chapter, we will explain how it can be used.
 
 The first thing is adding assimp maven dependencies to the project pom.xml. We need to add compile time and runtime dependencies.
 
@@ -23,7 +23,7 @@ The first thing is adding assimp maven dependencies to the project pom.xml. We n
 </dependency>
 ```
 
-Once the dependencies has been set, we will create a new class named StaticMeshesLoader that will be used to load meshes with no animations. The class defines two static public methods:
+Once the dependencies has been set, we will create a new class named `StaticMeshesLoader` that will be used to load meshes with no animations. The class defines two static public methods:
 
 ```java
 public static Mesh[] load(String resourcePath, String texturesDir) throws Exception {
@@ -163,7 +163,7 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
 
 A `Mesh` is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords` and `processIndices` methods. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
 
-The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh` instance that returns the desired data. For instance, the process processVertices is defined like this:
+The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh` instance that returns the desired data. For instance, the `processVertices` is defined like this:
 
 ```java
 private static void processVertices(AIMesh aiMesh, List<Float> vertices) {
@@ -189,7 +189,7 @@ The `StaticMeshesLoader` makes the `OBJLoader` class obsolete, so it has been re
 
 Now that we have used assimp for loading static meshes we can proceed with animations. If you recall from the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
 
-#### ![](/chapter27/vao_animation.png)
+![](/chapter27/vao_animation.png)
 
 Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame, a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated.
 
@@ -197,19 +197,19 @@ In the animation chapter, we developed a MD5 parser to load animated meshes. In 
 
 Before we start coding let’s clarify some terminology. In this chapter we will refer to bones and joints indistinguishably. A joint / bone is are just elements that affect vertices, and that have a parent forming a hierarchy. MD5 format uses the term joint, but assimp uses the term bone.
 
-Let’s review first the structures handled by assimp that contain animation information. We will start first with the bones and weights information. For each Mesh, we can access the vertices positions, texture coordinates and indices. Meshes store also a list of bones. Each bone is defined by the following attributes:
+Let’s review first the structures handled by assimp that contain animation information. We will start first with the bones and weights information. For each `Mesh`, we can access the vertices positions, texture coordinates and indices. Meshes store also a list of bones. Each bone is defined by the following attributes:
 
 * A name.
 * An offset matrix: This will used later to compute the final transformations that should be used by each bone.
 
-Bones also point to a list of weights, each weights. Each weights is defined by the following attributes:
+Bones also point to a list of weights. Each weights is defined by the following attributes:
 
 * A weight factor, that is, the number that will be used to modulate the influence of the bone’s transformation associated to each vertex.
 * A vertex identifier, that is, the vertex associated to the current bone.
 
 The following picture shows the relationships between all these elements.
 
-#### ![](/chapter27/mesh_bones_weights_vertices.png)
+![](/chapter27/mesh_bones_weights_vertices.png)
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
@@ -219,21 +219,21 @@ A scene also defines a set of animations. A single model can have more than one 
 
 * A name.
 * A duration. That is, the duration in time of the animation. The name may seem confusing since an animation is the list of transformations that should be applied to each node for each different frame. 
-* A list of animation channels. An animation channel contains, for a specific instant in time the translation, rotation and scaling information that should be applied to each node. The class that models the data contained in the animation channels is the AINodeAnim.
+* A list of animation channels. An animation channel contains, for a specific instant in time the translation, rotation and scaling information that should be applied to each node. The class that models the data contained in the animation channels is the `AINodeAnim`.
 
 The following figure shows the relationships between all the elements described above.
 
-#### ![](/chapter27/node_animations.png)
+![](/chapter27/node_animations.png)
 
 For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node. Hence, we need to reorder the information stored in the scene, the process is as follows:
 
 * Construct the node hierarchy.
 * For each animation, iterate over each animation channel \(for each animation node\):
-   Construct the transformation matrices for all the frames. The transformation m matrix is the composition of the translation, rotation and scale matrix .
+   Construct the transformation matrices for all the frames. The transformation matrix is the composition of the translation, rotation and scale matrix.
 * Reorder that information for each frame:
    Construct the final transformations to be applied for each bone in the Mesh. This is achieved by multiplying the transformation matrix of the bone \(of the associated node\) by the transformation matrices of all the parent nodes up to the root node.
 
-So let’s start coding. We will first create a class named `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of Meshes, it returns an `AnimGameItem` instance. It defines two public methods for that:
+So let’s start coding. We will first create a class named `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of `Mesh`, it returns an `AnimGameItem` instance. It defines two public methods for that:
 
 ```java
 public static AnimGameItem loadAnimGameItem(String resourcePath, String texturesDir)
@@ -345,9 +345,9 @@ This method traverses the bone definition for a specific mesh, getting their wei
 * `boneIds`: It contains just the identifiers of the bones for each vertex of the `Mesh`. Bones are identified by its position when rendering. This list only contains the bones for a specific Mesh.
 * `weights`: It contains the weights for each vertex of the `Mesh` to be applied for the associated bones.
 
-The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the boneList will be used later when calculating animation data.
+The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the `boneList` will be used later when calculating animation data.
 
-Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes, we also get the transformation which is applied to the root node which will be used also to calculate the final transformation. After that , we need to process the hierarchy of nodes, which is done in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes, we also get the transformation which is applied to the root node which will be used also to calculate the final transformation. After that, we need to process the hierarchy of nodes, which is done in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
 
 ```java
 private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
@@ -368,7 +368,7 @@ private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
 
 We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the `loadAnimGameItem` method, we just use that information to calculate the animations in the `processAnimations` method. This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. With that information we can finally construct an `AnimAgameItem` instance.
 
-The `processAnimations` method is defined like this
+The `processAnimations` method is defined like this:
 
 ```java
 private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bone> boneList,
@@ -399,7 +399,7 @@ private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bo
 }
 ```
 
-For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatricesmethod`. These matrices are stored for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
+For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatrices` method. These matrices are stored for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
 
 Let’s first review the `buildTransFormationMatrices` method:
 
