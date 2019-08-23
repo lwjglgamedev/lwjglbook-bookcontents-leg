@@ -2,9 +2,9 @@
 
 Debugging an OpenGL program can be a daunting task. Most of the times you end up with a black screen and you have no means of knowing what’s going on. In order to alleviate this problem we can use some existing tools that will provide more information about the rendering process.
 
-In this annex we will describe how to use the [RenderDoc](https://renderdoc.org/ "RenderDoc") tool to debug our LWJLG programs. RenderDoc is a graphics debugging tool that can be used with DIrect3D, Vulkan an OpenGL. In the case of OpenGL it only supports the core profile from 3.2 up to 4.5.
+In this annex we will describe how to use the [RenderDoc](https://renderdoc.org/ "RenderDoc") tool to debug our LWJGL programs. RenderDoc is a graphics debugging tool that can be used with Direct3D, Vulkan and OpenGL. In the case of OpenGL it only supports the core profile from 3.2 up to 4.5.
 
-So let’s get started. You need to downlaod and install the RenderDoc version for your OS. Once installed, when you launch it you will see something similar to this.
+So let’s get started. You need to download and install the RenderDoc version for your OS. Once installed, when you launch it you will see something similar to this.
 
 ![](/appendixa/renderdoc.png)
 
@@ -22,7 +22,7 @@ There are many other options int this tab to configure the capture options. You 
 
 ![](/appendixa/sample.png)
 
-You may see a Warning since RenderDoc can only work with OpenGL core profile. In the sample we’ve enabled compatibiñity profile, but it should work even with that warning. Once the program is being executed you can triigger snapshots of it. You will see that a new tab has been added which is named “java \[PID XXXX\]” \(where the XXXX number represents the PID, the process identifier, of the java process\).
+You may see a Warning since RenderDoc can only work with OpenGL core profile. In the sample we’ve enabled compatibiñity profile, but it should work even with that warning. Once the program is being executed you can trigger snapshots of it. You will see that a new tab has been added which is named “java \[PID XXXX\]” \(where the XXXX number represents the PID, the process identifier, of the java process\).
 
 ![](/appendixa/java_process.png)
 
@@ -34,9 +34,9 @@ If you double click on that capture, all the data collected will be loaded and y
 
 ![](/appendixa/event_browser.png)
 
-You can see, for the first rendering pass, how the floor is drawn and later on the mesh that models the house. If you click over a glDrawELements event, and select the “Mesh” tab you can event see the Mesh that was drawin, was the input for the vertex shader and its output.
+You can see, for the first rendering pass, how the floor is drawn and later on the mesh that models the house. If you click over a glDrawELements event, and select the “Mesh” tab you can see the mesh that was drawn, its input and output for the vertex shader.
 
-You can also view the input textures used for that drawing operation \(by clicking the “Texture Viewer Tab”\).
+You can also view the input textures used for that drawing operation \(by clicking the “Texture Viewer” tab\).
 
 ![](/appendixa/texture_inputs.png)
 
