@@ -2,7 +2,7 @@
 
 Up to now the way that we are rendering a 3D scene is called forward rendering. We first render the 3D objects and apply the texture and lighting effects in a fragment shader. This method is not very efficient if we have a complex fragment shader pass with many lights and complex effects. In addition to that we may end up applying these effects to fragments that may be later on discarded due to depth testing \(although this is not exactly true if we enable [early fragment testing](https://www.khronos.org/opengl/wiki/Early_Fragment_Test)\).
 
-In order to alleviate the problems described above we may change thy way that we render the scene by using a technical called deferred shading. With deferred shading we first render the geometry information that is required in later stages \(in the fragment shader\) to a buffer. The complex calculus required by the fragment shader are postponed, deferred, to a later stage when using the information stored in those buffers.
+In order to alleviate the problems described above we may change the way that we render the scene by using a technical called deferred shading. With deferred shading we first render the geometry information that is required in later stages \(in the fragment shader\) to a buffer. The complex calculus required by the fragment shader are postponed, deferred, to a later stage when using the information stored in those buffers.
 
 Hence, with deferred shading we perform two rendering passes. The first one, is the geometry pass, where we render the scene to a buffer that will contain the following information:
 
@@ -111,7 +111,7 @@ After that, we use a for loop to initialize the textures. We have the following 
 
 Once the texture has been initialized, we enable sampling for them and attach them to the frame buffer. Each texture is attached using an identifier which starts at `GL_COLOR_ATTACHMENT0`. Each texture increments by one that id, so the positions are attached using `GL_COLOR_ATTACHMENT0`, the diffuse component uses `GL_COLOR_ATTACHMENT1` \(which is `GL_COLOR_ATTACHMENT0 + 1`\), and so on.
 
-After all the textures have been created, we need to enable them to be used by the fragment shader for rendering. This is done with the `glDrawBuffers` call. We just pass the array with the identifiers of the colour attachments used \(`GL_COLOR_ ATTACHMENT0` to `GL_COLOR_ATTACHMENT5`\).
+After all the textures have been created, we need to enable them to be used by the fragment shader for rendering. This is done with the `glDrawBuffers` call. We just pass the array with the identifiers of the colour attachments used \(`GL_COLOR_ATTACHMENT0` to `GL_COLOR_ATTACHMENT5`\).
 
 The rest of the class are just getter methods and the cleanup one.
 
@@ -208,9 +208,9 @@ public class SceneBuffer {
 }
 ```
 
-As you can see, this is similar to the `GBuffer` class, but here we will only use a single texture to store the resulting colours. Now that we have created these new classes, we can start using them. In the `Renderer` class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `“scene_vertex.vs”` and `“scene_fragment.fs”`\).
+As you can see, this is similar to the `GBuffer` class, but here we will only use a single texture to store the resulting colours. Now that we have created these new classes, we can start using them. In the `Renderer` class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `scene_vertex.vs` and `scene_fragment.fs`\).
 
-In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). You may see also that we create a instance of the class `SceneBuffer` named `sceneBuffer`. This will be used when rendering lights as explained before. An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the init method. This will be used in the light pass. More on this will be explained later.
+In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). You may see also that we create a instance of the class `SceneBuffer` named `sceneBuffer`. This will be used when rendering lights as explained before. An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the `init` method. This will be used in the light pass. More on this will be explained later.
 
 ```java
 public void init(Window window) throws Exception {
@@ -231,7 +231,7 @@ public void init(Window window) throws Exception {
 
 The shaders used in the geometry and light passes are defined like usual \(you can check the source code directly\). Let’s focus in their content instead. Let’s focus in their content instead. We will start with the geometry pass, here’s the vertex shader code \(`gbuffer_vertex.vs`\):
 
-```
+```glsl
 #version 330
 
 const int MAX_WEIGHTS = 4;
@@ -324,7 +324,7 @@ void main()
 
 This shader is very similar to the vertex shader used in previous chapters to render a scene. There are some changes in the name of the output variables but in essence is the same shader. Indeed, it should be almost the same, the way we render the vertices should not change, the major changes are done in the fragment shader, which is defined like this \(`gbuffer_fragment.fs`\):
 
-```
+```glsl
 #version 330
 
 const int NUM_CASCADES = 3;
@@ -477,7 +477,7 @@ void main()
 
 The most relevant lines are:
 
-```
+```glsl
 layout (location = 0) out vec3 fs_worldpos;
 layout (location = 1) out vec3 fs_diffuse;
 layout (location = 2) out vec3 fs_specular;
@@ -489,7 +489,7 @@ This is where we are referring to the textures that this fragment shader will wr
 
 SIDE NOTE: We have simplified the `Material` class definition removing the ambient colour component.
 
-Going back to the `Renderer` class, the render method is defined like this:
+Going back to the `Renderer` class, the `render` method is defined like this:
 
 ```java
 public void render(Window window, Camera camera, Scene scene, boolean sceneChanged) {
@@ -612,11 +612,11 @@ private void initLightRendering() {
 
 Since we won’t be rendering to the screen, we first need to bind to the texture that will hold the results of the lighting pass. Then we clear that buffer and disable depth testing. This is not required any more, as depth testing has been already done in the geometry pass. Another important step is to enable blending. The last action is to enable the G-Buffer for reading, it will be used during the light pass.
 
-Before analyzing the render methods for the different types of light, let’s think a little bit about how we will render the lights. We need to use the contents of the G-Buffer, but in order to use them, we need to first render something. But, we have already drawn the scene, what are we going to render. now? The answer is simple, we just need to render a quad that fills all the screen. For each fragment of that quad, we will use the data contained in the G-Buffer and generate the correct output colour. Do you remember the `Mesh` that we loaded in the init method of the `Renderer` class? It was named `bufferPassMesh`, and it just contains that, a quad that fills up the whole screen.
+Before analyzing the render methods for the different types of light, let’s think a little bit about how we will render the lights. We need to use the contents of the G-Buffer, but in order to use them, we need to first render something. But, we have already drawn the scene, what are we going to render. now? The answer is simple, we just need to render a quad that fills all the screen. For each fragment of that quad, we will use the data contained in the G-Buffer and generate the correct output colour. Do you remember the `Mesh` that we loaded in the `init` method of the `Renderer` class? It was named `bufferPassMesh`, and it just contains that, a quad that fills up the whole screen.
 
 So, how the vertex shader for the light pass looks like?
 
-```
+```glsl
 #version 330
 
 layout (location=0) in vec3 position;
@@ -633,7 +633,7 @@ The code above is the vertex shader used when rendering point lights and directi
 
 The fragment shader for point lights \(`point_light_fragment.fs`\) is defined like this:
 
-```
+```glsl
 #version 330
 
 out vec4 fragColor;
@@ -721,7 +721,7 @@ void main()
 
 As you can see, it contains functions that should look familiar to you. They were used in previous chapters in the scene fragment shader. The important things here to note are the following lines:
 
-```
+```glsl
 uniform sampler2D positionsText;
 uniform sampler2D diffuseText;
 uniform sampler2D specularText;
@@ -732,7 +732,7 @@ uniform sampler2D depthText;
 
 These uniforms model the different textures that compose the G-Buffer. We will use them to access the data. You may be asking now, how do we know which pixel to peek from those textures when we are rendering a fragment? The answer is by using the `gl_FragCoord` input variable. This variable contains the windows relative coordinates for the current fragment. To transform from that coordinates system to the textures one we use this function:
 
-```
+```glsl
 vec2 getTextCoord()
 {
     return gl_FragCoord.xy / screenSize;
@@ -838,7 +838,7 @@ private void renderDirectionalLight(Window window, Camera camera, Scene scene) {
 }
 ```
 
-The `endLightRendering` simply retsores the state.
+The `endLightRendering` simply restores the state.
 
 ```java
 private void endLightRendering() {
