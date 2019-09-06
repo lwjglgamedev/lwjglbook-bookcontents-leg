@@ -141,7 +141,7 @@ public interface IGameLogic {
 }
 ```
 
-Then we will create a class named `GameEngine` which will contain our game loop code. This class will implement hold the game loop:
+Then we will create a class named `GameEngine` which will contain our game loop code. This class will implement to hold the game loop:
 
 ```java
 public class GameEngine implements Runnable {
@@ -155,7 +155,7 @@ public class GameEngine implements Runnable {
     }
 ```
 
-The `vSync` parameter allows us to select if we want to use v-sync or not. You can see we create a new Thread which will execute the run method of our `GameEngine` class which will contain our game loop:
+The `vSync` parameter allows us to select if we want to use v-sync or not. You can see we implement the run method of our `GameEngine` class which will contain our game loop:
 
 ```java
 @Override
@@ -169,11 +169,11 @@ public void run() {
 }
 ```
 
-Our `GameEngine` class provides a  run method that will perform the initialization tasks and will run the game loop until our window is closed. A little bit note on threading. GLFW requires to be initialized from the main thread. Polling of events should also be done in that thread. Therefore, instead of creating a separate thread for the game loop, which is what you would see commonly in games, we will execute everything from the main thread.
+Our `GameEngine` class provides a `run` method that will perform the initialization tasks and will run the game loop until our window is closed. A little bit note on threading. GLFW requires to be initialized from the main thread. Polling of events should also be done in that thread. Therefore, instead of creating a separate thread for the game loop, which is what you would see commonly in games, we will execute everything from the main thread.
 
 In the source code you will see that we created other auxiliary classes such as Timer \(which will provide utility methods for calculating elapsed time\) and will be used by our game loop logic.
 
-Our `GameEngine` class just delegates the input and update methods to the `IGameLogic` instance. In the render method it delegates also to the `IGameLogic`  instance and updates the window.
+Our `GameEngine` class just delegates the input and update methods to the `IGameLogic` instance. In the render method it delegates also to the `IGameLogic` instance and updates the window.
 
 ```java
 protected void input() {
@@ -190,7 +190,7 @@ protected void render() {
 }
 ```
 
-Our starting point, our class that contains the main method will just only create a `GameEngine` instance and start it.
+Our starting point, our class that contains the main method will just only create a `GameEngine` instance and run it.
 
 ```java
 public class Main {
@@ -211,7 +211,7 @@ public class Main {
 }
 ```
 
-At the end we only need to create our game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear colour of the window whenever the user presses the up / down key. The render method will just clear the window with that colour.
+At the end we only need to create our game logic class, which for this chapter will be a simpler one. It will just increase / decrease the clear colour of the window whenever the user presses the up / down key. The `render` method will just clear the window with that colour.
 
 ```java
 public class DummyGame implements IGameLogic {
@@ -233,9 +233,9 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void input(Window window) {
-        if ( window.isKeyPressed(GLFW_KEY_UP) ) {
+        if (window.isKeyPressed(GLFW_KEY_UP)) {
             direction = 1;
-        } else if ( window.isKeyPressed(GLFW_KEY_DOWN) ) {
+        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
             direction = -1;
         } else {
             direction = 0;
@@ -254,7 +254,7 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void render(Window window) {
-        if ( window.isResized() ) {
+        if (window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResized(false);
         }
