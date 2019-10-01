@@ -4,7 +4,7 @@ In this chapter we will learn to load more complex models defined in external fi
 
 OBJ \(or .OBJ\) is a geometry definition open file format developed by Wavefront Technologies which has been widely adopted. An OBJ file defines the vertices, texture coordinates and polygons that compose a 3D model. It’s a relatively easy format to parse since it is text based and each line defines an element \(a vertex, a texture coordinate, etc.\).
 
-In an .obj file each line starts with a token with identifies the type of element:
+In an .obj file each line starts with a token which identifies the type of element:
 
 * Comments are lines which start with \#.
 * The token “v” defines a geometric vertex with coordinates \(x, y, z, w\). Example: v 0.155 0.211 0.32 1.0.
