@@ -87,9 +87,9 @@ Texture texture = new Texture(textureFile);
 float incx = getWidth() / (width - 1);
 float incz = Math.abs(STARTZ * 2) / (height - 1);
 
-List<Float> positions = new ArrayList();
-List<Float> textCoords = new ArrayList();
-List<Integer> indices = new ArrayList();
+List<Float> positions = new ArrayList<>();
+List<Float> textCoords = new ArrayList<>();
+List<Integer> indices = new ArrayList<>();
 ```
 
 After that we are ready to iterate over the image, creating a vertex per each pixel, setting up its texture coordinates and setting up the indices to define correctly the triangles that compose the ```Mesh```.
