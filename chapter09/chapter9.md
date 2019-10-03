@@ -4,13 +4,13 @@ In this chapter we will learn to load more complex models defined in external fi
 
 OBJ \(or .OBJ\) is a geometry definition open file format developed by Wavefront Technologies which has been widely adopted. An OBJ file defines the vertices, texture coordinates and polygons that compose a 3D model. It’s a relatively easy format to parse since it is text based and each line defines an element \(a vertex, a texture coordinate, etc.\).
 
-In an .obj file each line starts with a token with identifies the type of element:
+In an .obj file each line starts with a token which identifies the type of element:
 
 * Comments are lines which start with \#.
 * The token “v” defines a geometric vertex with coordinates \(x, y, z, w\). Example: v 0.155 0.211 0.32 1.0.
 * The token “vn” defines a vertex normal with coordinates \(x, y, z\). Example: vn 0.71 0.21 0.82. More on this later.
 * The token “vt” defines a texture coordinate. Example: vt 0.500 1. 
-* The token “f” defines a face. With the information contained in these lines we will construct our indices array. We will handle only the case were faces are exported as triangles. It can have several variants:
+* The token “f” defines a face. With the information contained in these lines we will construct our indices array. We will handle only the case where faces are exported as triangles. It can have several variants:
   * It can define just vertex positions \(f v1 v2 v3\). Example: f 6 3 1. In this case this triangle is defined by the geometric vertices that occupy positions 6, 3 a and 1. \(Vertex indices always starts by 1\).
   * It can define vertex positions, texture coordinates and normals \(f v1/t1/n1 v2/t2/n2 V3/t3/n3\). Example: f 6/4/1 3/5/3 7/6/5. The first block is “6/4/1” and defines the coordinates, texture coordinates and normal vertex. What you see here is the position, so we are saying: pick the geometric vertex number six, the texture coordinate number four and the vertex normal number one.
 
