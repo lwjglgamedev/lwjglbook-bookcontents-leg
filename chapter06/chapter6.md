@@ -412,7 +412,7 @@ public void render(Window window, GameItem[] gameItems) {
                 gameItem.getRotation(),
                 gameItem.getScale());
         shaderProgram.setUniform("worldMatrix", worldMatrix);
-        // Render the mes for this game item
+        // Render the mesh for this game item
         gameItem.getMesh().render();
     }
 
