@@ -16,7 +16,7 @@ The process of creating a sky box can be summarized in the following steps:
 
 Let’s start with the texture. You will find that there are lots of pre-generated textures for you to use in the internet. The one used in the sample for this chapter has been downloaded from here: [http://www.custommapmakers.org/skyboxes.php](http://www.custommapmakers.org/skyboxes.php). The concrete sample that we have used is this one: [http://www.custommapmakers.org/skyboxes/zips/ely\_hills.zip](http://www.custommapmakers.org/skyboxes/zips/ely_hills.zip) and has been created by Colin Lowndes.
 
-The textures from that site are composed by separate TGA files, one for each side of the cube. The texture loader that we have created expects a single file in PNG format so we need to compose a single PNG image with the images of each face. We could apply other techniques, such us cube mapping, in order to apply the textures automatically. But, in order to keep this chapter as simple as possible, you will have to manually arrange them into a single file. The result image will look like this.
+The textures from that site are composed by separate TGA files, one for each side of the cube. The texture loader that we have created expects a single file in PNG format so we need to compose a single PNG image with the images of each face. We could apply other techniques, such as cube mapping, in order to apply the textures automatically. But, in order to keep this chapter as simple as possible, you will have to manually arrange them into a single file. The result image will look like this.
 
 ![Sky Box Texture](skybox_texture.png)
 
