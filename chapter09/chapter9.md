@@ -353,7 +353,7 @@ private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoord
         texCoordArr[posIndex * 2 + 1] = 1 - textCoord.y;
     }
     if (indices.idxVecNormal >= 0) {
-        // Reorder vectornormals
+        // Reorder normal vectors
         Vector3f vecNorm = normList.get(indices.idxVecNormal);
         normArr[posIndex * 3] = vecNorm.x;
         normArr[posIndex * 3 + 1] = vecNorm.y;
