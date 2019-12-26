@@ -6,7 +6,7 @@ You may have wondered why are we drawing the whole list of GameItems every frame
 
 But, first let’s review what is the view frustum. The view frustum is a volume that contains every object that may be visible taking into consideration the camera position and rotation and the projection that we are using. Typically, the view frustum is a rectangular pyramid like shown in the next figure.
 
-![View Frustum I](/chapter25/view_frustum_i.png)
+![View Frustum I](view_frustum_i.png)
 
 As you can see, the view frustum is defined by six planes, anything that lies outside the view frustum will not be rendering. So, frustum culling is the process of removing objects that are outside the view frustum.
 
@@ -14,13 +14,13 @@ Thus, in order to perform frustum culling we need to:
 
 * Calculate frustum planes using the data contained in the view and projection matrices.
 
-* For every GameItem, check if its contained inside that view frustum, that is, comatined between the size frustum planes, and eliminate the ones that lie outside from the rendering process.
+* For every GameItem, check if its contained inside that view frustum, that is, contained between the size frustum planes, and eliminate the ones that lie outside from the rendering process.
 
-![View Frustum II](/chapter25/view_frustum_ii.png)
+![View Frustum II](view_frustum_ii.png)
 
 So let’s start by calculating the frustum planes. A plane, is defined by a point contained in it and a vector orthogonal to that plane, as shown in the next figure:
 
-![Plane](/chapter25/plane.png)
+![Plane](plane.png)
 
 The equation of a plane is defined like this:
 
@@ -115,7 +115,7 @@ public void filter(List<GameItem> gameItems, float meshBoundingRadius) {
 }
 ```
 
-We have added a new attribute, `insideFrustum`, to the `GameItem` class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radius of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assumig also that the position of the `GameItem` is the centre of the sphere \(in world space coordinates\).
+We have added a new attribute, `insideFrustum`, to the `GameItem` class, to track the visibility. As you can see, the radius of the bounding sphere is passed as parameter This is due to the fact that the bounding sphere is associated to the `Mesh`, it’s not a property of the `GameItem`. But, remember that we must operate in world coordinates, and the radius of the bounding sphere will be in model space. We will transform it to world space by applying the scale that has been set up for the `GameItem`, We are assuming also that the position of the `GameItem` is the centre of the sphere \(in world space coordinates\).
 
 The last method, is just a utility one, that accepts the map of meshes and filters all the `GameItem` instances contained in it.
 
@@ -140,7 +140,7 @@ You can play with activating and deactivating the filtering and can check the in
 
 # Optimizations - Frustum Culling \(II\)
 
-Once the basis of frustum culling has been explained, we can get advatange of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML") library provides. In particular, it provides a class named `FrustumIntersection` which extracts the planes of the view frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
+Once the basis of frustum culling has been explained, we can get advantage of more refined methods that the [JOML](https://github.com/JOML-CI/JOML "JOML") library provides. In particular, it provides a class named `FrustumIntersection` which extracts the planes of the view frustum in a more efficient way as described in this [paper](http://gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf "paper"). Besides that, this class also provides methods for testing bounding boxes, points and spheres.
 
 So, let's change the `FrustumCullingFilter` class. The attributes and constructor are simplified like this:
 

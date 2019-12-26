@@ -16,7 +16,7 @@ All that information is stored in a buffer called G-Buffer.
 
 The second pass is called the lighting pass. This pass takes a quad that fills up all the screen and generates the colour information for each fragment using the information contained in the G-Buffer. When we will be performing the lighting pass, the depth test will have already removed all the scene data that would not be seen. Hence, the number of operations to be done are restricted to what will be displayed on the screen.
 
-![](/chapter28/schema.png)
+![](schema.png)
 
 You may be asking if performing additional rendering passes will result in an increase of performance or not. The answer is that it depends. Deferred shading is usually used when you have many different light passes. In this case, the additional rendering steps are compensated by the reduction of operations that will be done in the fragment shader.
 
@@ -578,15 +578,15 @@ The only differences are:
 
 If you debug the sample execution with an OpenGL debugger \(such as RenderDoc\), you can view the textures generated during the geometry pass. The positions texture will look like this:
 
-![](/chapter28/text_positions.png)
+![](text_positions.png)
 
 The texture that holds the values for the diffuse component will look like this:
 
-![](/chapter28/text_diffuse.png)
+![](text_diffuse.png)
 
 The texture that holds the values for the normals will look like this:
 
-![](/chapter28/text_normals.png)
+![](text_normals.png)
 
 Now it’s the turn of the light pass. We first need to set up a few things before rendering, this is done in the `initLightRendering` method:
 
@@ -851,7 +851,7 @@ private void endLightRendering() {
 
 If you execute the sample you will see something like this:
 
-![](/chapter28/result.png)
+![](result.png)
 
 This chapter got longer than expected but there are a few key points that need to be clarified:
 

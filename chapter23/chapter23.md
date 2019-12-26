@@ -14,7 +14,7 @@ Then we need to be able to use that value in the scene shaders. Let’s start wi
 
 ```glsl
 in float outSelected;
-``` 
+```
 
 Then, at the end of the fragment shader, we will modify the final fragment colour, by setting the blue component to $$1$$ if it’s selected.
 
@@ -53,7 +53,7 @@ Let’s continue with the picking discussion. In this sample, we will follow a s
 
 The following picture depicts the situation we need to solve.
 
-![Object Picking](/chapter23/object_picking.png)
+![Object Picking](object_picking.png)
 
 We have the camera, placed in some coordinates in world-space, facing a specific direction. Any object that intersects with a ray cast from camera’s position following camera’s forward direction will be a candidate. Between all the candidates we just need to chose the closest one.
 
@@ -89,7 +89,7 @@ The method iterates over the game items trying to get the ones that intersect wi
 
 Before entering into the loop, we need to get the direction vector that points where the camera is facing. This is easy, just use the view matrix to get the z direction taking into consideration camera’s rotation. Remember that positive z points out of the screen, so we need the opposite direction vector, this is why we negate it.
 
-![Camera](/chapter23/camera.png)
+![Camera](camera.png)
 
 In the game loop intersection calculations are done per each ```GameItem```. But, how do we do this? This is where the glorious [JOML](https://github.com/JOML-CI/JOML "JOML") library comes to the rescue. We are using [JOML](https://github.com/JOML-CI/JOML "JOML")’s ```Intersectionf``` class, which provides several methods to calculate intersections in 2D and 3D. Specifically, we are using the ```intersectRayAab``` method.
 
@@ -105,7 +105,7 @@ The method tests if a ray, defined by an origin and a direction, intersects a bo
 
 The method will return true if there is an intersection. If true, we check the closes distance and update it if needed, and store a reference of the candidate selected ```GameItem```. The next figure shows all the elements involved in this method.
 
-![Intersection](/chapter23/intersection.png)
+![Intersection](intersection.png)
 
 Once the loop has finished, the candidate ```GameItem``` is marked as selected.
 
@@ -120,10 +120,10 @@ soundMgr.updateListenerPosition(camera);
 
 this.selectDetector.selectGameItem(gameItems, camera);
 ```
- 
+
 Besides that, a cross-hair has been added to the rendering process to check that everything is working properly. The result is shown in the next figure.
 
-![Object Picking result](/chapter23/object_picking_result.png)
+![Object Picking result](object_picking_result.png)
 
 Obviously, the method presented here is far from optimal but it will give you the basics to develop more sophisticated methods on your own. Some parts of the scene could be easily discarded, like objects behind the camera, since they are not going to be intersected. Besides that, you may want to order your items according to the distance to the camera to speed up calculations. In addition to that, calculations only need to be done if the camera has moved or rotated from previous update.
 
@@ -168,7 +168,7 @@ We have created a new class named `MouseBoxSelectionDetector` that implements th
 
 The result now looks like this.
 
-![Mouse selection](/chapter23/mouse_selection.png)
+![Mouse selection](mouse_selection.png)
 
 You just need to click over the block with the mouse left button to perform the selection.
 

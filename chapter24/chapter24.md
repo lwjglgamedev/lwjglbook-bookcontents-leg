@@ -144,5 +144,5 @@ public void restoreState() {
 
 And that’s all \(besides some additional methods to clear things up\), the code is completed. When you execute the sample you will get something like this:
 
-![Hud](/chapter24/hud.png)
+![Hud](hud.png)
 

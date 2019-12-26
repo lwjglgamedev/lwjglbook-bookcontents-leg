@@ -283,16 +283,10 @@ private void initRender() {
 
     // Draw the mesh
     glBindVertexArray(getVaoId());
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
 }
 
 private void endRender() {
     // Restore state
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
     glBindVertexArray(0);
 
     glBindTexture(GL_TEXTURE_2D, 0);

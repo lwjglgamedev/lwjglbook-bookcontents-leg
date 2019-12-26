@@ -65,6 +65,7 @@ int start = 5;
 for (int i = 0; i < 4; i++) {
     glVertexAttribPointer(start, 4, GL_FLOAT, false, MATRIX_SIZE_BYTES, i * VECTOR4F_SIZE_BYTES);
     glVertexAttribDivisor(start, 1);
+    glEnableVertexAttribArray(start);
     start++;
 }
 ```
@@ -82,31 +83,7 @@ Once the VBO has been bound we start defining the attributes for it. You can see
 
 After defining the vertex attribute, we need to call the `glVertexAttribDivisor` using the same index.
 
-The definition of the light view matrix is similar to the previous one, you can check it in the source code. Continuing with the `InstancedMesh` class definition it’s important to override the methods that enable the vertex attributes before rendering \(and the one that disables them after\).
-
-```java
-@Override
-protected void initRender() {
-    super.initRender();
-    int start = 5;
-    int numElements = 4 * 2;
-    for (int i = 0; i < numElements; i++) {
-        glEnableVertexAttribArray(start + i);
-    }
-}
-
-@Override
-protected void endRender() {
-    int start = 5;
-    int numElements = 4 * 2;
-    for (int i = 0; i < numElements; i++) {
-        glDisableVertexAttribArray(start + i);
-    }
-    super.endRender();
-}
-```
-
-The `InstancedMesh` class defines a public method, named `renderListInstanced`, that renders a list of game items. This method splits the list of game items into chunks of size equal to the number of instances used to create the `InstancedMesh`. The real rendering method is called `renderChunkInstanced` and is defined like this.
+The definition of the light view matrix is similar to the previous one, you can check it in the source code. The `InstancedMesh` class defines a public method, named `renderListInstanced`, that renders a list of game items. This method splits the list of game items into chunks of size equal to the number of instances used to create the `InstancedMesh`. The real rendering method is called `renderChunkInstanced` and is defined like this.
 
 ```java
 private void renderChunkInstanced(List<GameItem> gameItems, boolean depthMap, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {

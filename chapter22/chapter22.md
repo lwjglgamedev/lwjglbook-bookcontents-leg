@@ -22,7 +22,7 @@ And last, but no least, a listener which is where the generated sounds are suppo
 
 So an audio 3D scene is composed by a set of sound sources which emit sound and a listener that receives them. The final perceived sound will depend on the distance of the listener to the different sources, their relative speed and the selected propagation models. Sources can share buffers and play the same data. The following figure depicts a sample 3D scene with the different element types involved.
 
-![OpenAL concepts](/chapter22/openal_concepts.png)
+![OpenAL concepts](openal_concepts.png)
 
 So, let's start coding, we will create a new package under the name ```org.lwjglb.engine.sound``` that will host all the classes responsible for handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
 
@@ -179,7 +179,7 @@ public class SoundListener {
 ```
 A difference you will notice from the previous classes is that there’s no need to create a listener. There will always be one listener, so no need to create one, it’s already there for us. Thus, in the constructor we just simply set its initial position. For the same reason there’s no need for a ```cleanup``` method. The class has methods also for setting listener position and velocity, as in the ```SoundSource``` class, but we have an extra method for changing the listener orientation. Let’s review what orientation is all about. Listener orientation is defined by two vectors, “at” vector and “up” one, which are shown in the next figure.
 
-![Listener at and up vectors](/chapter22/listener_at_up.png)
+![Listener at and up vectors](listener_at_up.png)
 
 The “at” vector basically points where the listener is facing, by default its coordinates are $$(0, 0, -1)$$. The “up” vector determines which direction is up for the listener and, by default it points to $$(0, 1, 0)$$. So the three components of each of those two vectors are what are set in the ```alListenerfv``` method call. This method is used to transfer a set of floats (a variable number of floats) to a property, in this case, the orientation.
 

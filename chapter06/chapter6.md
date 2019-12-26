@@ -428,14 +428,10 @@ We moved the rendering code to draw a `Mesh` to its class:
 public void render() {
     // Draw the mesh
     glBindVertexArray(getVaoId());
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
 
     glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
     // Restore state
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
     glBindVertexArray(0);
 }
 ```

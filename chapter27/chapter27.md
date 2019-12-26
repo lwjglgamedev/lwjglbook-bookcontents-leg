@@ -183,13 +183,13 @@ If you want a sample of the much more efficient approach, that is, directly pass
 
 The `StaticMeshesLoader` makes the `OBJLoader` class obsolete, so it has been removed from the base source code. A more complex OBJ file is provided as a sample, if you run it you will see something like this:
 
-![](/chapter27/model.png)
+![](model.png)
 
 ## Animations
 
 Now that we have used assimp for loading static meshes we can proceed with animations. If you recall from the animations chapter, the VAO associated to a mesh contains the vertices positions, the texture coordinates, the indices and a list of weights that should be applied to joint positions to modulate final vertex position.
 
-![](/chapter27/vao_animation.png)
+![](vao_animation.png)
 
 Each vertex position has associated a list of four weights that change the final position, referring the bones indices that will be combined to determine its final position. Each frame, a list of transformation matrices are loaded, as uniforms, for each joint. With that information the final position is calculated.
 
@@ -209,7 +209,7 @@ Bones also point to a list of weights. Each weights is defined by the following 
 
 The following picture shows the relationships between all these elements.
 
-![](/chapter27/mesh_bones_weights_vertices.png)
+![](mesh_bones_weights_vertices.png)
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
@@ -223,7 +223,7 @@ A scene also defines a set of animations. A single model can have more than one 
 
 The following figure shows the relationships between all the elements described above.
 
-![](/chapter27/node_animations.png)
+![](node_animations.png)
 
 For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node. Hence, we need to reorder the information stored in the scene, the process is as follows:
 
@@ -468,7 +468,7 @@ This method returns a list of `AnimatedFrame` instances. Each `AnimatedFrame` in
 
 The rest of the changes in the source code are minor changes to adapt some structures. At the end you will be able to load animations like this one \(you need yo press space par to change the frame\).
 
-![](/chapter27/animation_result.png)
+![](animation_result.png)
 
 The complexity of this sample resides more in the adaptations of the assimp structures to adapt it to the engine used in the book and to pre-calculate the data for each frame. Beyond that, the concepts are similar to the ones presented in the animations chapter. You may try also to modify the source code to interpolate between frames to get smoother animations.
 

@@ -30,6 +30,7 @@ public class Mesh {
             vboId = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);            
+            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -78,11 +79,9 @@ public void render(Mesh mesh) {
 
     // Draw the mesh
     glBindVertexArray(mesh.getVaoId());
-    glEnableVertexAttribArray(0);
     glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
 
     // Restore state
-    glDisableVertexAttribArray(0);
     glBindVertexArray(0);
 
     shaderProgram.unbind();
@@ -232,11 +231,11 @@ FloatBuffer colourBuffer = memAllocFloat(colours.length);
 colourBuffer.put(colours).flip();
 glBindBuffer(GL_ARRAY_BUFFER, colourVboId);
 glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
-memFree(colourBuffer);
+glEnableVertexAttribArray(1);
 glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 ```
 
-Please notice that in the `glVertexAttribPointer` call, the first parameter is now a `“1”`. This is the location where our shader will be expecting that data. \(Of course, since we have another VBO we need to free it in the `cleanup` method\).
+Please notice that in the `glVertexAttribPointer` call, the first parameter is now a `“1”`. This is the location where our shader will be expecting that data. \(Of course, since we have another VBO we need to free it in the `cleanup` method\). You can see that we need to enable the VAO attribute at position 1 to be used during rendering.
 
 The next step is to modify the shaders. The vertex shader is now expecting two parameters, the coordinates \(in location 0\) and the colour \(in location 1\). The vertex shader will just output the received colour so it can be processed by the fragment shader.
 
@@ -269,28 +268,7 @@ void main()
 }
 ```
 
-The last important thing to do is to modify our rendering code to use that second array of data:
-
-```java
-public void render(Window window, Mesh mesh) {
-    clear();
-
-    if ( window.isResized() ) {
-        glViewport(0, 0, window.getWidth(), window.getHeight());
-        window.setResized(false);
-    }
-
-    shaderProgram.bind();
-
-    // Draw the mesh
-    glBindVertexArray(mesh.getVaoId());
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-    // ...
-```
-
-You can see that we need to enable the VAO attribute at position 1 to be used during rendering.  We can now pass an array of colours like this to our `Mesh` class in order to add some colour to our quad.
+ We can now pass an array of colours like this to our `Mesh` class in order to add some colour to our quad.
 
 ```java
 float[] colours = new float[]{

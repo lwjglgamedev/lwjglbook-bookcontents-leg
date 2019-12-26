@@ -268,6 +268,7 @@ Then we need to create the VBO, bind it and put the data into it.
 vboId = glGenBuffers();
 glBindBuffer(GL_ARRAY_BUFFER, vboId);
 glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+glEnableVertexAttribArray(0);
 ```
 
 Now comes the most important part. We need to define the structure of our data and store it in one of the attribute lists of the VAO. This is done with the following line.
@@ -318,13 +319,11 @@ public void render(Window window) {
 
     // Bind to the VAO
     glBindVertexArray(vaoId);
-    glEnableVertexAttribArray(0);
 
     // Draw the vertices
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Restore state
-    glDisableVertexAttribArray(0);
     glBindVertexArray(0);
 
     shaderProgram.unbind();

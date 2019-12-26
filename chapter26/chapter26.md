@@ -6,21 +6,21 @@ Let’s first start by examining how we can automate the construction of the lig
 
 We want all the visible objects to fit into the light view projection matrix. Hence, we need to fit the view frustum into the light frustum. The following picture depicts what we want to achieve.
 
-![](/chapter26/view_frustum.png)
+![](view_frustum.png)
 
 How can we construct that? The first step is to calculate the frustum corners of the view projection matrix. We get the coordinates in world space. Then we calculate the centre of that frustum. This can be calculating by adding the coordinates for all the corners and dividing the result by the number of corners.
 
-![](/chapter26/frustum_center.png)
+![](frustum_center.png)
 
 With that information we can set the position of the light. That position and its direction will be used to construct the light view matrix. In order to calculate the position, we start from the centre of the view frustum obtained before. We then go back to the direction of light an amount equal to the distance between the near and far z planes of the view frustum.
 
-![](/chapter26/light_position.png)
+![](light_position.png)
 
 Once we have constructed the light view matrix, we need to setup the orthographic projection matrix. In order to calculate them we transform the frustum corners to light view space, just by multiplying them by the light view matrix we have just constructed. The dimensions of that projection matrix will be minimum and maximum x and y values. The near z plane can be set up to the same value used by our standard projection matrices and the far value will be the distance between the maximum and minimum z values of the frustum corners in light view space.
 
 However, if you implement the algorithm described above over the shadows sample, you may be disappointed by the shadows quality.
 
-![](/chapter26/low_quality_shadows.png)
+![](low_quality_shadows.png)
 
 The reason for that is that shadows resolution is limited by the texture size. We are covering now a potentially huge area, and textures we are using to store depth information have not enough resolution in order to get good results. You may think that the solution is just to increase texture resolution, but this is not sufficient to completely fix the problem. You would need huge textures for that.
 
@@ -28,7 +28,7 @@ There’s a smarter solution for that. The key concept is that, shadows of objec
 
 The approach that Cascaded Shadow Maps \(CSMs\) use is to divide the view frustum into several splits. Splits closer to the camera cover a smaller amount spaces whilst distant regions cover a much wider region of space. The next figure shows a view frustum divided into three splits.
 
-![](/chapter26/cascade_splits.png)
+![](cascade_splits.png)
 
 For each of these splits, the depth map is rendered, adjusting the light view and projection matrices to cover fit to each split. Thus, the texture that stores the depth map covers a reduced area of the view frustum. And, since the split closest to the camera covers less space, the depth resolution is increased.
 
@@ -248,5 +248,5 @@ The rest of the changes in the source code, and the shaders are just adaptations
 
 Finally, when introducing these changes you may see that performance has dropped. This is due to the fact that we are rendering three times the depth map. We can mitigate this effect by avoiding rendering at all when the scene has not changed. If the camera has not been moved or the scene items have not changed we do not need to render again and again the depth map. The depth maps are stored in textures, so they are not wiped out for each render call.  Thus, we have added a new variable to the `render` method that indicates if this has changed, avoiding updating the depth maps it remains the same. This increases the FPS dramatically. At the end, you will get something like this:
 
-![](/chapter26/csmpng.png)
+![](csmpng.png)
 

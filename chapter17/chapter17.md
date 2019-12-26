@@ -165,9 +165,6 @@ private void initRender() {
 
     // Draw the mesh
     glBindVertexArray(getVaoId());
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
 }
 ```
 
