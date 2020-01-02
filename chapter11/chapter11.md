@@ -10,7 +10,7 @@ If you recall, directional lighting hits all the objects by parallel rays all co
 
 Another characteristic of directional light is that it is not affected by attenuation. Think again about sunlight: all objects that are hit by rays of light are illuminated with the same intensity, as the distance from the sun is so huge that the position of the objects is irrelevant. In fact, directional lights are modeled as light sources placed at infinity, if it was affected by attenuation it would have no effect in any object \(its colour contribution would be equal to $$0$$\).
 
-Besides that, directional light is composed also by a diffuse and specular components. The only differences with point lights is that it does not have a position but a direction and that it is not affected by attenuation. Let’s get back to the direction attribute of directional light, and imagine we are modeling the movement of the sun across our 3D world. If we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, midnight and dusk.
+Besides that, directional light is composed also by a diffuse and specular components. The only differences with point lights is that it does not have a position but a direction and that it is not affected by attenuation. Let’s get back to the direction attribute of directional light, and imagine we are modeling the movement of the sun across our 3D world. If we are assuming that the north is placed towards the increasing z-axis, the following picture shows the direction to the light source at dawn, mid day and dusk.
 
 ![Sun as a directional light](sun_directional_light.png)
 
@@ -22,13 +22,13 @@ Light directions for the above positions are:
 
 Side note: You may think that above coordinates are equal to position ones, but they model a vector, a direction, not a position. From the mathematical point of view a vector and a position are indistinguishable, but they have a totally different meaning.
 
-But how do we model the fact that this light is located at infinity? The answer is by using the w coordinate, that is, by using homogeneous coordinates and setting the w coordinate to $$0$$:
+But how do we model the fact that this light is located at infinity? The answer is by using the $$w$$ component, that is, by using homogeneous coordinates and setting the $$w$$ component to $$0$$:
 
 * Dawn: \(-1, 0, 0, 0\)
 * Mid day: \(0, 1, 0, 0\)
 * Dusk: \(1, 0, 0, 0\)
 
-This is the same case as when we pass the normals, for normals we set the w component to $$0$$ to state that we are not interested in displacements, just in the direction. Also, when we deal with directional light we need to do the same, camera translations should not affect the direction of a directional light.
+This is the same case as when we pass the normals, for normals we set the $$w$$ component to $$0$$ to state that we are not interested in displacements, just in the direction. Also, when we deal with directional light we need to do the same, camera translations should not affect the direction of a directional light.
 
 So let’s start coding and model our directional light. The first thing we are going to do is to create a class that models its attributes. It will be another POJO with a copy constructor which stores the direction, the colour and the intensity of the light.
 
@@ -58,7 +58,7 @@ public class DirectionalLight {
     // Getters and setters beyond this point...
 ```
 
-As you can see, we are still using a `Vector3f` to model the direction. Keep calm, we will deal with the w component when we transfer the directional light to the shader. And by the way, the next thing that we do is to update the `ShaderProgram` to create and update the uniform that will hold the directional light.
+As you can see, we are still using a `Vector3f` to model the direction. Keep calm, we will deal with the $$w$$ component when we transfer the directional light to the shader. And by the way, the next thing that we do is to update the `ShaderProgram` to create and update the uniform that will hold the directional light.
 
 In our fragment shader we will define a structure that models a directional light.
 
@@ -92,11 +92,11 @@ Now we need to use that uniform. We will model how the sun appears to move acros
 
 ![Sun Movement](sun_movement.png)
 
-We need to update the light direction so that when the sun is at dawn \(-90º\) its direction is \(-1,0,0\) and its x coordinate progressively increases from -1 to 0 and the “y” coordinate increases to 1 as it approaches midday. Then the “x” coordinate increases to 1 and the “y” coordinates decreases to 0 again. This can be done by setting the x coordinate to the $$sine$$ of the angle and y coordinate to the $$cosine$$ of the angle.
+We need to update the light direction so that when the sun is at dawn \($$-90º$$\) its direction is $$(-1,0,0)$$ and its $$x$$ component progressively increases from $$-1$$ to $$0$$ and the $$y$$ component increases to $$1$$ as it approaches midday. Then the $$x$$ component increases to $$1$$ and the $$y$$ component decreases to $$0$$ again. This can be done by setting the $$x$$ component to the $$sine$$ of the angle and $$y$$ component to the $$cosine$$ of the angle.
 
 ![Sine and Cosine](sine_cosine.png)
 
-We will also modulate light intensity, the intensity will be increasing when it’s getting away from dawn and will decrease as it approaches to dusk. We will simulate the night by setting the intensity to 0. Besides that, we will also modulate the colour so the light gets more red at dawn and at dusk. This will be done in the update method of the `DummyGame` class.
+We will also modulate light intensity, the intensity will be increasing when it’s getting away from dawn and will decrease as it approaches to dusk. We will simulate the night by setting the intensity to $$0$$. Besides that, we will also modulate the colour so the light gets more red at dawn and at dusk. This will be done in the update method of the `DummyGame` class.
 
 ```java
 // Update directional light direction, intensity and colour
@@ -133,7 +133,7 @@ currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
 shaderProgram.setUniform("directionalLight", currDirLight);
 ```
 
-As you can see we need to transform the light direction coordinates to view space, but we set the w component to 0 since we are not interested in applying translations.
+As you can see we need to transform the light direction coordinates to view space, but we set the $$w$$ component to $$0$$ since we are not interested in applying translations.
 
 Now we are ready to do the real work, which will happen in the fragment shader since the vertex shader does not be modified. We have already stated above that we need to define a new struct, named `DirectionalLight`, to model a directional light, and we will need a new uniform for that.
 
@@ -223,7 +223,7 @@ How do we calculate if it’s inside the light cone or not? We need to do a dot 
 
 ![Spot Light calculation](spot_light_calc.png)
 
-The dot product between L and C vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will know that it is inside the light cone \(recall the cosine graph, when α angle is 0, the cosine will be 1, the smaller the angle the higher the cosine\).
+The dot product between $$L$$ and $$C$$ vectors is equal to: $$\vec{L}\cdot\vec{C}=|\vec{L}|\cdot|\vec{C}|\cdot Cos(\alpha)$$. If, in our spot light definition we store the cosine of the cutoff angle, if the dot product is higher than that value we will know that it is inside the light cone \(recall the cosine graph, when $$α$$ angle is $$0$$, the cosine will be $$1$$, the smaller the angle the higher the cosine\).
 
 The second difference is that the points that are far away from the cone vector will receive less light, that is, the attenuation will be higher. There are several ways of calculating this; we will chose a simple approach by multiplying the attenuation by the following factor:
 
