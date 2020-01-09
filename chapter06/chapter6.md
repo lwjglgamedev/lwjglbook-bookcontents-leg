@@ -49,12 +49,12 @@ And define the version of the library to use.
 ```xml
     <properties>
         [...]
-        <joml.version>1.9.6</joml.version>
+        <joml.version>1.9.20</joml.version>
         [...]
     </properties>
 ```
 
-Now that everything has been set up let’s define our projection matrix. We will create an instance of the class `Matrix4f` \(provided by the JOML library\) in our `Renderer` class. The `Matrix4f` class provides a method to set up a projection matrix named `perspective`. This method needs the following parameters:
+Now that everything has been set up let’s define our projection matrix. We will create an instance of the class `Matrix4f` \(provided by the JOML library\) in our `Renderer` class. The `Matrix4f` class provides a method to set up a projection matrix named `setPerspective`. This method needs the following parameters:
 
 * Field of View: The Field of View angle in radians. We will define a constant that holds that value
 * Aspect Ratio.
@@ -80,7 +80,7 @@ The projection matrix is created as follows:
 
 ```java
 float aspectRatio = (float) window.getWidth() / window.getHeight();
-projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio,
+projectionMatrix = new Matrix4f().setPerspective(FOV, aspectRatio,
     Z_NEAR, Z_FAR);
 ```
 
@@ -156,9 +156,8 @@ We will create another method in our `ShaderProgram` class to setup the data, na
 public void setUniform(String uniformName, Matrix4f value) {
     // Dump the matrix into a float buffer
     try (MemoryStack stack = MemoryStack.stackPush()) {
-        FloatBuffer fb = stack.mallocFloat(16);
-        value.get(fb);
-        glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
+        glUniformMatrix4fv(uniforms.get(uniformName), false,
+                           value.get(stack.mallocFloat(16)));
     }
 }
 ```
@@ -289,9 +288,9 @@ public class GameItem {
 
     public GameItem(Mesh mesh) {
         this.mesh = mesh;
-        position = new Vector3f(0, 0, 0);
+        position = new Vector3f();
         scale = 1;
-        rotation = new Vector3f(0, 0, 0);
+        rotation = new Vector3f();
     }
 
     public Vector3f getPosition() {
@@ -348,19 +347,15 @@ public class Transformation {
     }
 
     public final Matrix4f getProjectionMatrix(float fov, float width, float height, float zNear, float zFar) {
-        float aspectRatio = width / height;        
-        projectionMatrix.identity();
-        projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
-        return projectionMatrix;
+        return projectionMatrix.setPerspective(fov, width / height, zNear, zFar);
     }
 
     public Matrix4f getWorldMatrix(Vector3f offset, Vector3f rotation, float scale) {
-        worldMatrix.identity().translate(offset).
+        return worldMatrix.translation(offset).
                 rotateX((float)Math.toRadians(rotation.x)).
                 rotateY((float)Math.toRadians(rotation.y)).
                 rotateZ((float)Math.toRadians(rotation.z)).
                 scale(scale);
-        return worldMatrix;
     }
 }
 ```
@@ -392,10 +387,10 @@ In the render method of our `Renderer` class we now receive an array of GameItem
 public void render(Window window, GameItem[] gameItems) {
     clear();
 
-        if ( window.isResized() ) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResized(false);
-        }
+    if (window.isResized()) {
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        window.setResized(false);
+    }
 
     shaderProgram.bind();
 
@@ -404,7 +399,7 @@ public void render(Window window, GameItem[] gameItems) {
     shaderProgram.setUniform("projectionMatrix", projectionMatrix);        
 
     // Render each gameItem
-    for(GameItem gameItem : gameItems) {
+    for (GameItem gameItem : gameItems) {
         // Set world matrix for this item
         Matrix4f worldMatrix =
             transformation.getWorldMatrix(
