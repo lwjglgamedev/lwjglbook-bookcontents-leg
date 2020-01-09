@@ -310,7 +310,7 @@ That’s all the code that should be in our `init` method. Our data is already i
 public void render(Window window) {
     clear();
 
-    if ( window.isResized() ) {
+    if (window.isResized()) {
         glViewport(0, 0, window.getWidth(), window.getHeight());
         window.setResized(false);
     }

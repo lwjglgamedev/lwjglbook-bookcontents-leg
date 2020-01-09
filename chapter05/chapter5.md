@@ -70,7 +70,7 @@ We will create our `Mesh` instance in our `DummyGame` class, removing the VAO an
 public void render(Mesh mesh) {
     clear();
 
-    if ( window.isResized() ) {
+    if (window.isResized()) {
         glViewport(0, 0, window.getWidth(), window.getHeight());
         window.setResized(false);
     }

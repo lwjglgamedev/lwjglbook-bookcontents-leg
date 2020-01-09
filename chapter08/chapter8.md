@@ -58,8 +58,8 @@ public class Camera {
     private final Vector3f rotation;
 
     public Camera() {
-        position = new Vector3f(0, 0, 0);
-        rotation = new Vector3f(0, 0, 0);
+        position = new Vector3f();
+        rotation = new Vector3f();
     }
 
     public Camera(Vector3f position, Vector3f rotation) {
@@ -162,7 +162,7 @@ Matrix4f viewMatrix = transformation.getViewMatrix(camera);
 
 shaderProgram.setUniform("texture_sampler", 0);
 // Render each gameItem
-for(GameItem gameItem : gameItems) {
+for (GameItem gameItem : gameItems) {
     // Set model view matrix for this item
     Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
     shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);

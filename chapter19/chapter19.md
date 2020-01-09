@@ -149,9 +149,9 @@ public class GameItem {
     private final Vector3f rotation;
 
     public GameItem() {
-        position = new Vector3f(0, 0, 0);
+        position = new Vector3f();
         scale = 1;
-        rotation = new Vector3f(0, 0, 0);
+        rotation = new Vector3f();
     }
 
     public GameItem(Mesh mesh) {
@@ -246,7 +246,7 @@ private static class VertexInfo {
 
     public VertexInfo(Vector3f position) {
         this.position = position;
-        normal = new Vector3f(0, 0, 0);
+        normal = new Vector3f();
     }
 
     public VertexInfo() {

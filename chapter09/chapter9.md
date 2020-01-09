@@ -97,7 +97,7 @@ shaderProgram.createUniform("useColour");
 And like any other uniform, in the `render` method of the `Renderer` class we need to set the values for this uniforms for each `gameItem`.
 
 ```java
-for(GameItem gameItem : gameItems) {
+for (GameItem gameItem : gameItems) {
     Mesh mesh = gameItem.getMesh();
     // Set model view matrix for this item
     Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
