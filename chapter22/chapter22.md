@@ -1,6 +1,6 @@
 # Audio
 
-Until this moment we have been dealing with graphics, but another key aspect of every game is audio. This capability is going to be addressed in this chapter with the help of [OpenAL](https://www.openal.org "OpenAL") (Open Audio Library). OpenAL is the OpenGL counterpart for audio, it allows us to play sounds through and abstraction layer. That layer isolates us from the underlying complexities of the audio subsystem. Besides that, it allows us to “render” sounds in a 3D scene, where sounds can be set up in specific locations, attenuated with the distance and modified according to their velocity (simulating [Doppler effect](https://en.wikipedia.org/wiki/Doppler_effect)\)
+Until this moment we have been dealing with graphics, but another key aspect of every game is audio. This capability is going to be addressed in this chapter with the help of [OpenAL](https://www.openal.org "OpenAL") (Open Audio Library). OpenAL is the OpenGL counterpart for audio, it allows us to play sounds through an abstraction layer. That layer isolates us from the underlying complexities of the audio subsystem. Besides that, it allows us to “render” sounds in a 3D scene, where sounds can be set up in specific locations, attenuated with the distance and modified according to their velocity (simulating [Doppler effect](https://en.wikipedia.org/wiki/Doppler_effect)\)
 
 LWJGL supports OpenAL without requiring any additional download, it’s just ready to use. But before start coding we need to present the main elements involved when dealing with OpenAL, which are:
 
@@ -8,7 +8,7 @@ LWJGL supports OpenAL without requiring any additional download, it’s just rea
 * Sources.
 * Listener.
 
-Buffers store audio data, that is, music or sound effects. They are similar to the textures in the OpenGL domain. OpenAL expects audio data to be in PCM (Pulse Coded Modulation) format (either in mono or in stereo), so we cannot just dump MP3 or OGG files without converting them first to PCM.
+Buffers store audio data, such as music or sound effects. They are similar to the textures in the OpenGL domain. OpenAL expects audio data to be in PCM (Pulse Coded Modulation) format (either in mono or in stereo), so we cannot just dump MP3 or OGG files without converting them first to PCM.
 
 The next element are sources, which represent a location in a 3D space (a point) that emits sound. A source is associated to a buffer (only one at time) and can be defined by the following attributes:
 
@@ -24,7 +24,7 @@ So an audio 3D scene is composed by a set of sound sources which emit sound and 
 
 ![OpenAL concepts](openal_concepts.png)
 
-So, let's start coding, we will create a new package under the name ```org.lwjglb.engine.sound``` that will host all the classes responsible for handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
+So, let's start coding. We will create a new package under the name ```org.lwjglb.engine.sound``` that will host all the classes responsible for handling audio. We will first start with a class, named ```SoundBuffer``` that will represent an OpenAL buffer. A fragment of the definition of that class is shown below.
 
 ```java
 package org.lwjglb.engine.sound;
@@ -130,11 +130,11 @@ public class SoundSource {
 }
 ```
 
-The sound source class provides some methods to setup its position, the gain, and control methods for playing stopping and pausing it. Keep in mind that sound control actions are made over a source (not over the buffer), remember that several sources can share the same buffer. As in the ```SoundBuffer``` class, a ```SoundSource``` is identified by an identifier, which is used in each operation. This class also provides a ```cleanup``` method to free the reserved resources. But let’s examine the constructor. The first thing that we do is to create the source with the ```alGenSources``` call. Then, we set up some interesting properties using the constructor parameters.
+The sound source class provides some methods to setup its position, the gain, and control methods for playing, stopping, and pausing it. Keep in mind that sound control actions are made over a source (not over the buffer), remember that several sources can share the same buffer. As in the ```SoundBuffer``` class, a ```SoundSource``` is identified by an identifier, which is used in each operation. This class also provides a ```cleanup``` method to free the reserved resources. But let’s examine the constructor. The first thing that we do is to create the source with the ```alGenSources``` call. Then, we set up some interesting properties using the constructor parameters.
 
 The first parameter, ```loop```, indicates if the sound to be played should be in loop mode or not. By default, when a play action is invoked over a source the playing stops when the audio data is consumed. This is fine for some sounds, but some others, like background music, need to be played over and over again. Instead of manually controlling when the audio has stopped and re-launch the play process, we just simply set the looping property to true: “```alSourcei(sourceId, AL_LOOPING, AL_TRUE);```”.
 
-The other parameter, ```relative```, controls if the position of the source is relative to the listener or not. In this case, when we set the position for a source, we basically are defining the distance (with a vector) to the listener, not the position in the OpenAL 3D scene, not the world position. This activated by the “```alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);”``` call. But, What can we use this for? This property is interesting for instance for background sounds that shouldn't be affected (attenuated) by the distance to the listener. Think, for instance, in background music or sound effects related to player controls. If we set these sources as relative, and set their position to $$(0, 0, 0)$$ they will not be attenuated.
+The other parameter, ```relative```, controls if the position of the source is relative to the listener or not. In this case, when we set the position for a source, we basically are defining the distance (with a vector) to the listener, not the position in the OpenAL 3D scene, not the world position. This activated by the “```alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);”``` call. But, What can we use this for? This property is interesting, for instance, for background sounds that shouldn't be affected (attenuated) by the distance to the listener. Think, for instance, in background music or sound effects related to player controls. If we set these sources as relative, and set their position to $$(0, 0, 0)$$ they will not be attenuated.
 
 Now it’s turn for the listener which, surprise, is modelled by a class named ```SoundListener```. Here’s the definition for that class.
 
@@ -181,11 +181,11 @@ A difference you will notice from the previous classes is that there’s no need
 
 ![Listener at and up vectors](listener_at_up.png)
 
-The “at” vector basically points where the listener is facing, by default its coordinates are $$(0, 0, -1)$$. The “up” vector determines which direction is up for the listener and, by default it points to $$(0, 1, 0)$$. So the three components of each of those two vectors are what are set in the ```alListenerfv``` method call. This method is used to transfer a set of floats (a variable number of floats) to a property, in this case, the orientation.
+The “at” vector basically points where the listener is facing and by default its coordinates are $$(0, 0, -1)$$. The “up” vector determines which direction is up for the listener, and by default it points to $$(0, 1, 0)$$. So the three components of each of those two vectors are what are set in the ```alListenerfv``` method call. This method is used to transfer a set of floats (a variable number of floats) to a property, in this case, the orientation.
 
-Before continuing it's necessary to stress out some concepts in relation to source and listener speeds. The relative speed between sources and listener will cause OpenAL to simulate Doppler effect. In case you don’t know, Doppler effect is what causes that a moving object that is getting closer to you seems to emit in a higher frequency than it seems to emit when is walking away. The thing, is that, simply by setting a source or listener velocity, OpenAL will not update their position for you. It will use the relative velocity to calculate the Doppler effect, but the positions won’t be modified. So, if you want to simulate a moving source or listener you must take care of updating their positions in the game loop.
+Before continuing, it's necessary to stress out some concepts in relation to source and listener speeds. The relative speed between sources and listener will cause OpenAL to simulate Doppler effect. In case you don’t know, Doppler effect is what causes that a moving object that is getting closer to you seems to emit in a higher frequency than it seems to emit when it is moving away. The thing is, that simply by setting a source or listener velocity, OpenAL will not update their position for you. It will use the relative velocity to calculate the Doppler effect, but the positions won’t be modified. So, if you want to simulate a moving source or listener, you must take care of updating their positions in the game loop.
 
-Now that we have modelled the key elements we can set them up to work, we need to initialize OpenAL library, so we will create a new class named ```SoundManager``` that will handle this. Here’s a fragment of the definition of this class.
+Now that we have modelled the key elements, we can set them up to work; we need to initialize the OpenAL library, so we will create a new class named ```SoundManager``` that will handle this. Here’s a fragment of the definition of this class.
 
 ```java
 package org.lwjglb.engine.sound;
