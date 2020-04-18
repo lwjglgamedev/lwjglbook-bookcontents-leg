@@ -183,3 +183,4 @@ But usually normal maps are not defined in that way, they usually are defined in
 
 We will stick with this simple implementation for now, but keep in mind that you must always use normal maps defined in object space. If you use maps defined in tangent space you will get weird results. In order to be able to work with them we need to setup specific matrices to transform coordinates to the tangent space.
 
+You can check a great tutorial on this aspect [here](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)
