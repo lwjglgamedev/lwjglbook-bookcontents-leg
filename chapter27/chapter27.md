@@ -143,6 +143,14 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
     processTextCoords(aiMesh, textures);
     processIndices(aiMesh, indices);
 
+    // Texture coordinates may not have been populated. We need at least the empty slots
+    if ( textures.size() == 0) {
+        int numElements = (vertices.size() / 3) * 2;
+        for (int i=0; i<numElements; i++) {
+            textures.add(0.0f);
+        }
+    }
+    
     Mesh mesh = new Mesh(Utils.listToArray(vertices),
         Utils.listToArray(textures),
         Utils.listToArray(normals),
@@ -161,7 +169,7 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
 }
 ```
 
-A `Mesh` is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords` and `processIndices` methods. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`.
+A `Mesh` is defined by a set of vertices position, normals directions, texture coordinates and indices. Each of these elements are processed in the `processVertices`, `processNormals`, `processTextCoords` and `processIndices` methods. A Mesh also may point to a material, using its index. If the index corresponds to the previously processed materials we just simply associate them to the `Mesh`. After processing all that data we check if texture coordinates have been defined. If not, we just assign a set of texture coordinates to 0.0f to ensure consistency of the VAO.
 
 The `processXXX` methods are very simple, they just invoke the corresponding method over the `AIMesh` instance that returns the desired data. For instance, the `processVertices` is defined like this:
 
@@ -471,4 +479,3 @@ The rest of the changes in the source code are minor changes to adapt some struc
 ![](animation_result.png)
 
 The complexity of this sample resides more in the adaptations of the assimp structures to adapt it to the engine used in the book and to pre-calculate the data for each frame. Beyond that, the concepts are similar to the ones presented in the animations chapter. You may try also to modify the source code to interpolate between frames to get smoother animations.
-
