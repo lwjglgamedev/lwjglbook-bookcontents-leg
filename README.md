@@ -8,6 +8,8 @@ My initial goal was to learn the techniques involved in writing a 3D game using 
 
 I started to collect some materials, develop some examples and decided to organize that information in the form of a book.
 
+**2020/06709 - NEWS**:  Vulkan book is also in progress.
+
 ## Source Code
 
 The source code of the samples of this book is in [GitHub](https://github.com/lwjglgamedev/lwjglbook).
@@ -36,5 +38,3 @@ Antonio Hernández Bejarano
 ## Special Thanks
 
 To all the readers that have contributed with corrections, improvements and ideas.
-
-
