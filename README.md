@@ -8,7 +8,7 @@ My initial goal was to learn the techniques involved in writing a 3D game using 
 
 I started to collect some materials, develop some examples and decided to organize that information in the form of a book.
 
-**2020/06709 - NEWS**:  Vulkan book is also in progress.
+**2020/06/20 - NEWS**:  Vulkan book first chapters already available [here](https://github.com/lwjglgamedev/vulkanbook).
 
 ## Source Code
 
