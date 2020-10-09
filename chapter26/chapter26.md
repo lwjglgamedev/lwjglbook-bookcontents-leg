@@ -109,7 +109,7 @@ Also, in each pass, we need to change the texture we are using. Each pass will r
 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowBuffer.getDepthMapTexture().getIds()[i], 0);
 ```
 
-As it’s just have been mentioned, the `ShadowBuffer` class stores the information related to the textures used to store depth information. The code is very similar to the code used in the shadows chapter, except t that we are using texture arrays. Thus, we have created a new class, `ArrTexture`, that creates an  array of textures with the same attributes. This class also provides a `bind` method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
+As it has just been mentioned, the `ShadowBuffer` class stores the information related to the textures used to store depth information. The code is very similar to the code used in the shadows chapter, except t that we are using texture arrays. Thus, we have created a new class, `ArrTexture`, that creates an  array of textures with the same attributes. This class also provides a `bind` method that binds all the texture arrays for using them in the scene shader. The method receives a parameter, with the texture unit to start with.
 
 ```java
 public void bindTextures(int start) {
