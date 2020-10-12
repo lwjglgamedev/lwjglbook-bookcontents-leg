@@ -1,10 +1,10 @@
 # Fog
 
-Before we deal with more complex topics, we will review how to create a fog effect in our game engine. With that effect we will simulate how distant objects get dimmed and seem to vanish into a dense fog.
+Before we deal with more complex topics, we will review how to create a fog effect in our game engine. With that effect, we will simulate how distant objects get dimmed and seem to vanish into a dense fog.
 
-Let us first examine the attributes that define fog. The first one is the fog colour. In the real world the fog has a gray colour, but we can use this effect to simulate wide areas invaded by a fog with different colours. The attribute is the fog's density.
+Let us first examine the attributes that define fog. The first one is the fog colour. In the real world, the fog has a gray colour, but we can use this effect to simulate wide areas invaded by a fog with different colours. The attribute is the fog's density.
 
-Thus, in order to apply the fog effect we need to find a way to fade our 3D scene objects into the fog colour as long as they get far away from the camera. Objects that are close to the camera will not be affected by the fog, but objects that are far away will not be distinguishable. So we need to be able to calculate a factor that can be used to blend the fog colour and each fragment colour in order to simulate that effect. That factor will need to be dependent on the distance to the camera.
+Thus, in order to apply the fog effect, we need to find a way to fade our 3D scene objects into the fog colour as long as they get far away from the camera. Objects that are close to the camera will not be affected by the fog, but objects that are far away will not be distinguishable. So we need to be able to calculate a factor that can be used to blend the fog colour and each fragment colour in order to simulate that effect. That factor will need to be dependent on the distance to the camera.
 
 Let’s call that factor $$fogFactor$$, and set its range from 0 to 1. When the $$fogFactor$$ is 1, it means that the object will not be affected by fog, that is, it’s a nearby object. When the $$fogFactor$$ takes the 0 value, it means that the objects will be completely hidden in the fog.
 
@@ -17,12 +17,12 @@ $$finalColour = (1 - fogFactor) \cdot fogColour + fogFactor \cdot framentColour$
 * $$fogColour$$ is the colour of the fog.
 * $$fragmentColour$$ is the colour of the fragment without applying any fog effect on it.
 
-Now we need to find a way to calculate $$fogFactor$$ depending on the distance. We can chose different models, and the first one could be to use a linear model. This is a model that, given a distance, changes the fogFactor value in a linear way.
+Now we need to find a way to calculate $$fogFactor$$ depending on the distance. We can choose different models, and the first one could be to use a linear model. This is a model that, given a distance, changes the fogFactor value in a linear way.
 
 The linear model can be defined by the following parameters:
 
 * $$fogStart$$: The distance at where fog effects starts to be applied.
-* $$fogFinish$$: The distance at where fog effects reaches its maximum value.
+* $$fogFinish$$: The distance at where fog effects reach its maximum value.
 * $$distance$$: Distance to the camera.
 
 With those parameters, the equation to be applied is:
@@ -33,7 +33,7 @@ For objects at distance lower than $$fogStart$$ we just simply set the $$fogFact
 
 ![Linear model](linear_model.png)
 
-The linear model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality fog tends to grow in a smoother way. So the next suitable model is a exponential one. The equation for that model is as follows:
+The linear model is easy to calculate but it is not very realistic and it does not take into consideration the fog density. In reality, fog tends to grow in a smoother way. So the next suitable model is an exponential one. The equation for that model is as follows:
 
 $$\displaystyle fogFactor = e^{-(distance \cdot fogDensity)^{exponent}} = \frac{1}{e^{(distance \cdot fogDensity)^{exponent}}}$$
 
@@ -46,7 +46,7 @@ The following picture shows two graphs for the equation above for different valu
 
 ![Exponential model](exponential_model.png)
 
-In our code we will use a formula which sets a value of two for the exponent \(you can easily modify the example to use different values\).
+In our code, we will use a formula that sets a value of two for the exponent \(you can easily modify the example to use different values\).
 
 Now that the theory has been explained we can put it into practice. We will implement the effect in the scene fragment shader since we have there all the variables we need. We will start by defining a struct that models the fog attributes.
 
@@ -65,7 +65,7 @@ The `active` attribute will be used to activate or deactivate the fog effect. Th
 uniform Fog fog;
 ```
 
-We will create also a new class named `Fog` which is another POJO \(Plain Old Java Object\) which contains the fog attributes.
+We will create also a new class named `Fog` which is another POJO \(Plain Old Java Object\) that contains the fog attributes.
 
 ```java
 package org.lwjglb.engine.graph.weather;
@@ -127,7 +127,7 @@ And use it in the `renderScene` method:
 sceneShaderProgram.setUniform("fog", scene.getFog());
 ```
 
-We are now able to define fog characteristics in our game, but we need to get back to the fragment shader in order to apply the fog effect. We will create a function named `calcFog` which is defined like this.
+We are now able to define fog characteristics in our game, but we need to get back to the fragment shader in order to apply the fog effect. We will create a function named `calcFog` which is defined as this.
 
 ```glsl
 vec4 calcFog(vec3 pos, vec4 colour, Fog fog)
