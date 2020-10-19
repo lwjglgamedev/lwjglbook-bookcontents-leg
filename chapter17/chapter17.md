@@ -1,8 +1,8 @@
 # Normal Mapping
 
-In this chapter we will explain a technique that will dramatically improve how our 3D models look like. By now we are able to apply textures to complex 3D models, but we are still far away from what real objects look like. Surfaces in the real world are not perfectly plain, they have imperfections that our 3D models currently do not have.
+In this chapter, we will explain a technique that will dramatically improve how our 3D models look like. By now we are able to apply textures to complex 3D models, but we are still far away from what real objects look like. Surfaces in the real world are not perfectly plain, they have imperfections that our 3D models currently do not have.
 
-In order to render more realistic scenes we are going to use normal maps. If you look at a flat surface in the real word you will see that those imperfections can be seen even at distance by the way that the light reflects on it. In a 3D scene a flat surface will have no imperfections, we can apply a texture to it but we won’t change the way that light reflects on it. That’s the thing that makes the difference.
+In order to render more realistic scenes, we are going to use normal maps. If you look at a flat surface in the real world you will see that those imperfections can be seen even at distance by the way that the light reflects on it. In a 3D scene, a flat surface will have no imperfections, we can apply a texture to it but we won’t change the way that light reflects on it. That’s the thing that makes the difference.
 
 We may think of increasing the detail of our models by increasing the number of triangles and reflect those imperfections, but performance will degrade. What we need is a way to change the way light reflects on surfaces to increase the realism. This is achieved with the normal mapping technique.
 
@@ -14,7 +14,7 @@ If we could change the normals for each fragment of the surface we could model s
 
 ![Fragment Normals](fragment_normals.png)
 
-The way we are going to achieve this is by loading another texture which stores the normals for the surface. Each pixel of the normal texture will contain the values of the $$x$$, y and $$z$$ coordinates of the normal stored as an RGB value.
+The way we are going to achieve this is by loading another texture that stores the normals for the surface. Each pixel of the normal texture will contain the values of the $$x$$, y and $$z$$ coordinates of the normal stored as an RGB value.
 
 Let’s use the following texture to draw a quad.
 
@@ -126,7 +126,7 @@ The function takes the following parameters:
 * The texture coordinates.
 * The model view matrix.
 
-The first thing we do in that function is to check if this material has a normal map associated or not. If not, we just simply use the vertex normal as usual. If it has a normal map, we use the normal data stored in the normal texture map associated to the current texture coordinates.
+The first thing we do in that function is to check if this material has a normal map associated or not. If not, we just simply use the vertex normal as usual. If it has a normal map, we use the normal data stored in the normal texture map associated with the current texture coordinates.
 
 Remember that the colour we get are the normal coordinates, but since they are stored as RGB values they are contained in the range \[0, 1\]. We need to transform them to be in the range \[-1, 1\], so we just multiply by two and subtract 1. Then, we normalize that value and transform it to view model coordinate space \(as with the vertex normal\).
 
@@ -179,8 +179,8 @@ The result is shown in the next figure.
 As you can see the quad that has a normal texture applied gives the impression of having more volume. Although it is, in essence, a plain surface like the other quad, you can see how the light reflects.
 Although the code we have set up works perfectly with this example, you need to be aware of its limitations. The code only works for normal map textures that are created using object space coordinates. If this is the case we can apply the model view matrix transformations to translate the normal coordinates to the view space.
 
-But usually normal maps are not defined in that way, they usually are defined in the so called tangent space. The tangent space is a coordinate system that is local to each triangle of the model. In that coordinate space the $$z$$ axis always points out of the surface. This is the reason why a normal map is usually bluish, even for complex models with opposing faces.
+But usually, normal maps are not defined in that way, they usually are defined in the so called tangent space. The tangent space is a coordinate system that is local to each triangle of the model. In that coordinate space the $$z$$ axis always points out of the surface. This is the reason why a normal map is usually bluish, even for complex models with opposing faces.
 
-We will stick with this simple implementation for now, but keep in mind that you must always use normal maps defined in object space. If you use maps defined in tangent space you will get weird results. In order to be able to work with them we need to setup specific matrices to transform coordinates to the tangent space.
+We will stick with this simple implementation for now, but keep in mind that you must always use normal maps defined in object space. If you use maps defined in tangent space you will get weird results. In order to be able to work with them, we need to setup specific matrices to transform coordinates to the tangent space.
 
 You can check a great tutorial on this aspect [here](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)
