@@ -27,7 +27,9 @@ Once the dependencies has been set, we will create a new class named `StaticMesh
 
 ```java
 public static Mesh[] load(String resourcePath, String texturesDir) throws Exception {
-    return load(resourcePath, texturesDir, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
+    return load(resourcePath, texturesDir,
+            aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate
+                    | aiProcess_FixInfacingNormals | aiProcess_PreTransformVertices);
 }
 
 public static Mesh[] load(String resourcePath, String texturesDir, int flags) throws Exception {
@@ -47,6 +49,8 @@ The second method has an extra argument named `flags`. This parameter allows to 
 * `aiProcess_Triangulate`: The model may use quads or other geometries to define their elements. Since we are only dealing with triangles, we must use this flag to split all he faces into triangles \(if needed\).
 
 * `aiProcess_FixInfacingNormals`: This flags try to reverse normals that may point inwards.
+
+* `aiProcess_PreTransformVertices`: This flag performs some transformation over the data loaded so the model is placed in the origin and the coordinates are corrected to math OpenGL coordinate System. If you have problems with models that are rotated, make sure to use this flag. Important: do not use this fal is you model uses animations, this flag will remove that information.
 
 There are many other flags that can be used, you can check them in the LWJGL Javadoc documentation.
 
@@ -150,7 +154,7 @@ private static Mesh processMesh(AIMesh aiMesh, List<Material> materials) {
             textures.add(0.0f);
         }
     }
-    
+
     Mesh mesh = new Mesh(Utils.listToArray(vertices),
         Utils.listToArray(textures),
         Utils.listToArray(normals),
@@ -221,25 +225,25 @@ The following picture shows the relationships between all these elements.
 
 Hence, the first thing that we must do is to construct the list of vertices positions, the bones / joints / indices and the associated weights from the structure above. Once we have done that, we need to pre-calculate the transformation matrices for each bone / joint for all the animation frames defined in the model.
 
-Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that these Node’s hierarchy is defined from the whole model, we do not have separate hierarchies for each mesh.
+Assimp scene object defines a Node’s hierarchy. Each Node is defined by a name a list of children node. Animations use these nodes to define the transformations that should be applied to. This hierarchy is defined indeed the bones’ hierarchy. Every bone is a node, and has a parent, except the root node, and possible a set of children. There are special nodes that are not bones, they are used to group transformations, and should be handled when calculating the transformations. Another issue is that this Nodes hierarchy is defined from the whole model, we do not have separate hierarchies for each mesh.
 
-A scene also defines a set of animations. A single model can have more than one animation. You can have animations for a model to walk, run etc. Each of these animations define different transformations. An animation has the following attributes:
+A scene also defines a set of animations. A single model can have more than one animation to model how a character walks, runs, etc. Each of these animations define different transformations. An animation has the following attributes:
 
 * A name.
 * A duration. That is, the duration in time of the animation. The name may seem confusing since an animation is the list of transformations that should be applied to each node for each different frame. 
-* A list of animation channels. An animation channel contains, for a specific instant in time the translation, rotation and scaling information that should be applied to each node. The class that models the data contained in the animation channels is the `AINodeAnim`.
+* A list of animation channels. An animation channel contains, for a specific instant in time the translation, rotation and scaling information that should be applied to each node. The class that models the data contained in the animation channels is the `AINodeAnim`. Animation channels could be assimilated as the key frames.
 
 The following figure shows the relationships between all the elements described above.
 
 ![](node_animations.png)
 
-For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node. Hence, we need to reorder the information stored in the scene, the process is as follows:
+For a specific instant of time, for a frame, the transformation to be applied to a bone is the transformation defined in the animation channel for that instant, multiplied by the transformations of all the parent nodes up to the root node. Hence, we need to extract the information stored in the scene, the process is as follows:
 
 * Construct the node hierarchy.
-* For each animation, iterate over each animation channel \(for each animation node\):
-   Construct the transformation matrices for all the frames. The transformation matrix is the composition of the translation, rotation and scale matrix.
-* Reorder that information for each frame:
-   Construct the final transformations to be applied for each bone in the Mesh. This is achieved by multiplying the transformation matrix of the bone \(of the associated node\) by the transformation matrices of all the parent nodes up to the root node.
+* For each animation, iterate over each animation channel (for each animation node\) and construct the transformation matrices for each of the bones for all the potential animation frames.  Those transformation matrices are a combination of the transformation matrix of the node associated to the bone and the bone transformation matrices.
+* We start at the root node, and for each frame, build transformation matrix for that node, which is the the transformation matrix of the node multiplied by the composition of the translation, rotation and scale matrix of that specific frame for that node.
+* We then get the bones associated to that node and complement that transformation by multiplying  the offset matrices of the bones. The result will be a transformation matrix associated to the related bones for that specific frame, which will be used in the shaders.
+* After that, we iterate over the children nodes, passing the transformation matrix of the parent node to be used also in combination with the children node transformations.
 
 So let’s start coding. We will first create a class named `AnimMeshesLoader` which extends from `StaticMeshesLoader`, but instead of returning an array of `Mesh`, it returns an `AnimGameItem` instance. It defines two public methods for that:
 
@@ -276,10 +280,10 @@ public static AnimGameItem loadAnimGameItem(String resourcePath, String textures
         meshes[i] = mesh;
     }
 
-    AINode aiRootNode = aiScene.mRootNode();
-    Matrix4f rootTransfromation = AnimMeshesLoader.toMatrix(aiRootNode.mTransformation());
-    Node rootNode = processNodesHierarchy(aiRootNode, null);
-    Map<String, Animation> animations = processAnimations(aiScene, boneList, rootNode, rootTransfromation);
+    Node rootNode = buildNodesTree(aiScene.mRootNode(), null);
+    Matrix4f globalInverseTransformation = toMatrix(aiScene.mRootNode().mTransformation()).invert();
+    Map<String, Animation> animations = processAnimations(aiScene, boneList, rootNode,
+            globalInverseTransformation);
     AnimGameItem item = new AnimGameItem(meshes, animations);
 
     return item;
@@ -355,32 +359,29 @@ This method traverses the bone definition for a specific mesh, getting their wei
 
 The information contained in the `weights` and `boneIds` is used to construct the `Mesh` data. The information contained in the `boneList` will be used later when calculating animation data.
 
-Let’s go back to the `loadAnimGameItem` method. Once we have created the Meshes, we also get the transformation which is applied to the root node which will be used also to calculate the final transformation. After that, we need to process the hierarchy of nodes, which is done in the `processNodesHierarchy` method. This method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes.
+The `buildNodesTree` method is quite simple, It just traverses the nodes hierarchy starting from the root node constructing a tree of nodes:
 
 ```java
-private static Node processNodesHierarchy(AINode aiNode, Node parentNode) {
+private static Node buildNodesTree(AINode aiNode, Node parentNode) {
     String nodeName = aiNode.mName().dataString();
-    Node node = new Node(nodeName, parentNode);
+    Node node = new Node(nodeName, parentNode, toMatrix(aiNode.mTransformation()));
 
     int numChildren = aiNode.mNumChildren();
     PointerBuffer aiChildren = aiNode.mChildren();
     for (int i = 0; i < numChildren; i++) {
         AINode aiChildNode = AINode.create(aiChildren.get(i));
-        Node childNode = processNodesHierarchy(aiChildNode, node);
+        Node childNode = buildNodesTree(aiChildNode, node);
         node.addChild(childNode);
     }
-
     return node;
 }
 ```
 
-We have created a new `Node` class that will contain the relevant information of `AINode` instances, and provides find methods to locate the nodes hierarchy to find a node by its name. Back in the `loadAnimGameItem` method, we just use that information to calculate the animations in the `processAnimations` method. This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. With that information we can finally construct an `AnimAgameItem` instance.
-
-The `processAnimations` method is defined like this:
+Let’s review the `processAnimations` method, which is defined like this:
 
 ```java
 private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bone> boneList,
-        Node rootNode, Matrix4f rootTransformation) {
+                                                            Node rootNode, Matrix4f globalInverseTransformation) {
     Map<String, Animation> animations = new HashMap<>();
 
     // Process all animations
@@ -388,91 +389,111 @@ private static Map<String, Animation> processAnimations(AIScene aiScene, List<Bo
     PointerBuffer aiAnimations = aiScene.mAnimations();
     for (int i = 0; i < numAnimations; i++) {
         AIAnimation aiAnimation = AIAnimation.create(aiAnimations.get(i));
+        int maxFrames = calcAnimationMaxFrames(aiAnimation);
 
-        // Calculate transformation matrices for each node
-        int numChanels = aiAnimation.mNumChannels();
-        PointerBuffer aiChannels = aiAnimation.mChannels();
-        for (int j = 0; j < numChanels; j++) {
-            AINodeAnim aiNodeAnim = AINodeAnim.create(aiChannels.get(j));
-            String nodeName = aiNodeAnim.mNodeName().dataString();
-            Node node = rootNode.findByName(nodeName);
-            buildTransFormationMatrices(aiNodeAnim, node);
-        }
-
-        List<AnimatedFrame> frames = buildAnimationFrames(boneList, rootNode, rootTransformation);
+        List<AnimatedFrame> frames = new ArrayList<>();
         Animation animation = new Animation(aiAnimation.mName().dataString(), frames, aiAnimation.mDuration());
         animations.put(animation.getName(), animation);
+
+        for (int j = 0; j < maxFrames; j++) {
+            AnimatedFrame animatedFrame = new AnimatedFrame();
+            buildFrameMatrices(aiAnimation, boneList, animatedFrame, j, rootNode,
+                    rootNode.getNodeTransformation(), globalInverseTransformation);
+            frames.add(animatedFrame);
+        }
     }
     return animations;
 }
 ```
 
-For each animation, animation channels are processed. Each channel defines the different transformations that should be applied over time for a node. The transformations defined for each node are defined in the `buildTransFormationMatrices` method. These matrices are stored for each node. Once the nodes hierarchy is filled up with that information we can construct the animation frames.
-
-Let’s first review the `buildTransFormationMatrices` method:
-
+This method returns a `Map` of `Animation` instances. Remember that a model can have more than one animation, so they are stored indexed by their names. For each of these animations we construct a list of animation frames (`AnimatedFrame` instances), which are essentially a list of the transformation matrices to be applied to each of the bones that compose the model. For each of the animations, we calculate the maximum number of frames by calling the method `calcAnimationMaxFrames`, which is defined like this: 
 ```java
-private static void buildTransFormationMatrices(AINodeAnim aiNodeAnim, Node node) {
-    int numFrames = aiNodeAnim.mNumPositionKeys();
+private static int calcAnimationMaxFrames(AIAnimation aiAnimation) {
+    int maxFrames = 0;
+    int numNodeAnims = aiAnimation.mNumChannels();
+    PointerBuffer aiChannels = aiAnimation.mChannels();
+    for (int i=0; i<numNodeAnims; i++) {
+        AINodeAnim aiNodeAnim = AINodeAnim.create(aiChannels.get(i));
+        int numFrames = Math.max(Math.max(aiNodeAnim.mNumPositionKeys(), aiNodeAnim.mNumScalingKeys()),
+                aiNodeAnim.mNumRotationKeys());
+        maxFrames = Math.max(maxFrames, numFrames);
+    }
+
+    return maxFrames;
+    }
+```
+
+Each `AINodeAnim` instance defines some transformations to be applied to a node in the model for a specific frame. These transformations, for a specific node, are defined in the `AINodeAnim` instance. These transformations are defined in the form of position translations, rotations and scaling values. The trick here is that, for example, for a specific node, translation values can stop at a specific frae, but rotations and scaling values can continue for the next frames. In this case, we will have less translation values than rotation or scaling ones. Therefore, a good approximation, to calculate the maximum number of frames is to use the maximum value. The problem gest more complex, because this is defines per node. A node can define just some transformations for the first frames and do not apply more modifications for the rest. In this case, we should use always the last defined values. Therefore, we get the maximum number for all the animations associated to the nodes.
+
+Going back to the `processAnimations` method, with that information, we are ready to iterate over the different frames and build the transformation matrices for the bones by calling the `buildFrameMatrices` method. For each frame we start with the root node, and will apply the transformations recursively from top to down of the nodes hierarchy. The `buildFrameMatrices` is defined like this:
+```java
+private static void buildFrameMatrices(AIAnimation aiAnimation, List<Bone> boneList, AnimatedFrame animatedFrame, int frame, Node node, Matrix4f parentTransformation, Matrix4f globalInverseTransform) {
+    String nodeName = node.getName();
+    AINodeAnim aiNodeAnim = findAIAnimNode(aiAnimation, nodeName);
+    Matrix4f nodeTransform = node.getNodeTransformation();
+    if (aiNodeAnim != null) {
+        nodeTransform = buildNodeTransformationMatrix(aiNodeAnim, frame);
+    }
+    Matrix4f nodeGlobalTransform = new Matrix4f(parentTransformation).mul(nodeTransform);
+
+    List<Bone> affectedBones = boneList.stream().filter( b -> b.getBoneName().equals(nodeName)).collect(Collectors.toList());
+    for (Bone bone: affectedBones) {
+        Matrix4f boneTransform = new Matrix4f(globalInverseTransform).mul(nodeGlobalTransform).
+                mul(bone.getOffsetMatrix());
+        animatedFrame.setMatrix(bone.getBoneId(), boneTransform);
+    }
+
+    for (Node childNode : node.getChildren()) {
+        buildFrameMatrices(aiAnimation, boneList, animatedFrame, frame, childNode, nodeGlobalTransform,
+                globalInverseTransform);
+    }
+}
+```
+
+We get the transformation associated to the node. Then we check if this node has an animation node associated to it. If so, we need to get the proper translation, rotation and scaling transformations that apply to the frame that we are handling. With that information, we get the bones associated to that node and update the transformation matrix for each of those bones, for that specific frame by multiplying:
+
+* The model inverse global transformation matrix (the inverse of the root node transformation matrix).
+* The transformation matrix for the node.
+* The bone offset matrix.
+
+After that, we iterate over the children nodes, using the node transformation matrix as the parent matrix for those child nodes.
+
+Let’s review the `buildNodeTransformationMatrix` method:
+```java
+ private static Matrix4f buildNodeTransformationMatrix(AINodeAnim aiNodeAnim, int frame) {
     AIVectorKey.Buffer positionKeys = aiNodeAnim.mPositionKeys();
     AIVectorKey.Buffer scalingKeys = aiNodeAnim.mScalingKeys();
     AIQuatKey.Buffer rotationKeys = aiNodeAnim.mRotationKeys();
 
-    for (int i = 0; i < numFrames; i++) {
-        AIVectorKey aiVecKey = positionKeys.get(i);
-        AIVector3D vec = aiVecKey.mValue();
+    AIVectorKey aiVecKey;
+    AIVector3D vec;
 
-        Matrix4f transfMat = new Matrix4f().translate(vec.x(), vec.y(), vec.z());
-
-        AIQuatKey quatKey = rotationKeys.get(i);
+    Matrix4f nodeTransform = new Matrix4f();
+    int numPositions = aiNodeAnim.mNumPositionKeys();
+    if (numPositions > 0) {
+        aiVecKey = positionKeys.get(Math.min(numPositions - 1, frame));
+        vec = aiVecKey.mValue();
+        nodeTransform.translate(vec.x(), vec.y(), vec.z());
+    }
+    int numRotations = aiNodeAnim.mNumRotationKeys();
+    if (numRotations > 0) {
+        AIQuatKey quatKey = rotationKeys.get(Math.min(numRotations - 1, frame));
         AIQuaternion aiQuat = quatKey.mValue();
         Quaternionf quat = new Quaternionf(aiQuat.x(), aiQuat.y(), aiQuat.z(), aiQuat.w());
-        transfMat.rotate(quat);
-
-        if (i < aiNodeAnim.mNumScalingKeys()) {
-            aiVecKey = scalingKeys.get(i);
-            vec = aiVecKey.mValue();
-            transfMat.scale(vec.x(), vec.y(), vec.z());
-        }
-
-        node.addTransformation(transfMat);
+        nodeTransform.rotate(quat);
     }
+    int numScalingKeys = aiNodeAnim.mNumScalingKeys();
+    if (numScalingKeys > 0) {
+        aiVecKey = scalingKeys.get(Math.min(numScalingKeys - 1, frame));
+        vec = aiVecKey.mValue();
+        nodeTransform.scale(vec.x(), vec.y(), vec.z());
+    }
+
+    return nodeTransform;
 }
 ```
 
-As you can see, an `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. That final calculation is done in the `buildAnimationFrames` method:
-
-```java
-private static List<AnimatedFrame> buildAnimationFrames(List<Bone> boneList, Node rootNode,
-        Matrix4f rootTransformation) {
-
-    int numFrames = rootNode.getAnimationFrames();
-    List<AnimatedFrame> frameList = new ArrayList<>();
-    for (int i = 0; i < numFrames; i++) {
-        AnimatedFrame frame = new AnimatedFrame();
-        frameList.add(frame);
-
-        int numBones = boneList.size();
-        for (int j = 0; j < numBones; j++) {
-            Bone bone = boneList.get(j);
-            Node node = rootNode.findByName(bone.getBoneName());
-            Matrix4f boneMatrix = Node.getParentTransforms(node, i);
-            boneMatrix.mul(bone.getOffsetMatrix());
-            boneMatrix = new Matrix4f(rootTransformation).mul(boneMatrix);
-            frame.setMatrix(j, boneMatrix);
-        }
-    }
-
-    return frameList;
-}
-```
-
-This method returns a list of `AnimatedFrame` instances. Each `AnimatedFrame` instance will contain the list of transformations to be applied for each bone for a specific frame. This method just iterates over the list that contains all the bones. For each bone:
-
-* Gets the associated node.
-* Builds a transformation matrix by multiplying the transformation of the associated `Node` with all the transformations of their parents up to the root node. This is done in the `Node.getParentTransforms` method.
-* It multiplies that matrix with the bone’s offset matrix.
-* The final transformation is calculated by multiplying the root’s node transformation with the matrix calculated in the step above.
+The `AINodeAnim` instance defines a set of keys that contain translation, rotation and scaling information. These keys are referred to specific instant of times. We assume that information is ordered in time, and construct a list of matrices that contain the transformation to be applied for each frame. As it has been said before, some of those transformations may "stop" at a specific frame, we should use the last values for the last of the frames.
 
 The rest of the changes in the source code are minor changes to adapt some structures. At the end you will be able to load animations like this one \(you need yo press space par to change the frame\).
 
