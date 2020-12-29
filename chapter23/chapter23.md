@@ -95,6 +95,12 @@ In the game loop intersection calculations are done per each ```GameItem```. But
 
 This method implements the algorithm that test intersection for Axis Aligned Boxes. You can check the details, as pointed out in the JOML documentation, [here](http://people.csail.mit.edu/amy/papers/box-jgt.pdf "here").
 
+In order to use that class, we need to add another dependency to the `pom.xml` file, to include `joml-primitives` package:
+
+```xml
+
+```
+
 The method tests if a ray, defined by an origin and a direction, intersects a box, defined by minimum and maximum corner. This algorithm is valid, because our cubes, are aligned with the axis, if they were rotated, this method would not work. Thus, the method receives the following parameters:
 
 * An origin: In our case, this will be our camera position.
