@@ -600,7 +600,7 @@ We get the position and orientation of the base frame element associated to each
 
 In principle, that information should be assigned to the joint’s position and orientation, but it needs to be transformed according to the joint’s flag. If you recall, when the structure of the animation file was presented, each joint in the hierarchy section defines a flag. That flag models how the position and orientation information should be changed according to the information defined in each animation frame.
 
-If the first bit of that flag field is equal to 1, we should change the x component of the base frame position with the data contained in the animation frame we are processing. That animation frame defines a bug a float array, so which I elements should we take. The answer is also in the joints definition which includes a startIndex attribute. If the second bit of the gal is equal to 1, we should change the y component of the base frame position with the value at startIndex + 1, and so on. The next bits are for the z position, and the x, y and z components of the orientation.
+If the first bit of that flag field is equal to 1, we should change the x component of the base frame position with the data contained in the animation frame we are processing. That animation frame defines a big float array, so which elements should we take? The answer is also in the joints definition which includes a startIndex attribute. If the second bit of the flag is equal to 1, we should change the y component of the base frame position with the value at startIndex + 1, and so on. The next bits are for the z position, and the x, y and z components of the orientation.
 
 ```java
         int flags = hierarchyList.get(i).getFlags();
