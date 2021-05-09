@@ -168,7 +168,7 @@ $$y-y1=m\cdot(x-x1),$$
 
 where m is the line slope, that is, how much the height changes when moving through the $$x$$ axis. Note that, in our case, the $$y$$ coordinates are the $$z$$ ones. Also note that we are using 2D coordinates because we are not calculating heights here. We just want to select the proper triangle and to do that $$x$$ an $$z$$ coordinates are enough. So, in our case the line equation should be rewritten like this.
 
-$$z-z1=m\cdot(z-z1)$$
+$$z-z1=m\cdot(x-x1)$$
 
 The slope can be calculated in the following way:
 
@@ -176,7 +176,7 @@ $$m=\frac{z1-z2}{x1-x2}$$
 
 So the equation of the diagonal to get the $$z$$ value given a $$x$$ position is like this:
 
-$$z=m\cdot(xpos-x1)+z1=\frac{z1-z2}{x1-x2}\cdot(zpos-x1)+z1$$
+$$z=m\cdot(xpos-x1)+z1=\frac{z1-z2}{x1-x2}\cdot(xpos-x1)+z1$$
 
 Where $$x1$$, $$x2$$, $$z1$$ and $$z2$$ are the $$x$$ and $$z$$ coordinates of the vertices $$V1$$ and $$V2$$, respectively.
 
