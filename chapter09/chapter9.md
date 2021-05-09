@@ -389,7 +389,7 @@ With this OBJ loader class you can now use Blender to create your models. Blende
 
 ![OBJ Export options](obj_export_options.png)
 
-Remember to split edges when exporting, since we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not assigned to vertices. If you find light problems with some models \(next chapters\), you should verify the normals. You can visualize them inside Blender.
+Remember to split edges when exporting, since we cannot assign several texture coordinates to the same vertex. Also, we need the normals to be defined per each triangle, not assigned to vertices. If you find light problems with some models \(next chapters\), you should verify the normals. You can visualize them inside Blender. In later chapters, we will use [Assimp](https://www.assimp.org/) to load the models, which will allow us to load other formats and remove the restrictions on the model structure mentioned above. In any case, If you cannot wait for that, you can check the [following code](https://gist.github.com/Nutriz/e473701b359487a606caf48465b2fb77) by Jérôme Gully, which will allow you to use models which reuse texture coordinates.
 
 ![Edge split](edge_split.png)
 
