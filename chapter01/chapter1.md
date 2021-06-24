@@ -1,12 +1,12 @@
 # 第一步
 
-我们将会在这部指南中学会一些在开发 3D 游戏当中涉及到的一些最主要的技术。我们将会使用 Java 与 Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\) 来开发我们的示例项目。LWJGL 将允许您访问一些类似于 OpenGL 的底层 API。
+我们将会在这本书中学会一些在开发 3D 游戏当中涉及到的一些最主要的技术。我们将会使用 Java 与 Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\) 来开发我们的示例项目。LWJGL 将允许您访问一些类似于 OpenGL 的底层 API。
 
 LWJGL 是一个像 OpenGL 的包装器的底层 API。如果您想在短时间内开始制作 3D 游戏的话，或许您应当考虑其他的 API，比如 \[JmonkeyEngine\]。要使用这些底层API，您将需要理解许多概念并写下许多代码来获得您心意的结果，这样做的好处就是，您将会更好地理解与掌握 3D 图形系统。
 
-As said in the previous paragraphs we will be using Java for this book. We will be using Java 10, so you need to download the Java SDK from Oracle’s pages. Just choose the installer that suits your Operating System and install it. This book assumes that you have a moderate understanding of the Java language.
+我们在先前的段落里已经提到了这本书将会使用 Java 进行开发。我们将会使用 Java 10，所以您应该从 Oracle 公司的网页下载 Java SDK（软件开发工具包）。选择适合您系统的版本并安装即可。这本书假定您已经对 Java 语言拥有一定程度的了解。
 
-You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 10. Since Java 10 is only available, by now, for 64 bits platforms, remember to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
+你需要使用支持 Java 的 IDE（集成开发环境）You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 10. Since Java 10 is only available, by now, for 64 bits platforms, remember to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
 
 ![](/chapter01/intellij.png)
 
@@ -83,5 +83,5 @@ The jars that contain LWJGL classes, also contain the native libraries. LWJGL wi
 
 ![Hello World](hello_world.png)
 
-**这本指南的源代码已经发布到了 **[**GitHub**](https://github.com/lwjglgamedev/lwjglbook)**。**
+**这本书的源代码已经发布到了 **[**GitHub**](https://github.com/lwjglgamedev/lwjglbook)**。**
 
