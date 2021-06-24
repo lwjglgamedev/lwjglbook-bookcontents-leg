@@ -4,17 +4,17 @@
 
 LWJGL 是一个像 OpenGL 的包装器的底层 API。如果您想在短时间内开始制作 3D 游戏的话，或许您应当考虑其他的 API，比如 \[JmonkeyEngine\]。要使用这些底层API，您将需要理解许多概念并写下许多代码来获得您心意的结果，这样做的好处就是，您将会更好地理解与掌握 3D 图形系统。
 
-我们在先前的段落里已经提到了这本书将会使用 Java 进行开发。我们将会使用 Java 10，所以您应该从 Oracle 公司的网页下载 Java SDK（软件开发工具包）。选择适合您系统的版本并安装即可。这本书假定您已经对 Java 语言拥有一定程度的了解。
+我们在先前的段落里已经提到了这本书将会使用 Java 进行开发。我们将会使用 Java 10，所以您应该从 Oracle 公司的网页下载 Java SDK (软件开发工具包)。选择适合您系统的版本并安装即可。这本书假定您已经对 Java 语言拥有一定程度的了解。
 
-你需要使用支持 Java 的 IDE（集成开发环境）You may use the Java IDE you want in order to run the samples. You can download IntelliJ IDEA which has good support for Java 10. Since Java 10 is only available, by now, for 64 bits platforms, remember to download the 64 bits version of IntelliJ. IntelliJ provides a free open source version, the Community version, which you can download from here: [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij").
+你需要使用支持 Java 的 IDE (集成开发环境) 来运行示例项目。 您可以下载对 Java 10 拥有超棒支持的 IntelliJ。到目前为止，Java 10 仅支持 64 位平台，所以请一定要下载 IntelliJ 的 64 位版本。IntelliJ提供了一个开源版本，即社区版，您可从此处下载： [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/ "Intellij")。
 
 ![](/chapter01/intellij.png)
 
-For building our samples we will be using [Maven](https://maven.apache.org/). Maven is already integrated in most IDEs and you can directly open the different samples inside them. Just open the folder that contains the chapter sample and IntelliJ will detect that it is a maven project.
+我们将使用 [Maven](https://maven.apache.org/) 来构建我们的示例项目。Maven 已经被集成进了大多数 IDE，所以您可以直接打开不同的示例文件。只需要打开包含该章节示例的文件夹，IntelliJ 就会检测到这是一个 Maven 项目。
 
 ![](/chapter01/maven_project.png)
 
-Maven builds projects based on an XML file named `pom.xml` \(Project Object Model\) which manages project dependencies \(the libraries you need to use\) and the steps to be performed during the build process. Maven follows the principle of convention over configuration, that is, if you stick to the standard project structure and naming conventions the configuration file does not need to explicitly say where source files are or where compiled classes should be located.
+通过 Maven 构建的项目是基于一个叫做 `pom.xml` \(Project Object Model\) 的 XML 文件上的。这个文件用来管理项目的依赖关系与构建过程中所要进行的步骤。Maven 遵循约定大于配置的原则，这就是说，如果您执意使用标准的项目结构与命名规范，那么您将没有必要在配置文件中加入源文件和编译类的位置。
 
 This book does not intend to be a maven tutorial, so please find the information about it in the web in case you need it.  The source code folder defines a parent project which defines the plugins to be used and collects the versions of the libraries employed.
 
