@@ -1,8 +1,8 @@
 # 第一步
 
-我们将会在这部指南中学会一些在开发3D游戏当中涉及到的一些最主要的技术。我们将会使用 Java 与 Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\)来开发我们的示例项目。LWJGL将允许您访问一些类似于 OpenGL 的低级API。
+我们将会在这部指南中学会一些在开发 3D 游戏当中涉及到的一些最主要的技术。我们将会使用 Java 与 Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\) 来开发我们的示例项目。LWJGL 将允许您访问一些类似于 OpenGL 的底层 API。
 
-LWJGL 像是一个在 OpenGL 的低级API。LWJGL is a low level API that acts like a wrapper around OpenGL. If your idea is to start creating 3D games in a short period of time maybe you should consider other alternatives like  \[JmonkeyEngine\]. By using this low level API you will have to go through many concepts and write lots of lines of code before you see the results. The benefit of doing it this way is that you will get a much better understanding of 3D graphics and also you can get better control.
+LWJGL 是一个像 OpenGL 的包装器的底层 API。如果您想在短时间内开始制作 3D 游戏的话，或许您应当考虑其他的 API，比如 \[JmonkeyEngine\]。要使用这些底层API，您将需要理解许多概念并写下许多代码来获得您心意的结果，这样做的好处就是，您将会更好地理解与掌握 3D 图形系统。
 
 As said in the previous paragraphs we will be using Java for this book. We will be using Java 10, so you need to download the Java SDK from Oracle’s pages. Just choose the installer that suits your Operating System and install it. This book assumes that you have a moderate understanding of the Java language.
 
@@ -60,7 +60,7 @@ The LWJGL platform dependency already takes care of unpacking native libraries f
     </profiles>
 ```
 
-Inside each project, the LWJGL platform dependency will use the correct property established in the profile for the current platform.
+在每个项目中，LWJGL 的平台依赖将会使用正确的属性为当前平台的配置文件进行正确的设置。
 
 ```xml
         <dependency>
