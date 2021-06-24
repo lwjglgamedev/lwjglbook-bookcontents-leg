@@ -1,8 +1,8 @@
-# First steps
+# 第一步
 
-In this book we will learn the principal techniques involved in developing 3D games. We will develop our samples in Java and we will use the Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\). The LWJGL library enables the access to low-level APIs \(Application Programming Interface\) such as OpenGL.
+我们将会在这部指南中学会一些在开发3D游戏当中涉及到的一些最主要的技术。我们将会使用 Java 与 Lightweight Java Game Library \([LWJGL](http://www.lwjgl.org/)\)来开发我们的示例项目。LWJGL将允许您访问一些类似于 OpenGL 的低级API。
 
-LWJGL is a low level API that acts like a wrapper around OpenGL. If your idea is to start creating 3D games in a short period of time maybe you should consider other alternatives like  \[JmonkeyEngine\]. By using this low level API you will have to go through many concepts and write lots of lines of code before you see the results. The benefit of doing it this way is that you will get a much better understanding of 3D graphics and also you can get better control.
+LWJGL 像是一个在 OpenGL 的低级API。LWJGL is a low level API that acts like a wrapper around OpenGL. If your idea is to start creating 3D games in a short period of time maybe you should consider other alternatives like  \[JmonkeyEngine\]. By using this low level API you will have to go through many concepts and write lots of lines of code before you see the results. The benefit of doing it this way is that you will get a much better understanding of 3D graphics and also you can get better control.
 
 As said in the previous paragraphs we will be using Java for this book. We will be using Java 10, so you need to download the Java SDK from Oracle’s pages. Just choose the installer that suits your Operating System and install it. This book assumes that you have a moderate understanding of the Java language.
 
@@ -75,13 +75,13 @@ Besides that, every project generates a runnable jar \(one that can be executed 
 
 The jars that contain LWJGL classes, also contain the native libraries. LWJGL will also take care of extracting them and adding them to the path where the JVM will look for libraries.
 
-Chapter 1 source code is taken directly from the getting started sample in the LWJGL site \([http://www.lwjgl.org/guide](http://www.lwjgl.org/guide)\). You will see that we are not using Swing or JavaFX as our GUI library. Instead of that we are using [GLFW](www.glfw.org) which is a library to handle GUI components \(Windows, etc.\) and events \(key presses, mouse movements, etc.\) with an OpenGL context attached in a straightforward way. Previous versions of LWJGL provided a custom GUI API but, for LWJGL 3, GLFW is the preferred windowing API.
+第一章的源代码是直接从 LWGPL 的官方站点 \([http://www.lwjgl.org/guide](http://www.lwjgl.org/guide)\) 上得到的。您可能会注意到，我们并未使用 Swing 或是 JavaFX 当做我们的 GUI 库。取而代之的是 [GLFW](www.glfw.org) ：Instead of that we are using  which is a library to handle GUI components \(Windows, etc.\) and events \(key presses, mouse movements, etc.\) with an OpenGL context attached in a straightforward way. Previous versions of LWJGL provided a custom GUI API but, for LWJGL 3, GLFW is the preferred windowing API.
 
-The samples source code is very well documented and straightforward so we won’t repeat the comments here.
+这个开发示例已经经过了十分直白而又简明的排版，所以我们不会再次重复注释了。
 
-If you have your environment correctly set up you should be able to execute it and see a window with a red background.
+如果您成功地设置好了您的开发环境，您应该可以运行这个程序并看到一个带有红色背景的窗口。
 
 ![Hello World](hello_world.png)
 
-**The source code of this book is published in **[**GitHub**](https://github.com/lwjglgamedev/lwjglbook)**.**
+**这本指南的源代码已经发布到了 **[**GitHub**](https://github.com/lwjglgamedev/lwjglbook)**。**
 
