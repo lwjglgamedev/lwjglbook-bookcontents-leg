@@ -18,9 +18,9 @@ LWJGL 是一个像 OpenGL 的包装器的底层 API。如果您想在短时间�
 
 这本书并未打算变成一个 Maven 的教程，所以您可以在您需要更多信息的情况下在网上自行查找。包含源代码的文件夹定义了父级项目，即用来定义插件的使用与收集被使用的库的版本的项目。T
 
-LWJGL 3.1 介绍了一些在构建项目时的变化。现在核心代码已经变得更加结构化，从而使得我们在包管理上可以更加有选择性地选择我们需要的包，而不是取而代之地使用一个庞大单一臃肿不堪的 jar 文件。但这也需要一个代价：你需要更仔细地一个个指定依赖关系。但是不用担心，[下载](https://www.lwjgl.org/download) 页面包含了一个可以帮您生成 pom 文件的脚本。对于我们而言，这就意味着我们只需要使用 GLFW 与 OpenGl 的绑定 API 就可以了。您可以在下面的源代码中看看 pom 文件是什么样的。
+LWJGL 3.1 第一次尝试了一些在构建项目时的变化。现在核心代码已经变得更加结构化，从而使得我们在包管理上可以更加有选择性地选择我们需要的包，而不是取而代之地使用一个庞大单一臃肿不堪的 jar 文件。但这也需要一个代价：你需要更仔细地一个个指定依赖关系。但是不用担心，[下载](https://www.lwjgl.org/download) 页面包含了一个可以帮您生成 pom 文件的脚本。对于我们而言，这就意味着我们只需要使用 GLFW 与 OpenGl 的绑定 API 就可以了。您可以在源代码中看看 pom 文件是什么样的。
 
-The LWJGL platform dependency already takes care of unpacking native libraries for your platform, so there's no need to use other plugins \(such as `mavennatives`\). We just need to set up three profiles to set a property that will configure the LWJGL platform. The profiles will set up the correct values of that property for Windows, Linux and Mac OS families.
+LWJGL 的平台依赖关系已经被您平台的原生解包库所掌管，所以您没有必要去使用其他的插件 \(就例如 `mavennatives`\) 。我们只需要准备三个配置文件，这样就可以设置能够管理 LWJGL 平台的属性了。这些配置文件将会为 Windows, Linux 和 Mac OS 系列准备合适的属性值。
 
 ```xml
     <profiles>
@@ -71,7 +71,7 @@ The LWJGL platform dependency already takes care of unpacking native libraries f
         </dependency>
 ```
 
-Besides that, every project generates a runnable jar \(one that can be executed by typing java -jar name\_of\_the\_jar.jar\). This is achieved by using the maven-jar-plugin which creates a jar with a `MANIFEST.MF` file with the correct values. The most important attribute for that file is `Main-Class`, which sets the entry point for the program. In addition, all the dependencies are set as entries in the `Class-Path` attribute for that file. In order to execute it on another computer, you just need to copy the main jar file and the lib directory \(with all the jars included there\) which are located under the target directory.
+除此之外，每个项目都会生成一个可运行的 jar 文件 \(可通过输入 java -jar name\_of\_the\_jar.jar\ 来运行)。其是通过使用可以生成带有正确属性值的 jar 文件的This is achieved by using the maven-jar-plugin which creates a jar with a `MANIFEST.MF` file with the correct values. The most important attribute for that file is `Main-Class`, which sets the entry point for the program. In addition, all the dependencies are set as entries in the `Class-Path` attribute for that file. In order to execute it on another computer, you just need to copy the main jar file and the lib directory \(with all the jars included there\) which are located under the target directory.
 
 The jars that contain LWJGL classes, also contain the native libraries. LWJGL will also take care of extracting them and adding them to the path where the JVM will look for libraries.
 
