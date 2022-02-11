@@ -49,7 +49,7 @@ And define the version of the library to use.
 ```xml
     <properties>
         [...]
-        <joml.version>1.10.0</joml.version>
+        <joml.version>1.10.4</joml.version>
         [...]
     </properties>
 ```
