@@ -100,7 +100,7 @@ in mat4 outModelViewMatrix;
 In the fragment shader, we will need to pass a new uniform for the normal map texture sampler:
 
 ```glsl
-uniform sampler2D texture_sampler;
+uniform sampler2D normalMap;
 ```
 
 Also, in the fragment shader, we will create a new function that calculates the normal for the current fragment.
