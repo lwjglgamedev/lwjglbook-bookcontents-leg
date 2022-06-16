@@ -138,9 +138,11 @@ public class ShaderProgram {
 
         if (vertexShaderId != 0) {
             glDetachShader(programId, vertexShaderId);
+            glDeleteShader(vertexShaderId);
         }
         if (fragmentShaderId != 0) {
             glDetachShader(programId, fragmentShaderId);
+            glDeleteShader(fragmentShaderId);
         }
 
         glValidateProgram(programId);
@@ -169,7 +171,7 @@ public class ShaderProgram {
 
 The constructor of the `ShaderProgram` creates a new program in OpenGL and provides methods to add vertex and fragment shaders. Those shaders are compiled and attached to the OpenGL program. When all shaders are attached the link method should be invoked which links all the code and verifies that everything has been done correctly.
 
-Once the shader program has been linked, the compiled vertex and fragment shaders can be freed up \(by calling `glDetachShader`\).
+Once the shader program has been linked, the compiled vertex and fragment shaders can be freed up \(by calling `glDetachShader` followed by `glDeleteShader`\).
 
 Regarding verification, this is done through the `glValidateProgram` call. This method is used mainly for debugging purposes, and it should be removed when your game reaches production stage. This method tries to validate if the shader is correct given the **current OpenGL state**. This means, that validation may fail in some cases even if the shader is correct, due to the fact that the current state is not complete enough to run the shader \(some data may have not been uploaded yet\). So, instead of failing, we just print an error message to the standard error output.
 
