@@ -324,8 +324,8 @@ As you can see, they are very simple: they resemble the pair of shaders used in 
 ```java
 private void setupParticlesShader() throws Exception {
     particlesShaderProgram = new ShaderProgram();
-    particlesShaderProgram.createVertexShader(Utils.loadResource("/shaders/particles_vertex.vs"));
-    particlesShaderProgram.createFragmentShader(Utils.loadResource("/shaders/particles_fragment.fs"));
+    particlesShaderProgram.createVertexShader(Utils.loadResource("/shaders/particles_vertex.vert"));
+    particlesShaderProgram.createFragmentShader(Utils.loadResource("/shaders/particles_fragment.frag"));
     particlesShaderProgram.link();
 
     particlesShaderProgram.createUniform("projectionMatrix");

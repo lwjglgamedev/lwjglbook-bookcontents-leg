@@ -115,8 +115,8 @@ In the `Renderer` class we just have added a new method to use those shaders and
 ```java
 private void setupSkyBoxShader() throws Exception {
     skyBoxShaderProgram = new ShaderProgram();
-    skyBoxShaderProgram.createVertexShader(Utils.loadResource("/shaders/sb_vertex.vs"));
-    skyBoxShaderProgram.createFragmentShader(Utils.loadResource("/shaders/sb_fragment.fs"));
+    skyBoxShaderProgram.createVertexShader(Utils.loadResource("/shaders/sb_vertex.vert"));
+    skyBoxShaderProgram.createFragmentShader(Utils.loadResource("/shaders/sb_fragment.frag"));
     skyBoxShaderProgram.link();
 
     skyBoxShaderProgram.createUniform("projectionMatrix");

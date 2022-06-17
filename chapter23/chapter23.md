@@ -10,7 +10,7 @@ Before we start talking about the steps to be performed to select objects, we ne
 private boolean selected;
 ```
 
-Then we need to be able to use that value in the scene shaders. Let’s start with the fragment shader (```scene_fragment.fs```). In this case, we will assume that we receive a flag, from the vertex shader, that will determine if the fragment to be rendered belongs to a selected object or not.
+Then we need to be able to use that value in the scene shaders. Let’s start with the fragment shader (```scene_fragment.frag```). In this case, we will assume that we receive a flag, from the vertex shader, that will determine if the fragment to be rendered belongs to a selected object or not.
 
 ```glsl
 in float outSelected;
