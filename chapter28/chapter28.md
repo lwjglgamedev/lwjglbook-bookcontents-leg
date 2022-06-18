@@ -208,7 +208,7 @@ public class SceneBuffer {
 }
 ```
 
-As you can see, this is similar to the `GBuffer` class, but here we will only use a single texture to store the resulting colours. Now that we have created these new classes, we can start using them. In the `Renderer` class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `scene_vertex.vs` and `scene_fragment.fs`\).
+As you can see, this is similar to the `GBuffer` class, but here we will only use a single texture to store the resulting colours. Now that we have created these new classes, we can start using them. In the `Renderer` class, we will no longer be using the forward rendering shaders we were using for rendering the scene \(named `scene_vertex.vert` and `scene_fragment.frag`\).
 
 In the `init` method of the `Renderer` class you may see that a `GBuffer` instance is created and that we initialize and another set of shaders for the geometry pass \(by calling the `setupGeometryShader` method\) and the light pass \(by calling the `setupDirLightShader` and `setupPointLightShader` methods\). You may see also that we create a instance of the class `SceneBuffer` named `sceneBuffer`. This will be used when rendering lights as explained before. An utility matrix named `bufferPassModelMatrix` is also instantiated \(it will be used when performing the geometry pass\). You can see that we create a new `Mesh` at the end of the `init` method. This will be used in the light pass. More on this will be explained later.
 
@@ -229,7 +229,7 @@ public void init(Window window) throws Exception {
 }
 ```
 
-The shaders used in the geometry and light passes are defined like usual \(you can check the source code directly\). Let’s focus in their content instead. Let’s focus in their content instead. We will start with the geometry pass, here’s the vertex shader code \(`gbuffer_vertex.vs`\):
+The shaders used in the geometry and light passes are defined like usual \(you can check the source code directly\). Let’s focus in their content instead. Let’s focus in their content instead. We will start with the geometry pass, here’s the vertex shader code \(`gbuffer_vertex.vert`\):
 
 ```glsl
 #version 330
@@ -322,7 +322,7 @@ void main()
 }
 ```
 
-This shader is very similar to the vertex shader used in previous chapters to render a scene. There are some changes in the name of the output variables but in essence is the same shader. Indeed, it should be almost the same, the way we render the vertices should not change, the major changes are done in the fragment shader, which is defined like this \(`gbuffer_fragment.fs`\):
+This shader is very similar to the vertex shader used in previous chapters to render a scene. There are some changes in the name of the output variables but in essence is the same shader. Indeed, it should be almost the same, the way we render the vertices should not change, the major changes are done in the fragment shader, which is defined like this \(`gbuffer_fragment.frag`\):
 
 ```glsl
 #version 330
@@ -629,9 +629,9 @@ void main()
 }
 ```
 
-The code above is the vertex shader used when rendering point lights and directional light \(`light_vertex.vs`\). It just dumps the vertices using the model matrix and a projection matrix. There’s no need to use a view matrix, we don’t need a camera here.
+The code above is the vertex shader used when rendering point lights and directional light \(`light_vertex.vert`\). It just dumps the vertices using the model matrix and a projection matrix. There’s no need to use a view matrix, we don’t need a camera here.
 
-The fragment shader for point lights \(`point_light_fragment.fs`\) is defined like this:
+The fragment shader for point lights \(`point_light_fragment.frag`\) is defined like this:
 
 ```glsl
 #version 330

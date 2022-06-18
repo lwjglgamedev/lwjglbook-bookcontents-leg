@@ -135,7 +135,7 @@ glReadBuffer(GL_NONE);
 
 Now we are ready to render the scene from the light perspective into FBO in the `Renderer` class. In order to do that, we will create a specific set of vertex and fragments shaders.
 
-The vertex shader, named `depth_vertex.fs`, is defined like this.
+The vertex shader, named `depth_vertex.frag`, is defined like this.
 
 ```glsl
 #version 330
@@ -175,8 +175,8 @@ Once we have defined the new shaders for depth rendering we can use them in the 
 ```java
 private void setupDepthShader() throws Exception {
     depthShaderProgram = new ShaderProgram();
-    depthShaderProgram.createVertexShader(Utils.loadResource("/shaders/depth_vertex.vs"));
-    depthShaderProgram.createFragmentShader(Utils.loadResource("/shaders/depth_fragment.fs"));
+    depthShaderProgram.createVertexShader(Utils.loadResource("/shaders/depth_vertex.vert"));
+    depthShaderProgram.createFragmentShader(Utils.loadResource("/shaders/depth_fragment.frag"));
     depthShaderProgram.link();
 
     depthShaderProgram.createUniform("orthoProjectionMatrix");

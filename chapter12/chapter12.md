@@ -228,8 +228,8 @@ By using this interface our different games can define custom HUDs but the rende
 ```java
 private void setupHudShader() throws Exception {
     hudShaderProgram = new ShaderProgram();
-    hudShaderProgram.createVertexShader(Utils.loadResource("/shaders/hud_vertex.vs"));
-    hudShaderProgram.createFragmentShader(Utils.loadResource("/shaders/hud_fragment.fs"));
+    hudShaderProgram.createVertexShader(Utils.loadResource("/shaders/hud_vertex.vert"));
+    hudShaderProgram.createFragmentShader(Utils.loadResource("/shaders/hud_fragment.frag"));
     hudShaderProgram.link();
 
     // Create uniforms for Orthographic-model projection matrix and base colour

@@ -24,7 +24,7 @@ Those fragments are used during the fragment processing stage by the fragment sh
 
 Keep in mind that 3D cards are designed to parallelize all the operations described above. The input data can be processed in parallel in order to generate the final scene.
 
-So let's start writing our first shader program. Shaders are written by using the GLSL language \(OpenGL Shading Language\) which is based on ANSI C. First we will create a file named “`vertex.vs`” \(the extension is for Vertex Shader\) under the resources directory with the following content:
+So let's start writing our first shader program. Shaders are written by using the GLSL language \(OpenGL Shading Language\) which is based on ANSI C. First we will create a file named “`vertex.vert`” \(the extension is for Vertex Shader\) under the resources directory with the following content:
 
 ```
 #version 330
@@ -60,7 +60,7 @@ So, first we need to get that chunk into something that’s meaningful to us. In
 
 The shader has a main block like any other C program which in this case is very simple. It is just returning the received position in the output variable `gl_Position` without applying any transformation. You now may be wondering why the vector of three attributes has been converted into a vector of four attributes \(vec4\). This is because `gl_Position` is expecting the result in vec4 format since it is using homogeneous coordinates. That is, it’s expecting something in the form \(x, y, z, w\), where w represents an extra dimension. Why add another dimension? In later chapters you will see that most of the operations we need to do are based on vectors and matrices. Some of those operations cannot be combined if we do not have that extra dimension. For instance we could not combine rotation and translation operations. \(If you want to learn more on this, this extra dimension allow us to combine affine and linear transformations. You can learn more about this by reading the excellent book “3D Math Primer for Graphics and Game Development", by Fletcher Dunn and Ian Parberry\).
 
-Let us now have a look at our first fragment shader. We will create a file named “`fragment.fs`” \(the extension is for Fragment Shader\) under the resources directory with the following content:
+Let us now have a look at our first fragment shader. We will create a file named “`fragment.frag`” \(the extension is for Fragment Shader\) under the resources directory with the following content:
 
 ```
 #version 330
@@ -210,8 +210,8 @@ private ShaderProgram shaderProgram;
 
 public void init() throws Exception {
     shaderProgram = new ShaderProgram();
-    shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
-    shaderProgram.createFragmentShader(Utils.loadResource("/fragment.fs"));
+    shaderProgram.createVertexShader(Utils.loadResource("/vertex.vert"));
+    shaderProgram.createFragmentShader(Utils.loadResource("/fragment.frag"));
     shaderProgram.link();
 }
 ```
