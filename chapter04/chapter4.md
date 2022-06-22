@@ -354,6 +354,15 @@ public void cleanup() {
 }
 ```
 
+The last step is to use our renderer by updating the IGameLogic instance's render method to:
+
+```java
+public void render(Window window) {
+    window.setClearColor(color, color, color, 0.0f);
+    renderer.render(window)
+}
+```
+
 And, that’s all! If you followed the steps carefully you will see something like this:
 
 ![Triangle game](triangle_window.png)
