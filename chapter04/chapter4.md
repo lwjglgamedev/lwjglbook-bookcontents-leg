@@ -341,7 +341,8 @@ public void cleanup() {
     if (shaderProgram != null) {
         shaderProgram.cleanup();
     }
-
+    
+    glBindVertexArray(vaoId);
     glDisableVertexAttribArray(0);
 
     // Delete the VBO
