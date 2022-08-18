@@ -1,4 +1,7 @@
-# 3D Game Development with LWJGL 3
+# 3D Game Development with LWJGL 3 (Legacy version)
+
+**** IMPORTANT: If you are here, you are viewing the legacy version. It is kept in case it contains usefull information for anybody but it will not be maintained ****
+**** IMPORTANT: Current version is [here](https://github.com/lwjglgamedev/lwjglbook-bookcontents) ****
 
 This online book will introduce the main concepts required to write a 3D game using the LWJGL 3 library.
 
